@@ -42,7 +42,8 @@ namespace BetterEditor.Essentials.Movement.Note
 				NoodleData = null;
 			}
 
-			_rotatedObject = transform.Find("NoteCube") ?? transform;
+			_rotatedObject = transform.Find("NoteCube");
+			if (_rotatedObject == null) _rotatedObject = transform;
 			_worldRotation = Quaternion.Euler(0f, worldRotation, 0f);
 			_inverseWorldRotation = Quaternion.Euler(0f, -worldRotation, 0f);
 			_startPos = startPos;

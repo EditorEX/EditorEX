@@ -342,18 +342,14 @@ namespace BetterEditor.Essentials.Movement.Note.MovementProvider
 
 		private IReadonlyBeatmapState _state;
 
-		private BeatmapDataModel _beatmapDataModel;
-
 		[Inject]
 		private void Construct([Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
 			AnimationHelper animationHelper,
-			IReadonlyBeatmapState state,
-			BeatmapDataModel beatmapDataModel)
+			IReadonlyBeatmapState state)
 		{
 			_editorDeserializedData = editorDeserializedData;
 			_animationHelper = animationHelper;
 			_state = state;
-			_beatmapDataModel = beatmapDataModel;
 		}
 
 		public enum MovementPhase
