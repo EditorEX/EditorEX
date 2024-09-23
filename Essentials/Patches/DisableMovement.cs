@@ -30,20 +30,18 @@ namespace BetterEditor.Essentials.Patches
 		{
 			var result = new CodeMatcher(instructions, null).Advance(11).RemoveInstructions(17).InstructionEnumeration();
 			return result;
-		}
+		}*/
 
 		[HarmonyPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.UpdateObjects))]
 		[HarmonyTranspiler]
 		public static IEnumerable<CodeInstruction> TranspilerObstacle(IEnumerable<CodeInstruction> instructions)
 		{
-			var result = new CodeMatcher(instructions, null).Advance(8).RemoveInstructions(20).InstructionEnumeration();
-
-			//debug
+			var result = new CodeMatcher(instructions, null).Advance(9).RemoveInstructions(19).InstructionEnumeration();
 			foreach (var instruction in result)
 			{
-				Console.WriteLine(instruction);
+				Plugin.Log.Info(instruction.ToString());
 			}
 			return result;
-		}*/
+		}
 	}
 }

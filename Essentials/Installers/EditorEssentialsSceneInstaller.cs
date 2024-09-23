@@ -2,6 +2,7 @@
 using BetterEditor.Essentials.Movement;
 using BetterEditor.Essentials.Movement.Data;
 using BetterEditor.Essentials.Movement.Note.MovementProvider;
+using BetterEditor.Essentials.Movement.Obstacle.MovementProvider;
 using BetterEditor.Essentials.Patches;
 using BetterEditor.Essentials.SpawnProcessing;
 using BetterEditor.Essentials.ViewMode;
@@ -30,6 +31,9 @@ namespace BetterEditor.Essentials.Installers
 
 			Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] {"Normal" }, typeof(EditorNoteBasicMovement)));
 			Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] {"Preview" }, typeof(EditorNoteGameMovement)));
+
+			Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Normal" }, typeof(EditorObstacleBasicMovement)));
+			Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Preview" }, typeof(EditorObstacleGameMovement)));
 			Container.Bind<MovementTypeProvider>().AsSingle();
 
 			Container.Bind<EditorBeatmapObjectsInTimeRowProcessor>().AsSingle();
