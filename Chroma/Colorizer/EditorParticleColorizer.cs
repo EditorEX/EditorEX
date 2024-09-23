@@ -4,26 +4,26 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Zenject;
 
-namespace Chroma.Colorizer
+namespace BetterEditor.Chroma.Colorizer
 {
     [UsedImplicitly]
-    public sealed class ParticleColorizerManager
+    public sealed class EditorParticleColorizerManager
     {
-        private readonly ParticleColorizer.Factory _factory;
+        private readonly EditorParticleColorizer.Factory _factory;
 
-        private ParticleColorizerManager(ParticleColorizer.Factory factory)
+        private EditorParticleColorizerManager(EditorParticleColorizer.Factory factory)
         {
             _factory = factory;
         }
 
-        public Dictionary<BasicBeatmapEventType, List<ParticleColorizer>> Colorizers { get; } = new();
+        public Dictionary<BasicBeatmapEventType, List<EditorParticleColorizer>> Colorizers { get; } = new();
 
         internal void Create(ParticleSystemEventEffect particleSystemEventEffect)
         {
             BasicBeatmapEventType type = particleSystemEventEffect._colorEvent;
-            if (!Colorizers.TryGetValue(type, out List<ParticleColorizer> colorizers))
+            if (!Colorizers.TryGetValue(type, out List<EditorParticleColorizer> colorizers))
             {
-                colorizers = new List<ParticleColorizer>();
+                colorizers = new List<EditorParticleColorizer>();
                 Colorizers.Add(type, colorizers);
             }
 
@@ -32,7 +32,7 @@ namespace Chroma.Colorizer
     }
 
     [UsedImplicitly]
-    public sealed class ParticleColorizer : IDisposable
+    public sealed class EditorParticleColorizer : IDisposable
     {
         private readonly ParticleSystemEventEffect _particleSystemEventEffect;
 
@@ -41,13 +41,13 @@ namespace Chroma.Colorizer
         private readonly MultipliedColorSO _highlightColor0;
         private readonly MultipliedColorSO _highlightColor1;
 
-        private LightColorizer? _lightColorizer;
+        private EditorLightColorizer? _lightColorizer;
 
         private int _previousValue;
 
-        private ParticleColorizer(
+        private EditorParticleColorizer(
             ParticleSystemEventEffect particleSystemEventEffect,
-            LightColorizerManager lightColorizerManager)
+            EditorLightColorizerManager lightColorizerManager)
         {
             _particleSystemEventEffect = particleSystemEventEffect;
             _lightColor0 = (MultipliedColorSO)particleSystemEventEffect._lightColor0;
@@ -59,7 +59,7 @@ namespace Chroma.Colorizer
             lightColorizerManager.CreateLightColorizerContract(particleSystemEventEffect._colorEvent, AssignLightColorizer);
         }
 
-        private LightColorizer FollowedColorizer => _lightColorizer ?? throw new InvalidOperationException($"{nameof(_lightColorizer)} was null.");
+        private EditorLightColorizer FollowedColorizer => _lightColorizer ?? throw new InvalidOperationException($"{nameof(_lightColorizer)} was null.");
 
         public void Dispose()
         {
@@ -145,7 +145,7 @@ namespace Chroma.Colorizer
             return value is 1 or 2 or 3 or 4 or 0 or -1;
         }
 
-        private void AssignLightColorizer(LightColorizer lightColorizer)
+        private void AssignLightColorizer(EditorLightColorizer lightColorizer)
         {
             _lightColorizer = lightColorizer;
             lightColorizer.ChromaLightSwitchEventEffect.BeatmapEventDidTrigger += Callback;
@@ -158,7 +158,7 @@ namespace Chroma.Colorizer
         }
 
         [UsedImplicitly]
-        internal class Factory : PlaceholderFactory<ParticleSystemEventEffect, ParticleColorizer>
+        internal class Factory : PlaceholderFactory<ParticleSystemEventEffect, EditorParticleColorizer>
         {
         }
     }
