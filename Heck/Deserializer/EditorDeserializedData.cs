@@ -22,6 +22,12 @@ namespace BetterEditor.Heck.Deserializer
 
 		public bool Resolve<T>(BasicEventEditorData beatmapEventData, out T result) where T : IEventCustomData
 		{
+			if (beatmapEventData == null)
+			{
+				Plugin.Log.Error("EditorDeserializedData | beatmapEventData is null");
+				result = default;
+				return false;
+			}
 			return Resolve(_eventCustomDatas, beatmapEventData, out result);
 		}
 

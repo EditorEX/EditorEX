@@ -6,17 +6,17 @@ using System.Linq;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Essentials.Movement.Obstacle
+namespace BetterEditor.Essentials.Movement.Arc
 {
-	internal class EditorObstacleController : MonoBehaviour, IDisposable
+	internal class EditorArcController : MonoBehaviour, IDisposable
 	{
 		private IReadonlyBeatmapState _state;
 
-		private IObjectMovement _obstacleMovement;
+		private IObjectMovement _arcMovement;
 		private MovementTypeProvider _movementTypeProvider;
 		private ActiveViewMode _activeViewMode;
 
-		private ObstacleEditorData _data;
+		private ArcEditorData _data;
 
 		private EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
@@ -28,19 +28,19 @@ namespace BetterEditor.Essentials.Movement.Obstacle
 			_movementData = movementData;
 
 			_activeViewMode = activeViewMode;
-			_activeViewMode.ModeChanged += RefreshObstacleMovementAndInit;
+			_activeViewMode.ModeChanged += RefreshArcMovementAndInit;
 		}
 
 		public void Dispose()
 		{
-			_activeViewMode.ModeChanged -= RefreshObstacleMovementAndInit;
+			_activeViewMode.ModeChanged -= RefreshArcMovementAndInit;
 		}
 
-		private void RefreshObstacleMovementAndInit()
+		private void RefreshArcMovementAndInit()
 		{
 			try
 			{
-				RefreshObstacleMovement();
+				RefreshArcMovement();
 				Init(_data);
 			}
 			catch
@@ -49,29 +49,29 @@ namespace BetterEditor.Essentials.Movement.Obstacle
 			}
 		}
 
-		private void RefreshObstacleMovement()
+		private void RefreshArcMovement()
 		{
 			var components = gameObject?.GetComponents<IObjectMovement>();
 			if (components == null) return;
 			var types = components?.Select(x => x.GetType())?.ToArray();
 			var type = _movementTypeProvider.GetNoteMovement(types);
 
-			if (_obstacleMovement != null && type == _obstacleMovement.GetType())
+			if (_arcMovement != null && type == _arcMovement.GetType())
 			{
 				return; // No need to refresh if the type is the same
 			}
 
-			_obstacleMovement = GetComponent(type) as IObjectMovement;
+			_arcMovement = GetComponent(type) as IObjectMovement;
 		}
 
-		public void Init(ObstacleEditorData obstacleData)
+		public void Init(ArcEditorData editorData)
 		{
-			if (obstacleData == null) return;
-			_data = obstacleData;
+			if (editorData == null) return;
+			_data = editorData;
 
-			RefreshObstacleMovement();
+			RefreshArcMovement();
 
-			_obstacleMovement.Init(obstacleData, _movementData);
+			_arcMovement.Init(editorData, _movementData);
 
 			ManualUpdate();
 		}
@@ -92,14 +92,14 @@ namespace BetterEditor.Essentials.Movement.Obstacle
 
 		public void ManualUpdate()
 		{
-			if (_obstacleMovement == null)
+			if (_arcMovement == null)
 			{
-				RefreshObstacleMovementAndInit();
+				RefreshArcMovementAndInit();
 			}
 
-			_obstacleMovement.Setup(_data);
+			_arcMovement.Setup(_data);
 
-			_obstacleMovement.ManualUpdate();
+			_arcMovement.ManualUpdate();
 		}
 	}
 }

@@ -3,7 +3,7 @@ using BeatmapEditor3D.Visuals;
 using HarmonyLib;
 using System.Collections.Generic;
 
-namespace BetterEditor.Essentials.Patches
+namespace BetterEditor.Essentials.Patches.Movement
 {
 	[HarmonyPatch]
 	public static class DisableMovement
@@ -24,13 +24,13 @@ namespace BetterEditor.Essentials.Patches
 			return result;
 		}
 
-		/*[HarmonyPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.UpdateObjects))]
+		[HarmonyPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.UpdateObjects))]
 		[HarmonyTranspiler]
 		public static IEnumerable<CodeInstruction> TranspilerArc(IEnumerable<CodeInstruction> instructions)
 		{
 			var result = new CodeMatcher(instructions, null).Advance(11).RemoveInstructions(17).InstructionEnumeration();
 			return result;
-		}*/
+		}
 
 		[HarmonyPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.UpdateObjects))]
 		[HarmonyTranspiler]
