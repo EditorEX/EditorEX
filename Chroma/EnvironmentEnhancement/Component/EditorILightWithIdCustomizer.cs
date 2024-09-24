@@ -20,8 +20,8 @@ namespace Chroma.EnvironmentEnhancement.Component
         [UsedImplicitly]
         private EditorILightWithIdCustomizer(
             SiraLog log,
-			EditorLightColorizerManager lightColorizerManager,
-			EditorLightWithIdRegisterer lightWithIdRegisterer,
+            EditorLightColorizerManager lightColorizerManager,
+            EditorLightWithIdRegisterer lightWithIdRegisterer,
             LightWithIdManager lightWithIdManager)
         {
             _log = log;

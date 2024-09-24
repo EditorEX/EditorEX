@@ -9,15 +9,15 @@ using Zenject;
 
 namespace BetterEditor.NoodleExtensions.Installers
 {
-	public class EditorNoodleSceneInstaller : Installer
-	{
-		public override void InstallBindings()
-		{
-			Container.Bind<AnimationHelper>().AsSingle();
+    public class EditorNoodleSceneInstaller : Installer
+    {
+        public override void InstallBindings()
+        {
+            Container.Bind<AnimationHelper>().AsSingle();
 
-			Container.BindInterfacesTo<EditorAssignTrackParent>().AsSingle();
+            Container.BindInterfacesTo<EditorAssignTrackParent>().AsSingle();
 
-			Container.BindInterfacesAndSelfTo<EditorSpawnDataManager>().AsSingle();
-		}
-	}
+            Container.BindInterfacesAndSelfTo<EditorSpawnDataManager>().AsSingle();
+        }
+    }
 }

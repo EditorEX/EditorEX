@@ -3,13 +3,13 @@ using Zenject;
 
 namespace BetterEditor.Essentials.Installers
 {
-	public class EditorEssentialsModelsInstaller : Installer
-	{
-		public override void InstallBindings()
-		{
-			EditorSpawnDataRepository.ClearAll();
+    public class EditorEssentialsModelsInstaller : Installer
+    {
+        public override void InstallBindings()
+        {
+            EditorSpawnDataRepository.ClearAll();
 
 
-		}
-	}
+        }
+    }
 }

@@ -45,19 +45,19 @@ namespace Chroma.EnvironmentEnhancement
             VersionContext versionContext,
             Dictionary<string, Track> tracks,
             [Inject(Id = LEFT_HANDED_ID)] bool leftHanded,
-			EditorGeometryFactory geometryFactory,
+            EditorGeometryFactory geometryFactory,
             TrackLaneRingOffset trackLaneRingOffset,
             ParametricBoxControllerTransformOverride parametricBoxControllerTransformOverride,
             BeatmapObjectsAvoidanceTransformOverride beatmapObjectsAvoidanceTransformOverride,
             EditorDuplicateInitializer duplicateInitializer,
-			EditorComponentCustomizer componentCustomizer,
+            EditorComponentCustomizer componentCustomizer,
             TransformControllerFactory controllerFactory,
             SavedEnvironmentLoader savedEnvironmentLoader,
             EnvironmentSceneSetupData sceneSetupData)
-		{
-			Plugin.Log.Info("aSWDEFPLOKIJASFSAEO?");
-			_versionContext = versionContext;
-			_log = log;
+        {
+            Plugin.Log.Info("aSWDEFPLOKIJASFSAEO?");
+            _versionContext = versionContext;
+            _log = log;
             _tracks = tracks;
             _leftHanded = leftHanded;
             _geometryFactory = geometryFactory;
@@ -74,8 +74,8 @@ namespace Chroma.EnvironmentEnhancement
         private void Start()
         {
             Plugin.Log.Info("hello?");
-			StartCoroutine(DelayedStart());
-		}
+            StartCoroutine(DelayedStart());
+        }
 
         private static void GetChildRecursive(Transform gameObject, ref List<Transform> children)
         {
@@ -94,36 +94,36 @@ namespace Chroma.EnvironmentEnhancement
             bool v2 = _versionContext.Version.Major < 3;
             IEnumerable<CustomData>? environmentData = null;
 
-			// seriously what the fuck beat games
-			// GradientBackground permanently yeeted because it looks awful and can ruin multi-colored chroma maps
-			GameObject? gradientBackground = GameObject.Find("/Environment/GradientBackground");
-			if (gradientBackground != null)
-			{
-				gradientBackground.SetActive(false);
-			}
+            // seriously what the fuck beat games
+            // GradientBackground permanently yeeted because it looks awful and can ruin multi-colored chroma maps
+            GameObject? gradientBackground = GameObject.Find("/Environment/GradientBackground");
+            if (gradientBackground != null)
+            {
+                gradientBackground.SetActive(false);
+            }
 
             environmentData = CustomDataRepository.GetCustomLivePreviewBeatmapData().customData
-					.Get<List<object>>(v2 ? V2_ENVIRONMENT : ENVIRONMENT)?
-					.Cast<CustomData>();
+                    .Get<List<object>>(v2 ? V2_ENVIRONMENT : ENVIRONMENT)?
+                    .Cast<CustomData>();
 
-			if (v2)
-			{
-				try
-				{
-					if (LegacyEnvironmentRemoval.Init(CustomDataRepository.GetCustomLivePreviewBeatmapData()))
-					{
-						yield break;
-					}
-				}
-				catch (Exception e)
-				{
-					_log.Error("Could not run Legacy Enviroment Removal");
-					_log.Error(e);
-				}
-			}
+            if (v2)
+            {
+                try
+                {
+                    if (LegacyEnvironmentRemoval.Init(CustomDataRepository.GetCustomLivePreviewBeatmapData()))
+                    {
+                        yield break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    _log.Error("Could not run Legacy Enviroment Removal");
+                    _log.Error(e);
+                }
+            }
 
-			// _usingOverrideEnvironment kinda a jank way to allow forcing map environment
-			if (environmentData == null && _usingOverrideEnvironment)
+            // _usingOverrideEnvironment kinda a jank way to allow forcing map environment
+            if (environmentData == null && _usingOverrideEnvironment)
             {
                 // custom environment
                 v2 = false;

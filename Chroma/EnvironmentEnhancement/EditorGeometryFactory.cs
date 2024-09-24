@@ -27,8 +27,8 @@ namespace BetterEditor.Chroma.EnvironmentEnhancement
         [UsedImplicitly]
         private EditorGeometryFactory(
             IInstantiator instantiator,
-			EditorMaterialsManager materialsManager,
-			EditorLightWithIdRegisterer lightWithIdRegisterer,
+            EditorMaterialsManager materialsManager,
+            EditorLightWithIdRegisterer lightWithIdRegisterer,
             ParametricBoxControllerTransformOverride parametricBoxControllerTransformOverride)
         {
             _instantiator = instantiator;

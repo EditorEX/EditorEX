@@ -8,21 +8,21 @@ using Zenject;
 
 namespace BetterEditor.Essentials.Patches.Movement
 {
-	public class ArcMaterialPreview : IAffinity
-	{
-		private ActiveViewMode _activeViewMode;
+    public class ArcMaterialPreview : IAffinity
+    {
+        private ActiveViewMode _activeViewMode;
 
-		[Inject]
-		private void Construct(ActiveViewMode activeViewMode)
-		{
-			_activeViewMode = activeViewMode;
-		}
+        [Inject]
+        private void Construct(ActiveViewMode activeViewMode)
+        {
+            _activeViewMode = activeViewMode;
+        }
 
-		[AffinityPatch(typeof(ArcView), nameof(ArcView.SetMaterialPropertyBlock))]
-		[AffinityPrefix]
-		private bool SetMaterialPropertyBlock()
-		{
-			return _activeViewMode.Mode != "Preview";
-		}
-	}
+        [AffinityPatch(typeof(ArcView), nameof(ArcView.SetMaterialPropertyBlock))]
+        [AffinityPrefix]
+        private bool SetMaterialPropertyBlock()
+        {
+            return _activeViewMode.Mode != "Preview";
+        }
+    }
 }

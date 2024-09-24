@@ -17,43 +17,43 @@ using Zenject;
 
 namespace BetterEditor.Essentials.Installers
 {
-	public class EditorEssentialsSceneInstaller : Installer
-	{
-		public override void InstallBindings()
-		{
-			Plugin.Log.Info("Installing EditorEssentialsSceneInstaller");
-			// Clean this up!!!
-			Container.Bind<VersionContext>().FromInstance(new(DeserializationPatch.beatmapVersion)).AsSingle();
+    public class EditorEssentialsSceneInstaller : Installer
+    {
+        public override void InstallBindings()
+        {
+            Plugin.Log.Info("Installing EditorEssentialsSceneInstaller");
+            // Clean this up!!!
+            Container.Bind<VersionContext>().FromInstance(new(DeserializationPatch.beatmapVersion)).AsSingle();
 
-			Container.Bind<ActiveViewMode>().AsSingle();
+            Container.Bind<ActiveViewMode>().AsSingle();
 
-			//TODO: Improve this
-			var objectsView = Resources.FindObjectsOfTypeAll<BeatmapObjectsView>().FirstOrDefault();
-			Container.Bind<BeatmapObjectsView>().FromInstance(objectsView).AsSingle();
+            //TODO: Improve this
+            var objectsView = Resources.FindObjectsOfTypeAll<BeatmapObjectsView>().FirstOrDefault();
+            Container.Bind<BeatmapObjectsView>().FromInstance(objectsView).AsSingle();
 
-			Container.BindInterfacesAndSelfTo<ArcMaterialPreview>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ArcMaterialPreview>().AsSingle().NonLazy();
 
-			Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] {"Normal" }, typeof(EditorNoteBasicMovement)));
-			Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] {"Preview" }, typeof(EditorNoteGameMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Normal" }, typeof(EditorNoteBasicMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Preview" }, typeof(EditorNoteGameMovement)));
 
-			Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Normal" }, typeof(EditorObstacleBasicMovement)));
-			Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Preview" }, typeof(EditorObstacleGameMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Normal" }, typeof(EditorObstacleBasicMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Preview" }, typeof(EditorObstacleGameMovement)));
 
-			Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Normal" }, typeof(EditorArcBasicMovement)));
-			Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Preview" }, typeof(EditorArcGameMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Normal" }, typeof(EditorArcBasicMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Preview" }, typeof(EditorArcGameMovement)));
 
-			Container.Bind<MovementTypeProvider>().AsSingle();
+            Container.Bind<MovementTypeProvider>().AsSingle();
 
-			Container.Bind<EditorBeatmapObjectsInTimeRowProcessor>().AsSingle();
+            Container.Bind<EditorBeatmapObjectsInTimeRowProcessor>().AsSingle();
 
-			Container.BindInterfacesAndSelfTo<ProcessNewEditorData>().AsSingle().NonLazy();
-			Container.BindInterfacesAndSelfTo<PreviewToggler>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ProcessNewEditorData>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<PreviewToggler>().AsSingle().NonLazy();
 
-			Container.Bind<SideBarUI>().AsSingle().NonLazy();
+            Container.Bind<SideBarUI>().AsSingle().NonLazy();
 
-			Container.BindInterfacesAndSelfTo<ViewModeSwappingUI>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ViewModeSwappingUI>().AsSingle().NonLazy();
 
-			Container.Bind<EditorBasicBeatmapObjectSpawnMovementData>().AsSingle().NonLazy();
-		}
-	}
+            Container.Bind<EditorBasicBeatmapObjectSpawnMovementData>().AsSingle().NonLazy();
+        }
+    }
 }

@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace BetterEditor.UI
 {
-	public static class EditorTagRegistrar
-	{
-		public static void RegisterAllTags()
-		{
+    public static class EditorTagRegistrar
+    {
+        public static void RegisterAllTags()
+        {
 
-		}
-	}
+        }
+    }
 }

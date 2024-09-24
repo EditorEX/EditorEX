@@ -34,7 +34,7 @@ namespace Chroma.EnvironmentEnhancement.Component
         private EditorDuplicateInitializer(
             SiraLog log,
             TrackLaneRingOffset trackLaneRingOffset,
-			EditorLightWithIdRegisterer lightWithIdRegisterer,
+            EditorLightWithIdRegisterer lightWithIdRegisterer,
             Config config)
         {
             _log = log;

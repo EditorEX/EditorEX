@@ -75,30 +75,30 @@ namespace BetterEditor.Chroma.Patches.Events
             switch (_lastData.value)
             {
                 case 0:
-                {
-                    rotationData.enabled = false;
-                    if (!lockPosition)
                     {
-                        rotationData.rotationAngle = startRotationAngle;
-                        transform.localRotation = startRotation * Quaternion.Euler(____rotationVector * startRotationAngle);
-                    }
+                        rotationData.enabled = false;
+                        if (!lockPosition)
+                        {
+                            rotationData.rotationAngle = startRotationAngle;
+                            transform.localRotation = startRotation * Quaternion.Euler(____rotationVector * startRotationAngle);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
 
                 case > 0:
-                {
-                    rotationData.enabled = true;
-                    rotationData.rotationSpeed = precisionSpeed * 20f * direction;
-                    if (!lockPosition)
                     {
-                        float rotationAngle = startRotationOffset + startRotationAngle;
-                        rotationData.rotationAngle = rotationAngle;
-                        transform.localRotation = startRotation * Quaternion.Euler(____rotationVector * rotationAngle);
-                    }
+                        rotationData.enabled = true;
+                        rotationData.rotationSpeed = precisionSpeed * 20f * direction;
+                        if (!lockPosition)
+                        {
+                            float rotationAngle = startRotationOffset + startRotationAngle;
+                            rotationData.rotationAngle = rotationAngle;
+                            transform.localRotation = startRotation * Quaternion.Euler(____rotationVector * rotationAngle);
+                        }
 
-                    break;
-                }
+                        break;
+                    }
             }
 
             return false;

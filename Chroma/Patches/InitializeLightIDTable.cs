@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace BetterEditor.Chroma.Patches
 {
-	[HarmonyPatch(typeof(BeatmapEditorLevelSceneTransitionSetupDataSO), nameof(BeatmapEditorLevelSceneTransitionSetupDataSO.Init))]
-	public static class InitializeLightIDTable
-	{
-		[HarmonyPostfix]
-		public static void Postfix(EnvironmentInfoSO environmentInfo)
-		{
-			LightIDTableManager.SetEnvironment(environmentInfo.serializedName);
-		}
-	}
+    [HarmonyPatch(typeof(BeatmapEditorLevelSceneTransitionSetupDataSO), nameof(BeatmapEditorLevelSceneTransitionSetupDataSO.Init))]
+    public static class InitializeLightIDTable
+    {
+        [HarmonyPostfix]
+        public static void Postfix(EnvironmentInfoSO environmentInfo)
+        {
+            LightIDTableManager.SetEnvironment(environmentInfo.serializedName);
+        }
+    }
 }

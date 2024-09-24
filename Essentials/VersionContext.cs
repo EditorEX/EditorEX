@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace BetterEditor.Essentials
 {
-	public class VersionContext
-	{
-		public VersionContext(Version version) 
-		{
-			Version = version;
-		}
+    public class VersionContext
+    {
+        public VersionContext(Version version)
+        {
+            Version = version;
+        }
 
-		public Version Version { get; }
-	}
+        public Version Version { get; }
+    }
 }

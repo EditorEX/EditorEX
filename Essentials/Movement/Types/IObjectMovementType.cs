@@ -2,10 +2,10 @@
 
 namespace BetterEditor.Essentials.Movement.Types
 {
-	public interface IObjectMovementType
-	{
-		string[] ViewModes { get; }
+    public interface IObjectMovementType
+    {
+        string[] ViewModes { get; }
 
-		Type Type { get; }
-	}
+        Type Type { get; }
+    }
 }

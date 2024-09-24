@@ -16,52 +16,52 @@ using IPALogger = IPA.Logging.Logger;
 
 namespace BetterEditor
 {
-	[Plugin(RuntimeOptions.SingleStartInit)]
-	public class Plugin
-	{
-		internal static Plugin Instance { get; private set; }
-		internal static IPALogger Log { get; private set; }
-		internal static Harmony Harmony { get; private set; }
+    [Plugin(RuntimeOptions.SingleStartInit)]
+    public class Plugin
+    {
+        internal static Plugin Instance { get; private set; }
+        internal static IPALogger Log { get; private set; }
+        internal static Harmony Harmony { get; private set; }
 
-		[Init]
-		public Plugin(IPALogger logger, Zenjector zenjector)
-		{
-			Instance = this;
-			Log = logger;
-			Harmony = new Harmony("futuremapper.BetterEditor");
+        [Init]
+        public Plugin(IPALogger logger, Zenjector zenjector)
+        {
+            Instance = this;
+            Log = logger;
+            Harmony = new Harmony("futuremapper.BetterEditor");
 
-			zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
-			zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();
-			zenjector.Install<EditorHeckModelsInstaller, BeatmapEditorDataModelsInstaller>();
+            zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
+            zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();
+            zenjector.Install<EditorHeckModelsInstaller, BeatmapEditorDataModelsInstaller>();
 
-			zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
-			zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
-			zenjector.Install<EditorEssentialsSceneInstaller, BeatmapLevelEditorSceneSetup>();
-			zenjector.Install<EditorChromaSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            zenjector.Install<EditorEssentialsSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            zenjector.Install<EditorChromaSceneInstaller, BeatmapLevelEditorSceneSetup>();
 
-			zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
+            zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
 
 
-			EditorDeserializerManager.Register<EditorNoodleCustomDataManager>("NoodleExtensions").Enabled = true;
-			EditorDeserializerManager.Register<EditorHeckCustomDataManager>("Heck").Enabled = true;
-			EditorDeserializerManager.Register<EditorChromaCustomDataManager>("Chroma").Enabled = true;
-		}
+            EditorDeserializerManager.Register<EditorNoodleCustomDataManager>("NoodleExtensions").Enabled = true;
+            EditorDeserializerManager.Register<EditorHeckCustomDataManager>("Heck").Enabled = true;
+            EditorDeserializerManager.Register<EditorChromaCustomDataManager>("Chroma").Enabled = true;
+        }
 
-		[OnStart]
-		public void OnApplicationStart()
-		{
-			Harmony.PatchAll(Assembly.GetExecutingAssembly());
+        [OnStart]
+        public void OnApplicationStart()
+        {
+            Harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-			SideBarUI.RegisterButton(BeatSaberMarkupLanguage.Utilities.FindSpriteInAssembly("BetterEditor.UI.Resources.lockcamera.png"), "Lock Camera", (x) =>
-			{
+            SideBarUI.RegisterButton(BeatSaberMarkupLanguage.Utilities.FindSpriteInAssembly("BetterEditor.UI.Resources.lockcamera.png"), "Lock Camera", (x) =>
+            {
 
-			});
-		}
+            });
+        }
 
-		[OnExit]
-		public void OnApplicationQuit()
-		{
-			Harmony.UnpatchSelf();
-		}
-	}
+        [OnExit]
+        public void OnApplicationQuit()
+        {
+            Harmony.UnpatchSelf();
+        }
+    }
 }

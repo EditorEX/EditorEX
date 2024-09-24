@@ -8,11 +8,11 @@ using Zenject;
 
 namespace BetterEditor.Chroma.Installers
 {
-	public class EditorChromaMainInstaller : Installer
-	{
-		public override void InstallBindings()
-		{
-			Container.BindInterfacesTo<EnvironmentMaterialsManager.EnvironmentMaterialsManagerInitializer>().AsSingle();
-		}
-	}
+    public class EditorChromaMainInstaller : Installer
+    {
+        public override void InstallBindings()
+        {
+            Container.BindInterfacesTo<EnvironmentMaterialsManager.EnvironmentMaterialsManagerInitializer>().AsSingle();
+        }
+    }
 }

@@ -16,7 +16,7 @@ namespace Chroma.HarmonyPatches.Colorizer.Initialize
         private readonly LightWithIdManager _lightWithIdManager;
 
         private EditorLightWithIdRegisterer(
-			EditorLightColorizerManager colorizerManager,
+            EditorLightColorizerManager colorizerManager,
             LightWithIdManager lightWithIdManager,
             LightIDTableManager tableManager)
         {

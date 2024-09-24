@@ -3,10 +3,10 @@ using System;
 
 namespace BetterEditor.Essentials.Movement.Types
 {
-	public class NoteBasicMovementType : IObjectMovementType
-	{
-		public string[] ViewModes => new string[] { "Normal" };
+    public class NoteBasicMovementType : IObjectMovementType
+    {
+        public string[] ViewModes => new string[] { "Normal" };
 
-		public Type Type => typeof(EditorNoteBasicMovement);
-	}
+        public Type Type => typeof(EditorNoteBasicMovement);
+    }
 }

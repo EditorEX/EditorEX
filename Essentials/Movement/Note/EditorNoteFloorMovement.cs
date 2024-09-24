@@ -10,115 +10,115 @@ using NoodleExtensions.Animation;
 
 namespace BetterEditor.Essentials.Movement.Note
 {
-	public class EditorNoteFloorMovement : MonoBehaviour
-	{
-		public event Action floorMovementDidFinishEvent;
+    public class EditorNoteFloorMovement : MonoBehaviour
+    {
+        public event Action floorMovementDidFinishEvent;
 
-		public float distanceToPlayer => Mathf.Abs(_localPosition.z - (_inverseWorldRotation * _playerTransforms.headPseudoLocalPos).z);
+        public float distanceToPlayer => Mathf.Abs(_localPosition.z - (_inverseWorldRotation * _playerTransforms.headPseudoLocalPos).z);
 
-		public Vector3 startPos => _startPos;
+        public Vector3 startPos => _startPos;
 
-		public Vector3 endPos => _endPos;
+        public Vector3 endPos => _endPos;
 
-		public float startTime => _startTime;
+        public float startTime => _startTime;
 
-		public float moveDuration => _moveDuration;
+        public float moveDuration => _moveDuration;
 
-		public Quaternion worldRotation => _worldRotation;
+        public Quaternion worldRotation => _worldRotation;
 
-		public Quaternion inverseWorldRotation => _inverseWorldRotation;
+        public Quaternion inverseWorldRotation => _inverseWorldRotation;
 
-		public Vector3 localPosition => _localPosition;
+        public Vector3 localPosition => _localPosition;
 
-		[Inject(Id = "NoodleExtensions")] private EditorDeserializedData _editorDeserializedData;
+        [Inject(Id = "NoodleExtensions")] private EditorDeserializedData _editorDeserializedData;
 
-		[Inject] private AnimationHelper _animationHelper;
+        [Inject] private AnimationHelper _animationHelper;
 
-		public void Init(NoteEditorData editorData, float worldRotation, Vector3 startPos, Vector3 endPos, float moveDuration, float startTime)
-		{
-			_editorData = editorData;
-			if (!_editorDeserializedData.Resolve(_editorData, out NoodleData))
-			{
-				NoodleData = null;
-			}
+        public void Init(NoteEditorData editorData, float worldRotation, Vector3 startPos, Vector3 endPos, float moveDuration, float startTime)
+        {
+            _editorData = editorData;
+            if (!_editorDeserializedData.Resolve(_editorData, out NoodleData))
+            {
+                NoodleData = null;
+            }
 
-			_rotatedObject = transform.Find("NoteCube");
-			if (_rotatedObject == null) _rotatedObject = transform;
-			_worldRotation = Quaternion.Euler(0f, worldRotation, 0f);
-			_inverseWorldRotation = Quaternion.Euler(0f, -worldRotation, 0f);
-			_startPos = startPos;
-			_endPos = endPos;
-			_moveDuration = moveDuration;
-			_startTime = startTime;
-		}
+            _rotatedObject = transform.Find("NoteCube");
+            if (_rotatedObject == null) _rotatedObject = transform;
+            _worldRotation = Quaternion.Euler(0f, worldRotation, 0f);
+            _inverseWorldRotation = Quaternion.Euler(0f, -worldRotation, 0f);
+            _startPos = startPos;
+            _endPos = endPos;
+            _moveDuration = moveDuration;
+            _startTime = startTime;
+        }
 
-		private Vector3 DefiniteNoteFloorMovement(Vector3 original)
-		{
-			EditorNoodleBaseNoteData? noodleData = NoodleData;
-			if (noodleData == null)
-			{
-				return original;
-			}
+        private Vector3 DefiniteNoteFloorMovement(Vector3 original)
+        {
+            EditorNoodleBaseNoteData? noodleData = NoodleData;
+            if (noodleData == null)
+            {
+                return original;
+            }
 
-			_animationHelper.GetDefinitePositionOffset(noodleData.AnimationObject, noodleData.Track, 0, out Vector3? position);
-			if (!position.HasValue)
-			{
-				return original;
-			}
+            _animationHelper.GetDefinitePositionOffset(noodleData.AnimationObject, noodleData.Track, 0, out Vector3? position);
+            if (!position.HasValue)
+            {
+                return original;
+            }
 
-			return original + (position.Value + noodleData.InternalNoteOffset - endPos);
-		}
+            return original + (position.Value + noodleData.InternalNoteOffset - endPos);
+        }
 
-		public Vector3 SetToStart()
-		{
-			_localPosition = _startPos;
-			Vector3 vector = _worldRotation * _localPosition;
-			transform.localPosition = vector;
-			transform.localRotation = _worldRotation;
-			_rotatedObject.localRotation = Quaternion.identity;
-			return vector;
-		}
+        public Vector3 SetToStart()
+        {
+            _localPosition = _startPos;
+            Vector3 vector = _worldRotation * _localPosition;
+            transform.localPosition = vector;
+            transform.localRotation = _worldRotation;
+            _rotatedObject.localRotation = Quaternion.identity;
+            return vector;
+        }
 
-		public Vector3 ManualUpdate()
-		{
-			float num = _audioTimeSyncController.songTime - _startTime;
-			_localPosition = Vector3.Lerp(_startPos, _endPos, num / _moveDuration);
-			Vector3 vector = _worldRotation * _localPosition;
-			transform.localPosition = DefiniteNoteFloorMovement(vector);
-			if (num >= _moveDuration)
-			{
-				floorMovementDidFinishEvent?.Invoke();
-			}
+        public Vector3 ManualUpdate()
+        {
+            float num = _audioTimeSyncController.songTime - _startTime;
+            _localPosition = Vector3.Lerp(_startPos, _endPos, num / _moveDuration);
+            Vector3 vector = _worldRotation * _localPosition;
+            transform.localPosition = DefiniteNoteFloorMovement(vector);
+            if (num >= _moveDuration)
+            {
+                floorMovementDidFinishEvent?.Invoke();
+            }
 
-			_rotatedObject.gameObject.SetActive(num > 0f);
+            _rotatedObject.gameObject.SetActive(num > 0f);
 
-			return vector;
-		}
+            return vector;
+        }
 
-		private EditorNoodleBaseNoteData NoodleData;
+        private EditorNoodleBaseNoteData NoodleData;
 
-		private NoteEditorData _editorData;
+        private NoteEditorData _editorData;
 
-		private Transform _rotatedObject;
+        private Transform _rotatedObject;
 
-		[Inject]
-		private readonly PlayerTransforms _playerTransforms;
+        [Inject]
+        private readonly PlayerTransforms _playerTransforms;
 
-		[Inject]
-		private readonly IAudioTimeSource _audioTimeSyncController;
+        [Inject]
+        private readonly IAudioTimeSource _audioTimeSyncController;
 
-		internal Vector3 _startPos;
+        internal Vector3 _startPos;
 
-		internal Vector3 _endPos;
+        internal Vector3 _endPos;
 
-		internal float _moveDuration;
+        internal float _moveDuration;
 
-		internal float _startTime;
+        internal float _startTime;
 
-		internal Quaternion _worldRotation;
+        internal Quaternion _worldRotation;
 
-		internal Quaternion _inverseWorldRotation;
+        internal Quaternion _inverseWorldRotation;
 
-		internal Vector3 _localPosition;
-	}
+        internal Vector3 _localPosition;
+    }
 }

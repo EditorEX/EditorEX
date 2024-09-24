@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace BetterEditor.CustomJSONData.Util
 {
-	public static class CustomDataExtensions
-	{
-		public static CustomData GetCustomData(this BaseEditorData data)
-		{
-			return CustomDataRepository.GetCustomData(data);
-		}
-	}
+    public static class CustomDataExtensions
+    {
+        public static CustomData GetCustomData(this BaseEditorData data)
+        {
+            return CustomDataRepository.GetCustomData(data);
+        }
+    }
 }

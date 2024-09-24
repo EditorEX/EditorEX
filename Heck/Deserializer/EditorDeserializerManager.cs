@@ -13,105 +13,105 @@ using Zenject;
 
 namespace BetterEditor.Heck.Deserializer
 {
-	public class EditorDeserializerManager
-	{
-		private IBeatmapLevelDataModel _objectDataModel;
-		private IBeatmapEventsDataModel _eventsDataModel;
+    public class EditorDeserializerManager
+    {
+        private IBeatmapLevelDataModel _objectDataModel;
+        private IBeatmapEventsDataModel _eventsDataModel;
 
-		[Inject]
-		private EditorDeserializerManager(IBeatmapLevelDataModel objectDataModel, IBeatmapEventsDataModel eventsDataModel)
-		{
-			_objectDataModel = objectDataModel;
-			_eventsDataModel = eventsDataModel;
-		}
+        [Inject]
+        private EditorDeserializerManager(IBeatmapLevelDataModel objectDataModel, IBeatmapEventsDataModel eventsDataModel)
+        {
+            _objectDataModel = objectDataModel;
+            _eventsDataModel = eventsDataModel;
+        }
 
-		public static EditorDataDeserializer Register<T>(object id)
-		{
-			EditorDataDeserializer deserializer = new EditorDataDeserializer(id, typeof(T));
-			_customEditorDataDeserializers.Add(deserializer);
-			return deserializer;
-		}
+        public static EditorDataDeserializer Register<T>(object id)
+        {
+            EditorDataDeserializer deserializer = new EditorDataDeserializer(id, typeof(T));
+            _customEditorDataDeserializers.Add(deserializer);
+            return deserializer;
+        }
 
-		internal void DeserializeBeatmapData(
-			bool v2,
-			bool leftHanded,
-			out Dictionary<string, Track> beatmapTracks,
-			out HashSet<(object Id, EditorDeserializedData DeserializedData)> deserializedDatas)
-		{
-			Plugin.Log.Info("Deserializing BeatmapData");
+        internal void DeserializeBeatmapData(
+            bool v2,
+            bool leftHanded,
+            out Dictionary<string, Track> beatmapTracks,
+            out HashSet<(object Id, EditorDeserializedData DeserializedData)> deserializedDatas)
+        {
+            Plugin.Log.Info("Deserializing BeatmapData");
 
-			if (v2)
-			{
-				Plugin.Log.Trace("BeatmapData is v2, converting...");
-			}
+            if (v2)
+            {
+                Plugin.Log.Trace("BeatmapData is v2, converting...");
+            }
 
-			var baseObjectDatas = (_objectDataModel as BeatmapLevelDataModel).allBeatmapObjects.Cast<BaseEditorData>();
-			var basicEventDatas = (_eventsDataModel as BeatmapBasicEventsDataModel).GetAllEventsAsList().Cast<BaseEditorData>();
+            var baseObjectDatas = (_objectDataModel as BeatmapLevelDataModel).allBeatmapObjects.Cast<BaseEditorData>();
+            var basicEventDatas = (_eventsDataModel as BeatmapBasicEventsDataModel).GetAllEventsAsList().Cast<BaseEditorData>();
 
-			// tracks are built based off the untransformed beatmapdata so modifiers like "no walls" do not prevent track creation
-			TrackBuilder trackManager = new TrackBuilder();
-			foreach (BaseEditorData baseEditorData in baseObjectDatas.Concat(basicEventDatas).Concat(CustomDataRepository.GetCustomEvents()))
-			{
-				CustomData customData = CustomDataRepository.GetCustomData(baseEditorData);
+            // tracks are built based off the untransformed beatmapdata so modifiers like "no walls" do not prevent track creation
+            TrackBuilder trackManager = new TrackBuilder();
+            foreach (BaseEditorData baseEditorData in baseObjectDatas.Concat(basicEventDatas).Concat(CustomDataRepository.GetCustomEvents()))
+            {
+                CustomData customData = CustomDataRepository.GetCustomData(baseEditorData);
 
-				// for epic tracks thing
-				object trackNameRaw = customData.Get<object>(v2 ? Constants.V2_TRACK : Constants.TRACK);
-				if (trackNameRaw == null)
-				{
-					continue;
-				}
+                // for epic tracks thing
+                object trackNameRaw = customData.Get<object>(v2 ? Constants.V2_TRACK : Constants.TRACK);
+                if (trackNameRaw == null)
+                {
+                    continue;
+                }
 
-				IEnumerable<string> trackNames;
-				if (trackNameRaw is List<object> listTrack)
-				{
-					trackNames = listTrack.Cast<string>();
-				}
-				else
-				{
-					trackNames = new[] { (string)trackNameRaw };
-				}
+                IEnumerable<string> trackNames;
+                if (trackNameRaw is List<object> listTrack)
+                {
+                    trackNames = listTrack.Cast<string>();
+                }
+                else
+                {
+                    trackNames = new[] { (string)trackNameRaw };
+                }
 
-				foreach (string trackName in trackNames)
-				{
-					trackManager.AddTrack(trackName);
-				}
-			}
+                foreach (string trackName in trackNames)
+                {
+                    trackManager.AddTrack(trackName);
+                }
+            }
 
-			// Point definitions
-			var pointDefinitions = new Dictionary<string, List<object>>();
+            // Point definitions
+            var pointDefinitions = new Dictionary<string, List<object>>();
 
-			if (v2)
-			{
-				IEnumerable<CustomData> pointDefinitionsRaw =
-					CustomDataRepository.GetCustomBeatmapSaveData().customData.Get<List<object>>(Constants.V2_POINT_DEFINITIONS)?.Cast<CustomData>();
-				if (pointDefinitionsRaw != null)
-				{
-					foreach (CustomData pointDefintionRaw in pointDefinitionsRaw)
-					{
-						string pointName = pointDefintionRaw.GetRequired<string>(Constants.V2_NAME);
-						AddPoint(pointName, pointDefintionRaw.GetRequired<List<object>>(Constants.V2_POINTS));
-					}
-				}
-			}
-			else
-			{
-				CustomData pointDefinitionsRaw = CustomDataRepository.GetCustomBeatmapSaveData().customData.Get<CustomData>(Constants.POINT_DEFINITIONS);
-				if (pointDefinitionsRaw != null)
-				{
-					foreach ((string key, object value) in pointDefinitionsRaw)
-					{
-						if (value == null)
-						{
-							throw new InvalidOperationException($"[{key}] was null.");
-						}
+            if (v2)
+            {
+                IEnumerable<CustomData> pointDefinitionsRaw =
+                    CustomDataRepository.GetCustomBeatmapSaveData().customData.Get<List<object>>(Constants.V2_POINT_DEFINITIONS)?.Cast<CustomData>();
+                if (pointDefinitionsRaw != null)
+                {
+                    foreach (CustomData pointDefintionRaw in pointDefinitionsRaw)
+                    {
+                        string pointName = pointDefintionRaw.GetRequired<string>(Constants.V2_NAME);
+                        AddPoint(pointName, pointDefintionRaw.GetRequired<List<object>>(Constants.V2_POINTS));
+                    }
+                }
+            }
+            else
+            {
+                CustomData pointDefinitionsRaw = CustomDataRepository.GetCustomBeatmapSaveData().customData.Get<CustomData>(Constants.POINT_DEFINITIONS);
+                if (pointDefinitionsRaw != null)
+                {
+                    foreach ((string key, object value) in pointDefinitionsRaw)
+                    {
+                        if (value == null)
+                        {
+                            throw new InvalidOperationException($"[{key}] was null.");
+                        }
 
-						AddPoint(key, (List<object>)value);
-					}
-				}
-			}
+                        AddPoint(key, (List<object>)value);
+                    }
+                }
+            }
 
-			// Event definitions
-			/*var eventDefinitions = new Dictionary<string, CustomEventData>();
+            // Event definitions
+            /*var eventDefinitions = new Dictionary<string, CustomEventData>();
 
 			if (!v2)
 			{
@@ -137,75 +137,75 @@ namespace BetterEditor.Heck.Deserializer
 				}
 			}*/
 
-			// new deserialize stuff should make these unnecessary
-			////customBeatmapData.customData["tracks"] = trackManager.Tracks;
-			////customBeatmapData.customData["pointDefinitions"] = pointDefinitions;
-			////customBeatmapData.customData["eventDefinitions"] = eventDefinitions;
+            // new deserialize stuff should make these unnecessary
+            ////customBeatmapData.customData["tracks"] = trackManager.Tracks;
+            ////customBeatmapData.customData["pointDefinitions"] = pointDefinitions;
+            ////customBeatmapData.customData["eventDefinitions"] = eventDefinitions;
 
-			// Currently used by Chroma.GameObjectTrackController
-			beatmapTracks = trackManager.Tracks;
+            // Currently used by Chroma.GameObjectTrackController
+            beatmapTracks = trackManager.Tracks;
 
-			object[] inputs =
-			{
-				_objectDataModel,
-				_eventsDataModel,
-				CustomDataRepository.GetCustomLivePreviewBeatmapData(),
-				trackManager,
-				pointDefinitions,
-				trackManager.Tracks,
-				v2
-			};
+            object[] inputs =
+            {
+                _objectDataModel,
+                _eventsDataModel,
+                CustomDataRepository.GetCustomLivePreviewBeatmapData(),
+                trackManager,
+                pointDefinitions,
+                trackManager.Tracks,
+                v2
+            };
 
-			EditorDataDeserializer[] deserializers = _customEditorDataDeserializers.Where(n => n.Enabled).ToArray();
+            EditorDataDeserializer[] deserializers = _customEditorDataDeserializers.Where(n => n.Enabled).ToArray();
 
-			foreach (EditorDataDeserializer deserializer in deserializers)
-			{
-				deserializer.InjectedInvokeEarly(inputs);
-			}
+            foreach (EditorDataDeserializer deserializer in deserializers)
+            {
+                deserializer.InjectedInvokeEarly(inputs);
+            }
 
-			deserializedDatas = new HashSet<(object Id, EditorDeserializedData)>(deserializers.Length);
-			foreach (EditorDataDeserializer deserializer in deserializers)
-			{
-				float customEventTime;
-				float eventTime;
-				float objectTime;
+            deserializedDatas = new HashSet<(object Id, EditorDeserializedData)>(deserializers.Length);
+            foreach (EditorDataDeserializer deserializer in deserializers)
+            {
+                float customEventTime;
+                float eventTime;
+                float objectTime;
 
-				Stopwatch stopwatch = new Stopwatch();
-				stopwatch.Start();
-				Dictionary<CustomEventEditorData, ICustomEventCustomData> customEventCustomDatas = deserializer.InjectedInvokeCustomEvent(inputs);
-				stopwatch.Stop();
-				customEventTime = stopwatch.ElapsedMilliseconds;
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                Dictionary<CustomEventEditorData, ICustomEventCustomData> customEventCustomDatas = deserializer.InjectedInvokeCustomEvent(inputs);
+                stopwatch.Stop();
+                customEventTime = stopwatch.ElapsedMilliseconds;
 
-				stopwatch.Restart();
-				Dictionary<BasicEventEditorData, IEventCustomData> eventCustomDatas = deserializer.InjectedInvokeEvent(inputs);
-				stopwatch.Stop();
-				eventTime = stopwatch.ElapsedMilliseconds;
+                stopwatch.Restart();
+                Dictionary<BasicEventEditorData, IEventCustomData> eventCustomDatas = deserializer.InjectedInvokeEvent(inputs);
+                stopwatch.Stop();
+                eventTime = stopwatch.ElapsedMilliseconds;
 
-				stopwatch.Restart();
-				Dictionary<BaseEditorData, IObjectCustomData> objectCustomDatas = deserializer.InjectedInvokeObject(inputs);
-				stopwatch.Stop();
-				objectTime = stopwatch.ElapsedMilliseconds;
+                stopwatch.Restart();
+                Dictionary<BaseEditorData, IObjectCustomData> objectCustomDatas = deserializer.InjectedInvokeObject(inputs);
+                stopwatch.Stop();
+                objectTime = stopwatch.ElapsedMilliseconds;
 
-				Plugin.Log.Info($"Binding [{deserializer.Id}] Time: {customEventTime}ms(custom event) {eventTime}ms(custom event) {objectTime}ms(custom event)");
+                Plugin.Log.Info($"Binding [{deserializer.Id}] Time: {customEventTime}ms(custom event) {eventTime}ms(custom event) {objectTime}ms(custom event)");
 
-				deserializedDatas.Add((deserializer.Id, new EditorDeserializedData(customEventCustomDatas, eventCustomDatas, objectCustomDatas)));
-			}
+                deserializedDatas.Add((deserializer.Id, new EditorDeserializedData(customEventCustomDatas, eventCustomDatas, objectCustomDatas)));
+            }
 
-			return;
+            return;
 
-			void AddPoint(string pointDataName, List<object> pointData)
-			{
-				if (!pointDefinitions.ContainsKey(pointDataName))
-				{
-					pointDefinitions.Add(pointDataName, pointData);
-				}
-				else
-				{
-					Plugin.Log.Error($"Duplicate point defintion name, {pointDataName} could not be registered");
-				}
-			}
-		}
+            void AddPoint(string pointDataName, List<object> pointData)
+            {
+                if (!pointDefinitions.ContainsKey(pointDataName))
+                {
+                    pointDefinitions.Add(pointDataName, pointData);
+                }
+                else
+                {
+                    Plugin.Log.Error($"Duplicate point defintion name, {pointDataName} could not be registered");
+                }
+            }
+        }
 
-		private static readonly HashSet<EditorDataDeserializer> _customEditorDataDeserializers = new HashSet<EditorDataDeserializer>();
-	}
+        private static readonly HashSet<EditorDataDeserializer> _customEditorDataDeserializers = new HashSet<EditorDataDeserializer>();
+    }
 }
