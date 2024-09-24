@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BetterEditor.Essentials.Movement.Types
+namespace EditorEX.Essentials.Movement.Types
 {
     public interface IObjectMovementType
     {

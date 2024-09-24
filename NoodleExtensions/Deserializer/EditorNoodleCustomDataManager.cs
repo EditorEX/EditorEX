@@ -1,8 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.CustomJSONData;
-using BetterEditor.CustomJSONData.CustomEvents;
-using BetterEditor.CustomJSONData.Util;
-using BetterEditor.NoodleExtensions.ObjectData;
+using EditorEX.CustomJSONData;
+using EditorEX.CustomJSONData.CustomEvents;
+using EditorEX.CustomJSONData.Util;
+using EditorEX.NoodleExtensions.ObjectData;
 using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
@@ -10,7 +10,7 @@ using NoodleExtensions;
 using System;
 using System.Collections.Generic;
 
-namespace BetterEditor.NoodleExtensions.Deserializer
+namespace EditorEX.NoodleExtensions.Deserializer
 {
     internal class EditorNoodleCustomDataManager
     {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using BetterEditor.Chroma.Colorizer;
+using EditorEX.Chroma.Colorizer;
 using Chroma.Colorizer;
 using Chroma.Lighting;
 using SiraUtil.Affinity;

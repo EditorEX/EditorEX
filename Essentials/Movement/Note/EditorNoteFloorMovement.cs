@@ -4,11 +4,11 @@ using System;
 using UnityEngine;
 using Zenject;
 using BeatmapEditor3D.DataModels;
-using BetterEditor.NoodleExtensions.ObjectData;
-using BetterEditor.Heck.Deserializer;
+using EditorEX.NoodleExtensions.ObjectData;
+using EditorEX.Heck.Deserializer;
 using NoodleExtensions.Animation;
 
-namespace BetterEditor.Essentials.Movement.Note
+namespace EditorEX.Essentials.Movement.Note
 {
     public class EditorNoteFloorMovement : MonoBehaviour
     {

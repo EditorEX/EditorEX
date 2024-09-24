@@ -1,7 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapSaveDataVersion2_6_0AndEarlier;
-using BetterEditor.CustomJSONData.Converters;
-using BetterEditor.CustomJSONData.Util;
+using EditorEX.CustomJSONData.Converters;
+using EditorEX.CustomJSONData.Util;
 using HarmonyLib;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -9,7 +9,7 @@ using System;
 using System.IO;
 using System.Xml;
 
-namespace BetterEditor.CustomJSONData.Patches
+namespace EditorEX.CustomJSONData.Patches
 {
 
     [HarmonyPatch(typeof(BeatmapProjectManager), nameof(BeatmapProjectManager.SaveBeatmapLevel))]

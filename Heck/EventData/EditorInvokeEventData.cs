@@ -1,10 +1,10 @@
-﻿using BetterEditor.CustomJSONData;
-using BetterEditor.CustomJSONData.CustomEvents;
+﻿using EditorEX.CustomJSONData;
+using EditorEX.CustomJSONData.CustomEvents;
 using CustomJSONData.CustomBeatmap;
 using Heck;
 using System.Collections.Generic;
 
-namespace BetterEditor.Heck.EventData
+namespace EditorEX.Heck.EventData
 {
     public class EditorInvokeEventData : ICustomEventCustomData
     {

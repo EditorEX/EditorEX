@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BetterEditor.Essentials.ViewMode
+namespace EditorEX.Essentials.ViewMode
 {
     public class ActiveViewMode
     {

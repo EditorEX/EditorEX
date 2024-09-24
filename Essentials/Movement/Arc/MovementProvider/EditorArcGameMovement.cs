@@ -1,17 +1,17 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Visuals;
-using BetterEditor.Essentials.Movement.Data;
-using BetterEditor.Essentials.SpawnProcessing;
-using BetterEditor.Heck.Deserializer;
-using BetterEditor.NoodleExtensions.ObjectData;
+using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.SpawnProcessing;
+using EditorEX.Heck.Deserializer;
+using EditorEX.NoodleExtensions.ObjectData;
 using NoodleExtensions.Animation;
 using System.Linq;
 using UnityEngine;
 using Zenject;
 using static SliderController;
 
-namespace BetterEditor.Essentials.Movement.Arc.MovementProvider
+namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 {
     public class EditorArcGameMovement : MonoBehaviour, IObjectMovement
     {

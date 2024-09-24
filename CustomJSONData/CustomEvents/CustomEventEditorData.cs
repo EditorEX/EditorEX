@@ -2,7 +2,7 @@
 using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 
-namespace BetterEditor.CustomJSONData.CustomEvents
+namespace EditorEX.CustomJSONData.CustomEvents
 {
     public class CustomEventEditorData : BaseEditorData
     {

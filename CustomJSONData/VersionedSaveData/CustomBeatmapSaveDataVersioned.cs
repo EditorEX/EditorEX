@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace BetterEditor.CustomJSONData.VersionedSaveData
+namespace EditorEX.CustomJSONData.VersionedSaveData
 {
     public class CustomBeatmapSaveDataVersioned
     {

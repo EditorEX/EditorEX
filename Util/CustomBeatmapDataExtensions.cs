@@ -1,7 +1,7 @@
 ﻿using CustomJSONData.CustomBeatmap;
 using System.Collections.Generic;
 
-namespace BetterEditor.CustomJSONData.Util
+namespace EditorEX.CustomJSONData.Util
 {
     public static class CustomBeatmapDataExtensions
     {

@@ -1,7 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
 using UnityEngine;
 
-namespace BetterEditor.Essentials.Movement.Data
+namespace EditorEX.Essentials.Movement.Data
 {
     public interface IEditorBeatmapObjectSpawnMovementData
     {

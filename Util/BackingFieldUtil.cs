@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 
 //https://stackoverflow.com/a/14210097
-namespace BetterEditor.CustomJSONData.Util
+namespace EditorEX.CustomJSONData.Util
 {
     public static class BackingFieldUtil
     {

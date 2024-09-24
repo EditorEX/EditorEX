@@ -1,6 +1,6 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.CustomJSONData;
-using BetterEditor.CustomJSONData.CustomEvents;
+using EditorEX.CustomJSONData;
+using EditorEX.CustomJSONData.CustomEvents;
 using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using Zenject;
 
-namespace BetterEditor.Heck.Deserializer
+namespace EditorEX.Heck.Deserializer
 {
     public class EditorDeserializerManager
     {

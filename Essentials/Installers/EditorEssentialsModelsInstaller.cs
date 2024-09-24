@@ -1,7 +1,7 @@
-﻿using BetterEditor.Essentials.SpawnProcessing;
+﻿using EditorEX.Essentials.SpawnProcessing;
 using Zenject;
 
-namespace BetterEditor.Essentials.Installers
+namespace EditorEX.Essentials.Installers
 {
     public class EditorEssentialsModelsInstaller : Installer
     {

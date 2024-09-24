@@ -1,5 +1,5 @@
-﻿using BetterEditor.CustomJSONData;
-using BetterEditor.Heck.Deserializer;
+﻿using EditorEX.CustomJSONData;
+using EditorEX.Heck.Deserializer;
 using Chroma;
 using CustomJSONData.CustomBeatmap;
 using Heck;
@@ -11,7 +11,7 @@ using UnityEngine;
 using Zenject;
 using static Chroma.ChromaController;
 
-namespace BetterEditor.Chroma.Events
+namespace EditorEX.Chroma.Events
 {
     [CustomEvent(ASSIGN_FOG_TRACK)]
     internal class EditorFogAnimatorV2 : ITickable, IDisposable, ICustomEvent

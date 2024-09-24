@@ -1,13 +1,13 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.Essentials.Patches;
-using BetterEditor.Essentials.SpawnProcessing;
-using BetterEditor.Heck.Deserializer;
-using BetterEditor.NoodleExtensions.Manager;
+using EditorEX.Essentials.Patches;
+using EditorEX.Essentials.SpawnProcessing;
+using EditorEX.Heck.Deserializer;
+using EditorEX.NoodleExtensions.Manager;
 using IPA.Utilities;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Essentials.Movement.Data
+namespace EditorEX.Essentials.Movement.Data
 {
     public class EditorBasicBeatmapObjectSpawnMovementData : IEditorBeatmapObjectSpawnMovementData
     {

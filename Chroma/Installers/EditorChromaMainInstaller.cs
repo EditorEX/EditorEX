@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Zenject;
 
-namespace BetterEditor.Chroma.Installers
+namespace EditorEX.Chroma.Installers
 {
     public class EditorChromaMainInstaller : Installer
     {

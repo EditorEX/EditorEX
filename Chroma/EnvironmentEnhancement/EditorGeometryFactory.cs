@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using BetterEditor.Chroma.Colorizer;
+using EditorEX.Chroma.Colorizer;
 using Chroma.Colorizer;
 using Chroma.EnvironmentEnhancement;
 using Chroma.Extras;
@@ -14,7 +14,7 @@ using Zenject;
 using static Chroma.ChromaController;
 using Object = UnityEngine.Object;
 
-namespace BetterEditor.Chroma.EnvironmentEnhancement
+namespace EditorEX.Chroma.EnvironmentEnhancement
 {
     internal class EditorGeometryFactory
     {

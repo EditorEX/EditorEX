@@ -1,20 +1,20 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
-using BetterEditor.Chroma.Deserializer;
-using BetterEditor.Chroma.Installers;
-using BetterEditor.Essentials.Installers;
-using BetterEditor.Heck.Deserializer;
-using BetterEditor.Heck.Installers;
-using BetterEditor.NoodleExtensions.Deserializer;
-using BetterEditor.NoodleExtensions.Installers;
-using BetterEditor.UI.SideBar;
+using EditorEX.Chroma.Deserializer;
+using EditorEX.Chroma.Installers;
+using EditorEX.Essentials.Installers;
+using EditorEX.Heck.Deserializer;
+using EditorEX.Heck.Installers;
+using EditorEX.NoodleExtensions.Deserializer;
+using EditorEX.NoodleExtensions.Installers;
+using EditorEX.UI.SideBar;
 using HarmonyLib;
 using IPA;
 using SiraUtil.Zenject;
 using System.Reflection;
 using IPALogger = IPA.Logging.Logger;
 
-namespace BetterEditor
+namespace EditorEX
 {
     [Plugin(RuntimeOptions.SingleStartInit)]
     public class Plugin
@@ -28,7 +28,7 @@ namespace BetterEditor
         {
             Instance = this;
             Log = logger;
-            Harmony = new Harmony("futuremapper.BetterEditor");
+            Harmony = new Harmony("futuremapper.EditorEX");
 
             zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();
@@ -52,7 +52,7 @@ namespace BetterEditor
         {
             Harmony.PatchAll(Assembly.GetExecutingAssembly());
 
-            SideBarUI.RegisterButton(BeatSaberMarkupLanguage.Utilities.FindSpriteInAssembly("BetterEditor.UI.Resources.lockcamera.png"), "Lock Camera", (x) =>
+            SideBarUI.RegisterButton(BeatSaberMarkupLanguage.Utilities.FindSpriteInAssembly("EditorEX.UI.Resources.lockcamera.png"), "Lock Camera", (x) =>
             {
 
             });

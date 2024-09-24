@@ -1,7 +1,7 @@
-﻿using BetterEditor.CustomJSONData;
+﻿using EditorEX.CustomJSONData;
 using Zenject;
 
-namespace BetterEditor.Heck.Installers
+namespace EditorEX.Heck.Installers
 {
     public class EditorCustomJSONDataModelsInstaller : Installer
     {

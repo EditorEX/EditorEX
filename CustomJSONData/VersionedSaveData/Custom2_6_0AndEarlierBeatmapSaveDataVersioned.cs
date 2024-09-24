@@ -1,10 +1,10 @@
 ﻿using BeatmapSaveDataVersion2_6_0AndEarlier;
-using BetterEditor.CustomJSONData.CustomEvents;
+using EditorEX.CustomJSONData.CustomEvents;
 using CustomJSONData.CustomBeatmap;
 using System.Collections.Generic;
 using static BeatmapSaveDataVersion2_6_0AndEarlier.BeatmapSaveData;
 
-namespace BetterEditor.CustomJSONData.VersionedSaveData
+namespace EditorEX.CustomJSONData.VersionedSaveData
 {
     public class Custom2_6_0AndEarlierBeatmapSaveDataVersioned
     {

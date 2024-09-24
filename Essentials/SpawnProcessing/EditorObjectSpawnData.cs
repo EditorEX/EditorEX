@@ -1,4 +1,4 @@
-﻿namespace BetterEditor.Essentials.SpawnProcessing
+﻿namespace EditorEX.Essentials.SpawnProcessing
 {
     public class EditorObjectSpawnData
     {

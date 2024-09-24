@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BetterEditor.Essentials.Movement.Arc
+namespace EditorEX.Essentials.Movement.Arc
 {
     public class EditorSliderIntensityEffect : MonoBehaviour
     {

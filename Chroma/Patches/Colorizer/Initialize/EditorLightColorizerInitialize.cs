@@ -1,4 +1,4 @@
-﻿using BetterEditor.Chroma.Lighting;
+﻿using EditorEX.Chroma.Lighting;
 using Chroma.Lighting;
 using SiraUtil.Affinity;
 

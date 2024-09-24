@@ -1,7 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.SerializedData;
 using BeatmapSaveDataVersion3;
-using BetterEditor.CustomJSONData.CustomEvents;
+using EditorEX.CustomJSONData.CustomEvents;
 using CustomJSONData.CustomBeatmap;
 using HarmonyLib;
 using System;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace BetterEditor.CustomJSONData.Patches
+namespace EditorEX.CustomJSONData.Patches
 {
 
     [HarmonyPatch(typeof(BeatmapLevelDataModelVersionedLoader), nameof(BeatmapLevelDataModelVersionedLoader.Load_v3Raw))]

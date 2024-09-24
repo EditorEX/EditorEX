@@ -1,4 +1,4 @@
-﻿using BetterEditor.CustomJSONData.CustomEvents;
+﻿using EditorEX.CustomJSONData.CustomEvents;
 using CustomJSONData.CustomBeatmap;
 using HarmonyLib;
 using Heck;
@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BetterEditor.Heck.EventData
+namespace EditorEX.Heck.EventData
 {
     public class EditorCoroutineEventData : ICustomEventCustomData
     {

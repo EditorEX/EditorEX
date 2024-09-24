@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using BetterEditor.Chroma.Colorizer;
+using EditorEX.Chroma.Colorizer;
 using Chroma.Colorizer;
 using Chroma.HarmonyPatches.Colorizer.Initialize;
 using CustomJSONData.CustomBeatmap;

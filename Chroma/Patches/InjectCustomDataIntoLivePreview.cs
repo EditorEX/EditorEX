@@ -1,8 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.DataModels.Events.Conversion;
-using BetterEditor.CustomJSONData;
-using BetterEditor.CustomJSONData.Patches;
-using BetterEditor.Essentials;
+using EditorEX.CustomJSONData;
+using EditorEX.CustomJSONData.Patches;
+using EditorEX.Essentials;
 using CustomJSONData.CustomBeatmap;
 using HarmonyLib;
 using SiraUtil.Affinity;
@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Zenject;
 
-namespace BetterEditor.Chroma.Patches
+namespace EditorEX.Chroma.Patches
 {
     [HarmonyPatch]
     public static class InjectCustomDataIntoLivePreview

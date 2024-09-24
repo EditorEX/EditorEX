@@ -3,15 +3,15 @@ using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.SerializedData;
 using BeatmapEditor3D.Types;
 using BeatmapSaveDataVersion3;
-using BetterEditor.CustomJSONData.VersionedSaveData;
+using EditorEX.CustomJSONData.VersionedSaveData;
 using CustomJSONData.CustomBeatmap;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using TrackDefinitions.DataModels;
-using static BetterEditor.CustomJSONData.VersionedSaveData.Custom2_6_0AndEarlierBeatmapSaveDataVersioned;
+using static EditorEX.CustomJSONData.VersionedSaveData.Custom2_6_0AndEarlierBeatmapSaveDataVersioned;
 
-namespace BetterEditor.CustomJSONData.Util
+namespace EditorEX.CustomJSONData.Util
 {
     public class BeatmapLevelDataModelSaverV3
     {

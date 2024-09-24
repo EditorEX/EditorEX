@@ -1,8 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.Essentials.Movement.Data;
+using EditorEX.Essentials.Movement.Data;
 using UnityEngine;
 
-namespace BetterEditor.Essentials.Movement
+namespace EditorEX.Essentials.Movement
 {
     public interface IObjectMovement
     {

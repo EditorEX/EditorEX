@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BetterEditor.Chroma.Patches
+namespace EditorEX.Chroma.Patches
 {
     [HarmonyPatch(typeof(BeatmapEditorLevelSceneTransitionSetupDataSO), nameof(BeatmapEditorLevelSceneTransitionSetupDataSO.Init))]
     public static class InitializeLightIDTable

@@ -1,7 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.Chroma.Deserializer;
-using BetterEditor.Chroma.Lighting;
-using BetterEditor.CustomJSONData.Util;
+using EditorEX.Chroma.Deserializer;
+using EditorEX.Chroma.Lighting;
+using EditorEX.CustomJSONData.Util;
 using Chroma;
 using Chroma.Lighting;
 using CustomJSONData.CustomBeatmap;
@@ -11,11 +11,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static BetterEditor.Chroma.Constants;
-using static BetterEditor.Heck.Constants;
+using static EditorEX.Chroma.Constants;
+using static EditorEX.Heck.Constants;
 using static Chroma.ChromaEventData;
 
-namespace BetterEditor.Chroma.Events
+namespace EditorEX.Chroma.Events
 {
     internal class EditorChromaEventData : IEventCustomData
     {

@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Chroma.Colorizer
+namespace EditorEX.Chroma.Colorizer
 {
     [UsedImplicitly]
     public sealed class EditorParticleColorizerManager

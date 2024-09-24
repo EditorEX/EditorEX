@@ -1,21 +1,21 @@
 ﻿using BeatmapEditor3D;
-using BetterEditor.Essentials.Movement;
-using BetterEditor.Essentials.Movement.Arc.MovementProvider;
-using BetterEditor.Essentials.Movement.Data;
-using BetterEditor.Essentials.Movement.Note.MovementProvider;
-using BetterEditor.Essentials.Movement.Obstacle.MovementProvider;
-using BetterEditor.Essentials.Patches;
-using BetterEditor.Essentials.Patches.Movement;
-using BetterEditor.Essentials.SpawnProcessing;
-using BetterEditor.Essentials.ViewMode;
-using BetterEditor.Heck.Patches;
-using BetterEditor.UI.SideBar;
+using EditorEX.Essentials.Movement;
+using EditorEX.Essentials.Movement.Arc.MovementProvider;
+using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.Movement.Note.MovementProvider;
+using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
+using EditorEX.Essentials.Patches;
+using EditorEX.Essentials.Patches.Movement;
+using EditorEX.Essentials.SpawnProcessing;
+using EditorEX.Essentials.ViewMode;
+using EditorEX.Heck.Patches;
+using EditorEX.UI.SideBar;
 using System;
 using System.Linq;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Essentials.Installers
+namespace EditorEX.Essentials.Installers
 {
     public class EditorEssentialsSceneInstaller : Installer
     {

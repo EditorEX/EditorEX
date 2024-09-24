@@ -1,16 +1,16 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Views;
 using BeatmapEditor3D.Visuals;
-using BetterEditor.Essentials.Movement.Arc;
-using BetterEditor.Essentials.Movement.Note;
-using BetterEditor.Essentials.Movement.Obstacle;
+using EditorEX.Essentials.Movement.Arc;
+using EditorEX.Essentials.Movement.Note;
+using EditorEX.Essentials.Movement.Obstacle;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
 
-namespace BetterEditor.Essentials.Patches.Movement
+namespace EditorEX.Essentials.Patches.Movement
 {
     [HarmonyPatch]
     public static class InitMovement

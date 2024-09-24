@@ -6,7 +6,7 @@ using IPA.Utilities;
 using System;
 using System.Collections.Generic;
 
-namespace BetterEditor.NoodleExtensions.ObjectData
+namespace EditorEX.NoodleExtensions.ObjectData
 {
     internal class EditorNoodleNoteData : EditorNoodleBaseNoteData
     {

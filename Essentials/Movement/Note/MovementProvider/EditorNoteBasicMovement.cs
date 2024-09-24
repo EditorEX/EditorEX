@@ -1,11 +1,11 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
-using BetterEditor.Essentials.Movement.Data;
+using EditorEX.Essentials.Movement.Data;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
 
-namespace BetterEditor.Essentials.Movement.Note.MovementProvider
+namespace EditorEX.Essentials.Movement.Note.MovementProvider
 {
     public class EditorNoteBasicMovement : MonoBehaviour, IObjectMovement
     {

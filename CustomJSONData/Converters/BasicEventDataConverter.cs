@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System;
 
-namespace BetterEditor.CustomJSONData.Converters
+namespace EditorEX.CustomJSONData.Converters
 {
     public class V2BasicEventDataWithoutFloatValueConverter : JsonConverter<BeatmapSaveData.EventData>
     {

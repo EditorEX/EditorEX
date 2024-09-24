@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BetterEditor.NoodleExtensions.ObjectData
+namespace EditorEX.NoodleExtensions.ObjectData
 {
     internal class EditorNoodleSliderData : EditorNoodleBaseNoteData, ICopyable<IObjectCustomData>
     {

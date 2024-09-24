@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace BetterEditor.NoodleExtensions.ObjectData
+namespace EditorEX.NoodleExtensions.ObjectData
 {
     internal class EditorNoodleObstacleData : EditorNoodleObjectData
     {

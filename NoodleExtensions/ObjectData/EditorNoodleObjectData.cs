@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace BetterEditor.NoodleExtensions.ObjectData
+namespace EditorEX.NoodleExtensions.ObjectData
 {
     internal class EditorNoodleObjectData : IObjectCustomData
     {

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 using Zenject;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
-namespace BetterEditor.UI.SideBar
+namespace EditorEX.UI.SideBar
 {
     internal class SideBarUI
     {

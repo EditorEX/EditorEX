@@ -1,7 +1,7 @@
-﻿using BetterEditor.Essentials.Movement.Note.MovementProvider;
+﻿using EditorEX.Essentials.Movement.Note.MovementProvider;
 using System;
 
-namespace BetterEditor.Essentials.Movement.Types
+namespace EditorEX.Essentials.Movement.Types
 {
     public class NoteGameMovementType : IObjectMovementType
     {

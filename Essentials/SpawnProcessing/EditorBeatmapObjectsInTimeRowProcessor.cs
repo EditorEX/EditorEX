@@ -1,10 +1,10 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Types;
-using BetterEditor.CustomJSONData;
-using BetterEditor.CustomJSONData.Util;
-using BetterEditor.Essentials.Patches;
-using BetterEditor.Essentials.SpawnProcessing;
-using BetterEditor.NoodleExtensions.Util;
+using EditorEX.CustomJSONData;
+using EditorEX.CustomJSONData.Util;
+using EditorEX.Essentials.Patches;
+using EditorEX.Essentials.SpawnProcessing;
+using EditorEX.NoodleExtensions.Util;
 using CustomJSONData.CustomBeatmap;
 using HarmonyLib;
 using Heck;
@@ -24,7 +24,7 @@ using static BeatmapObjectsInTimeRowProcessor;
 using static Heck.HeckController;
 using static NoodleExtensions.NoodleController;
 
-namespace BetterEditor.Essentials.SpawnProcessing
+namespace EditorEX.Essentials.SpawnProcessing
 {
     public class EditorBeatmapObjectsInTimeRowProcessor
     {

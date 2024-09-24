@@ -1,4 +1,4 @@
-﻿namespace BetterEditor.Chroma
+﻿namespace EditorEX.Chroma
 {
     internal static class Constants
     {

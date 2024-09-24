@@ -1,8 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.Essentials.Movement.Data;
-using BetterEditor.Essentials.SpawnProcessing;
-using BetterEditor.Heck.Deserializer;
-using BetterEditor.NoodleExtensions.ObjectData;
+using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.SpawnProcessing;
+using EditorEX.Heck.Deserializer;
+using EditorEX.NoodleExtensions.ObjectData;
 using Heck;
 using Heck.Animation;
 using NoodleExtensions;
@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Essentials.Movement.Note.MovementProvider
+namespace EditorEX.Essentials.Movement.Note.MovementProvider
 {
     public class EditorNoteGameMovement : MonoBehaviour, IObjectMovement
     {

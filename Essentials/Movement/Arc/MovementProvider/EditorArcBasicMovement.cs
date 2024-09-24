@@ -1,7 +1,7 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Visuals;
-using BetterEditor.Essentials.Movement.Data;
+using EditorEX.Essentials.Movement.Data;
 using IPA.Config.Data;
 using System;
 using System.Linq;
@@ -10,7 +10,7 @@ using UnityEngine.Rendering;
 using UnityEngine.UIElements;
 using Zenject;
 
-namespace BetterEditor.Essentials.Movement.Arc.MovementProvider
+namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 {
     public class EditorArcBasicMovement : MonoBehaviour, IObjectMovement
     {

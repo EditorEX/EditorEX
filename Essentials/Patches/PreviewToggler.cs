@@ -1,6 +1,6 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.Visuals;
-using BetterEditor.Essentials.ViewMode;
+using EditorEX.Essentials.ViewMode;
 using SiraUtil.Affinity;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace BetterEditor.Essentials.Patches
+namespace EditorEX.Essentials.Patches
 {
     internal class PreviewToggler : IAffinity, IDisposable
     {

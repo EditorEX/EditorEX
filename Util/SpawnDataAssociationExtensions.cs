@@ -1,8 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.Essentials.SpawnProcessing;
+using EditorEX.Essentials.SpawnProcessing;
 using IPA.Utilities;
 
-namespace BetterEditor.NoodleExtensions.Util
+namespace EditorEX.NoodleExtensions.Util
 {
     public static class SpawnDataAssociationExtensions
     {

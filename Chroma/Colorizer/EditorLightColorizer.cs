@@ -1,4 +1,4 @@
-﻿using BetterEditor.Chroma.Lighting;
+﻿using EditorEX.Chroma.Lighting;
 using Chroma.Lighting;
 using IPA.Utilities;
 using JetBrains.Annotations;
@@ -10,7 +10,7 @@ using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;
 
-namespace BetterEditor.Chroma.Colorizer
+namespace EditorEX.Chroma.Colorizer
 {
     [UsedImplicitly]
     public class EditorLightColorizerManager

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using BetterEditor.Chroma.Events;
-using BetterEditor.CustomJSONData;
-using BetterEditor.Heck.Deserializer;
+using EditorEX.Chroma.Events;
+using EditorEX.CustomJSONData;
+using EditorEX.Heck.Deserializer;
 using Chroma;
 using Chroma.Lighting;
 using Heck;
@@ -9,7 +9,7 @@ using SiraUtil.Affinity;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Chroma.Patches.Events
+namespace EditorEX.Chroma.Patches.Events
 {
     internal class EditorRingRotationChromafier : IAffinity
     {

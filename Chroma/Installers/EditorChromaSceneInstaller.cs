@@ -1,9 +1,9 @@
-﻿using BetterEditor.Chroma.Colorizer;
-using BetterEditor.Chroma.EnvironmentEnhancement;
-using BetterEditor.Chroma.Events;
-using BetterEditor.Chroma.Lighting;
-using BetterEditor.Chroma.Patches;
-using BetterEditor.Chroma.Patches.Events;
+﻿using EditorEX.Chroma.Colorizer;
+using EditorEX.Chroma.EnvironmentEnhancement;
+using EditorEX.Chroma.Events;
+using EditorEX.Chroma.Lighting;
+using EditorEX.Chroma.Patches;
+using EditorEX.Chroma.Patches.Events;
 using Chroma;
 using Chroma.EnvironmentEnhancement;
 using Chroma.EnvironmentEnhancement.Component;
@@ -13,7 +13,7 @@ using Chroma.Lighting;
 using Heck;
 using Zenject;
 
-namespace BetterEditor.Chroma.Installers
+namespace EditorEX.Chroma.Installers
 {
     public class EditorChromaSceneInstaller : Installer
     {

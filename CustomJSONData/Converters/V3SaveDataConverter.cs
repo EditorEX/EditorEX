@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BetterEditor.CustomJSONData.Converters
+namespace EditorEX.CustomJSONData.Converters
 {
     public static class V3SaveDataConverter
     {

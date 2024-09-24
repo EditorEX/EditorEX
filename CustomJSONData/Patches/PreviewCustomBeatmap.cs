@@ -1,5 +1,5 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.CustomJSONData.Preview;
+using EditorEX.CustomJSONData.Preview;
 using CustomJSONData.CustomBeatmap;
 using HarmonyLib;
 using System;
@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Zenject;
 
-namespace BetterEditor.CustomJSONData.Patches
+namespace EditorEX.CustomJSONData.Patches
 {
     [HarmonyPatch(typeof(BeatmapEditorDataModelsInstaller), nameof(BeatmapEditorDataModelsInstaller.Install))]
     public static class PreviewCustomBeatmap

@@ -10,8 +10,8 @@
     <LangVersion>9</LangVersion>
     <Nullable>enable</Nullable>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>BetterEditor</RootNamespace>
-    <AssemblyName>BetterEditor</AssemblyName>
+    <RootNamespace>EditorEX</RootNamespace>
+    <AssemblyName>EditorEX</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <DebugSymbols>true</DebugSymbols>

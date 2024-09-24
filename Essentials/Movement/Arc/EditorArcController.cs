@@ -1,12 +1,12 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.Essentials.Movement.Data;
-using BetterEditor.Essentials.ViewMode;
+using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.ViewMode;
 using System;
 using System.Linq;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Essentials.Movement.Arc
+namespace EditorEX.Essentials.Movement.Arc
 {
     internal class EditorArcController : MonoBehaviour, IDisposable
     {

@@ -1,5 +1,5 @@
-﻿using BetterEditor.CustomJSONData;
-using BetterEditor.Heck.Deserializer;
+﻿using EditorEX.CustomJSONData;
+using EditorEX.Heck.Deserializer;
 using Chroma;
 using Chroma.EnvironmentEnhancement.Component;
 using CustomJSONData.CustomBeatmap;
@@ -14,10 +14,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
-using static BetterEditor.Chroma.Constants;
+using static EditorEX.Chroma.Constants;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
 
-namespace BetterEditor.Chroma.Events
+namespace EditorEX.Chroma.Events
 {
     [CustomEvent(ANIMATE_COMPONENT)]
     internal class EditorAnimateComponent : ICustomEvent

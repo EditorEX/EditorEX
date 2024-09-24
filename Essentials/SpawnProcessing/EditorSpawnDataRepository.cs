@@ -1,7 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
 using System.Collections.Generic;
 
-namespace BetterEditor.Essentials.SpawnProcessing
+namespace EditorEX.Essentials.SpawnProcessing
 {
     public class SpawnDataRepoData
     {

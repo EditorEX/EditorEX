@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BetterEditor.Heck.ObjectData
+namespace EditorEX.Heck.ObjectData
 {
     internal class EditorHeckObjectData : IObjectCustomData
     {

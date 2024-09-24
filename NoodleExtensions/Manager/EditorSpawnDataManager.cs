@@ -9,13 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
-using BetterEditor.Heck.Deserializer;
+using EditorEX.Heck.Deserializer;
 using BeatmapEditor3D.DataModels;
-using BetterEditor.NoodleExtensions.ObjectData;
-using BetterEditor.Essentials.Movement.Data;
-using BetterEditor.Essentials.Patches;
+using EditorEX.NoodleExtensions.ObjectData;
+using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.Patches;
 
-namespace BetterEditor.NoodleExtensions.Manager
+namespace EditorEX.NoodleExtensions.Manager
 {
     internal class EditorSpawnDataManager
     {

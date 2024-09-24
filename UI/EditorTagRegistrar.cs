@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BetterEditor.UI
+namespace EditorEX.UI
 {
     public static class EditorTagRegistrar
     {

@@ -1,8 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.Chroma.Colorizer;
-using BetterEditor.Chroma.Events;
-using BetterEditor.CustomJSONData;
-using BetterEditor.Heck.Deserializer;
+using EditorEX.Chroma.Colorizer;
+using EditorEX.Chroma.Events;
+using EditorEX.CustomJSONData;
+using EditorEX.Heck.Deserializer;
 using Chroma;
 using Chroma.Colorizer;
 using Chroma.Extras;
@@ -17,7 +17,7 @@ using Tweening;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Chroma.Lighting
+namespace EditorEX.Chroma.Lighting
 {
     public sealed class EditorChromaLightSwitchEventEffect : IDisposable
     {

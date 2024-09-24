@@ -1,7 +1,7 @@
 ﻿using Heck.Animation;
 using System.Collections.Generic;
 
-namespace BetterEditor.Heck.Deserializer
+namespace EditorEX.Heck.Deserializer
 {
     // Used until we can install it in EditorSceneInstaller
     internal static class EditorDeserializedDataContainer

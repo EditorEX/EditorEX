@@ -1,8 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.SerializedData;
-using BetterEditor.CustomJSONData;
-using BetterEditor.CustomJSONData.Util;
-using BetterEditor.Heck.Deserializer;
+using EditorEX.CustomJSONData;
+using EditorEX.CustomJSONData.Util;
+using EditorEX.Heck.Deserializer;
 using CustomJSONData.CustomBeatmap;
 using Heck.Animation;
 using SiraUtil.Affinity;
@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace BetterEditor.Heck.Patches
+namespace EditorEX.Heck.Patches
 {
     internal class DeserializationPatch : IAffinity
     {

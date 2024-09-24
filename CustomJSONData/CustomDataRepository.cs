@@ -1,11 +1,11 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.CustomJSONData.CustomEvents;
+using EditorEX.CustomJSONData.CustomEvents;
 using CustomJSONData.CustomBeatmap;
 using ModestTree.Util;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BetterEditor.CustomJSONData
+namespace EditorEX.CustomJSONData
 {
     public class RepoData
     {

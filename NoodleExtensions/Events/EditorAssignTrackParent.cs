@@ -1,6 +1,6 @@
-﻿using BetterEditor.CustomJSONData;
-using BetterEditor.Heck.Deserializer;
-using BetterEditor.Heck.EventData;
+﻿using EditorEX.CustomJSONData;
+using EditorEX.Heck.Deserializer;
+using EditorEX.Heck.EventData;
 using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Heck.Events
+namespace EditorEX.Heck.Events
 {
     [CustomEvent(new string[] { "AssignTrackParent" })]
     internal class EditorAssignTrackParent : ICustomEvent

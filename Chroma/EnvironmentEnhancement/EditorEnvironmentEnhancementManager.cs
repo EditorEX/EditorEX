@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BetterEditor.Chroma.EnvironmentEnhancement;
-using BetterEditor.CustomJSONData;
-using BetterEditor.Essentials;
+using EditorEX.Chroma.EnvironmentEnhancement;
+using EditorEX.CustomJSONData;
+using EditorEX.Essentials;
 using Chroma.EnvironmentEnhancement.Component;
 using Chroma.EnvironmentEnhancement.Saved;
 using Chroma.HarmonyPatches.EnvironmentComponent;

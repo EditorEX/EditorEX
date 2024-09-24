@@ -3,7 +3,7 @@ using BeatmapEditor3D.Visuals;
 using HarmonyLib;
 using System.Collections.Generic;
 
-namespace BetterEditor.Essentials.Patches.Movement
+namespace EditorEX.Essentials.Patches.Movement
 {
     //TODO: Make these safer lol.
     [HarmonyPatch]

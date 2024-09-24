@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using BetterEditor.Chroma.Events;
-using BetterEditor.CustomJSONData;
-using BetterEditor.Heck.Deserializer;
+using EditorEX.Chroma.Events;
+using EditorEX.CustomJSONData;
+using EditorEX.Heck.Deserializer;
 using Chroma;
 using HarmonyLib;
 using Heck;
 using SiraUtil.Affinity;
 using Zenject;
 
-namespace BetterEditor.Chroma.Patches.Events
+namespace EditorEX.Chroma.Patches.Events
 {
     internal class EditorRingStepChromafier : IAffinity, IDisposable
     {

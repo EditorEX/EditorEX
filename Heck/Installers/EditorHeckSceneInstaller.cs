@@ -1,5 +1,5 @@
-﻿using BetterEditor.Heck.Deserializer;
-using BetterEditor.Heck.Events;
+﻿using EditorEX.Heck.Deserializer;
+using EditorEX.Heck.Events;
 using HarmonyLib;
 using Heck;
 using Heck.Animation;
@@ -8,7 +8,7 @@ using Heck.Event;
 using System.Collections.Generic;
 using Zenject;
 
-namespace BetterEditor.Heck.Installers
+namespace EditorEX.Heck.Installers
 {
     public class EditorHeckSceneInstaller : Installer
     {

@@ -1,7 +1,7 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
-using BetterEditor.Heck.Deserializer;
-using BetterEditor.NoodleExtensions.ObjectData;
+using EditorEX.Heck.Deserializer;
+using EditorEX.NoodleExtensions.ObjectData;
 using Heck;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
@@ -10,7 +10,7 @@ using System;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Essentials.Movement.Note
+namespace EditorEX.Essentials.Movement.Note
 {
     public class EditorNoteJump : MonoBehaviour
     {

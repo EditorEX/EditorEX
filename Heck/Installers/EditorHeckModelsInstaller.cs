@@ -1,9 +1,9 @@
-﻿using BetterEditor.Heck.Deserializer;
-using BetterEditor.Heck.Patches;
+﻿using EditorEX.Heck.Deserializer;
+using EditorEX.Heck.Patches;
 using Heck;
 using Zenject;
 
-namespace BetterEditor.Heck.Installers
+namespace EditorEX.Heck.Installers
 {
     public class EditorHeckModelsInstaller : Installer
     {

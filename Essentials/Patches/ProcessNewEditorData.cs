@@ -1,8 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.Essentials.SpawnProcessing;
+using EditorEX.Essentials.SpawnProcessing;
 using SiraUtil.Affinity;
 
-namespace BetterEditor.Essentials.Patches
+namespace EditorEX.Essentials.Patches
 {
     internal class ProcessNewEditorData : IAffinity
     {

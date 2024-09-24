@@ -1,7 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Views;
-using BetterEditor.Heck.Deserializer;
-using BetterEditor.Heck.ObjectData;
+using EditorEX.Heck.Deserializer;
+using EditorEX.Heck.ObjectData;
 using HarmonyLib;
 using Heck.Animation;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Reflection.Emit;
 using UnityEngine;
 
 // Heavily based on https://github.com/Aeroluna/Heck/blob/master/Heck/HarmonyPatches/GameObjectTracker.cs
-namespace BetterEditor.Heck.Patches
+namespace EditorEX.Heck.Patches
 {
     [HarmonyPatch]
     public static class EditorGameObjectTracker

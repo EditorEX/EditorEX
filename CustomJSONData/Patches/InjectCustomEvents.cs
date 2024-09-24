@@ -1,11 +1,11 @@
 ﻿using BeatmapEditor3D.DataModels;
-using BetterEditor.CustomJSONData.Preview;
+using EditorEX.CustomJSONData.Preview;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace BetterEditor.CustomJSONData.Patches
+namespace EditorEX.CustomJSONData.Patches
 {
     [HarmonyPatch(typeof(BeatmapLivePreviewDataModel), nameof(BeatmapLivePreviewDataModel.HandleBeatmapLevelDataModelLoaded))]
     public static class InjectCustomEvents

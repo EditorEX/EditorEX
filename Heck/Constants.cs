@@ -1,4 +1,4 @@
-﻿namespace BetterEditor.Heck
+﻿namespace EditorEX.Heck
 {
     public static class Constants
     {

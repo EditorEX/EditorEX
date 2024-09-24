@@ -1,12 +1,12 @@
-﻿using BetterEditor.Essentials.Movement.Data;
-using BetterEditor.Essentials.Movement.Types;
-using BetterEditor.Essentials.ViewMode;
+﻿using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.Movement.Types;
+using EditorEX.Essentials.ViewMode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Zenject;
 
-namespace BetterEditor.Essentials.Movement
+namespace EditorEX.Essentials.Movement
 {
     public class MovementTypeProvider
     {

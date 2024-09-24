@@ -1,11 +1,11 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
-using BetterEditor.CustomJSONData.CustomEvents;
-using BetterEditor.CustomJSONData.Util;
+using EditorEX.CustomJSONData.CustomEvents;
+using EditorEX.CustomJSONData.Util;
 using CustomJSONData.CustomBeatmap;
 using System.Collections.Generic;
 
-namespace BetterEditor.CustomJSONData.Preview
+namespace EditorEX.CustomJSONData.Preview
 {
     public class CustomBeatmapLivePreviewDataModel : BeatmapLivePreviewDataModel
     {

@@ -1,12 +1,12 @@
 ﻿using BeatmapEditor3D.Views;
 using BeatmapEditor3D.Visuals;
-using BetterEditor.Essentials.ViewMode;
+using EditorEX.Essentials.ViewMode;
 using HarmonyLib;
 using SiraUtil.Affinity;
 using System.Collections.Generic;
 using Zenject;
 
-namespace BetterEditor.Essentials.Patches.Movement
+namespace EditorEX.Essentials.Patches.Movement
 {
     public class ArcMaterialPreview : IAffinity
     {

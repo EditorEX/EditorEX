@@ -1,15 +1,15 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
-using BetterEditor.Essentials.Movement.Data;
-using BetterEditor.Essentials.SpawnProcessing;
-using BetterEditor.Heck.Deserializer;
-using BetterEditor.NoodleExtensions.ObjectData;
+using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.SpawnProcessing;
+using EditorEX.Heck.Deserializer;
+using EditorEX.NoodleExtensions.ObjectData;
 using NoodleExtensions.Animation;
 using System;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Essentials.Movement.Obstacle.MovementProvider
+namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 {
     public class EditorObstacleGameMovement : MonoBehaviour, IObjectMovement
     {

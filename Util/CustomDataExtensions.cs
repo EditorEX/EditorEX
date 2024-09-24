@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BetterEditor.CustomJSONData.Util
+namespace EditorEX.CustomJSONData.Util
 {
     public static class CustomDataExtensions
     {

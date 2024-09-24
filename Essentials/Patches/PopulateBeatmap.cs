@@ -2,7 +2,7 @@
 using HarmonyLib;
 using Zenject;
 
-namespace BetterEditor.Essentials.Patches
+namespace EditorEX.Essentials.Patches
 {
     [HarmonyPatch]
     public static class PopulateBeatmap

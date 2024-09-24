@@ -1,13 +1,13 @@
 ﻿using BeatmapEditor3D;
-using BetterEditor.Essentials.Movement.Arc;
-using BetterEditor.Essentials.Movement.Arc.MovementProvider;
-using BetterEditor.Essentials.Movement.Note;
-using BetterEditor.Essentials.Movement.Note.MovementProvider;
-using BetterEditor.Essentials.Movement.Obstacle;
-using BetterEditor.Essentials.Movement.Obstacle.MovementProvider;
+using EditorEX.Essentials.Movement.Arc;
+using EditorEX.Essentials.Movement.Arc.MovementProvider;
+using EditorEX.Essentials.Movement.Note;
+using EditorEX.Essentials.Movement.Note.MovementProvider;
+using EditorEX.Essentials.Movement.Obstacle;
+using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
 using HarmonyLib;
 
-namespace BetterEditor.Essentials.Patches.Movement
+namespace EditorEX.Essentials.Patches.Movement
 {
     [HarmonyPatch(typeof(BeatmapLevelEditorInstaller), nameof(BeatmapLevelEditorInstaller.InstallBindings))]
     public static class InstallMovement

@@ -1,7 +1,7 @@
-﻿using BetterEditor.Chroma.Colorizer;
+﻿using EditorEX.Chroma.Colorizer;
 using SiraUtil.Affinity;
 
-namespace BetterEditor.Chroma.Patches.Colorizer.Initialize
+namespace EditorEX.Chroma.Patches.Colorizer.Initialize
 {
     internal class EditorParticleColorizerInitialize : IAffinity
     {

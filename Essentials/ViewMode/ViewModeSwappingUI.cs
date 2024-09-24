@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
-namespace BetterEditor.Essentials.ViewMode
+namespace EditorEX.Essentials.ViewMode
 {
     internal class ViewModeSwappingUI : ITickable
     {
