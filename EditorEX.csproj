@@ -333,7 +333,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
-    <None Include="BetterEditor.csproj.user" Condition="Exists('BetterEditor.csproj.user')" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">
@@ -349,6 +348,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\Resources\lockcamera.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EditorEX.csproj.user" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
