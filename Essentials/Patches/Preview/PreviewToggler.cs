@@ -9,13 +9,15 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace EditorEX.Essentials.Patches
+namespace EditorEX.Essentials.Patches.Preview
 {
     internal class PreviewToggler : IAffinity, IDisposable
     {
         private ActiveViewMode _activeViewMode;
 
         private GameObject grid;
+        private GameObject hover;
+        private GameObject selection;
         private BeatlineContainer[] beatlines;
         private BeatmapObjectBeatLine currentLine;
         private BeatNumberContainer beatNumbers;
@@ -32,9 +34,12 @@ namespace EditorEX.Essentials.Patches
         private void Patch(BeatmapObjectsContainer __instance)
         {
             grid = __instance.transform.Find("BeatmapObjectSelectionGridView").gameObject;
-            beatlines = __instance.gameObject.GetComponentsInChildren<BeatlineContainer>().ToArray();
+            hover = __instance.transform.Find("BeatmapObjectGridHoverView").gameObject;
+            selection = __instance.transform.Find("BeatmapObjectSelectionView").gameObject;
             currentLine = __instance.gameObject.GetComponentInChildren<BeatmapObjectBeatLine>();
-            beatNumbers = __instance.gameObject.GetComponentInChildren<BeatNumberContainer>();
+            var container = __instance.GetComponentInChildren<BeatGridContainer>();
+            beatlines = new BeatlineContainer[] { container._mainBeatlineContainer, container._normalBeatlineContainer };
+            beatNumbers = container._beatNumberContainer;
             lanes = __instance.transform.Find("BeatGridContainer").Find("GridLanes").gameObject;
 
             TogglePreview();
@@ -53,11 +58,11 @@ namespace EditorEX.Essentials.Patches
             {
                 if (showGrid)
                 {
-                    //beatline.Enable();
+                    beatline.Enable();
                 }
                 else
                 {
-                    //beatline.Disable();
+                    beatline.Disable();
                 }
             }
             if (showGrid)

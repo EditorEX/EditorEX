@@ -37,9 +37,9 @@ namespace EditorEX
             zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorEssentialsSceneInstaller, BeatmapLevelEditorSceneSetup>();
-            zenjector.Install<EditorChromaSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            //zenjector.Install<EditorChromaSceneInstaller, BeatmapLevelEditorSceneSetup>();
 
-            zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
+            //zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
 
 
             EditorDeserializerManager.Register<EditorNoodleCustomDataManager>("NoodleExtensions").Enabled = true;

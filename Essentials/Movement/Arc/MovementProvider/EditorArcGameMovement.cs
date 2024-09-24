@@ -53,11 +53,8 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 
         // Object fields
         private SliderMeshController _sliderMeshController;
-        private SliderMeshController _selectionSliderMeshController;
         private MaterialPropertyBlockController _materialPropertyBlockController;
-        private MaterialPropertyBlockController _selectionMaterialPropertyBlockController;
         private EditorSliderIntensityEffect _sliderIntensityEffect;
-        private ArcTubePhysicsMeshConstructor _arcTubePhysicsMeshConstructor;
 
         [Inject]
         private void Construct([Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
@@ -121,9 +118,6 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             var arcvView = GetComponent<ArcView>();
             _sliderMeshController = arcvView._arcMeshController;
             _materialPropertyBlockController = arcvView._arcMaterialPropertyBlockController;
-            _selectionSliderMeshController = arcvView._selectionArcMeshController;
-            _selectionMaterialPropertyBlockController = arcvView._selectionArcMaterialPropertyBlockController;
-            _arcTubePhysicsMeshConstructor = arcvView._arcTubePhysicsMeshConstructor;
             _sliderIntensityEffect = GetComponent<EditorSliderIntensityEffect>();
 
             var material = _sliderMeshController.GetComponent<MeshRenderer>().sharedMaterial;
@@ -150,10 +144,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             Vector3 vector = new Vector3(sliderSpawnData.headJumpEndPos.x, sliderSpawnData.headJumpStartPos.y + _headNoteGravity * num * num * 0.5f, 0f);
             Vector3 vector2 = new Vector3(sliderSpawnData.tailJumpEndPos.x, sliderSpawnData.tailJumpStartPos.y + _tailNoteGravity * num * num * 0.5f, _zDistanceBetweenNotes);
             _sliderMeshController.CreateBezierPathAndMesh(_sliderData, vector, vector2, noteJumpMovementSpeed, 1f);
-            _selectionSliderMeshController.CreateBezierPathAndMesh(_sliderData, vector, vector2, noteJumpMovementSpeed, 1f);
-            _arcTubePhysicsMeshConstructor.CreatePhysicsMeshFromController();
             SetInitialProperties(_materialPropertyBlockController, noteJumpMovementSpeed);
-            SetInitialProperties(_selectionMaterialPropertyBlockController, noteJumpMovementSpeed);
             UpdateMaterialPropertyBlock(-num, _materialPropertyBlockController);
 
             transform.localRotation = _worldRotation;

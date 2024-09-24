@@ -266,8 +266,8 @@
     <Compile Include="Essentials\Movement\Types\IObjectMovementType.cs" />
     <Compile Include="Essentials\Movement\Types\NoteBasicMovementType.cs" />
     <Compile Include="Essentials\Movement\Types\NoteGameMovementType.cs" />
-    <Compile Include="Essentials\Patches\Movement\ArcMaterialPreview.cs" />
-    <Compile Include="Essentials\Patches\PreviewToggler.cs" />
+    <Compile Include="Essentials\Patches\Preview\ArcPreview.cs" />
+    <Compile Include="Essentials\Patches\Preview\PreviewToggler.cs" />
     <Compile Include="Essentials\Patches\ProcessNewEditorData.cs" />
     <Compile Include="Essentials\VersionContext.cs" />
     <Compile Include="Essentials\ViewMode\ActiveViewMode.cs" />
@@ -307,6 +307,7 @@
     <Compile Include="Essentials\Movement\Note\EditorNoteFloorMovement.cs" />
     <Compile Include="Essentials\Movement\Note\EditorNoteJump.cs" />
     <Compile Include="Essentials\Movement\Note\MovementProvider\EditorNoteGameMovement.cs" />
+    <Compile Include="NoodleExtensions\Animation\EditorParentObject.cs" />
     <Compile Include="NoodleExtensions\Deserializer\EditorNoodleCustomDataManager.cs" />
     <Compile Include="NoodleExtensions\Events\EditorAssignTrackParent.cs" />
     <Compile Include="NoodleExtensions\Installers\EditorNoodleSceneInstaller.cs" />

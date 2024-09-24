@@ -6,9 +6,9 @@ using SiraUtil.Affinity;
 using System.Collections.Generic;
 using Zenject;
 
-namespace EditorEX.Essentials.Patches.Movement
+namespace EditorEX.Essentials.Patches.Preview
 {
-    public class ArcMaterialPreview : IAffinity
+    public class ArcPreview : IAffinity
     {
         private ActiveViewMode _activeViewMode;
 
@@ -21,6 +21,20 @@ namespace EditorEX.Essentials.Patches.Movement
         [AffinityPatch(typeof(ArcView), nameof(ArcView.SetMaterialPropertyBlock))]
         [AffinityPrefix]
         private bool SetMaterialPropertyBlock()
+        {
+            return _activeViewMode.Mode != "Preview";
+        }
+
+        [AffinityPatch(typeof(ArcView), nameof(ArcView.UpdateHighlight))]
+        [AffinityPrefix]
+        private bool DisableSelectionViews()
+        {
+            return _activeViewMode.Mode != "Preview";
+        }
+
+        [AffinityPatch(typeof(ArcView), nameof(ArcView.UpdateState))]
+        [AffinityPrefix]
+        private bool DisableSelectionViews2()
         {
             return _activeViewMode.Mode != "Preview";
         }

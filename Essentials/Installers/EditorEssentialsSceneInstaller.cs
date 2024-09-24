@@ -5,7 +5,7 @@ using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Movement.Note.MovementProvider;
 using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
 using EditorEX.Essentials.Patches;
-using EditorEX.Essentials.Patches.Movement;
+using EditorEX.Essentials.Patches.Preview;
 using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.ViewMode;
 using EditorEX.Heck.Patches;
@@ -21,7 +21,6 @@ namespace EditorEX.Essentials.Installers
     {
         public override void InstallBindings()
         {
-            Plugin.Log.Info("Installing EditorEssentialsSceneInstaller");
             // Clean this up!!!
             Container.Bind<VersionContext>().FromInstance(new(DeserializationPatch.beatmapVersion)).AsSingle();
 
@@ -31,7 +30,7 @@ namespace EditorEX.Essentials.Installers
             var objectsView = Resources.FindObjectsOfTypeAll<BeatmapObjectsView>().FirstOrDefault();
             Container.Bind<BeatmapObjectsView>().FromInstance(objectsView).AsSingle();
 
-            Container.BindInterfacesAndSelfTo<ArcMaterialPreview>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ArcPreview>().AsSingle().NonLazy();
 
             Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Normal" }, typeof(EditorNoteBasicMovement)));
             Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Preview" }, typeof(EditorNoteGameMovement)));
