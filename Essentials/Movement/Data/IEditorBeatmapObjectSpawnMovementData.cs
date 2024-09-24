@@ -7,7 +7,9 @@ namespace BetterEditor.Essentials.Movement.Data
 	{
 		void Init(int noteLinesCount, float startNoteJumpMovementSpeed, float startBpm, BeatmapObjectSpawnMovementData.NoteJumpValueType noteJumpValueType, float noteJumpValue, IJumpOffsetYProvider jumpOffsetYProvider, Vector3 rightVec, Vector3 forwardVec);
 
-		BeatmapObjectSpawnMovementData.ObstacleSpawnData GetObstacleSpawnData(ObstacleEditorData obstacleData);
+        float noteJumpMovementSpeed { get; }
+
+        BeatmapObjectSpawnMovementData.ObstacleSpawnData GetObstacleSpawnData(ObstacleEditorData obstacleData);
 
 		BeatmapObjectSpawnMovementData.NoteSpawnData GetJumpingNoteSpawnData(NoteEditorData noteData);
 

@@ -27,7 +27,6 @@ namespace BetterEditor.Chroma.Patches.Events
 			ref float ____rotationSpeed,
 			Vector3 ____rotationVector)
 		{
-			Plugin.Log.Info($"holy shit {CustomDataRepository.GetBasicEventConversion(basicBeatmapEventData) == null}");
 			if (!_deserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(basicBeatmapEventData), out EditorChromaEventData? chromaData))
 			{
 				return true;

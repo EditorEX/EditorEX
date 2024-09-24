@@ -34,6 +34,7 @@ namespace BetterEditor.Essentials.Patches.Movement
 			__instance._arcViewPrefab.gameObject.AddComponent<EditorArcBasicMovement>();
 			__instance._arcViewPrefab.gameObject.AddComponent<EditorArcGameMovement>();
 			__instance._arcViewPrefab.gameObject.AddComponent<EditorArcController>();
+			__instance._arcViewPrefab.gameObject.AddComponent<EditorSliderIntensityEffect>();
 		}
 	}
 }

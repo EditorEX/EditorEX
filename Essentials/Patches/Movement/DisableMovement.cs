@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace BetterEditor.Essentials.Patches.Movement
 {
+	//TODO: Make these safer lol.
 	[HarmonyPatch]
 	public static class DisableMovement
 	{
@@ -24,11 +25,15 @@ namespace BetterEditor.Essentials.Patches.Movement
 			return result;
 		}
 
-		[HarmonyPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.UpdateObjects))]
+		[HarmonyPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.UpdateObjects))]	
 		[HarmonyTranspiler]
 		public static IEnumerable<CodeInstruction> TranspilerArc(IEnumerable<CodeInstruction> instructions)
 		{
-			var result = new CodeMatcher(instructions, null).Advance(11).RemoveInstructions(17).InstructionEnumeration();
+			var result = new CodeMatcher(instructions, null).Advance(12).RemoveInstructions(16).InstructionEnumeration();
+			foreach (var instruction in result)
+			{
+				Plugin.Log.Info(instruction.ToString());
+			}
 			return result;
 		}
 
@@ -37,10 +42,6 @@ namespace BetterEditor.Essentials.Patches.Movement
 		public static IEnumerable<CodeInstruction> TranspilerObstacle(IEnumerable<CodeInstruction> instructions)
 		{
 			var result = new CodeMatcher(instructions, null).Advance(9).RemoveInstructions(19).InstructionEnumeration();
-			foreach (var instruction in result)
-			{
-				Plugin.Log.Info(instruction.ToString());
-			}
 			return result;
 		}
 	}
