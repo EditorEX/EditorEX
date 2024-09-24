@@ -17,6 +17,7 @@ namespace EditorEX.Essentials.Patches.Movement
         {
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteBasicMovement>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteGameMovement>();
+            __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteVisuals>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteJump>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteFloorMovement>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteController>();

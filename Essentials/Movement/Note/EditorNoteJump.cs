@@ -14,27 +14,31 @@ namespace EditorEX.Essentials.Movement.Note
 {
     public class EditorNoteJump : MonoBehaviour
     {
-        public event Action noteJumpDidFinishEvent;
-
-        public event Action noteJumpDidPassMissedMarkerEvent;
-
-        public event Action<EditorNoteJump> noteJumpDidPassThreeQuartersEvent;
-
-        public event Action noteJumpDidPassHalfEvent;
-
-        public event Action<float> noteJumpDidUpdateProgressEvent;
-
         public float distanceToPlayer => Mathf.Abs(_localPosition.z - (_inverseWorldRotation * _playerTransforms.headPseudoLocalPos).z);
-
         public Vector3 beatPos => (_endPos + _startPos) * 0.5f;
-
         public float jumpDuration => _jumpDuration;
-
         public Vector3 moveVec => _moveVec;
-
         public Vector3 localPosition => _localPosition;
 
-        [Inject(Id = "NoodleExtensions")] private EditorDeserializedData _editorDeserializedData;
+        public event Action noteJumpDidFinishEvent;
+
+        private PlayerTransforms _playerTransforms;
+        private IAudioTimeSource _audioTimeSyncController;
+        private AnimationHelper _animationHelper;
+        private EditorDeserializedData _editorDeserializedData;
+
+        [Inject]
+        public void Construct(
+            PlayerTransforms playerTransforms,
+            IAudioTimeSource audioTimeSyncController,
+            AnimationHelper animationHelper,
+            [Inject(Id = NoodleController.ID)]EditorDeserializedData editorDeserializedData)
+        {
+            _playerTransforms = playerTransforms;
+            _audioTimeSyncController = audioTimeSyncController;
+            _animationHelper = animationHelper;
+            _editorDeserializedData = editorDeserializedData;
+        }
 
         public void Init(NoteEditorData editorData, float beatTime, float worldRotation, Vector3 startPos, Vector3 endPos, float jumpDuration, float gravity, float flipYSide, float endRotation)
         {
@@ -149,17 +153,14 @@ namespace EditorEX.Essentials.Movement.Note
             if (num2 >= 0.5f && !_halfJumpMarkReported)
             {
                 _halfJumpMarkReported = true;
-                noteJumpDidPassHalfEvent?.Invoke();
             }
             if (num2 >= 0.75f && !_threeQuartersMarkReported)
             {
                 _threeQuartersMarkReported = true;
-                noteJumpDidPassThreeQuartersEvent?.Invoke(this);
             }
             if (songTime >= _missedTime && !_missedMarkReported)
             {
                 _missedMarkReported = true;
-                noteJumpDidPassMissedMarkerEvent?.Invoke();
             }
             if (_threeQuartersMarkReported && (!_definitePosition || !hasNoodle))
             {
@@ -167,18 +168,12 @@ namespace EditorEX.Essentials.Movement.Note
                 num4 = num4 * num4 * num4;
                 _localPosition.z -= Mathf.LerpUnclamped(0f, _endDistanceOffset, num4);
             }
-            if (num2 >= 1f)
+            if (num2 >= 1f && !_missedMarkReported)
             {
-                if (!_missedMarkReported)
-                {
-                    _missedMarkReported = true;
-                    noteJumpDidPassMissedMarkerEvent?.Invoke();
-                }
-                noteJumpDidFinishEvent?.Invoke();
+                _missedMarkReported = true;
             }
             Vector3 vector3 = _worldRotation * _localPosition;
             transform.localPosition = vector3;
-            noteJumpDidUpdateProgressEvent?.Invoke(num);
             return vector3;
         }
 
@@ -195,18 +190,6 @@ namespace EditorEX.Essentials.Movement.Note
         private float _yAvoidanceDown = 0.15f;
 
         private float _endDistanceOffset = 500f;
-
-        [Inject]
-        private readonly PlayerTransforms _playerTransforms;
-
-        [Inject]
-        private readonly PlayerSpaceConvertor _playerSpaceConvertor;
-
-        [Inject]
-        private readonly IAudioTimeSource _audioTimeSyncController;
-
-        [Inject]
-        private readonly AnimationHelper _animationHelper;
 
         internal Vector3 _startPos;
 

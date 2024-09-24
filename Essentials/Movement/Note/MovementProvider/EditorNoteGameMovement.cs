@@ -16,45 +16,9 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 {
     public class EditorNoteGameMovement : MonoBehaviour, IObjectMovement
     {
-        public event Action didInitEvent;
-
-        public event Action noteDidStartJumpEvent;
-
-        public event Action noteDidFinishJumpEvent;
-
-        public event Action noteDidPassMissedMarkerEvent;
-
-        public event Action noteDidPassHalfJumpEvent;
-
-        public event Action<EditorNoteGameMovement> noteDidPassJumpThreeQuartersEvent;
-
-        public event Action noteDidMoveInJumpPhaseEvent;
+        // Properties
 
         public MovementPhase movementPhase { get; private set; }
-
-        public Vector3 position => _position;
-
-        public Vector3 prevPosition => _prevPosition;
-
-        public Vector3 localPosition => _localPosition;
-
-        public Vector3 prevLocalPosition => _prevLocalPosition;
-
-        public Quaternion worldRotation => _floorMovement.worldRotation;
-
-        public Quaternion inverseWorldRotation => _floorMovement.inverseWorldRotation;
-
-        public Vector3 moveEndPos => _floorMovement.endPos;
-
-        public float moveStartTime => _floorMovement.startTime;
-
-        public float moveDuration => _floorMovement.moveDuration;
-
-        public Vector3 beatPos => _jump.beatPos;
-
-        public float jumpDuration => _jump.jumpDuration;
-
-        public Vector3 jumpMoveVec => _jump.moveVec;
 
         public float distanceToPlayer
         {
@@ -66,6 +30,34 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
                 }
                 return _jump.distanceToPlayer;
             }
+        }
+
+        // Movement related fields
+
+        private EditorNoteFloorMovement _floorMovement;
+        private EditorNoteJump _jump;
+        private IEditorBeatmapObjectSpawnMovementData _editorBeatmapObjectSpawnMovementData;
+
+        private float _zOffset = 0.25f;
+        private Vector3 _position;
+        private Vector3 _prevPosition;
+        private Vector3 _localPosition;
+        private Vector3 _prevLocalPosition;
+
+        // Injected fields
+
+        private EditorDeserializedData _editorDeserializedData;
+        private AnimationHelper _animationHelper;
+        private IReadonlyBeatmapState _state;
+
+        [Inject]
+        private void Construct([Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+            AnimationHelper animationHelper,
+            IReadonlyBeatmapState state)
+        {
+            _editorDeserializedData = editorDeserializedData;
+            _animationHelper = animationHelper;
+            _state = state;
         }
 
         public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData)
@@ -98,8 +90,6 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             _jump.Init(editorData as NoteEditorData, beatTime, worldRotation, moveEndPos, jumpEndPos, jumpDuration, jumpGravity, flipYSide, endRotation);
 
             movementPhase = MovementPhase.MovingOnTheFloor;
-
-            didInitEvent?.Invoke();
 
             //NoteController.Init postfix for noodle(lol)
 
@@ -149,7 +139,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
                 noodleData.InternalStartPos = moveStartPos;
                 noodleData.InternalMidPos = moveEndPos;
                 noodleData.InternalEndPos = jumpEndPos;
-                noodleData.InternalWorldRotation = this.worldRotation;
+                noodleData.InternalWorldRotation = _floorMovement.worldRotation;
                 noodleData.InternalLocalRotation = localRotation;
 
                 float num2 = jumpDuration * 0.5f;
@@ -167,9 +157,6 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             movementPhase = MovementPhase.None;
             _floorMovement.floorMovementDidFinishEvent += HandleFloorMovementDidFinish;
             _jump.noteJumpDidFinishEvent += HandleNoteJumpDidFinish;
-            _jump.noteJumpDidPassMissedMarkerEvent += HandleNoteJumpDidPassMissedMark;
-            _jump.noteJumpDidPassThreeQuartersEvent += HandleNoteJumpDidPassThreeQuarters;
-            _jump.noteJumpDidPassHalfEvent += HandleNoteJumpNoteJumpDidPassHalf;
         }
 
         protected void OnDestroy()
@@ -181,9 +168,6 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             if (_jump)
             {
                 _jump.noteJumpDidFinishEvent -= HandleNoteJumpDidFinish;
-                _jump.noteJumpDidPassMissedMarkerEvent -= HandleNoteJumpDidPassMissedMark;
-                _jump.noteJumpDidPassThreeQuartersEvent -= HandleNoteJumpDidPassThreeQuarters;
-                _jump.noteJumpDidPassHalfEvent -= HandleNoteJumpNoteJumpDidPassHalf;
             }
         }
 
@@ -192,33 +176,11 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             movementPhase = MovementPhase.Jumping;
             _position = _jump.ManualUpdate();
             _localPosition = _jump.localPosition;
-            noteDidStartJumpEvent?.Invoke();
         }
 
         private void HandleNoteJumpDidFinish()
         {
             movementPhase = MovementPhase.None;
-            noteDidFinishJumpEvent?.Invoke();
-        }
-
-        private void HandleNoteJumpDidPassMissedMark()
-        {
-            noteDidPassMissedMarkerEvent?.Invoke();
-        }
-
-        private void HandleNoteJumpDidPassThreeQuarters(EditorNoteJump noteJump)
-        {
-            noteDidPassJumpThreeQuartersEvent?.Invoke(this);
-        }
-
-        private void HandleNoteJumpNoteJumpDidPassHalf()
-        {
-            Action action = noteDidPassHalfJumpEvent;
-            if (action == null)
-            {
-                return;
-            }
-            action();
         }
 
         public void Setup(BaseEditorData editorData)
@@ -317,39 +279,6 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             }
             _position = _jump.ManualUpdate();
             _localPosition = _jump.localPosition;
-            noteDidMoveInJumpPhaseEvent?.Invoke();
-        }
-
-        private EditorNoteFloorMovement _floorMovement;
-
-        private EditorNoteJump _jump;
-
-        private float _zOffset = 0.25f;
-
-        private Vector3 _position;
-
-        private Vector3 _prevPosition;
-
-        private Vector3 _localPosition;
-
-        private Vector3 _prevLocalPosition;
-
-        private IEditorBeatmapObjectSpawnMovementData _editorBeatmapObjectSpawnMovementData;
-
-        private EditorDeserializedData _editorDeserializedData;
-
-        private AnimationHelper _animationHelper;
-
-        private IReadonlyBeatmapState _state;
-
-        [Inject]
-        private void Construct([Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
-            AnimationHelper animationHelper,
-            IReadonlyBeatmapState state)
-        {
-            _editorDeserializedData = editorDeserializedData;
-            _animationHelper = animationHelper;
-            _state = state;
         }
 
         public enum MovementPhase

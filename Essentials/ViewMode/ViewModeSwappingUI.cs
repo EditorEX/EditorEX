@@ -25,7 +25,7 @@ namespace EditorEX.Essentials.ViewMode
         {
             if (Input.GetKey(KeyCode.LeftControl))
             {
-                if (Input.GetKeyDown(KeyCode.Alpha1))
+                if (Input.GetKeyDown(KeyCode.Alpha1) && _activeViewMode.Mode != "Normal")
                 {
                     _activeViewMode.Mode = "Normal";
                     _activeViewMode.ModeChanged();
@@ -34,7 +34,7 @@ namespace EditorEX.Essentials.ViewMode
                     _beatmapObjectsView.gameObject.SetActive(false);
                     _beatmapObjectsView.gameObject.SetActive(true);
                 }
-                if (Input.GetKeyDown(KeyCode.Alpha2))
+                if (Input.GetKeyDown(KeyCode.Alpha2) && _activeViewMode.Mode != "Preview")
                 {
                     _activeViewMode.Mode = "Preview";
                     _activeViewMode.ModeChanged();

@@ -260,6 +260,7 @@
     <Compile Include="Essentials\Movement\Arc\EditorArcController.cs" />
     <Compile Include="Essentials\Movement\Arc\MovementProvider\EditorArcBasicMovement.cs" />
     <Compile Include="Essentials\Movement\Arc\MovementProvider\EditorArcGameMovement.cs" />
+    <Compile Include="Essentials\Movement\Note\EditorNoteVisuals.cs" />
     <Compile Include="Essentials\Movement\Obstacle\EditorObstacleController.cs" />
     <Compile Include="Essentials\Movement\Obstacle\MovementProvider\EditorObstacleBasicMovement.cs" />
     <Compile Include="Essentials\Movement\Obstacle\MovementProvider\EditorObstacleGameMovement.cs" />

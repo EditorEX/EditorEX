@@ -38,5 +38,13 @@ namespace EditorEX.Essentials.Patches.Preview
         {
             return _activeViewMode.Mode != "Preview";
         }
+
+        [AffinityPatch(typeof(ArcHandleView), nameof(ArcView.Init))]
+        [AffinityPrefix]
+        private void DisableHandles(ref bool showHandle, ref bool showMoveHandle)
+        {
+            showHandle &= _activeViewMode.Mode != "Preview";
+            showMoveHandle &= _activeViewMode.Mode != "Preview";
+        }
     }
 }
