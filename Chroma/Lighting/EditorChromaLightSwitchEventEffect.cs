@@ -208,6 +208,10 @@ namespace EditorEX.Chroma.Lighting
                     previousEvent = CustomDataRepository.GetBasicEventConversion(tween.PreviousEvent);
                 }
 
+                if (previousEvent == null)
+                {
+                    continue;
+                }
                 int previousValue = previousEvent.value;
                 float previousFloatValue = previousEvent.floatValue;
 

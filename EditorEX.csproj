@@ -164,6 +164,16 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Unity.Addressables">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.Addressables.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Unity.ResourceManager">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.ResourceManager.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.TextMeshPro.dll</HintPath>
       <Private>False</Private>
@@ -219,6 +229,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analyzer\Installers\EditorAnalyzerSceneInstaller.cs" />
+    <Compile Include="Analyzer\Swings\AnalyzerSaberManager.cs" />
+    <Compile Include="Analyzer\Swings\SwingBaker\BakedSwingTrack.cs" />
+    <Compile Include="Analyzer\Swings\LevelUtils.cs" />
+    <Compile Include="Analyzer\Swings\Parity Behaviours\DefaultParityCheck.cs" />
+    <Compile Include="Analyzer\Swings\SliceMap.cs" />
+    <Compile Include="Analyzer\Swings\SwingBaker\Frame.cs" />
+    <Compile Include="Analyzer\Swings\SwingBaker\SwingTrackGenerator.cs" />
     <Compile Include="Chroma\Colorizer\EditorLightColorizer.cs" />
     <Compile Include="Chroma\Colorizer\EditorParticleColorizer.cs" />
     <Compile Include="Chroma\Constants.cs" />

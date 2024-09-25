@@ -208,7 +208,7 @@ namespace EditorEX.Essentials.Movement.Data
         private float _verticalObstaclePosY = 0.1f;
         internal float _obstacleTopPosY = 3.1f;
         private float _spawnAheadTime;
-        private float _jumpDuration;
+        internal float _jumpDuration;
         internal float _noteJumpStartBeatOffset;
         private float _noteJumpMovementSpeed;
         private float _jumpDistance;

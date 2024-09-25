@@ -19,7 +19,7 @@ namespace EditorEX.Essentials.Patches.Preview
         private GameObject hover;
         private GameObject selection;
         private BeatlineContainer[] beatlines;
-        private BeatmapObjectBeatLine currentLine;
+        private Transform currentLine;
         private BeatNumberContainer beatNumbers;
         private GameObject lanes;
 
@@ -36,8 +36,8 @@ namespace EditorEX.Essentials.Patches.Preview
             grid = __instance.transform.Find("BeatmapObjectSelectionGridView").gameObject;
             hover = __instance.transform.Find("BeatmapObjectGridHoverView").gameObject;
             selection = __instance.transform.Find("BeatmapObjectSelectionView").gameObject;
-            currentLine = __instance.gameObject.GetComponentInChildren<BeatmapObjectBeatLine>();
             var container = __instance.GetComponentInChildren<BeatGridContainer>();
+            currentLine = container._currentBeatLineTransform;
             beatlines = new BeatlineContainer[] { container._mainBeatlineContainer, container._normalBeatlineContainer };
             beatNumbers = container._beatNumberContainer;
             lanes = __instance.transform.Find("BeatGridContainer").Find("GridLanes").gameObject;

@@ -1,5 +1,6 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
+using EditorEX.Analyzer.Installers;
 using EditorEX.Chroma.Deserializer;
 using EditorEX.Chroma.Installers;
 using EditorEX.Essentials.Installers;
@@ -37,10 +38,11 @@ namespace EditorEX
             zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorEssentialsSceneInstaller, BeatmapLevelEditorSceneSetup>();
-            //zenjector.Install<EditorChromaSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            zenjector.Install<EditorChromaSceneInstaller, BeatmapLevelEditorSceneSetup>();
 
-            //zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
+            zenjector.Install<EditorAnalyzerSceneInstaller, BeatmapLevelEditorInstaller>();
 
+            zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
 
             EditorDeserializerManager.Register<EditorNoodleCustomDataManager>("NoodleExtensions").Enabled = true;
             EditorDeserializerManager.Register<EditorHeckCustomDataManager>("Heck").Enabled = true;
