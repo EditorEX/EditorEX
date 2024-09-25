@@ -21,7 +21,7 @@ namespace EditorEX.CustomJSONData.Patches
 
         private static CustomBeatmapData CreateBeatmapData(int numberOfLines)
         {
-            var beatmapData = new CustomBeatmapData(numberOfLines, false, null, null, null);
+            var beatmapData = new CustomBeatmapData(numberOfLines, null, null, null, null);
             CustomDataRepository.SetCustomLivePreviewBeatmapData(beatmapData);
             return beatmapData;
         }

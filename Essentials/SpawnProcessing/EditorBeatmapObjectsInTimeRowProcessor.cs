@@ -65,9 +65,7 @@ namespace EditorEX.Essentials.SpawnProcessing
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            BeatmapLevelDataModel beatmapLevelDataModel = PopulateBeatmap._beatmapLevelDataModel;
-
-            var objects = beatmapLevelDataModel.allBeatmapObjects.Cast<BaseEditorData>();
+            var objects = PopulateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.Cast<BaseEditorData>();
             foreach (var obj in objects)
             {
                 if (obj is NoteEditorData noteData)
@@ -189,7 +187,7 @@ namespace EditorEX.Essentials.SpawnProcessing
             }
 
             float offset = 4 / 2f;
-            bool v2 = CustomDataRepository.GetCustomLivePreviewBeatmapData().version2_6_0AndEarlier;
+            bool v2 = CustomDataRepository.GetCustomLivePreviewBeatmapData().version.Major == 2;
             IReadOnlyList<BaseBeatmapObjectEditorData> containerItems = allObjectsTimeSlice.items.Where(x => x is BaseBeatmapObjectEditorData).Select(x => x as BaseBeatmapObjectEditorData).ToList();
             IEnumerable<NoteEditorData> notesInTimeRow = containerItems.OfType<NoteEditorData>().ToArray();
             Dictionary<float, List<NoteEditorData>> notesInColumns = new();
@@ -395,7 +393,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                 return;
             }
 
-            bool v2 = CustomDataRepository.GetCustomLivePreviewBeatmapData().version2_6_0AndEarlier;
+            bool v2 = CustomDataRepository.GetCustomLivePreviewBeatmapData().version.Major == 2;
 
             float[] lineIndexes = new float[2];
             float[] lineLayers = new float[2];

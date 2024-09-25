@@ -44,7 +44,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             Config config)
         {
             CustomBeatmapData beatmapData = (CustomBeatmapData)readonlyBeatmap;
-            _v2 = beatmapData.version2_6_0AndEarlier;
+            _v2 = beatmapData.version.Major == 2;
             _environmentMaterialsManager = environmentMaterialsManager;
             _beatmapTracks = beatmapTracks;
             _materialColorAnimator = materialColorAnimator;
@@ -97,7 +97,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
 
         internal MaterialInfo CreateMaterialInfo(CustomData customData)
         {
-            Color? color = CustomDataManager.GetColorFromData(customData, _v2);
+            Color? color = CustomDataDeserializer.GetColorFromData(customData, _v2);
             ShaderType shaderType = customData.GetStringToEnumRequired<ShaderType>(_v2 ? V2_SHADER_PRESET : SHADER_PRESET);
             string[]? shaderKeywords = customData.Get<List<object>?>(_v2 ? V2_SHADER_KEYWORDS : SHADER_KEYWORDS)?.Cast<string>().ToArray();
             List<Track>? track = customData.GetNullableTrackArray(_beatmapTracks, _v2)?.ToList();

@@ -1,4 +1,4 @@
-﻿using EditorEX.Heck.Deserializer;
+﻿using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.Events;
 using HarmonyLib;
 using Heck;

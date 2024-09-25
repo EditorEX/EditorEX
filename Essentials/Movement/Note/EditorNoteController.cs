@@ -1,13 +1,6 @@
-﻿using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
-using EditorEX.Essentials.Movement.Note.MovementProvider;
-using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.ViewMode;
-using EditorEX.Heck.Deserializer;
-using EditorEX.NoodleExtensions.ObjectData;
-using IPA.Utilities;
-using NoodleExtensions.Animation;
 using System;
 using System.Linq;
 using UnityEngine;

@@ -1,17 +1,12 @@
-﻿using EditorEX.CustomJSONData;
-using EditorEX.Heck.Deserializer;
-using EditorEX.Heck.EventData;
-using CustomJSONData.CustomBeatmap;
+﻿using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData;
+using EditorEX.Heck.Deserialize;
+using EditorEX.NoodleExtensions.Animation;
 using Heck;
-using Heck.Animation;
-using Heck.Animation.Events;
 using Heck.Animation.Transform;
 using Heck.Event;
-using JetBrains.Annotations;
-using NoodleExtensions.Animation;
 using NoodleExtensions;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -23,7 +18,7 @@ namespace EditorEX.Heck.Events
     {
         internal EditorAssignTrackParent(IReadonlyBeatmapData beatmapData, [Inject(Id = "NoodleExtensions")] EditorDeserializedData deserializedData, [Inject(Id = "leftHanded")] bool leftHanded, TransformControllerFactory transformControllerFactory)
         {
-            _v2 = ((CustomBeatmapData)beatmapData).version2_6_0AndEarlier;
+            _version = ((CustomBeatmapData)beatmapData).version;
             _deserializedData = deserializedData;
             _leftHanded = leftHanded;
             _transformControllerFactory = transformControllerFactory;
@@ -37,19 +32,19 @@ namespace EditorEX.Heck.Events
                 return;
             }
             GameObject parentGameObject = new GameObject("ParentObject");
-            ParentObject instance = parentGameObject.AddComponent<ParentObject>();
+            EditorParentObject instance = parentGameObject.AddComponent<EditorParentObject>();
             instance.Init(noodleData, _leftHanded, _parentObjects);
-            if (_v2)
+            if (_version.Major == 2)
             {
-                instance.ApplyV2Transform(noodleData);
+                //instance.ApplyV2Transform(noodleData);
                 return;
             }
-            instance.enabled = false;
-            noodleData.TransformData.Apply(instance.transform, _leftHanded);
-            _transformControllerFactory.Create(parentGameObject, noodleData.ParentTrack, false);
+            //instance.enabled = false;
+            //noodleData.TransformData.Apply(instance.transform, _leftHanded);
+            //_transformControllerFactory.Create(parentGameObject, noodleData.ParentTrack, false);
         }
 
-        private readonly bool _v2;
+        private readonly Version _version;
 
         private readonly EditorDeserializedData _deserializedData;
 
@@ -57,6 +52,6 @@ namespace EditorEX.Heck.Events
 
         private readonly TransformControllerFactory _transformControllerFactory;
 
-        private readonly HashSet<ParentObject> _parentObjects = new HashSet<ParentObject>();
+        private readonly HashSet<EditorParentObject> _parentObjects = new HashSet<EditorParentObject>();
     }
 }

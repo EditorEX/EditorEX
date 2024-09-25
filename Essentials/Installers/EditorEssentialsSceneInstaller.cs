@@ -22,7 +22,7 @@ namespace EditorEX.Essentials.Installers
         public override void InstallBindings()
         {
             // Clean this up!!!
-            Container.Bind<VersionContext>().FromInstance(new(DeserializationPatch.beatmapVersion)).AsSingle();
+            //Container.Bind<VersionContext>().FromInstance(new(DeserializationPatch.beatmapVersion)).AsSingle();
 
             Container.Bind<ActiveViewMode>().AsSingle();
 

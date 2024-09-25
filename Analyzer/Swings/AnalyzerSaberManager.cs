@@ -42,8 +42,8 @@ namespace EditorEX.Analyzer.Swings
         {
             Resources.FindObjectsOfTypeAll<CuttingManager>().FirstOrDefault().enabled = false;
 
-            var notes = PopulateBeatmap._beatmapLevelDataModel.allBeatmapObjects.OfType<NoteEditorData>().ToList();
-            var obstacles = PopulateBeatmap._beatmapLevelDataModel.allBeatmapObjects.OfType<ObstacleEditorData>().ToList();
+            var notes = PopulateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.OfType<NoteEditorData>().ToList();
+            var obstacles = PopulateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.OfType<ObstacleEditorData>().ToList();
 
             var sliceMapRight = new SliceMap(notes, obstacles, true);
             var sliceMapLeft = new SliceMap(notes, obstacles, false);
@@ -77,8 +77,8 @@ namespace EditorEX.Analyzer.Swings
 
             _prevBeat = _beatTime;
 
-            int leftFrame = (int)(PopulateBeatmap._beatmapDataModel.bpmData.BeatToSeconds(_beatTime) * 24f);
-            int rightFrame = (int)(PopulateBeatmap._beatmapDataModel.bpmData.BeatToSeconds(_beatTime) * 24f);
+            int leftFrame = (int)(PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(_beatTime) * 24f);
+            int rightFrame = (int)(PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(_beatTime) * 24f);
 
             if (_swingTrackLeft.frames.Count > leftFrame)
             {

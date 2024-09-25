@@ -1,12 +1,11 @@
 ﻿using BeatmapEditor3D.DataModels;
+using Chroma;
+using Chroma.Extras;
+using Chroma.Lighting;
 using EditorEX.Chroma.Colorizer;
 using EditorEX.Chroma.Events;
 using EditorEX.CustomJSONData;
-using EditorEX.Heck.Deserializer;
-using Chroma;
-using Chroma.Colorizer;
-using Chroma.Extras;
-using Chroma.Lighting;
+using EditorEX.Heck.Deserialize;
 using Heck.Animation;
 using JetBrains.Annotations;
 using SiraUtil.Logging;

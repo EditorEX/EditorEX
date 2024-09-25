@@ -8,16 +8,33 @@ using Heck;
 using Heck.Animation;
 using System;
 using System.Collections.Generic;
+using Heck.Deserialize;
 
-namespace EditorEX.Heck.Deserializer
+namespace EditorEX.Heck.Deserialize
 {
-    internal class EditorHeckCustomDataManager
+    internal class EditorHeckCustomDataDeserializer : IEditorObjectsDeserializer, IEditorCustomEventsDeserializer
     {
-        [ObjectsDeserializer]
-        private static Dictionary<BaseEditorData, IObjectCustomData> DeserializeObjects(IBeatmapLevelDataModel beatmapLevelDataModel, Dictionary<string, Track> beatmapTracks, bool v2)
+        private readonly BeatmapObjectsDataModel _beatmapObjectsDataModel;
+        private readonly Dictionary<string, Track> _tracks;
+        private readonly Dictionary<string, List<object>> _pointDefinitions;
+        private bool _v2;
+
+        private EditorHeckCustomDataDeserializer(
+            BeatmapObjectsDataModel beatmapObjectsDataModel, 
+            Dictionary<string, Track> beatmapTracks, 
+            Dictionary<string, List<object>> pointDefinitions, 
+            bool v2)
+        {
+            _beatmapObjectsDataModel = beatmapObjectsDataModel;
+            _tracks = beatmapTracks;
+            _pointDefinitions = pointDefinitions;
+            _v2 = v2;
+        }
+
+        public Dictionary<BaseEditorData, IObjectCustomData> DeserializeObjects()
         {
             Dictionary<BaseEditorData, IObjectCustomData> dictionary = new Dictionary<BaseEditorData, IObjectCustomData>();
-            foreach (BaseEditorData baseEditorData in (beatmapLevelDataModel as BeatmapLevelDataModel).allBeatmapObjects)
+            foreach (BaseEditorData baseEditorData in _beatmapObjectsDataModel.allBeatmapObjects)
             {
                 CustomData customData = CustomDataRepository.GetCustomData(baseEditorData);
                 if (customData == null)
@@ -26,14 +43,13 @@ namespace EditorEX.Heck.Deserializer
                 }
                 else
                 {
-                    dictionary.Add(baseEditorData, new EditorHeckObjectData(customData, beatmapTracks, v2));
+                    dictionary.Add(baseEditorData, new EditorHeckObjectData(customData, _tracks, _v2));
                 }
             }
             return dictionary;
         }
 
-        [CustomEventsDeserializer]
-        private static Dictionary<CustomEventEditorData, ICustomEventCustomData> DeserializeCustomEvents(IBeatmapLevelDataModel beatmapLevelDataModel, Dictionary<string, Track> beatmapTracks, Dictionary<string, List<object>> pointDefinitions)
+        public Dictionary<CustomEventEditorData, ICustomEventCustomData> DeserializeCustomEvents()
         {
             Dictionary<CustomEventEditorData, ICustomEventCustomData> dictionary = new Dictionary<CustomEventEditorData, ICustomEventCustomData>();
             foreach (CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents())
@@ -54,7 +70,7 @@ namespace EditorEX.Heck.Deserializer
                     }
                     else
                     {
-                        dictionary.Add(customEventData, new EditorCoroutineEventData(customEventData, pointDefinitions, beatmapTracks, v2));
+                        dictionary.Add(customEventData, new EditorCoroutineEventData(customEventData, _pointDefinitions, _tracks, _v2));
                     }
                 }
                 catch (Exception e)

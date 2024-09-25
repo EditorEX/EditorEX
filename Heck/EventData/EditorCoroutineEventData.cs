@@ -6,6 +6,7 @@ using Heck.Animation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Heck.Deserialize;
 
 namespace EditorEX.Heck.EventData
 {

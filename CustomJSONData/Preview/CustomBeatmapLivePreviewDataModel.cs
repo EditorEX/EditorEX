@@ -13,7 +13,7 @@ namespace EditorEX.CustomJSONData.Preview
 
         public void AddLivePreviewCustomEvent(CustomEventEditorData evt)
         {
-            CustomEventData customEventData = new CustomEventData(_timeConvertor.ConvertBeatToTime(evt.beat), evt.eventType, evt.customData);
+            CustomEventData customEventData = new CustomEventData(_timeConverter.ConvertBeatToTime(evt.beat), evt.eventType, evt.customData, null);
             CustomDataRepository.AddCustomEventConversion(evt, customEventData);
             _livePreviewCustomEvents[evt.id] = customEventData;
             (_livePreviewBeatmapData as CustomBeatmapData).InsertCustomEventData(customEventData);

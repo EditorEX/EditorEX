@@ -1,12 +1,10 @@
-﻿using NoodleExtensions.HarmonyPatches.Objects;
-using NoodleExtensions;
+﻿using BeatmapEditor3D.DataModels;
+using EditorEX.Heck.Deserialize;
+using EditorEX.NoodleExtensions.ObjectData;
+using NoodleExtensions.Animation;
 using System;
 using UnityEngine;
 using Zenject;
-using BeatmapEditor3D.DataModels;
-using EditorEX.NoodleExtensions.ObjectData;
-using EditorEX.Heck.Deserializer;
-using NoodleExtensions.Animation;
 
 namespace EditorEX.Essentials.Movement.Note
 {

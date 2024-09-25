@@ -1,6 +1,7 @@
 ﻿using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
+using Heck.Deserialize;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace EditorEX.Heck.ObjectData
             try
             {
                 IEnumerable<Track> nullableTrackArray = customData.GetNullableTrackArray(beatmapTracks, v2);
-                Track = ((nullableTrackArray != null) ? nullableTrackArray.ToList<Track>() : null);
+                Track = nullableTrackArray?.ToList();
             }
             catch (Exception e)
             {

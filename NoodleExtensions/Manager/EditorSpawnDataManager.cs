@@ -1,19 +1,12 @@
-﻿using Heck;
-using JetBrains.Annotations;
-using NoodleExtensions.HarmonyPatches.SmallFixes;
-using NoodleExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using Zenject;
-using EditorEX.Heck.Deserializer;
-using BeatmapEditor3D.DataModels;
-using EditorEX.NoodleExtensions.ObjectData;
+﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Patches;
+using EditorEX.Heck.Deserialize;
+using EditorEX.NoodleExtensions.ObjectData;
+using JetBrains.Annotations;
+using NoodleExtensions;
+using UnityEngine;
+using Zenject;
 
 namespace EditorEX.NoodleExtensions.Manager
 {
@@ -264,7 +257,7 @@ namespace EditorEX.NoodleExtensions.Manager
             //	return _movementData.jumpDuration;
             //}
 
-            float oneBeatDuration = 60f / PopulateBeatmap._beatmapDataModel.beatsPerMinute;
+            float oneBeatDuration = 60f / PopulateBeatmap._beatmapLevelDataModel.beatsPerMinute;
             float halfJumpDurationInBeats = CoreMathUtils.CalculateHalfJumpDurationInBeats(
                 _movementData._startHalfJumpDurationInBeats,
                 _movementData._maxHalfJumpDistance,

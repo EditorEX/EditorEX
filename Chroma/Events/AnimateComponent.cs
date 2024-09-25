@@ -1,8 +1,8 @@
-﻿using EditorEX.CustomJSONData;
-using EditorEX.Heck.Deserializer;
-using Chroma;
+﻿using Chroma;
 using Chroma.EnvironmentEnhancement.Component;
 using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData;
+using EditorEX.Heck.Deserialize;
 using HarmonyLib;
 using Heck;
 using Heck.Animation;
@@ -14,8 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
-using static EditorEX.Chroma.Constants;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
+using static EditorEX.Chroma.Constants;
 
 namespace EditorEX.Chroma.Events
 {

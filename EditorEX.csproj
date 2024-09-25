@@ -92,6 +92,11 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="DataModels" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\DataModels.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="GameplayCore">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\GameplayCore.dll</HintPath>
       <Private>False</Private>
@@ -104,11 +109,6 @@
     </Reference>
     <Reference Include="HMRendering" Publicize="true">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMRendering.dll</HintPath>
-      <Private>False</Private>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
-    <Reference Include="MathUtils">
-      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\MathUtils.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -153,11 +153,6 @@
     <Reference Include="IPA.Loader">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="TrackDefinitions">
-      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\TrackDefinitions.dll</HintPath>
-      <Private>False</Private>
-      <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Tweening">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Tweening.dll</HintPath>
@@ -240,7 +235,7 @@
     <Compile Include="Chroma\Colorizer\EditorLightColorizer.cs" />
     <Compile Include="Chroma\Colorizer\EditorParticleColorizer.cs" />
     <Compile Include="Chroma\Constants.cs" />
-    <Compile Include="Chroma\Deserializer\EditorChromaCustomDataManager.cs" />
+    <Compile Include="Chroma\Deserializer\EditorChromaCustomDataDeserializer.cs" />
     <Compile Include="Chroma\EnvironmentEnhancement\Component\EditorDuplicateInitializer.cs" />
     <Compile Include="Chroma\EnvironmentEnhancement\Component\EditorComponentCustomizer.cs" />
     <Compile Include="Chroma\EnvironmentEnhancement\Component\EditorILightWithIdCustomizer.cs" />
@@ -264,8 +259,6 @@
     <Compile Include="Chroma\Patches\Events\EditorRingStepChromafier.cs" />
     <Compile Include="Chroma\Patches\InitializeLightIDTable.cs" />
     <Compile Include="Chroma\Patches\InjectCustomDataIntoLivePreview.cs" />
-    <Compile Include="CustomJSONData\Converters\BasicEventDataConverter.cs" />
-    <Compile Include="CustomJSONData\Converters\V3SaveDataConverter.cs" />
     <Compile Include="CustomJSONData\CustomDataRepository.cs" />
     <Compile Include="CustomJSONData\CustomEvents\CustomEventEditorData.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataModelsInstaller.cs" />
@@ -291,13 +284,10 @@
     <Compile Include="Essentials\VersionContext.cs" />
     <Compile Include="Essentials\ViewMode\ActiveViewMode.cs" />
     <Compile Include="Essentials\ViewMode\ViewModeSwappingUI.cs" />
+    <Compile Include="Heck\Constants.cs" />
+    <Compile Include="Heck\Deserialize\EditorDeserializerInterfaces.cs" />
     <Compile Include="Heck\Installers\EditorHeckModelsInstaller.cs" />
     <Compile Include="Heck\Installers\EditorHeckSceneInstaller.cs" />
-    <Compile Include="CustomJSONData\Patches\BeatmapLevelDataModelVersionedLoaderV2.cs" />
-    <Compile Include="CustomJSONData\Patches\BeatmapLevelDataModelVersionedLoaderV3.cs" />
-    <Compile Include="CustomJSONData\Patches\BeatmapProjectManagerV2Support.cs" />
-    <Compile Include="CustomJSONData\VersionedSaveData\Custom2_6_0AndEarlierBeatmapSaveDataVersioned.cs" />
-    <Compile Include="CustomJSONData\VersionedSaveData\CustomBeatmapSaveDataVersioned.cs" />
     <Compile Include="Essentials\Patches\Movement\DisableMovement.cs" />
     <Compile Include="Essentials\Patches\Movement\InitMovement.cs" />
     <Compile Include="Essentials\Patches\Movement\InstallMovement.cs" />
@@ -309,17 +299,15 @@
     <Compile Include="Heck\EventData\EditorInvokeEventData.cs" />
     <Compile Include="Heck\Events\EditorCoroutineEvent.cs" />
     <Compile Include="Heck\ObjectData\EditorHeckObjectData.cs" />
-    <Compile Include="Heck\Patches\DeserializationPatch.cs" />
     <Compile Include="Heck\Patches\EditorGameObjectTracker.cs" />
     <Compile Include="CustomJSONData\Patches\InjectCustomEvents.cs" />
     <Compile Include="CustomJSONData\Patches\PreviewCustomBeatmap.cs" />
     <Compile Include="CustomJSONData\Preview\CustomBeatmapLivePreviewDataModel.cs" />
-    <Compile Include="Heck\Constants.cs" />
-    <Compile Include="Heck\Deserializer\EditorHeckCustomDataManager.cs" />
-    <Compile Include="Heck\Deserializer\EditorDataDeserializer.cs" />
-    <Compile Include="Heck\Deserializer\EditorDeserializedData.cs" />
-    <Compile Include="Heck\Deserializer\EditorDeserializedDataContainer.cs" />
-    <Compile Include="Heck\Deserializer\EditorDeserializerManager.cs" />
+    <Compile Include="Heck\Deserialize\EditorHeckCustomDataDeserializer.cs" />
+    <Compile Include="Heck\Deserialize\EditorDataDeserializer.cs" />
+    <Compile Include="Heck\Deserialize\EditorDeserializedData.cs" />
+    <Compile Include="Heck\Deserialize\EditorDeserializedDataContainer.cs" />
+    <Compile Include="Heck\Deserialize\EditorDeserializerManager.cs" />
     <Compile Include="Essentials\Movement\Data\IEditorBeatmapObjectSpawnMovementData.cs" />
     <Compile Include="Essentials\Movement\Data\EditorBasicBeatmapObjectSpawnMovementData.cs" />
     <Compile Include="Essentials\Movement\Note\EditorNoteController.cs" />
@@ -327,7 +315,7 @@
     <Compile Include="Essentials\Movement\Note\EditorNoteJump.cs" />
     <Compile Include="Essentials\Movement\Note\MovementProvider\EditorNoteGameMovement.cs" />
     <Compile Include="NoodleExtensions\Animation\EditorParentObject.cs" />
-    <Compile Include="NoodleExtensions\Deserializer\EditorNoodleCustomDataManager.cs" />
+    <Compile Include="NoodleExtensions\Deserialize\EditorNoodleCustomDataDeserializer.cs" />
     <Compile Include="NoodleExtensions\Events\EditorAssignTrackParent.cs" />
     <Compile Include="NoodleExtensions\Installers\EditorNoodleSceneInstaller.cs" />
     <Compile Include="NoodleExtensions\Manager\EditorSpawnDataManager.cs" />
@@ -342,8 +330,6 @@
     <Compile Include="UI\EditorTagRegistrar.cs" />
     <Compile Include="UI\SideBar\SideBarUIView.cs" />
     <Compile Include="Util\BackingFieldUtil.cs" />
-    <Compile Include="Util\BeatmapLevelDataModelSaverV2.cs" />
-    <Compile Include="Util\BeatmapLevelDataModelSaverV3.cs" />
     <Compile Include="Util\CustomBeatmapDataExtensions.cs" />
     <Compile Include="Util\CustomDataExtensions.cs" />
     <Compile Include="Util\SpawnDataAssociationExtensions.cs" />
@@ -363,6 +349,7 @@
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Serialization\" />
     <Folder Include="UI\Installers\" />
     <Folder Include="UI\Tags\" />
   </ItemGroup>

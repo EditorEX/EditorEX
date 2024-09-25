@@ -1,7 +1,7 @@
-﻿using EditorEX.CustomJSONData;
-using EditorEX.Heck.Deserializer;
-using Chroma;
+﻿using Chroma;
 using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData;
+using EditorEX.Heck.Deserialize;
 using Heck;
 using Heck.Animation;
 using Heck.Event;

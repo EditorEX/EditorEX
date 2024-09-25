@@ -14,6 +14,7 @@ using UnityEngine;
 using static EditorEX.Chroma.Constants;
 using static EditorEX.Heck.Constants;
 using static Chroma.ChromaEventData;
+using Heck.Deserialize;
 
 namespace EditorEX.Chroma.Events
 {
@@ -26,7 +27,7 @@ namespace EditorEX.Chroma.Events
         {
             CustomData customData = beatmapEventData.GetCustomData();
 
-            Color? color = EditorChromaCustomDataManager.GetColorFromData(customData, v2);
+            Color? color = EditorChromaCustomDataDeserializer.GetColorFromData(customData, v2);
             if (legacyLightHelper != null)
             {
                 color = color ?? legacyLightHelper.GetLegacyColor(beatmapEventData);
@@ -56,8 +57,8 @@ namespace EditorEX.Chroma.Events
                 {
                     GradientObject = new GradientObjectData(
                         gradientObject.Get<float>(V2_DURATION),
-                        EditorChromaCustomDataManager.GetColorFromData(gradientObject, V2_START_COLOR) ?? Color.white,
-                        EditorChromaCustomDataManager.GetColorFromData(gradientObject, V2_END_COLOR) ?? Color.white,
+                        EditorChromaCustomDataDeserializer.GetColorFromData(gradientObject, V2_START_COLOR) ?? Color.white,
+                        EditorChromaCustomDataDeserializer.GetColorFromData(gradientObject, V2_END_COLOR) ?? Color.white,
                         gradientObject.GetStringToEnum<Functions?>(V2_EASING) ?? Functions.easeLinear);
                 }
             }

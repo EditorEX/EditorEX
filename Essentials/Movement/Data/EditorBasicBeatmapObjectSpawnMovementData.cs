@@ -1,7 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Patches;
 using EditorEX.Essentials.SpawnProcessing;
-using EditorEX.Heck.Deserializer;
+using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.Manager;
 using IPA.Utilities;
 using UnityEngine;
@@ -30,12 +30,12 @@ namespace EditorEX.Essentials.Movement.Data
             BeatmapDataModel beatmapDataModel = PopulateBeatmap._beatmapDataModel;
             BeatmapLevelDataModel beatmapLevelDataModel = PopulateBeatmap._beatmapLevelDataModel;
 
-            var difficultyBeatmap = beatmapDataModel.difficultyBeatmapSets[beatmapLevelDataModel.beatmapCharacteristic].difficultyBeatmaps[beatmapLevelDataModel.beatmapDifficulty];
+            var difficultyBeatmap = beatmapLevelDataModel.difficultyBeatmaps[(beatmapDataModel.beatmapCharacteristic, beatmapDataModel.beatmapDifficulty)];
 
             var offsetProvider = new StaticJumpOffsetYProvider();
             offsetProvider.SetField("_initData", new StaticJumpOffsetYProvider.InitData(0));
 
-            Init(4, difficultyBeatmap.noteJumpMovementSpeed, beatmapDataModel.bpmData.GetRegionAtBeat(0f).bpm, BeatmapObjectSpawnMovementData.NoteJumpValueType.BeatOffset, difficultyBeatmap.noteJumpStartBeatOffset, offsetProvider, Vector3.right, Vector3.forward);
+            Init(4, difficultyBeatmap.noteJumpMovementSpeed, beatmapLevelDataModel.beatsPerMinute, BeatmapObjectSpawnMovementData.NoteJumpValueType.BeatOffset, difficultyBeatmap.noteJumpStartBeatOffset, offsetProvider, Vector3.right, Vector3.forward);
         }
 
         public void Init(int noteLinesCount, float startNoteJumpMovementSpeed, float startBpm, BeatmapObjectSpawnMovementData.NoteJumpValueType noteJumpValueType, float noteJumpValue, IJumpOffsetYProvider jumpOffsetYProvider, Vector3 rightVec, Vector3 forwardVec)

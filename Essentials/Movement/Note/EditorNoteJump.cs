@@ -1,11 +1,8 @@
-﻿using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
-using EditorEX.Heck.Deserializer;
+﻿using BeatmapEditor3D.DataModels;
+using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
-using Heck;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
-using NoodleExtensions.HarmonyPatches.Objects;
 using System;
 using UnityEngine;
 using Zenject;
@@ -32,7 +29,7 @@ namespace EditorEX.Essentials.Movement.Note
             PlayerTransforms playerTransforms,
             IAudioTimeSource audioTimeSyncController,
             AnimationHelper animationHelper,
-            [Inject(Id = NoodleController.ID)]EditorDeserializedData editorDeserializedData)
+            [Inject(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData)
         {
             _playerTransforms = playerTransforms;
             _audioTimeSyncController = audioTimeSyncController;

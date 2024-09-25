@@ -32,7 +32,6 @@ namespace Chroma.EnvironmentEnhancement
         private EditorGeometryFactory _geometryFactory;
         private TrackLaneRingOffset _trackLaneRingOffset;
         private ParametricBoxControllerTransformOverride _parametricBoxControllerTransformOverride;
-        private BeatmapObjectsAvoidanceTransformOverride _beatmapObjectsAvoidanceTransformOverride;
         private EditorDuplicateInitializer _duplicateInitializer;
         private EditorComponentCustomizer _componentCustomizer;
         private TransformControllerFactory _controllerFactory;
@@ -48,7 +47,6 @@ namespace Chroma.EnvironmentEnhancement
             EditorGeometryFactory geometryFactory,
             TrackLaneRingOffset trackLaneRingOffset,
             ParametricBoxControllerTransformOverride parametricBoxControllerTransformOverride,
-            BeatmapObjectsAvoidanceTransformOverride beatmapObjectsAvoidanceTransformOverride,
             EditorDuplicateInitializer duplicateInitializer,
             EditorComponentCustomizer componentCustomizer,
             TransformControllerFactory controllerFactory,
@@ -63,7 +61,6 @@ namespace Chroma.EnvironmentEnhancement
             _geometryFactory = geometryFactory;
             _trackLaneRingOffset = trackLaneRingOffset;
             _parametricBoxControllerTransformOverride = parametricBoxControllerTransformOverride;
-            _beatmapObjectsAvoidanceTransformOverride = beatmapObjectsAvoidanceTransformOverride;
             _duplicateInitializer = duplicateInitializer;
             _componentCustomizer = componentCustomizer;
             _controllerFactory = controllerFactory;
@@ -279,14 +276,6 @@ namespace Chroma.EnvironmentEnhancement
                             _parametricBoxControllerTransformOverride.SetTransform(parametricBoxController, spawnData);
                         }
 
-                        // Handle BeatmapObjectsAvoidance
-                        BeatmapObjectsAvoidance beatmapObjectsAvoidance =
-                            gameObject.GetComponentInChildren<BeatmapObjectsAvoidance>();
-                        if (beatmapObjectsAvoidance != null)
-                        {
-                            _beatmapObjectsAvoidanceTransformOverride.SetTransform(beatmapObjectsAvoidance, spawnData);
-                        }
-
                         if (componentData != null)
                         {
                             _componentCustomizer.Customize(transform, componentData);
@@ -310,13 +299,6 @@ namespace Chroma.EnvironmentEnhancement
                                 _parametricBoxControllerTransformOverride.UpdatePosition(parametricBoxController);
                             controller.ScaleUpdated += () =>
                                 _parametricBoxControllerTransformOverride.UpdateScale(parametricBoxController);
-                        }
-                        else if (beatmapObjectsAvoidance != null)
-                        {
-                            controller.RotationUpdated += () =>
-                                _beatmapObjectsAvoidanceTransformOverride.UpdateRotation(beatmapObjectsAvoidance);
-                            controller.PositionUpdated += () =>
-                                _beatmapObjectsAvoidanceTransformOverride.UpdatePosition(beatmapObjectsAvoidance);
                         }
 
                         track.ForEach(n => n.AddGameObject(gameObject));

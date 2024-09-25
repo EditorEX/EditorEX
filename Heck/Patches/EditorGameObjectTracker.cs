@@ -1,6 +1,6 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Views;
-using EditorEX.Heck.Deserializer;
+using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.ObjectData;
 using HarmonyLib;
 using Heck.Animation;

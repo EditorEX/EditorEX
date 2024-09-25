@@ -21,7 +21,7 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
             _levelUtils = levelUtils;
             _sliceMap = sliceMap;
             _track = new BakedSwingTrack();
-            totalFrames = (int)Mathf.Ceil(PopulateBeatmap._beatmapDataModel.bpmData.BeatToSeconds(_sliceMap.Cuts.Last().sliceEndBeat) * 24);
+            totalFrames = (int)Mathf.Ceil(PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(_sliceMap.Cuts.Last().sliceEndBeat) * 24);
 
             var handFrames = ProcessHandFrames(rightHand);
             _handFrames = handFrames;
@@ -106,11 +106,11 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
             for (int i = 1; i < totalFrames-1; i++)
             {
                 float second = i * secondsPerFrame;
-                float _beatTime = PopulateBeatmap._beatmapDataModel.bpmData.SecondsToBeat(second);
+                float _beatTime = PopulateBeatmap._audioDataModel.bpmData.SecondsToBeat(second);
 
                 float _timeToReachSabers = -Mathf.Abs((Mathf.Abs(-30f) - 3.0f) / 75f);
 
-                float _beatTimeToReachSabers = PopulateBeatmap._beatmapDataModel.bpmData.SecondsToBeat(_timeToReachSabers);
+                float _beatTimeToReachSabers = PopulateBeatmap._audioDataModel.bpmData.SecondsToBeat(_timeToReachSabers);
                 float _beatTimeToPrepareSwing = _beatTimeToReachSabers * 0.5f;
 
                 if (_sliceIndex < _sliceMap.GetSliceCount())
@@ -131,7 +131,7 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
                         if (_sliceIndex < _sliceMap.GetSliceCount())
                         {
                             BeatCutData nextCutData = _sliceMap.GetBeatCutData(_sliceIndex);
-                            float timeTilNextBeat = PopulateBeatmap._beatmapDataModel.bpmData.BeatToSeconds(nextCutData.sliceStartBeat - cutData.sliceEndBeat);
+                            float timeTilNextBeat = PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(nextCutData.sliceStartBeat - cutData.sliceEndBeat);
                             SetTimeToNextBeat(timeTilNextBeat, lastFrame);
                         }
                     }

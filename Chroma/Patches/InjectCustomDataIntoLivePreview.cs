@@ -32,16 +32,16 @@ namespace EditorEX.Chroma.Patches
         //	v2 = versionContext.Version.Major < 3;
         //}
 
-        static BeatmapEventData ConvertBasicEvent(BasicEventEditorData e, IBeatToTimeConvertor timeConvertor)
+        static BeatmapEventData ConvertBasicEvent(BasicEventEditorData e, IBeatToTimeConverter timeConvertor)
         {
             BeatmapEventData result;
             if (e.type == BasicBeatmapEventType.Event5)
             {
-                result = new CustomColorBoostBeatmapEventData(timeConvertor.ConvertBeatToTime(e.beat), e.value == 1, CustomDataRepository.GetCustomData(e), true);
+                result = new CustomColorBoostBeatmapEventData(timeConvertor.ConvertBeatToTime(e.beat), e.value == 1, CustomDataRepository.GetCustomData(e), null);
             }
             else
             {
-                result = new CustomBasicBeatmapEventData(timeConvertor.ConvertBeatToTime(e.beat), e.type, e.value, e.floatValue, CustomDataRepository.GetCustomData(e));
+                result = new CustomBasicBeatmapEventData(timeConvertor.ConvertBeatToTime(e.beat), e.type, e.value, e.floatValue, CustomDataRepository.GetCustomData(e), null);
             }
             //Plugin.Log.Info("guh");
             CustomDataRepository.AddBasicEventConversion(e, result);
@@ -50,7 +50,7 @@ namespace EditorEX.Chroma.Patches
 
         [HarmonyPatch(typeof(BeatmapBasicEventConverter), nameof(BeatmapBasicEventConverter.ConvertBasicEvent))]
         [HarmonyPrefix]
-        public static bool Prefix(BasicEventEditorData e, IBeatToTimeConvertor timeConvertor, ref BeatmapEventData __result)
+        public static bool Prefix(BasicEventEditorData e, IBeatToTimeConverter timeConvertor, ref BeatmapEventData __result)
         {
             __result = ConvertBasicEvent(e, timeConvertor);
             return false;

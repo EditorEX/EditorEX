@@ -4,9 +4,9 @@ using EditorEX.Analyzer.Installers;
 using EditorEX.Chroma.Deserializer;
 using EditorEX.Chroma.Installers;
 using EditorEX.Essentials.Installers;
-using EditorEX.Heck.Deserializer;
+using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.Installers;
-using EditorEX.NoodleExtensions.Deserializer;
+using EditorEX.NoodleExtensions.Deserialize;
 using EditorEX.NoodleExtensions.Installers;
 using EditorEX.UI.SideBar;
 using HarmonyLib;
@@ -29,24 +29,24 @@ namespace EditorEX
         {
             Instance = this;
             Log = logger;
-            Harmony = new Harmony("futuremapper.EditorEX");
+            Harmony = new Harmony("com.futuremapper.EditorEX");
 
-            zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
+            //zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();
-            zenjector.Install<EditorHeckModelsInstaller, BeatmapEditorDataModelsInstaller>();
+            //zenjector.Install<EditorHeckModelsInstaller, BeatmapEditorDataModelsInstaller>();
 
-            zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
-            zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
-            zenjector.Install<EditorEssentialsSceneInstaller, BeatmapLevelEditorSceneSetup>();
-            zenjector.Install<EditorChromaSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            //zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            //zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            //zenjector.Install<EditorEssentialsSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            //zenjector.Install<EditorChromaSceneInstaller, BeatmapLevelEditorSceneSetup>();
 
-            zenjector.Install<EditorAnalyzerSceneInstaller, BeatmapLevelEditorInstaller>();
+            //zenjector.Install<EditorAnalyzerSceneInstaller, BeatmapLevelEditorInstaller>();
 
-            zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
+            //zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
 
-            EditorDeserializerManager.Register<EditorNoodleCustomDataManager>("NoodleExtensions").Enabled = true;
-            EditorDeserializerManager.Register<EditorHeckCustomDataManager>("Heck").Enabled = true;
-            EditorDeserializerManager.Register<EditorChromaCustomDataManager>("Chroma").Enabled = true;
+            //EditorDeserializerManager.Register<EditorNoodleCustomDataDeserializer>("NoodleExtensions").Enabled = true;
+            //EditorDeserializerManager.Register<EditorNoodleCustomDataDeserializer>("Heck").Enabled = true;
+            //EditorDeserializerManager.Register<EditorChromaCustomDataManager>("Chroma").Enabled = true;
         }
 
         [OnStart]
