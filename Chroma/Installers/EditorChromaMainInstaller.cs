@@ -1,4 +1,5 @@
 ﻿using Chroma.EnvironmentEnhancement;
+using EditorEX.Chroma.Patches;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,9 @@ namespace EditorEX.Chroma.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesTo<EnvironmentMaterialsManager.EnvironmentMaterialsManagerInitializer>().AsSingle();
+            Container.BindInterfacesTo<InitializeLightIDTable>().AsSingle();
+
+            Container.BindInterfacesTo<InjectCustomDataIntoLivePreview>().AsSingle().NonLazy();
         }
     }
 }

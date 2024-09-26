@@ -151,12 +151,12 @@ namespace EditorEX.CustomJSONData
             return _repoData.customBeatmapSaveData;
         }
 
-        public static void SetCustomLivePreviewBeatmapData(CustomBeatmapData customData)
+        public static void SetBeatmapData(CustomBeatmapData customData)
         {
             _repoData.customLivePreviewBeatmapData = customData;
         }
 
-        public static CustomBeatmapData GetCustomLivePreviewBeatmapData()
+        public static CustomBeatmapData GetBeatmapData()
         {
             return _repoData.customLivePreviewBeatmapData;
         }

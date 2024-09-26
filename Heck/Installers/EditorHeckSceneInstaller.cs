@@ -1,5 +1,6 @@
 ﻿using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.Events;
+using EditorEX.Heck.Patches;
 using HarmonyLib;
 using Heck;
 using Heck.Animation;
@@ -28,6 +29,8 @@ namespace EditorEX.Heck.Installers
             Container.BindInterfacesTo<EditorCoroutineEvent>().AsSingle();
             Container.BindInterfacesAndSelfTo<TransformControllerFactory>().AsSingle();
             Container.BindInterfacesTo<TrackUpdateManager>().AsSingle();
+
+            Container.BindInterfacesTo<EditorGameObjectTracker>().AsSingle().NonLazy();
         }
     }
 }

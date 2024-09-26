@@ -68,6 +68,7 @@ namespace EditorEX.NoodleExtensions.Deserialize
             Dictionary<BaseEditorData, IObjectCustomData> dictionary = new Dictionary<BaseEditorData, IObjectCustomData>();
             foreach (BaseEditorData baseEditorData in _beatmapObjectsDataModel.allBeatmapObjects)
             {
+                if (dictionary.ContainsKey(baseEditorData)) continue;
                 CustomData customData = baseEditorData.GetCustomData();
                 ObstacleEditorData customObstacleData = baseEditorData as ObstacleEditorData;
                 if (customObstacleData == null)

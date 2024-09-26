@@ -175,7 +175,7 @@ namespace EditorEX.Chroma.Lighting
 
         private bool HasLightFadeEventDataValue(BasicEventEditorData basicEventEditorData)
         {
-            return basicEventEditorData.value == 4 || basicEventEditorData.value == 8 || basicEventEditorData.value == 12;
+            return basicEventEditorData?.value == 4 || basicEventEditorData?.value == 8 || basicEventEditorData?.value == 12;
         }
 
         private bool HasFixedDurationLightSwitchEventDataValue(BasicEventEditorData basicBeatmapEventData)
@@ -190,11 +190,11 @@ namespace EditorEX.Chroma.Lighting
 
             foreach (ChromaIDColorTween tween in selectTweens)
             {
-                BasicEventEditorData previousEvent;
+                BasicBeatmapEventData previousEvent;
                 if (hard)
                 {
                     tween.PreviousEvent = beatmapEventData ?? throw new ArgumentNullException(nameof(beatmapEventData), "Argument must not be null for hard refresh.");
-                    previousEvent = CustomDataRepository.GetBasicEventConversion(beatmapEventData);
+                    previousEvent = beatmapEventData;
                 }
                 else
                 {
@@ -204,13 +204,9 @@ namespace EditorEX.Chroma.Lighting
                         return;
                     }
 
-                    previousEvent = CustomDataRepository.GetBasicEventConversion(tween.PreviousEvent);
+                    previousEvent = tween.PreviousEvent;
                 }
 
-                if (previousEvent == null)
-                {
-                    continue;
-                }
                 int previousValue = previousEvent.value;
                 float previousFloatValue = previousEvent.floatValue;
 
@@ -218,6 +214,7 @@ namespace EditorEX.Chroma.Lighting
                 {
                     case 0:
                         {
+                            Plugin.Log.Info("4");
                             if (hard)
                             {
                                 tween.Kill();
@@ -241,6 +238,7 @@ namespace EditorEX.Chroma.Lighting
                     case 8:
                     case 12:
                         {
+                            Plugin.Log.Info("3");
                             if (hard)
                             {
                                 tween.Kill();
@@ -259,6 +257,7 @@ namespace EditorEX.Chroma.Lighting
                     case 6:
                     case 10:
                         {
+                            Plugin.Log.Info("2");
                             Color colorFrom = GetHighlightColor(previousValue).MultAlpha(previousFloatValue);
                             Color colorTo = GetNormalColor(previousValue).MultAlpha(previousFloatValue);
                             tween.fromValue = colorFrom;
@@ -281,6 +280,7 @@ namespace EditorEX.Chroma.Lighting
                     case 11:
                     case -1:
                         {
+                            Plugin.Log.Info("1");
                             Color colorFrom = GetHighlightColor(previousValue).MultAlpha(previousFloatValue);
                             Color colorTo = GetNormalColor(previousValue).ColorWithAlpha(_offColorIntensity * previousFloatValue);
                             tween.fromValue = colorFrom;
@@ -304,23 +304,23 @@ namespace EditorEX.Chroma.Lighting
                 // this code is UGLY
                 void CheckNextEventForFadeBetter()
                 {
-                    _deserializedData.Resolve(previousEvent, out EditorChromaEventData? eventData);
+                    _deserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(previousEvent), out EditorChromaEventData? eventData);
                     Dictionary<int, BasicEventEditorData>? nextSameTypesDict = eventData?.NextSameTypeEvent;
-                    BasicEventEditorData? nextSameTypeEvent = null;
+                    BasicBeatmapEventData? nextSameTypeEvent = null;
                     if (nextSameTypesDict == null)
                     {
-                        nextSameTypeEvent = CustomDataRepository.GetBasicEventConversion(CustomDataRepository.GetBasicEventConversion(previousEvent).nextSameTypeEventData); //clean up
+                        nextSameTypeEvent = previousEvent.nextSameTypeEventData; //clean up
                     }
                     else if (nextSameTypesDict.TryGetValue(tween.Id, out BasicEventEditorData? value))
                     {
-                        nextSameTypeEvent = value;
+                        nextSameTypeEvent = CustomDataRepository.GetBasicEventConversion(value) as BasicBeatmapEventData;
                     }
                     else if (nextSameTypesDict.TryGetValue(-1, out BasicEventEditorData? nullVal))
                     {
-                        nextSameTypeEvent = nullVal;
+                        nextSameTypeEvent = CustomDataRepository.GetBasicEventConversion(nullVal) as BasicBeatmapEventData;
                     }
 
-                    if (nextSameTypeEvent == null || !HasLightFadeEventDataValue(nextSameTypeEvent))
+                    if (nextSameTypeEvent == null || !HasLightFadeEventDataValue(CustomDataRepository.GetBasicEventConversion(nextSameTypeEvent)))
                     {
                         return;
                     }
@@ -330,7 +330,7 @@ namespace EditorEX.Chroma.Lighting
                     EnvironmentColorType nextColorType = BeatmapEventDataLightsExtensions.GetLightColorTypeFromEventDataValue(nextSameTypeEvent.value);
                     Color nextColor;
 
-                    _deserializedData.Resolve(nextSameTypeEvent, out EditorChromaEventData? nextEventData);
+                    _deserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(nextSameTypeEvent), out EditorChromaEventData? nextEventData);
                     Color? nextColorData = nextEventData?.ColorData;
                     if (nextColorType != EnvironmentColorType.ColorW &&
                         nextColorData.HasValue)
@@ -358,7 +358,7 @@ namespace EditorEX.Chroma.Lighting
                     {
                         prevColor = nextColor.ColorWithAlpha(0f);
                     }
-                    else if (!HasFixedDurationLightSwitchEventDataValue(previousEvent))
+                    else if (!HasFixedDurationLightSwitchEventDataValue(CustomDataRepository.GetBasicEventConversion(previousEvent)))
                     {
                         prevColor = GetNormalColor(previousValue).MultAlpha(previousFloatValue);
                     }
@@ -371,8 +371,9 @@ namespace EditorEX.Chroma.Lighting
                     {
                         return;
                     }
+                    Plugin.Log.Info("12");
 
-                    tween.SetStartTimeAndEndTime(previousEvent.beat, nextSameTypeEvent.beat);
+                    tween.SetStartTimeAndEndTime(previousEvent.time, nextSameTypeEvent.time);
                     tween.HeckEasing = easing ?? Functions.easeLinear;
                     tween.LerpType = lerpType ?? LerpType.RGB;
                     _tweeningManager.ResumeTween(tween, LightSwitchEventEffect);

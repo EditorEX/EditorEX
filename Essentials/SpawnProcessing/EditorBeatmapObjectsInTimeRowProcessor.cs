@@ -187,7 +187,7 @@ namespace EditorEX.Essentials.SpawnProcessing
             }
 
             float offset = 4 / 2f;
-            bool v2 = CustomDataRepository.GetCustomLivePreviewBeatmapData().version.Major == 2;
+            bool v2 = CustomDataRepository.GetBeatmapData().version.Major == 2;
             IReadOnlyList<BaseBeatmapObjectEditorData> containerItems = allObjectsTimeSlice.items.Where(x => x is BaseBeatmapObjectEditorData).Select(x => x as BaseBeatmapObjectEditorData).ToList();
             IEnumerable<NoteEditorData> notesInTimeRow = containerItems.OfType<NoteEditorData>().ToArray();
             Dictionary<float, List<NoteEditorData>> notesInColumns = new();
@@ -393,7 +393,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                 return;
             }
 
-            bool v2 = CustomDataRepository.GetCustomLivePreviewBeatmapData().version.Major == 2;
+            bool v2 = CustomDataRepository.GetBeatmapData().version.Major == 2;
 
             float[] lineIndexes = new float[2];
             float[] lineLayers = new float[2];

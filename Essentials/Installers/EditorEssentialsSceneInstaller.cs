@@ -5,6 +5,7 @@ using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Movement.Note.MovementProvider;
 using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
 using EditorEX.Essentials.Patches;
+using EditorEX.Essentials.Patches.Movement;
 using EditorEX.Essentials.Patches.Preview;
 using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.ViewMode;
@@ -21,14 +22,16 @@ namespace EditorEX.Essentials.Installers
     {
         public override void InstallBindings()
         {
-            // Clean this up!!!
-            //Container.Bind<VersionContext>().FromInstance(new(DeserializationPatch.beatmapVersion)).AsSingle();
-
             Container.Bind<ActiveViewMode>().AsSingle();
 
             //TODO: Improve this
             var objectsView = Resources.FindObjectsOfTypeAll<BeatmapObjectsView>().FirstOrDefault();
             Container.Bind<BeatmapObjectsView>().FromInstance(objectsView).AsSingle();
+
+            Container.BindInterfacesAndSelfTo<InstallMovement>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<InitMovement>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<DisableMovement>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<PopulateBeatmap>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<ArcPreview>().AsSingle().NonLazy();
 

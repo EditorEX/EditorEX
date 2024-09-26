@@ -1,14 +1,15 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.CustomJSONData.Preview;
 using HarmonyLib;
+using SiraUtil.Affinity;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
 namespace EditorEX.CustomJSONData.Patches
 {
-    [HarmonyPatch(typeof(BeatmapLivePreviewDataModel), nameof(BeatmapLivePreviewDataModel.HandleBeatmapLevelDataModelLoaded))]
-    public static class InjectCustomEvents
+    [AffinityPatch]
+    public class InjectCustomEvents : IAffinity
     {
         private static readonly MethodInfo _InjectEvents = AccessTools.Method(typeof(InjectCustomEvents), "InjectEvents", null, null);
 
@@ -23,7 +24,9 @@ namespace EditorEX.CustomJSONData.Patches
             }
         }
 
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(BeatmapLivePreviewDataModel), nameof(BeatmapLivePreviewDataModel.HandleBeatmapLevelDataModelLoaded))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null).MatchForward(false, new CodeMatch[]
             {

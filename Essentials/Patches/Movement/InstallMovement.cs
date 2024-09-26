@@ -6,14 +6,16 @@ using EditorEX.Essentials.Movement.Note.MovementProvider;
 using EditorEX.Essentials.Movement.Obstacle;
 using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
 using HarmonyLib;
+using SiraUtil.Affinity;
 
 namespace EditorEX.Essentials.Patches.Movement
 {
-    [HarmonyPatch(typeof(BeatmapLevelEditorInstaller), nameof(BeatmapLevelEditorInstaller.InstallBindings))]
-    public static class InstallMovement
+    [AffinityPatch]
+    public class InstallMovement : IAffinity
     {
-        [HarmonyPrefix]
-        public static void Prefix(BeatmapLevelEditorInstaller __instance)
+        [AffinityPatch(typeof(BeatmapLevelEditorInstaller), nameof(BeatmapLevelEditorInstaller.InstallBindings))]
+        [AffinityPrefix]
+        public void Prefix(BeatmapLevelEditorInstaller __instance)
         {
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteBasicMovement>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteGameMovement>();

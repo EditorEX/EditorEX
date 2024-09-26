@@ -26,7 +26,6 @@ namespace Chroma.EnvironmentEnhancement
     internal class EditorEnvironmentEnhancementManager : MonoBehaviour
     {
         private SiraLog _log;
-        private VersionContext _versionContext;
         private Dictionary<string, Track> _tracks;
         private bool _leftHanded;
         private EditorGeometryFactory _geometryFactory;
@@ -41,7 +40,6 @@ namespace Chroma.EnvironmentEnhancement
         [Inject]
         private void Construct(
             SiraLog log,
-            VersionContext versionContext,
             Dictionary<string, Track> tracks,
             [Inject(Id = LEFT_HANDED_ID)] bool leftHanded,
             EditorGeometryFactory geometryFactory,
@@ -53,8 +51,6 @@ namespace Chroma.EnvironmentEnhancement
             SavedEnvironmentLoader savedEnvironmentLoader,
             EnvironmentSceneSetupData sceneSetupData)
         {
-            Plugin.Log.Info("aSWDEFPLOKIJASFSAEO?");
-            _versionContext = versionContext;
             _log = log;
             _tracks = tracks;
             _leftHanded = leftHanded;
@@ -70,7 +66,6 @@ namespace Chroma.EnvironmentEnhancement
 
         private void Start()
         {
-            Plugin.Log.Info("hello?");
             StartCoroutine(DelayedStart());
         }
 
@@ -88,7 +83,7 @@ namespace Chroma.EnvironmentEnhancement
         {
             yield return new WaitForEndOfFrame();
 
-            bool v2 = _versionContext.Version.Major < 3;
+            bool v2 = MapContext.Version.Major < 3;
             IEnumerable<CustomData>? environmentData = null;
 
             // seriously what the fuck beat games
@@ -99,7 +94,7 @@ namespace Chroma.EnvironmentEnhancement
                 gradientBackground.SetActive(false);
             }
 
-            environmentData = CustomDataRepository.GetCustomLivePreviewBeatmapData().customData
+            environmentData = CustomDataRepository.GetBeatmapData().customData
                     .Get<List<object>>(v2 ? V2_ENVIRONMENT : ENVIRONMENT)?
                     .Cast<CustomData>();
 
@@ -107,7 +102,7 @@ namespace Chroma.EnvironmentEnhancement
             {
                 try
                 {
-                    if (LegacyEnvironmentRemoval.Init(CustomDataRepository.GetCustomLivePreviewBeatmapData()))
+                    if (LegacyEnvironmentRemoval.Init(CustomDataRepository.GetBeatmapData()))
                     {
                         yield break;
                     }

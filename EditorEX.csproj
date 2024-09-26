@@ -266,11 +266,14 @@
     <Compile Include="Chroma\Patches\InjectCustomDataIntoLivePreview.cs" />
     <Compile Include="CustomJSONData\CustomDataRepository.cs" />
     <Compile Include="CustomJSONData\CustomEvents\CustomEventEditorData.cs" />
+    <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataAppInstaller.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataModelsInstaller.cs" />
+    <Compile Include="CustomJSONData\MapContext.cs" />
     <Compile Include="CustomJSONData\Patches\DisableConversion.cs" />
     <Compile Include="CustomJSONData\Patches\Loading\BeatmapDataModelsLoaderPatch.cs" />
     <Compile Include="CustomJSONData\Patches\Loading\BeatmapLevelDataModelLoaderPatch.cs" />
     <Compile Include="CustomJSONData\Patches\Loading\AudioDataLoaderPatch.cs" />
+    <Compile Include="Essentials\Installers\EditorEssentialsAppInstaller.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsModelsInstaller.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsSceneInstaller.cs" />
     <Compile Include="Essentials\Movement\Arc\EditorSliderIntensityEffect.cs" />
@@ -290,7 +293,6 @@
     <Compile Include="Essentials\Patches\Preview\ArcPreview.cs" />
     <Compile Include="Essentials\Patches\Preview\PreviewToggler.cs" />
     <Compile Include="Essentials\Patches\ProcessNewEditorData.cs" />
-    <Compile Include="Essentials\VersionContext.cs" />
     <Compile Include="Essentials\ViewMode\ActiveViewMode.cs" />
     <Compile Include="Essentials\ViewMode\ViewModeSwappingUI.cs" />
     <Compile Include="Heck\Constants.cs" />
@@ -308,6 +310,7 @@
     <Compile Include="Heck\EventData\EditorInvokeEventData.cs" />
     <Compile Include="Heck\Events\EditorCoroutineEvent.cs" />
     <Compile Include="Heck\ObjectData\EditorHeckObjectData.cs" />
+    <Compile Include="Heck\Patches\DeserializationPatch.cs" />
     <Compile Include="Heck\Patches\EditorGameObjectTracker.cs" />
     <Compile Include="CustomJSONData\Patches\InjectCustomEvents.cs" />
     <Compile Include="CustomJSONData\Patches\PreviewCustomBeatmap.cs" />

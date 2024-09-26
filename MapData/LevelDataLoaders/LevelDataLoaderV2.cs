@@ -61,7 +61,7 @@ namespace EditorEX.MapData.LevelDataLoaders
             Dictionary<string, CustomData> beatmapCustomDatasByFilename = customLevelInfoSaveData.difficultyBeatmapSets.SelectMany(x => x.difficultyBeatmaps.Select(x => (x.beatmapFilename, (x as CustomLevelInfoSaveData.DifficultyBeatmap).customData))).ToDictionary(x => x.beatmapFilename, x => x.customData);
 
             // Our static representation is v3.
-            CustomDataRepository.SetCustomBeatmapSaveData(V3SaveDataConverter.ConvertToV3(beatmapCustomDatasByFilename[filename], customLevelInfoSaveData.customData, beatmapSaveData));
+            CustomDataRepository.SetCustomBeatmapSaveData(V3SaveDataConverter.ConvertToV3(beatmapCustomDatasByFilename[filename], beatmapSaveData));
             CustomDataRepository.SetCustomEvents(customEvents);
 
             if (beatmapSaveData.specialEventsKeywordFilters != null && beatmapSaveData.specialEventsKeywordFilters.keywords != null)

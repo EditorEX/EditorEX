@@ -154,6 +154,7 @@ namespace EditorEX.Chroma.Deserializer
 
             foreach (BaseBeatmapObjectEditorData beatmapObjectData in _beatmapObjectsDataModel.allBeatmapObjects)
             {
+                if (dictionary.ContainsKey(beatmapObjectData)) continue;
                 try
                 {
                     CustomData customData = beatmapObjectData.GetCustomData();

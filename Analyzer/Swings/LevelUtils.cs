@@ -24,7 +24,6 @@ public class LevelUtils
     public Vector2 GetWorldXYFromBeatmapCoords(int x, int y)
     {
         var _gravity = _spawnMovementData.NoteJumpGravityForLineLayer((NoteLineLayer)y, NoteLineLayer.Base);
-        Plugin.Log.Info($"Gravity: {_gravity} {y}");
         var _startVerticalVelocity = _gravity * _spawnMovementData._jumpDuration * 0.5f;
         var yPos = _startVerticalVelocity * 0.75f - _gravity * 0.75f * 0.75f * 0.5f;
 

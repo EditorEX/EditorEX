@@ -36,7 +36,7 @@ namespace EditorEX.MapData.Converters
 {
     public static class V3SaveDataConverter
     {
-        public static Version3CustomBeatmapSaveData ConvertToV3(CustomData beatmapData, CustomData levelData, Version2_6_0AndEarlierCustomBeatmapSaveData oldSaveData)
+        public static Version3CustomBeatmapSaveData ConvertToV3(CustomData beatmapData, Version2_6_0AndEarlierCustomBeatmapSaveData oldSaveData)
         {
             ILookup<bool, v2CustomNoteSaveData> lookup = oldSaveData.notes
                 .OrderBy((v2NoteSaveData n) => n)

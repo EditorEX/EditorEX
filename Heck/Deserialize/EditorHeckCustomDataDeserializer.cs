@@ -36,6 +36,7 @@ namespace EditorEX.Heck.Deserialize
             Dictionary<BaseEditorData, IObjectCustomData> dictionary = new Dictionary<BaseEditorData, IObjectCustomData>();
             foreach (BaseEditorData baseEditorData in _beatmapObjectsDataModel.allBeatmapObjects)
             {
+                if (dictionary.ContainsKey(baseEditorData)) continue;
                 CustomData customData = CustomDataRepository.GetCustomData(baseEditorData);
                 if (customData == null)
                 {

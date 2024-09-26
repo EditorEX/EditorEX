@@ -1,0 +1,62 @@
+﻿using BeatmapEditor3D.DataModels;
+using BeatmapEditor3D.SerializedData;
+using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData;
+using EditorEX.CustomJSONData.Util;
+using EditorEX.Heck.Deserialize;
+using Heck.Animation;
+using SiraUtil.Affinity;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+
+namespace EditorEX.Heck.Patches
+{
+    internal class DeserializationPatch : IAffinity
+    {
+        private readonly EditorDeserializerManager _editorDeserializerManager;
+
+        private static readonly FieldInfo _customBeatmapDataV2 = BackingFieldUtil.GetBackingField<CustomBeatmapData>("version");
+        private static readonly FieldInfo _customBeatmapDataCustomData = BackingFieldUtil.GetBackingField<CustomBeatmapData>("customData");
+        private static readonly FieldInfo _customBeatmapDataBeatmapCustomData = BackingFieldUtil.GetBackingField<CustomBeatmapData>("beatmapCustomData");
+
+        internal static Version beatmapVersion;
+
+        private DeserializationPatch(EditorDeserializerManager editorDeserializerManager)
+        {
+            _editorDeserializerManager = editorDeserializerManager;
+        }
+        
+        [AffinityPatch(typeof(BeatmapDataModelsLoader), nameof(BeatmapDataModelsLoader.LoadToDataModel))]
+        [AffinityPostfix]
+        private void LoadToDataModelPatch(BeatmapDataModelsLoader __instance, string projectPath, string beatmapFilename, string lightshowFilename)
+        {
+            if (lightshowFilename != "") return;
+
+            var standardLevelInfoSaveData = CustomLevelInfoSaveData.Deserialize(File.ReadAllText(Path.Combine(projectPath, "Info.dat")));
+            var customBeatmapSaveData = CustomDataRepository.GetCustomBeatmapSaveData();
+            var beatmapData = CustomDataRepository.GetBeatmapData();
+            Plugin.Log.Info("Loading custom data into beatmap data " + (beatmapData == null) + " " + (customBeatmapSaveData == null) + " " + (standardLevelInfoSaveData == null));
+
+            _customBeatmapDataV2?.SetValue(beatmapData, Version.Parse(customBeatmapSaveData.version));
+            _customBeatmapDataCustomData?.SetValue(beatmapData, customBeatmapSaveData.customData);
+            _customBeatmapDataBeatmapCustomData?.SetValue(beatmapData, (standardLevelInfoSaveData.difficultyBeatmapSets.SelectMany(x=>x.difficultyBeatmaps).FirstOrDefault(x=>x.beatmapFilename==beatmapFilename) as CustomLevelInfoSaveData.DifficultyBeatmap).customData);
+
+            beatmapVersion = BeatmapProjectFileHelper.GetVersionedJSONVersion(projectPath, beatmapFilename);
+            bool v2 = beatmapVersion < __instance._version300;
+
+            MapContext.Version = beatmapVersion;
+
+            Dictionary<string, Track> beatmapTracks;
+            HashSet<ValueTuple<object, EditorDeserializedData>> deserializedDatas;
+
+            _editorDeserializerManager.DeserializeBeatmapData(v2, false, out beatmapTracks, out deserializedDatas);
+
+            EditorDeserializedDataContainer.DeserializeDatas = deserializedDatas.ToDictionary(x => x.Item1, x => x.Item2);
+            EditorDeserializedDataContainer.Tracks = beatmapTracks;
+            EditorDeserializedDataContainer.Ready = true;
+        }
+    }
+}

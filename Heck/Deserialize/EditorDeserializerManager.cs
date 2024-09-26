@@ -18,7 +18,7 @@ namespace EditorEX.Heck.Deserialize
     internal class EditorDeserializerManager
     {
         private readonly SiraLog _log;
-        private readonly HashSet<EditorDataDeserializer> _customDataDeserializers = new();
+        private static readonly HashSet<EditorDataDeserializer> _customDataDeserializers = new();
         private BeatmapObjectsDataModel _objectDataModel;
         private BeatmapBasicEventsDataModel _eventsDataModel;
 
@@ -29,14 +29,14 @@ namespace EditorEX.Heck.Deserialize
             _eventsDataModel = eventsDataModel;
         }
 
-        internal EditorDataDeserializer Register<T>(string id)
+        internal static EditorDataDeserializer Register<T>(string id)
         {
             EditorDataDeserializer deserializer = new(id, typeof(T));
             _customDataDeserializers.Add(deserializer);
             return deserializer;
         }
 
-        internal EditorDataDeserializer Register(string id, Type type)
+        internal static EditorDataDeserializer Register(string id, Type type)
         {
             EditorDataDeserializer deserializer = new(id, type);
             _customDataDeserializers.Add(deserializer);
@@ -176,7 +176,7 @@ namespace EditorEX.Heck.Deserialize
             {
                 _objectDataModel,
                 _eventsDataModel,
-                CustomDataRepository.GetCustomLivePreviewBeatmapData(),
+                CustomDataRepository.GetBeatmapData(),
                 trackManager,
                 pointDefinitions,
                 trackManager.Tracks,
