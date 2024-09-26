@@ -177,6 +177,11 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
@@ -262,6 +267,10 @@
     <Compile Include="CustomJSONData\CustomDataRepository.cs" />
     <Compile Include="CustomJSONData\CustomEvents\CustomEventEditorData.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataModelsInstaller.cs" />
+    <Compile Include="CustomJSONData\Patches\DisableConversion.cs" />
+    <Compile Include="CustomJSONData\Patches\Loading\BeatmapDataModelsLoaderPatch.cs" />
+    <Compile Include="CustomJSONData\Patches\Loading\BeatmapLevelDataModelLoaderPatch.cs" />
+    <Compile Include="CustomJSONData\Patches\Loading\AudioDataLoaderPatch.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsModelsInstaller.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsSceneInstaller.cs" />
     <Compile Include="Essentials\Movement\Arc\EditorSliderIntensityEffect.cs" />
@@ -314,6 +323,13 @@
     <Compile Include="Essentials\Movement\Note\EditorNoteFloorMovement.cs" />
     <Compile Include="Essentials\Movement\Note\EditorNoteJump.cs" />
     <Compile Include="Essentials\Movement\Note\MovementProvider\EditorNoteGameMovement.cs" />
+    <Compile Include="MapData\Converters\V3SaveDataConverter.cs" />
+    <Compile Include="MapData\LevelDataLoaders\LevelDataLoaderUtil.cs" />
+    <Compile Include="MapData\LevelDataLoaders\LevelDataLoaderV2.cs" />
+    <Compile Include="MapData\LevelDataLoaders\LevelDataLoaderV3.cs" />
+    <Compile Include="MapData\SaveDataLoaders\ICustomSaveDataLoader.cs" />
+    <Compile Include="MapData\SaveDataLoaders\V2BeatmapBpmDataVersionedLoader.cs" />
+    <Compile Include="MapData\SaveDataLoaders\V2CustomSaveDataLoader.cs" />
     <Compile Include="NoodleExtensions\Animation\EditorParentObject.cs" />
     <Compile Include="NoodleExtensions\Deserialize\EditorNoodleCustomDataDeserializer.cs" />
     <Compile Include="NoodleExtensions\Events\EditorAssignTrackParent.cs" />
@@ -349,7 +365,6 @@
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Serialization\" />
     <Folder Include="UI\Installers\" />
     <Folder Include="UI\Tags\" />
   </ItemGroup>

@@ -3,6 +3,7 @@ using BeatmapEditor3D.DataModels;
 using EditorEX.Analyzer.Installers;
 using EditorEX.Chroma.Deserializer;
 using EditorEX.Chroma.Installers;
+using EditorEX.CustomJSONData.Patches;
 using EditorEX.Essentials.Installers;
 using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.Installers;
@@ -22,14 +23,12 @@ namespace EditorEX
     {
         internal static Plugin Instance { get; private set; }
         internal static IPALogger Log { get; private set; }
-        internal static Harmony Harmony { get; private set; }
 
         [Init]
         public Plugin(IPALogger logger, Zenjector zenjector)
         {
             Instance = this;
             Log = logger;
-            Harmony = new Harmony("com.futuremapper.EditorEX");
 
             //zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();
@@ -52,18 +51,10 @@ namespace EditorEX
         [OnStart]
         public void OnApplicationStart()
         {
-            Harmony.PatchAll(Assembly.GetExecutingAssembly());
-
             SideBarUI.RegisterButton(BeatSaberMarkupLanguage.Utilities.FindSpriteInAssembly("EditorEX.UI.Resources.lockcamera.png"), "Lock Camera", (x) =>
             {
 
             });
-        }
-
-        [OnExit]
-        public void OnApplicationQuit()
-        {
-            Harmony.UnpatchSelf();
         }
     }
 }
