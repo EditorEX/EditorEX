@@ -48,11 +48,20 @@ namespace EditorEX.MapData.LevelDataLoaders
                 .Cast<Version2_6_0AndEarlierCustomBeatmapSaveData.SliderSaveData>(),
                 BeatmapDataModelsLoader.CreateSliderEditorData_v2)
                 .ToList();
+
+            Version version = new Version(beatmapSaveData.version);
+            Version version2 = new Version("2.5.0");
+            if (version.CompareTo(version2) < 0)
+            {
+                beatmapSaveData.ConvertBeatmapSaveDataPreV2_5_0();
+            }
+
             events = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.events
                 .Cast<Version2_6_0AndEarlierCustomBeatmapSaveData.EventSaveData>(),
                 BeatmapDataModelsLoader.CreateEventEditorData_v2)
                 .ToList();
+
             var customEvents = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.customEvents,
                 CreateCustomEventEditorData)
