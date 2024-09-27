@@ -1,10 +1,6 @@
-﻿using BeatmapEditor3D;
-using EditorEX.Heck.Events;
-using EditorEX.NoodleExtensions.Manager;
+﻿using EditorEX.NoodleExtensions.Events;
+using EditorEX.NoodleExtensions.Managers;
 using NoodleExtensions.Animation;
-using NoodleExtensions.HarmonyPatches.SmallFixes;
-using System.Linq;
-using UnityEngine;
 using Zenject;
 
 namespace EditorEX.NoodleExtensions.Installers
@@ -16,6 +12,7 @@ namespace EditorEX.NoodleExtensions.Installers
             Container.Bind<AnimationHelper>().AsSingle();
 
             Container.BindInterfacesTo<EditorAssignTrackParent>().AsSingle();
+            Container.BindInterfacesTo<EditorAssignPlayerToTrack>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<EditorSpawnDataManager>().AsSingle();
         }

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace EditorEX.Heck.Events
+namespace EditorEX.NoodleExtensions.Events
 {
     [CustomEvent(new string[] { "AssignTrackParent" })]
     internal class EditorAssignTrackParent : ICustomEvent
@@ -36,12 +36,12 @@ namespace EditorEX.Heck.Events
             instance.Init(noodleData, _leftHanded, _parentObjects);
             if (_version.Major == 2)
             {
-                //instance.ApplyV2Transform(noodleData);
+                instance.ApplyV2Transform(noodleData);
                 return;
             }
-            //instance.enabled = false;
-            //noodleData.TransformData.Apply(instance.transform, _leftHanded);
-            //_transformControllerFactory.Create(parentGameObject, noodleData.ParentTrack, false);
+            instance.enabled = false;
+            noodleData.TransformData.Apply(instance.transform, _leftHanded);
+            _transformControllerFactory.Create(parentGameObject, noodleData.ParentTrack, false);
         }
 
         private readonly Version _version;
