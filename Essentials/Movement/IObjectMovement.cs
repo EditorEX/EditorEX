@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace EditorEX.Essentials.Movement
 {
-    public interface IObjectMovement
+    public interface IObjectMovement : IObjectComponent
     {
         void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData);
 

@@ -4,13 +4,9 @@ using UnityEngine;
 
 namespace EditorEX.Essentials.Visuals
 {
-    public interface IObjectVisuals
+    public interface IObjectVisuals : IObjectComponent
     {
         void Init(BaseEditorData editorData);
-
-        void Enable();
-
-        void Disable();
 
         void ManualUpdate();
     }

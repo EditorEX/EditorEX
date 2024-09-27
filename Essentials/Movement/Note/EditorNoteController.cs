@@ -58,19 +58,24 @@ namespace EditorEX.Essentials.Movement.Note
             }
         }
 
-        private T GetProvidedComponent<T>(ITypeProvider typeProvider)
+        private T GetProvidedComponent<T>(ITypeProvider typeProvider, T existing) where T : IObjectComponent
         {
             var components = gameObject?.GetComponents<T>();
             var types = components?.Select(x => x.GetType())?.ToArray();
             var type = typeProvider.GetProvidedType(types, false);
+
+            existing?.Disable();
 
             return (T)Convert.ChangeType(GetComponent(type), typeof(T));
         }
 
         private void RefreshNoteMovementVisuals()
         {
-            _noteMovement = GetProvidedComponent<IObjectMovement>(_movementTypeProvider);
-            _noteVisuals = GetProvidedComponent<IObjectVisuals>(_visualsTypeProvider);
+            _noteMovement = GetProvidedComponent(_movementTypeProvider, _noteMovement);
+            _noteMovement.Enable();
+
+            _noteVisuals = GetProvidedComponent(_visualsTypeProvider, _noteVisuals);
+            _noteVisuals.Enable();
         }
 
         public void Init(NoteEditorData noteData)
