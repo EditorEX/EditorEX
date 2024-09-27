@@ -188,7 +188,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             __result = default;
             if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleObstacleData? noodleData))
             {
-                return true;
+                return false;
             }
 
             float jumpTime = Mathf.Clamp((time - _move1Duration) / (_move2Duration + _obstacleDuration), 0, 1);
@@ -196,7 +196,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
             if (!position.HasValue)
             {
-                return true;
+                return false;
             }
 
             Vector3 noteOffset = noodleData.InternalNoteOffset;
@@ -211,7 +211,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 __result = definitePosition;
             }
 
-            return false;
+            return true;
         }
 
         private Vector3 GetPosForTime(float time)

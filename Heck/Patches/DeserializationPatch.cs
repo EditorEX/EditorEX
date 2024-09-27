@@ -5,16 +5,12 @@ using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.Util;
 using EditorEX.Heck.Deserialize;
 using Heck.Animation;
-using Newtonsoft.Json;
 using SiraUtil.Affinity;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using UnityEngine.AddressableAssets.ResourceLocators;
-using UnityEngine.AddressableAssets;
-using System.Text;
 
 namespace EditorEX.Heck.Patches
 {
@@ -32,7 +28,7 @@ namespace EditorEX.Heck.Patches
         {
             _editorDeserializerManager = editorDeserializerManager;
         }
-        
+
         [AffinityPatch(typeof(BeatmapDataModelsLoader), nameof(BeatmapDataModelsLoader.LoadToDataModel))]
         [AffinityPostfix]
         private void LoadToDataModelPatch(BeatmapDataModelsLoader __instance, string projectPath, string beatmapFilename, string lightshowFilename)
