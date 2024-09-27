@@ -1,6 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.ViewMode;
+using EditorEX.Essentials.Visuals;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -13,7 +14,9 @@ namespace EditorEX.Essentials.Movement.Note
         private IReadonlyBeatmapState _state;
 
         private IObjectMovement _noteMovement;
+        private IObjectVisuals _noteVisuals;
         private MovementTypeProvider _movementTypeProvider;
+        private VisualsTypeProvider _visualsTypeProvider;
         private ActiveViewMode _activeViewMode;
 
         private NoteEditorData _data;
@@ -21,26 +24,32 @@ namespace EditorEX.Essentials.Movement.Note
         private EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
         [Inject]
-        private void Construct(IReadonlyBeatmapState state, ActiveViewMode activeViewMode, MovementTypeProvider movementTypeProvider, EditorBasicBeatmapObjectSpawnMovementData movementData)
+        private void Construct(
+            IReadonlyBeatmapState state, 
+            ActiveViewMode activeViewMode, 
+            MovementTypeProvider movementTypeProvider, 
+            VisualsTypeProvider visualsTypeProvider,
+            EditorBasicBeatmapObjectSpawnMovementData movementData)
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
+            _visualsTypeProvider = visualsTypeProvider;
             _movementData = movementData;
 
             _activeViewMode = activeViewMode;
-            _activeViewMode.ModeChanged += RefreshNoteMovementAndInit;
+            _activeViewMode.ModeChanged += RefreshNoteMovementVisualsAndInit;
         }
 
         public void Dispose()
         {
-            _activeViewMode.ModeChanged -= RefreshNoteMovementAndInit;
+            _activeViewMode.ModeChanged -= RefreshNoteMovementVisualsAndInit;
         }
 
-        private void RefreshNoteMovementAndInit()
+        private void RefreshNoteMovementVisualsAndInit()
         {
             try
             {
-                RefreshNoteMovement();
+                RefreshNoteMovementVisuals();
                 Init(_data);
             }
             catch
@@ -49,19 +58,19 @@ namespace EditorEX.Essentials.Movement.Note
             }
         }
 
-        private void RefreshNoteMovement()
+        private T GetProvidedComponent<T>(ITypeProvider typeProvider)
         {
-            var components = gameObject?.GetComponents<IObjectMovement>();
-            if (components == null) return;
+            var components = gameObject?.GetComponents<T>();
             var types = components?.Select(x => x.GetType())?.ToArray();
-            var type = _movementTypeProvider.GetNoteMovement(types);
+            var type = typeProvider.GetProvidedType(types, false);
 
-            if (_noteMovement != null && type == _noteMovement.GetType())
-            {
-                return; // No need to refresh if the type is the same
-            }
+            return (T)Convert.ChangeType(GetComponent(type), typeof(T));
+        }
 
-            _noteMovement = GetComponent(type) as IObjectMovement;
+        private void RefreshNoteMovementVisuals()
+        {
+            _noteMovement = GetProvidedComponent<IObjectMovement>(_movementTypeProvider);
+            _noteVisuals = GetProvidedComponent<IObjectVisuals>(_visualsTypeProvider);
         }
 
         public void Init(NoteEditorData noteData)
@@ -69,9 +78,11 @@ namespace EditorEX.Essentials.Movement.Note
             if (noteData == null) return;
             _data = noteData;
 
-            RefreshNoteMovement();
+            RefreshNoteMovementVisuals();
 
             _noteMovement.Init(noteData, _movementData);
+
+            _noteVisuals.Init(noteData);
 
             ManualUpdate();
         }
@@ -94,10 +105,12 @@ namespace EditorEX.Essentials.Movement.Note
         {
             if (_noteMovement == null)
             {
-                RefreshNoteMovementAndInit();
+                RefreshNoteMovementVisualsAndInit();
             }
 
             _noteMovement.Setup(_data);
+
+            _noteMovement.ManualUpdate();
 
             _noteMovement.ManualUpdate();
         }

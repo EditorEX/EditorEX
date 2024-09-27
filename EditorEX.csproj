@@ -283,7 +283,6 @@
     <Compile Include="Essentials\Movement\Arc\EditorArcController.cs" />
     <Compile Include="Essentials\Movement\Arc\MovementProvider\EditorArcBasicMovement.cs" />
     <Compile Include="Essentials\Movement\Arc\MovementProvider\EditorArcGameMovement.cs" />
-    <Compile Include="Essentials\Movement\Note\EditorNoteVisuals.cs" />
     <Compile Include="Essentials\Movement\Obstacle\EditorObstacleController.cs" />
     <Compile Include="Essentials\Movement\Obstacle\MovementProvider\EditorObstacleBasicMovement.cs" />
     <Compile Include="Essentials\Movement\Obstacle\MovementProvider\EditorObstacleGameMovement.cs" />
@@ -298,6 +297,10 @@
     <Compile Include="Essentials\ViewMode\ViewModeRepository.cs" />
     <Compile Include="Essentials\ViewMode\ViewModeSwapper.cs" />
     <Compile Include="Essentials\ViewMode\ViewModeSwappingUI.cs" />
+    <Compile Include="Essentials\Visuals\Note\EditorBasicNoteVisuals.cs" />
+    <Compile Include="Essentials\Visuals\IObjectVisuals.cs" />
+    <Compile Include="Essentials\Visuals\Universal\VisualAssetProvider.cs" />
+    <Compile Include="Essentials\Visuals\VisualsTypeProvider.cs" />
     <Compile Include="Heck\Constants.cs" />
     <Compile Include="Heck\Deserialize\EditorDeserializerInterfaces.cs" />
     <Compile Include="Heck\Installers\EditorHeckModelsInstaller.cs" />

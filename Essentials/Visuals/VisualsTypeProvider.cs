@@ -6,23 +6,23 @@ using System.Collections.Generic;
 using System.Linq;
 using Zenject;
 
-namespace EditorEX.Essentials.Movement
+namespace EditorEX.Essentials.Visuals
 {
-    public class MovementTypeProvider : ITypeProvider
+    public class VisualsTypeProvider : ITypeProvider
     {
         private ActiveViewMode _activeViewMode;
         private List<ValueTuple<string[], Type>> _providers;
 
         [Inject]
-        private MovementTypeProvider(ActiveViewMode activeViewMode, [Inject(Id = "Movement")] List<ValueTuple<string[], Type>> providers)
+        private VisualsTypeProvider(ActiveViewMode activeViewMode, [Inject(Id = "Visuals")] List<ValueTuple<string[], Type>> providers)
         {
             _activeViewMode = activeViewMode;
-            _providers = providers; //providers.Select(x => (x.ViewModes, x.Type)).ToList();
+            _providers = providers;
         }
 
         public Type GetProvidedType(Type[] availableTypes, bool REDACTED)
         {
-            var viewingMode = _activeViewMode.Mode.ID;
+            var viewingMode = _activeViewMode.Mode.ID + (REDACTED ? "-REDACTED" : "");
 
             // Provider name to use, fallback if none exist.
             var provider = _providers.Any(x => x.Item1.Contains(viewingMode)) ? viewingMode : "normal";
@@ -31,7 +31,7 @@ namespace EditorEX.Essentials.Movement
 
             if (pickedProvider == null)
             {
-                Plugin.Log.Error($"Something has gone horribly wrong! No Movement Provider could be found for the present conditions. Viewing Mode {viewingMode}");
+                Plugin.Log.Error($"Something has gone horribly wrong! No Visuals Provider could be found for the present conditions. Viewing Mode {viewingMode}");
             }
 
             return pickedProvider;
