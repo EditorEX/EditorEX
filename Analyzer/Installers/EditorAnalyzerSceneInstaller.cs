@@ -1,7 +1,4 @@
 ﻿using EditorEX.Analyzer.Swings;
-using System.Linq;
-using UnityEngine.AddressableAssets;
-using UnityEngine.AddressableAssets.ResourceLocators;
 using Zenject;
 
 namespace EditorEX.Analyzer.Installers

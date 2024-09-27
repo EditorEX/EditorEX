@@ -34,7 +34,6 @@ namespace EditorEX.MapData.LevelDataLoaders
 
             Version3CustomBeatmapSaveData beatmapSaveData = Version3CustomBeatmapSaveData.Deserialize(File.ReadAllText(fullPath));
             
-            Plugin.Log.Info("Loading " + filename);
             Plugin.Log.Info($"Loaded {beatmapSaveData.colorNotes.Count} notes; {beatmapSaveData.basicBeatmapEvents.Count} events");
             
             notes = LevelDataLoaderUtil.GetEditorData(

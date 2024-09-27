@@ -80,7 +80,6 @@ namespace EditorEX.Essentials.Movement.Data
                 if (spawnData.HasValue)
                     return spawnData.Value;
             }
-            Plugin.Log.Info("Sad");
 
             Vector3 obstacleOffset = GetObstacleOffset(obstacleData.column, (NoteLineLayer)obstacleData.row);
             obstacleOffset.y += _jumpOffsetYProvider.jumpOffsetY;

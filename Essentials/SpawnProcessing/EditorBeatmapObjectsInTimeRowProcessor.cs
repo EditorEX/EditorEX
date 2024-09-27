@@ -70,7 +70,6 @@ namespace EditorEX.Essentials.SpawnProcessing
             {
                 if (obj is NoteEditorData noteData)
                 {
-                    //Plugin.Log.Info("Processing note");
                     ProcessNote(noteData);
                 }
                 else if (obj is BaseSliderEditorData sliderData)
@@ -80,7 +79,6 @@ namespace EditorEX.Essentials.SpawnProcessing
             }
 
             stopwatch.Stop();
-            Plugin.Log.Info($"bdf {stopwatch.ElapsedMilliseconds}");
         }
 
         public void ProcessNote(NoteEditorData noteData)
@@ -174,14 +172,12 @@ namespace EditorEX.Essentials.SpawnProcessing
                 {
                     list.Add(noteData);
                 }
-                //Plugin.Log.Info("hi2asdf! " + list.Count);
             }
             for (int k = 0; k < _notesInColumnsReusableProcessingListOfLists.Length; k++)
             {
                 List<NoteEditorData> list2 = _notesInColumnsReusableProcessingListOfLists[k];
                 for (int l = 0; l < list2.Count; l++)
                 {
-                    //Plugin.Log.Info("hi! " + list2.Count);
                     list2[l].SetBeforeJumpNoteLineLayer((NoteLineLayer)l);
                 }
             }
@@ -196,7 +192,6 @@ namespace EditorEX.Essentials.SpawnProcessing
                 CustomData customData = noteData.GetCustomData();
                 if (customData == null)
                 {
-                    Plugin.Log.Info("NERD");
                     continue;
                 }
                 IEnumerable<float?>? position = customData.GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
@@ -275,7 +270,6 @@ namespace EditorEX.Essentials.SpawnProcessing
                 {
                     if (noteData.GetCustomData() == null)
                     {
-                        Plugin.Log.Info("NERD");
                         continue;
                     }
                     IEnumerable<float?>? notePosition = noteData.GetCustomData().GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
@@ -470,7 +464,6 @@ namespace EditorEX.Essentials.SpawnProcessing
             NoteEditorData noteData3 = items[1];
             if (noteData2.type != noteData3.type && ((noteData2.type == ColorType.ColorA && noteData2.column > noteData3.column) || (noteData2.type == ColorType.ColorB && noteData2.column < noteData3.column)))
             {
-                //Plugin.Log.Info("Hello");
                 noteData2.SetNoteFlipToNote(noteData3);
                 noteData3.SetNoteFlipToNote(noteData2);
             }

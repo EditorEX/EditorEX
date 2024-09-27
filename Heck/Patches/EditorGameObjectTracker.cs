@@ -158,8 +158,6 @@ namespace EditorEX.Heck.Patches
                 return;
             }
 
-            //Plugin.Log.Info($"Added {obj.name} to {track.Count} track(s)");
-
             track.ForEach(n => n.AddGameObject(obj));
         }
 

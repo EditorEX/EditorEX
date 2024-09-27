@@ -40,7 +40,7 @@ namespace EditorEX.Heck.Deserialize
                 CustomData customData = CustomDataRepository.GetCustomData(baseEditorData);
                 if (customData == null)
                 {
-                    Plugin.Log.Info(baseEditorData.GetType().Name);
+                    //Plugin.Log.Info(baseEditorData.GetType().Name);
                 }
                 else
                 {

@@ -25,7 +25,6 @@ namespace EditorEX.CustomJSONData.Patches.Loading
         [AffinityPrefix]
         public bool UniversalLoadingPatch(BeatmapLevelDataModelLoader __instance, string projectPath)
         {
-            Plugin.Log.Info("aODUHF");
             var version = BeatmapProjectFileHelper.GetVersionedJSONVersion(projectPath, "Info.dat");
 
             if (version >= BeatmapProjectFileHelper.version400)

@@ -10,7 +10,6 @@ namespace EditorEX.CustomJSONData.Installers
     {
         public override void InstallBindings()
         {
-            Plugin.Log.Info("fff");
             Container.Bind<ICustomSaveDataLoader>().To<V2CustomSaveDataLoader>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapLevelDataModelLoaderPatch>().AsSingle().NonLazy();
 

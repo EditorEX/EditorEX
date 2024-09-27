@@ -148,7 +148,6 @@ public class SliceMap
         _walls.Sort((x, y) => x.beat.CompareTo(y.beat));
         Cuts = GetCutData(_blocks, _bombs, walls, isRightHand);
         stopwatch.Stop();
-        Plugin.Log.Info($"SliceMap took {stopwatch.ElapsedMilliseconds}ms to generate.");
     }
 
     public void WriteBeatCutDataToList(List<BeatCutData> inOutCutData)
