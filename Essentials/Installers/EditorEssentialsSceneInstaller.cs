@@ -35,14 +35,14 @@ namespace EditorEX.Essentials.Installers
 
             Container.BindInterfacesAndSelfTo<ArcPreview>().AsSingle().NonLazy();
 
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Normal" }, typeof(EditorNoteBasicMovement)));
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Preview" }, typeof(EditorNoteGameMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "normal" }, typeof(EditorNoteBasicMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorNoteGameMovement)));
 
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Normal" }, typeof(EditorObstacleBasicMovement)));
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Preview" }, typeof(EditorObstacleGameMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "normal" }, typeof(EditorObstacleBasicMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorObstacleGameMovement)));
 
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Normal" }, typeof(EditorArcBasicMovement)));
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "Preview" }, typeof(EditorArcGameMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "normal" }, typeof(EditorArcBasicMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorArcGameMovement)));
 
             Container.Bind<MovementTypeProvider>().AsSingle();
 
@@ -54,6 +54,7 @@ namespace EditorEX.Essentials.Installers
             Container.Bind<SideBarUI>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<ViewModeSwappingUI>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ViewModeSwapper>().AsSingle().NonLazy();
 
             Container.Bind<EditorBasicBeatmapObjectSpawnMovementData>().AsSingle().NonLazy();
         }

@@ -5,6 +5,7 @@ using EditorEX.Chroma.Deserializer;
 using EditorEX.Chroma.Installers;
 using EditorEX.CustomJSONData.Installers;
 using EditorEX.Essentials.Installers;
+using EditorEX.Essentials.ViewMode;
 using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.Installers;
 using EditorEX.NoodleExtensions.Deserialize;
@@ -36,7 +37,7 @@ namespace EditorEX
             zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorEssentialsSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorChromaSceneInstaller, BeatmapLevelEditorSceneSetup>();
-            zenjector.Install<EditorAnalyzerSceneInstaller, BeatmapLevelEditorInstaller>();
+            //zenjector.Install<EditorAnalyzerSceneInstaller, BeatmapLevelEditorInstaller>();
 
             zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
 
@@ -46,6 +47,10 @@ namespace EditorEX
             EditorDeserializerManager.Register<EditorNoodleCustomDataDeserializer>("NoodleExtensions").Enabled = true;
             EditorDeserializerManager.Register<EditorHeckCustomDataDeserializer>("Heck").Enabled = true;
             EditorDeserializerManager.Register<EditorChromaCustomDataDeserializer>("Chroma").Enabled = true;
+
+            ViewModeRepository.RegisterViewMode(new ViewMode("Normal", "normal", false, true, false));
+            ViewModeRepository.RegisterViewMode(new ViewMode("Preview", "preview", true, false, false));
+            ViewModeRepository.RegisterViewMode(new ViewMode("Preview w/ Camlock", "preview-lock-cam", true, false, true));
         }
 
         [OnStart]

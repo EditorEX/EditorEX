@@ -52,7 +52,7 @@ namespace EditorEX.Essentials.Patches.Preview
 
         private void TogglePreview()
         {
-            bool showGrid = _activeViewMode.Mode != "Preview";
+            bool showGrid = _activeViewMode.Mode.ShowGridAndSelection;
             grid.SetActive(showGrid);
             foreach (var beatline in beatlines)
             {

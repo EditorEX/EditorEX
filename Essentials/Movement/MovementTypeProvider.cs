@@ -22,16 +22,16 @@ namespace EditorEX.Essentials.Movement
 
         public Type GetNoteMovement(Type[] availableTypes)
         {
-            var viewingMode = _activeViewMode.Mode;
+            var viewingMode = _activeViewMode.Mode.ID;
 
             // Provider name to use, fallback if none exist.
-            var provider = _providers.Any(x => x.Item1.Contains(viewingMode)) ? viewingMode : "Normal";
+            var provider = _providers.Any(x => x.Item1.Contains(viewingMode)) ? viewingMode : "normal";
 
             var pickedProvider = _providers.FirstOrDefault(x => x.Item1.Contains(provider) && availableTypes.Contains(x.Item2)).Item2;
 
             if (pickedProvider == null)
             {
-                Plugin.Log.Error($"Something has gone horribly wrong! No NoteMovement provider could be found for the present conditions. Viewing Mode {viewingMode}");
+                Plugin.Log.Error($"Something has gone horribly wrong! No Movement Provider could be found for the present conditions. Viewing Mode {viewingMode}");
             }
 
             return pickedProvider;
