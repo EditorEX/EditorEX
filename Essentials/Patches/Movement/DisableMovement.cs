@@ -31,10 +31,6 @@ namespace EditorEX.Essentials.Patches.Movement
         private IEnumerable<CodeInstruction> TranspilerArc(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null).Advance(12).RemoveInstructions(16).InstructionEnumeration();
-            foreach (var instruction in result)
-            {
-                Plugin.Log.Info(instruction.ToString());
-            }
             return result;
         }
 

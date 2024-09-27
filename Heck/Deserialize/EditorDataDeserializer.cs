@@ -35,7 +35,7 @@ namespace EditorEX.Heck.Deserialize
         internal void Create(object[] inputs)
         {
             _instance = _constructor.Invoke(_constructor.ActualParameters(inputs));
-            if (_instance is IEarlyDeserializer earlyDeserializer)
+            if (_instance is IEditorEarlyDeserializer earlyDeserializer)
             {
                 earlyDeserializer.DeserializeEarly();
             }

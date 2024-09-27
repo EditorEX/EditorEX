@@ -214,7 +214,6 @@ namespace EditorEX.Chroma.Lighting
                 {
                     case 0:
                         {
-                            Plugin.Log.Info("4");
                             if (hard)
                             {
                                 tween.Kill();
@@ -238,12 +237,10 @@ namespace EditorEX.Chroma.Lighting
                     case 8:
                     case 12:
                         {
-                            Plugin.Log.Info("3");
                             if (hard)
                             {
                                 tween.Kill();
                             }
-
                             Color color = GetNormalColor(previousValue).MultAlpha(previousFloatValue);
                             tween.fromValue = color;
                             tween.toValue = color;
@@ -257,7 +254,6 @@ namespace EditorEX.Chroma.Lighting
                     case 6:
                     case 10:
                         {
-                            Plugin.Log.Info("2");
                             Color colorFrom = GetHighlightColor(previousValue).MultAlpha(previousFloatValue);
                             Color colorTo = GetNormalColor(previousValue).MultAlpha(previousFloatValue);
                             tween.fromValue = colorFrom;
@@ -280,7 +276,6 @@ namespace EditorEX.Chroma.Lighting
                     case 11:
                     case -1:
                         {
-                            Plugin.Log.Info("1");
                             Color colorFrom = GetHighlightColor(previousValue).MultAlpha(previousFloatValue);
                             Color colorTo = GetNormalColor(previousValue).ColorWithAlpha(_offColorIntensity * previousFloatValue);
                             tween.fromValue = colorFrom;
@@ -371,7 +366,6 @@ namespace EditorEX.Chroma.Lighting
                     {
                         return;
                     }
-                    Plugin.Log.Info("12");
 
                     tween.SetStartTimeAndEndTime(previousEvent.time, nextSameTypeEvent.time);
                     tween.HeckEasing = easing ?? Functions.easeLinear;

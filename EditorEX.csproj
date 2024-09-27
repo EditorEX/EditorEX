@@ -294,6 +294,9 @@
     <Compile Include="Essentials\Patches\Preview\PreviewToggler.cs" />
     <Compile Include="Essentials\Patches\ProcessNewEditorData.cs" />
     <Compile Include="Essentials\ViewMode\ActiveViewMode.cs" />
+    <Compile Include="Essentials\ViewMode\ViewMode.cs" />
+    <Compile Include="Essentials\ViewMode\ViewModeRepository.cs" />
+    <Compile Include="Essentials\ViewMode\ViewModeSwapper.cs" />
     <Compile Include="Essentials\ViewMode\ViewModeSwappingUI.cs" />
     <Compile Include="Heck\Constants.cs" />
     <Compile Include="Heck\Deserialize\EditorDeserializerInterfaces.cs" />
@@ -335,9 +338,10 @@
     <Compile Include="MapData\SaveDataLoaders\V2CustomSaveDataLoader.cs" />
     <Compile Include="NoodleExtensions\Animation\EditorParentObject.cs" />
     <Compile Include="NoodleExtensions\Deserialize\EditorNoodleCustomDataDeserializer.cs" />
+    <Compile Include="NoodleExtensions\Events\EditorAssignPlayerToTrack.cs" />
     <Compile Include="NoodleExtensions\Events\EditorAssignTrackParent.cs" />
     <Compile Include="NoodleExtensions\Installers\EditorNoodleSceneInstaller.cs" />
-    <Compile Include="NoodleExtensions\Manager\EditorSpawnDataManager.cs" />
+    <Compile Include="NoodleExtensions\Managers\EditorSpawnDataManager.cs" />
     <Compile Include="NoodleExtensions\ObjectData\EditorNoodleBaseNoteData.cs" />
     <Compile Include="NoodleExtensions\ObjectData\EditorNoodleNoteData.cs" />
     <Compile Include="NoodleExtensions\ObjectData\EditorNoodleObjectData.cs" />

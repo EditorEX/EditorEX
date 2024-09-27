@@ -45,7 +45,7 @@ namespace EditorEX.Chroma.Deserializer
 
         public void DeserializeEarly()
         {
-            var beatmapData = CustomDataRepository.GetCustomBeatmapSaveData().customData;
+            var beatmapData = CustomDataRepository.GetBeatmapData().customData;
             IEnumerable<CustomData>? environmentData = beatmapData.Get<List<object>>(_v2 ? V2_ENVIRONMENT : ENVIRONMENT)?.Cast<CustomData>();
             if (environmentData != null)
             {
@@ -270,22 +270,6 @@ namespace EditorEX.Chroma.Deserializer
                 chromaEventData = null;
                 return false;
             }
-        }
-
-        internal static Color? GetColorFromData(CustomData data, bool v2)
-        {
-            return GetColorFromData(data, v2 ? V2_COLOR : COLOR);
-        }
-
-        internal static Color? GetColorFromData(CustomData data, string member = COLOR)
-        {
-            List<float>? color = data.Get<List<object>>(member)?.Select(Convert.ToSingle).ToList();
-            if (color == null)
-            {
-                return null;
-            }
-
-            return new Color(color[0], color[1], color[2], color.Count > 3 ? color[3] : 1);
         }
     }
 }

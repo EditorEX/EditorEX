@@ -31,6 +31,7 @@ namespace EditorEX.Heck.Deserialize
         {
             if (beatmapEventData == null)
             {
+                //Plugin.Log.Error($"NULL {Environment.StackTrace}");
                 Plugin.Log.Error("EditorDeserializedData | beatmapEventData is null");
                 result = default;
                 return false;

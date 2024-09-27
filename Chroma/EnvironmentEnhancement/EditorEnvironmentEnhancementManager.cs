@@ -84,6 +84,7 @@ namespace Chroma.EnvironmentEnhancement
             yield return new WaitForEndOfFrame();
 
             bool v2 = MapContext.Version.Major < 3;
+
             IEnumerable<CustomData>? environmentData = null;
 
             // seriously what the fuck beat games

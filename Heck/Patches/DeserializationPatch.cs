@@ -5,12 +5,16 @@ using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.Util;
 using EditorEX.Heck.Deserialize;
 using Heck.Animation;
+using Newtonsoft.Json;
 using SiraUtil.Affinity;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.AddressableAssets;
+using System.Text;
 
 namespace EditorEX.Heck.Patches
 {
@@ -40,11 +44,13 @@ namespace EditorEX.Heck.Patches
             var beatmapData = CustomDataRepository.GetBeatmapData();
             Plugin.Log.Info("Loading custom data into beatmap data " + (beatmapData == null) + " " + (customBeatmapSaveData == null) + " " + (standardLevelInfoSaveData == null));
 
-            _customBeatmapDataV2?.SetValue(beatmapData, Version.Parse(customBeatmapSaveData.version));
-            _customBeatmapDataCustomData?.SetValue(beatmapData, customBeatmapSaveData.customData);
-            _customBeatmapDataBeatmapCustomData?.SetValue(beatmapData, (standardLevelInfoSaveData.difficultyBeatmapSets.SelectMany(x=>x.difficultyBeatmaps).FirstOrDefault(x=>x.beatmapFilename==beatmapFilename) as CustomLevelInfoSaveData.DifficultyBeatmap).customData);
-
             beatmapVersion = BeatmapProjectFileHelper.GetVersionedJSONVersion(projectPath, beatmapFilename);
+
+            _customBeatmapDataV2?.SetValue(beatmapData, beatmapVersion);
+            _customBeatmapDataCustomData?.SetValue(beatmapData, customBeatmapSaveData.customData);
+            var beatmapCustomData = (standardLevelInfoSaveData.difficultyBeatmapSets.SelectMany(x => x.difficultyBeatmaps).FirstOrDefault(x => x.beatmapFilename == beatmapFilename) as CustomLevelInfoSaveData.DifficultyBeatmap).customData;
+            _customBeatmapDataBeatmapCustomData?.SetValue(beatmapData, beatmapCustomData);
+
             bool v2 = beatmapVersion < __instance._version300;
 
             MapContext.Version = beatmapVersion;

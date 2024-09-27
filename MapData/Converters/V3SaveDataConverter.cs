@@ -182,7 +182,7 @@ namespace EditorEX.MapData.Converters
                 basicEventTypesWithKeywords,
                 true,
                 customEvents,
-                beatmapData);
+                oldSaveData.customData);
         }
     }
 }
