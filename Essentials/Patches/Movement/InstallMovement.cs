@@ -5,6 +5,7 @@ using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Movement.Note.MovementProvider;
 using EditorEX.Essentials.Movement.Obstacle;
 using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
+using EditorEX.Essentials.Visuals;
 using HarmonyLib;
 using SiraUtil.Affinity;
 
@@ -19,6 +20,9 @@ namespace EditorEX.Essentials.Patches.Movement
         {
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteBasicMovement>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteGameMovement>();
+            __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteGameVisuals>();
+            __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteBasicVisuals>();
+            __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteJump>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteJump>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteFloorMovement>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteController>();

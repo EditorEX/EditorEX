@@ -9,5 +9,7 @@ namespace EditorEX.Essentials.Visuals
         void Init(BaseEditorData editorData);
 
         void ManualUpdate();
+
+        GameObject GetVisualRoot();
     }
 }

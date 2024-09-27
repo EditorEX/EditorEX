@@ -58,35 +58,15 @@ namespace EditorEX.Essentials.Movement.Note
             }
         }
 
-        private bool GetProvidedComponent<T>(ITypeProvider typeProvider, T existing, out T newComponent) where T : IObjectComponent
-        {
-            var components = gameObject?.GetComponents<T>();
-            var types = components?.Select(x => x.GetType())?.ToArray();
-            var type = typeProvider.GetProvidedType(types, false);
-
-            T newToUse = (T)Convert.ChangeType(GetComponent(type), typeof(T));
-
-            // We can't use != with generic values, can't use a type constraint for IEquatible as then the interface would need to inherit such also.
-            if (!EqualityComparer<T>.Default.Equals(existing, newToUse))
-            {
-                existing.Disable();
-                newComponent = newToUse;
-                return true;
-            }
-
-            newComponent = default;
-            return false;
-        }
-
         private void RefreshNoteMovementVisuals()
         {
-            if (GetProvidedComponent(_movementTypeProvider, _noteMovement, out IObjectMovement newNoteMovement))
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _noteMovement, out IObjectMovement newNoteMovement))
             {
                 _noteMovement = newNoteMovement;
                 _noteMovement.Enable();
             }
 
-            if (GetProvidedComponent(_visualsTypeProvider, _noteVisuals, out IObjectVisuals newNoteVisuals))
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _visualsTypeProvider, _noteVisuals, out IObjectVisuals newNoteVisuals))
             {
                 _noteVisuals = newNoteVisuals;
                 _noteVisuals.Enable();
@@ -100,7 +80,7 @@ namespace EditorEX.Essentials.Movement.Note
 
             RefreshNoteMovementVisuals();
 
-            _noteMovement.Init(noteData, _movementData);
+            _noteMovement.Init(noteData, _movementData, () => _noteVisuals);
             _noteVisuals.Init(noteData);
 
             ManualUpdate();

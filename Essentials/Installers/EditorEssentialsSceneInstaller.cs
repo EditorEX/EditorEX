@@ -37,7 +37,7 @@ namespace EditorEX.Essentials.Installers
 
             Container.BindInterfacesAndSelfTo<ArcPreview>().AsSingle().NonLazy();
 
-
+            // MOVEMENT
 
             Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "normal" }, typeof(EditorNoteBasicMovement)));
             Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorNoteGameMovement)));
@@ -50,13 +50,13 @@ namespace EditorEX.Essentials.Installers
 
             Container.Bind<MovementTypeProvider>().AsSingle();
 
-
+            // VISUALS
 
             Container.Bind<VisualsTypeProvider>().AsSingle().NonLazy();
             Container.Bind<VisualAssetProvider>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
 
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "normal" }, typeof(EditorNoteBasicMovement)));
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorNoteGameMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "normal" }, typeof(EditorNoteBasicVisuals)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorNoteGameVisuals)));
 
 
 

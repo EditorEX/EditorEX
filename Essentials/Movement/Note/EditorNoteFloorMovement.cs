@@ -1,4 +1,5 @@
 ﻿using BeatmapEditor3D.DataModels;
+using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using NoodleExtensions.Animation;
@@ -32,7 +33,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         [Inject] private AnimationHelper _animationHelper;
 
-        public void Init(NoteEditorData editorData, float worldRotation, Vector3 startPos, Vector3 endPos, float moveDuration, float startTime)
+        public void Init(NoteEditorData editorData, float worldRotation, Vector3 startPos, Vector3 endPos, float moveDuration, float startTime, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData;
             if (!_editorDeserializedData.Resolve(_editorData, out NoodleData))
@@ -40,8 +41,7 @@ namespace EditorEX.Essentials.Movement.Note
                 NoodleData = null;
             }
 
-            _rotatedObject = transform.Find("NoteCube");
-            if (_rotatedObject == null) _rotatedObject = transform;
+            _rotatedObject = getVisualRoot;
             _worldRotation = Quaternion.Euler(0f, worldRotation, 0f);
             _inverseWorldRotation = Quaternion.Euler(0f, -worldRotation, 0f);
             _startPos = startPos;
@@ -73,7 +73,7 @@ namespace EditorEX.Essentials.Movement.Note
             Vector3 vector = _worldRotation * _localPosition;
             transform.localPosition = vector;
             transform.localRotation = _worldRotation;
-            _rotatedObject.localRotation = Quaternion.identity;
+            _rotatedObject().GetVisualRoot().transform.localRotation = Quaternion.identity;
             return vector;
         }
 
@@ -88,7 +88,7 @@ namespace EditorEX.Essentials.Movement.Note
                 floorMovementDidFinishEvent?.Invoke();
             }
 
-            _rotatedObject.gameObject.SetActive(num > 0f);
+            _rotatedObject().GetVisualRoot().SetActive(num > 0f);
 
             return vector;
         }
@@ -97,7 +97,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         private NoteEditorData _editorData;
 
-        private Transform _rotatedObject;
+        private Func<IObjectVisuals> _rotatedObject;
 
         [Inject]
         private readonly PlayerTransforms _playerTransforms;

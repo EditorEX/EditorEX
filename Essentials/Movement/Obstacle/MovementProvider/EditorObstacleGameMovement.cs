@@ -1,11 +1,13 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -94,7 +96,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             return noodleData?.Length * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance ?? @default;
         }
 
-        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData)
+        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _stretchableObstacle = GetComponent<StretchableObstacle>();
             _selection = GetComponent<ObstacleViewSelection>();
@@ -167,12 +169,14 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             noodleData.InternalNoteOffset = noteOffset;
         }
 
-        protected void Awake()
+        public void Enable()
         {
+
         }
 
-        protected void OnDestroy()
+        public void Disable()
         {
+
         }
 
         public void Setup(BaseEditorData editorData)

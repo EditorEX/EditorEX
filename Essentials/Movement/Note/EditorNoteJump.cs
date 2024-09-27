@@ -1,4 +1,5 @@
 ﻿using BeatmapEditor3D.DataModels;
+using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using NoodleExtensions;
@@ -37,7 +38,7 @@ namespace EditorEX.Essentials.Movement.Note
             _editorDeserializedData = editorDeserializedData;
         }
 
-        public void Init(NoteEditorData editorData, float beatTime, float worldRotation, Vector3 startPos, Vector3 endPos, float jumpDuration, float gravity, float flipYSide, float endRotation)
+        public void Init(NoteEditorData editorData, float beatTime, float worldRotation, Vector3 startPos, Vector3 endPos, float jumpDuration, float gravity, float flipYSide, float endRotation, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData;
             if (!_editorDeserializedData.Resolve(_editorData, out NoodleData))
@@ -45,8 +46,7 @@ namespace EditorEX.Essentials.Movement.Note
                 NoodleData = null;
             }
 
-            _rotatedObject = transform.Find("NoteCube");
-            if (_rotatedObject == null) _rotatedObject = transform;
+            _rotatedObject = getVisualRoot;
             _worldRotation = Quaternion.Euler(0f, worldRotation, 0f);
             _inverseWorldRotation = Quaternion.Euler(0f, -worldRotation, 0f);
             _startPos = startPos;
@@ -145,7 +145,7 @@ namespace EditorEX.Essentials.Movement.Note
                 quaternion = Quaternion.Slerp(_middleRotation, _endRotation, Mathf.Sin((num2Clamped - 0.125f) * 3.1415927f * 2f));
             }
 
-            _rotatedObject.localRotation = quaternion;
+            _rotatedObject().GetVisualRoot().transform.localRotation = quaternion;
 
             if (num2 >= 0.5f && !_halfJumpMarkReported)
             {
@@ -180,7 +180,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         private NoteEditorData _editorData;
 
-        private Transform _rotatedObject;
+        private Func<IObjectVisuals> _rotatedObject;
 
         private float _yAvoidanceUp = 0.45f;
 

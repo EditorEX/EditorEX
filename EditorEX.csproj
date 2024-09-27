@@ -276,6 +276,8 @@
     <Compile Include="Essentials\Installers\EditorEssentialsAppInstaller.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsModelsInstaller.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsSceneInstaller.cs" />
+    <Compile Include="Essentials\IObjectComponent.cs" />
+    <Compile Include="Essentials\ITypeProvider.cs" />
     <Compile Include="Essentials\Movement\Arc\EditorSliderIntensityEffect.cs" />
     <Compile Include="Essentials\Movement\Note\MovementProvider\EditorNoteBasicMovement.cs" />
     <Compile Include="Essentials\Movement\IObjectMovement.cs" />
@@ -292,12 +294,14 @@
     <Compile Include="Essentials\Patches\Preview\ArcPreview.cs" />
     <Compile Include="Essentials\Patches\Preview\PreviewToggler.cs" />
     <Compile Include="Essentials\Patches\ProcessNewEditorData.cs" />
+    <Compile Include="Essentials\TypeProviderUtils.cs" />
     <Compile Include="Essentials\ViewMode\ActiveViewMode.cs" />
     <Compile Include="Essentials\ViewMode\ViewMode.cs" />
     <Compile Include="Essentials\ViewMode\ViewModeRepository.cs" />
     <Compile Include="Essentials\ViewMode\ViewModeSwapper.cs" />
     <Compile Include="Essentials\ViewMode\ViewModeSwappingUI.cs" />
-    <Compile Include="Essentials\Visuals\Note\EditorBasicNoteVisuals.cs" />
+    <Compile Include="Essentials\Visuals\Note\EditorNoteGameVisuals.cs" />
+    <Compile Include="Essentials\Visuals\Note\EditorNoteBasicVisuals.cs" />
     <Compile Include="Essentials\Visuals\IObjectVisuals.cs" />
     <Compile Include="Essentials\Visuals\Universal\VisualAssetProvider.cs" />
     <Compile Include="Essentials\Visuals\VisualsTypeProvider.cs" />
