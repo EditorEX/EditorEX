@@ -8,7 +8,7 @@ using NoodleExtensions;
 using UnityEngine;
 using Zenject;
 
-namespace EditorEX.NoodleExtensions.Manager
+namespace EditorEX.NoodleExtensions.Managers
 {
     internal class EditorSpawnDataManager
     {
@@ -35,7 +35,7 @@ namespace EditorEX.NoodleExtensions.Manager
             if (!_editorDeserializedData.Resolve(obstacleData, out EditorNoodleObstacleData? noodleData))
             {
                 result = null;
-                return true;
+                return false;
             }
 
             float? njs = noodleData.NJS;
@@ -79,7 +79,7 @@ namespace EditorEX.NoodleExtensions.Manager
                 jumpDuration,
                 StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance);
 
-            return false;
+            return true;
         }
 
         internal bool GetJumpingNoteSpawnData(NoteEditorData noteData, out BeatmapObjectSpawnMovementData.NoteSpawnData? result)
@@ -87,7 +87,7 @@ namespace EditorEX.NoodleExtensions.Manager
             if (!_editorDeserializedData.Resolve(noteData, out EditorNoodleBaseNoteData? noodleData))
             {
                 result = null;
-                return true;
+                return false;
             }
 
             float? njs = noodleData.NJS;
@@ -131,7 +131,7 @@ namespace EditorEX.NoodleExtensions.Manager
                 _movementData.moveDuration,
                 jumpDuration);
 
-            return false;
+            return true;
         }
 
         internal bool GetSliderSpawnData(BaseSliderEditorData sliderData, out BeatmapObjectSpawnMovementData.SliderSpawnData? result)
@@ -139,7 +139,7 @@ namespace EditorEX.NoodleExtensions.Manager
             if (!_editorDeserializedData.Resolve(sliderData, out EditorNoodleSliderData? noodleData))
             {
                 result = null;
-                return true;
+                return false;
             }
 
             float? njs = noodleData.NJS;
@@ -194,7 +194,7 @@ namespace EditorEX.NoodleExtensions.Manager
                 _movementData.moveDuration,
                 jumpDuration);
 
-            return false;
+            return true;
         }
 
         internal float GetSpawnAheadTime(float? inputNjs, float? inputOffset)
@@ -252,10 +252,10 @@ namespace EditorEX.NoodleExtensions.Manager
         {
             // We always use beat offset
 
-            //if (!inputNjs.HasValue && !inputOffset.HasValue && _initData.noteJumpValueType == BeatmapObjectSpawnMovementData.NoteJumpValueType.JumpDuration)
-            //{
-            //	return _movementData.jumpDuration;
-            //}
+            if (!inputNjs.HasValue && !inputOffset.HasValue && _movementData._noteJumpValueType == BeatmapObjectSpawnMovementData.NoteJumpValueType.JumpDuration)
+            {
+            	return _movementData.jumpDuration;
+            }
 
             float oneBeatDuration = 60f / PopulateBeatmap._beatmapLevelDataModel.beatsPerMinute;
             float halfJumpDurationInBeats = CoreMathUtils.CalculateHalfJumpDurationInBeats(
