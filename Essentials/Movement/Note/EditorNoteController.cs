@@ -3,6 +3,7 @@ using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.ViewMode;
 using EditorEX.Essentials.Visuals;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
@@ -58,24 +59,39 @@ namespace EditorEX.Essentials.Movement.Note
             }
         }
 
-        private T GetProvidedComponent<T>(ITypeProvider typeProvider, T existing) where T : IObjectComponent
+        private bool GetProvidedComponent<T>(ITypeProvider typeProvider, T existing, out T newComponent) where T : IObjectComponent
         {
             var components = gameObject?.GetComponents<T>();
             var types = components?.Select(x => x.GetType())?.ToArray();
             var type = typeProvider.GetProvidedType(types, false);
 
-            existing?.Disable();
+            T newToUse = (T)Convert.ChangeType(GetComponent(type), typeof(T));
 
-            return (T)Convert.ChangeType(GetComponent(type), typeof(T));
+            // We can't use != with generic values, can't use a type constraint for IEquatible as then the interface would need to inherit such also.
+            if (!EqualityComparer<T>.Default.Equals(existing, newToUse))
+            {
+                existing.Disable();
+                newComponent = newToUse;
+                return true;
+            }
+
+            newComponent = default;
+            return false;
         }
 
         private void RefreshNoteMovementVisuals()
         {
-            _noteMovement = GetProvidedComponent(_movementTypeProvider, _noteMovement);
-            _noteMovement.Enable();
+            if (GetProvidedComponent(_movementTypeProvider, _noteMovement, out IObjectMovement newNoteMovement))
+            {
+                _noteMovement = newNoteMovement;
+                _noteMovement.Enable();
+            }
 
-            _noteVisuals = GetProvidedComponent(_visualsTypeProvider, _noteVisuals);
-            _noteVisuals.Enable();
+            if (GetProvidedComponent(_visualsTypeProvider, _noteVisuals, out IObjectVisuals newNoteVisuals))
+            {
+                _noteVisuals = newNoteVisuals;
+                _noteVisuals.Enable();
+            }
         }
 
         public void Init(NoteEditorData noteData)
