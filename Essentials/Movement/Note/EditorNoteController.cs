@@ -12,23 +12,22 @@ namespace EditorEX.Essentials.Movement.Note
 {
     internal class EditorNoteController : MonoBehaviour, IDisposable
     {
-        private IReadonlyBeatmapState _state;
-
         private IObjectMovement _noteMovement;
         private IObjectVisuals _noteVisuals;
+
+        private IReadonlyBeatmapState _state;
         private MovementTypeProvider _movementTypeProvider;
         private VisualsTypeProvider _visualsTypeProvider;
         private ActiveViewMode _activeViewMode;
+        private EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
         private NoteEditorData _data;
 
-        private EditorBasicBeatmapObjectSpawnMovementData _movementData;
-
         [Inject]
         private void Construct(
-            IReadonlyBeatmapState state, 
-            ActiveViewMode activeViewMode, 
-            MovementTypeProvider movementTypeProvider, 
+            IReadonlyBeatmapState state,
+            ActiveViewMode activeViewMode,
+            MovementTypeProvider movementTypeProvider,
             VisualsTypeProvider visualsTypeProvider,
             EditorBasicBeatmapObjectSpawnMovementData movementData)
         {
@@ -102,21 +101,24 @@ namespace EditorEX.Essentials.Movement.Note
             RefreshNoteMovementVisuals();
 
             _noteMovement.Init(noteData, _movementData);
-
             _noteVisuals.Init(noteData);
 
             ManualUpdate();
         }
 
+        // Use our own prevBeat field as _state.prevBeat only updates when playing or scrubbing which will cause constant updates after scrubbing while paused.
         float _prevBeat = 9999f;
 
         public void Update()
         {
-            if (!_state.isPlaying && _prevBeat == _state.beat) return;
+            if (!_state.isPlaying && _prevBeat == _state.beat) return; //Don't update if not playing for performance, but force an update if scrubbing manually.
+
+            // If we rewind we should reinit the note to stop issues
             if (_prevBeat > _state.beat)
             {
                 Init(_data);
             }
+
             _prevBeat = _state.beat;
 
             ManualUpdate();
@@ -124,7 +126,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         public void ManualUpdate()
         {
-            if (_noteMovement == null)
+            if (_noteMovement == null || _noteVisuals == null)
             {
                 RefreshNoteMovementVisualsAndInit();
             }
@@ -132,8 +134,7 @@ namespace EditorEX.Essentials.Movement.Note
             _noteMovement.Setup(_data);
 
             _noteMovement.ManualUpdate();
-
-            _noteMovement.ManualUpdate();
+            _noteVisuals.ManualUpdate();
         }
     }
 }
