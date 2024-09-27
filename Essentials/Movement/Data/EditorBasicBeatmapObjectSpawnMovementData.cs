@@ -2,7 +2,7 @@
 using EditorEX.Essentials.Patches;
 using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Heck.Deserialize;
-using EditorEX.NoodleExtensions.Manager;
+using EditorEX.NoodleExtensions.Managers;
 using IPA.Utilities;
 using UnityEngine;
 using Zenject;
@@ -23,7 +23,7 @@ namespace EditorEX.Essentials.Movement.Data
         public float jumpOffsetY => _jumpOffsetYProvider.jumpOffsetY;
 
         [Inject]
-        private void Construct(EditorSpawnDataManager editorSpawnDataManager, [Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData)
+        private void Construct(EditorSpawnDataManager editorSpawnDataManager, [Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData, PlayerDataModel playerDataModel)
         {
             _editorSpawnDataManager = editorSpawnDataManager;
 
@@ -35,11 +35,17 @@ namespace EditorEX.Essentials.Movement.Data
             var offsetProvider = new StaticJumpOffsetYProvider();
             offsetProvider.SetField("_initData", new StaticJumpOffsetYProvider.InitData(0));
 
-            Init(4, difficultyBeatmap.noteJumpMovementSpeed, beatmapLevelDataModel.beatsPerMinute, BeatmapObjectSpawnMovementData.NoteJumpValueType.BeatOffset, difficultyBeatmap.noteJumpStartBeatOffset, offsetProvider, Vector3.right, Vector3.forward);
+            BeatmapObjectSpawnMovementData.NoteJumpValueType jumpValueType = BeatmapObjectSpawnMovementData.NoteJumpValueType.JumpDuration;
+            float jumpValue = 0f;
+
+            BeatmapObjectSpawnControllerHelpers.GetNoteJumpValues(playerDataModel.playerData.playerSpecificSettings, difficultyBeatmap.noteJumpStartBeatOffset, out jumpValueType, out jumpValue);
+
+            Init(4, difficultyBeatmap.noteJumpMovementSpeed, beatmapLevelDataModel.beatsPerMinute, jumpValueType, jumpValue, offsetProvider, Vector3.right, Vector3.forward);
         }
 
         public void Init(int noteLinesCount, float startNoteJumpMovementSpeed, float startBpm, BeatmapObjectSpawnMovementData.NoteJumpValueType noteJumpValueType, float noteJumpValue, IJumpOffsetYProvider jumpOffsetYProvider, Vector3 rightVec, Vector3 forwardVec)
         {
+            _noteJumpValueType = noteJumpValueType;
             _noteLinesCount = noteLinesCount;
             _noteJumpMovementSpeed = startNoteJumpMovementSpeed;
             if (noteJumpValueType != BeatmapObjectSpawnMovementData.NoteJumpValueType.BeatOffset)
@@ -74,6 +80,7 @@ namespace EditorEX.Essentials.Movement.Data
                 if (spawnData.HasValue)
                     return spawnData.Value;
             }
+            Plugin.Log.Info("Sad");
 
             Vector3 obstacleOffset = GetObstacleOffset(obstacleData.column, (NoteLineLayer)obstacleData.row);
             obstacleOffset.y += _jumpOffsetYProvider.jumpOffsetY;
@@ -220,6 +227,7 @@ namespace EditorEX.Essentials.Movement.Data
         private IJumpOffsetYProvider _jumpOffsetYProvider;
         internal Vector3 _rightVec;
         internal Vector3 _forwardVec;
+        internal BeatmapObjectSpawnMovementData.NoteJumpValueType _noteJumpValueType;
 
         public const float kDefaultMaxHalfJumpDistance = 18f;
         public const float kDefaultStartHalfJumpDurationInBeats = 4f;
