@@ -7,8 +7,6 @@ using NoodleExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace EditorEX.NoodleExtensions.ObjectData
@@ -89,7 +87,7 @@ namespace EditorEX.NoodleExtensions.ObjectData
                 }
                 Fake = customData.Get<bool?>(v2 ? "_fake" : "NE_fake");
                 Quaternion? quaternion = null;
-                LocalRotationQuaternion = ((customData.GetQuaternion(v2 ? "_localRotation" : "localRotation") != null) ? new Quaternion?(quaternion.GetValueOrDefault().Mirror(leftHanded)) : null);
+                LocalRotationQuaternion = customData.GetQuaternion(v2 ? "_localRotation" : "localRotation");
                 IEnumerable<Track> nullableTrackArray = customData.GetNullableTrackArray(beatmapTracks, v2);
                 Track = ((nullableTrackArray != null) ? nullableTrackArray.ToList() : null);
                 CustomData animationData = customData.Get<CustomData>(v2 ? "_animation" : "animation");

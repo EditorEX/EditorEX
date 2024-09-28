@@ -13,6 +13,11 @@ namespace EditorEX.Essentials
         {
             var components = gameObject?.GetComponents<T>();
             var types = components?.Select(x => x.GetType())?.ToArray();
+            if (types == null)
+            {
+                newComponent = existing;
+                return false;
+            }
             var type = typeProvider.GetProvidedType(types, false);
 
             T newToUse = (T)(object)gameObject.GetComponent(type);
@@ -25,7 +30,7 @@ namespace EditorEX.Essentials
                 return true;
             }
 
-            newComponent = default;
+            newComponent = existing;
             return false;
         }
     }

@@ -181,10 +181,6 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
         public void Setup(BaseEditorData editorData)
         {
-            if (!_editorDeserializedData.Resolve(editorData, out EditorNoodleObstacleData? noodleData))
-            {
-                return;
-            }
         }
 
         private bool NoodleGetPosForTime(float time, out Vector3 __result)
@@ -224,6 +220,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             {
                 return result;
             }
+
             Vector3 vector;
             if (time < _move1Duration)
             {
@@ -245,8 +242,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             return vector;
         }
 
-
-        public void ManualUpdate()
+        public void NoodleUpdate()
         {
             if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleObstacleData? noodleData))
             {
@@ -320,7 +316,6 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 {
                     worldRotationQuatnerion *= localRotationOffset.Value;
                 }
-
                 transform.localRotation = worldRotationQuatnerion;
             }
 
@@ -341,22 +336,23 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             {
                 transform.localScale = scaleOffset.Value;
             }
+        }
 
-            if (dissolve.HasValue)
-            {
-                //_cutoutManager.ObstacleCutoutEffects[__instance].SetCutout(dissolve.Value);
-            }
 
-            float num = this._audioTimeSyncController.songTime - _startTimeOffset;
+        public void ManualUpdate()
+        {
+            NoodleUpdate();
+
+            float num = _audioTimeSyncController.songTime - _startTimeOffset;
             Vector3 posForTime = GetPosForTime(num);
             transform.localPosition = _worldRotation * posForTime;
-            if (!this._passedThreeQuartersOfMove2Reported && num > this._move1Duration + this._move2Duration * 0.75f)
+            if (!_passedThreeQuartersOfMove2Reported && num > _move1Duration + _move2Duration * 0.75f)
             {
-                this._passedThreeQuartersOfMove2Reported = true;
+                _passedThreeQuartersOfMove2Reported = true;
             }
-            if (!this._passedAvoidedMarkReported && num > this._passedAvoidedMarkTime)
+            if (!_passedAvoidedMarkReported && num > _passedAvoidedMarkTime)
             {
-                this._passedAvoidedMarkReported = true;
+                _passedAvoidedMarkReported = true;
             }
         }
     }
