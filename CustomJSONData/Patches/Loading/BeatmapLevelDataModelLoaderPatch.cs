@@ -1,5 +1,6 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
+using EditorEX.MapData.Contexts;
 using EditorEX.MapData.SaveDataLoaders;
 using SiraUtil.Affinity;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ namespace EditorEX.CustomJSONData.Patches.Loading
         private SignalBus _signalBus;
 
         [Inject]
-        public BeatmapLevelDataModelLoaderPatch(List<ICustomSaveDataLoader> saveDataLoaders,
+        public BeatmapLevelDataModelLoaderPatch(
+            List<ICustomSaveDataLoader> saveDataLoaders,
             SignalBus signalBus)
         {
             _loaders = saveDataLoaders;
@@ -27,8 +29,14 @@ namespace EditorEX.CustomJSONData.Patches.Loading
         {
             var version = BeatmapProjectFileHelper.GetVersionedJSONVersion(projectPath, "Info.dat");
 
+            LevelContext.Reset();
+
+            LevelContext.Version = version;
+
             if (version >= BeatmapProjectFileHelper.version400)
+            {
                 return true;
+            }
 
             var loader = _loaders.FirstOrDefault(x => x.IsVersion(version));
             if (loader == null)

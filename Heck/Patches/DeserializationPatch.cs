@@ -4,6 +4,7 @@ using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.Util;
 using EditorEX.Heck.Deserialize;
+using EditorEX.MapData.Contexts;
 using Heck.Animation;
 using SiraUtil.Affinity;
 using System;

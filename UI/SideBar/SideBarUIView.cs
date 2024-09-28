@@ -19,7 +19,7 @@ namespace EditorEX.UI.SideBar
         [Inject]
         private SideBarUI()
         {
-            root = new GameObject("SideBarRoot").transform;
+            /*root = new GameObject("SideBarRoot").transform;
             root.SetParent(GameObject.Find("ScreenContainer").transform);
             root.transform.localPosition = new Vector3(910f, 0f, 0f);
             var bg = BasicUI.MakeBackground(root);
@@ -31,7 +31,7 @@ namespace EditorEX.UI.SideBar
             foreach (var button in buttons)
             {
                 MakeButton(bg.transform, button);
-            }
+            }*/
         }
 
         private void MakeButton(Transform bg, SideBarButton button)

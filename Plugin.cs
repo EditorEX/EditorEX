@@ -33,7 +33,7 @@ namespace EditorEX
             zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorHeckModelsInstaller, BeatmapEditorDataModelsInstaller>();
-            zenjector.Install<EditorUIModelsInstaller, BeatmapEditorDataModelsInstaller>();
+            zenjector.Install<EditorUIModelsInstaller, BeatmapEditorViewControllersInstaller>();
 
             zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();

@@ -1,20 +1,12 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.DataModels.Events.Conversion;
-using EditorEX.CustomJSONData;
-using EditorEX.CustomJSONData.Patches;
-using EditorEX.Essentials;
 using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData;
+using EditorEX.MapData.Contexts;
 using HarmonyLib;
 using SiraUtil.Affinity;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using Zenject;
-using EditorEX.Essentials.Patches;
 
 namespace EditorEX.Chroma.Patches
 {
