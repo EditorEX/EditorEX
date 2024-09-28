@@ -300,6 +300,7 @@
     <Compile Include="Essentials\ViewMode\ViewModeRepository.cs" />
     <Compile Include="Essentials\ViewMode\ViewModeSwapper.cs" />
     <Compile Include="Essentials\ViewMode\ViewModeSwappingUI.cs" />
+    <Compile Include="Essentials\Visuals\Note\EditorBombGameVisuals.cs" />
     <Compile Include="Essentials\Visuals\Note\EditorNoteGameVisuals.cs" />
     <Compile Include="Essentials\Visuals\Note\EditorNoteBasicVisuals.cs" />
     <Compile Include="Essentials\Visuals\IObjectVisuals.cs" />
@@ -358,6 +359,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UI\BasicUI.cs" />
     <Compile Include="UI\EditorTagRegistrar.cs" />
+    <Compile Include="UI\Installers\EditorUIModelsInstaller.cs" />
+    <Compile Include="UI\Patches\MoreCoverFileTypes.cs" />
     <Compile Include="UI\SideBar\SideBarUIView.cs" />
     <Compile Include="Util\BackingFieldUtil.cs" />
     <Compile Include="Util\CustomBeatmapDataExtensions.cs" />
@@ -379,7 +382,7 @@
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="UI\Installers\" />
+    <Folder Include="Essentials\Patches\Visuals\" />
     <Folder Include="UI\Tags\" />
   </ItemGroup>
   <ItemGroup>

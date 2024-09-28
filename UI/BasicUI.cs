@@ -21,7 +21,6 @@ namespace EditorEX.UI
             _bgColors = colors.FirstOrDefault(x => x.name == "BeatmapEditor.Navbar.Background.Normal");
         }
 
-
         private static SimpleColorSO BGColors { get { if (_bgColors == null) CollectColors(); return _bgColors; } }
 
         public static ImageView MakeBackground(Transform parent)

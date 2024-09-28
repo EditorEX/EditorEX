@@ -10,6 +10,7 @@ using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.Installers;
 using EditorEX.NoodleExtensions.Deserialize;
 using EditorEX.NoodleExtensions.Installers;
+using EditorEX.UI.Installers;
 using EditorEX.UI.SideBar;
 using IPA;
 using SiraUtil.Zenject;
@@ -32,6 +33,7 @@ namespace EditorEX
             zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorHeckModelsInstaller, BeatmapEditorDataModelsInstaller>();
+            zenjector.Install<EditorUIModelsInstaller, BeatmapEditorDataModelsInstaller>();
 
             zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
