@@ -13,8 +13,10 @@ namespace EditorEX.Essentials.Visuals.Universal
 {
     public class VisualAssetProvider : MonoBehaviour
     {
-        private Material basicNoteMaterial;
-        private Material gameNoteMaterial;
+        public Material gameNoteMaterial;
+        public GameObject gameNotePrefab;
+
+        public event Action onFinishLoading;
 
         private void Start()
         {
@@ -26,15 +28,13 @@ namespace EditorEX.Essentials.Visuals.Universal
             var load = Addressables.LoadSceneAsync("StandardGameplay", LoadSceneMode.Additive, true, int.MaxValue);
             yield return load;
 
-            Material[] allMats = Resources.FindObjectsOfTypeAll<Material>();
+            UnityEngine.Object[] allObjects = Resources.FindObjectsOfTypeAll<UnityEngine.Object>();
 
-            //foreach (var mat in allMats)
-            //{
-                //Plugin.Log.Info(mat.name);
-            //}
+            gameNoteMaterial = allObjects.FirstOrDefault(x => x.name == "NoteHD") as Material;
+            gameNotePrefab = Instantiate(Resources.FindObjectsOfTypeAll<BeatmapObjectsInstaller>().FirstOrDefault()._normalBasicNotePrefab.gameObject);
+            gameNotePrefab.SetActive(false);
 
-            gameNoteMaterial = allMats.FirstOrDefault(x => x.name == "NoteHD");
-            basicNoteMaterial = allMats.FirstOrDefault(x => x.name == "BeatmapEditorObject");
+            onFinishLoading();
 
             SceneManager.UnloadSceneAsync("StandardGameplay");
         }

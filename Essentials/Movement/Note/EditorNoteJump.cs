@@ -186,7 +186,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         private float _yAvoidanceDown = 0.15f;
 
-        private float _endDistanceOffset = 500f;
+        private float _endDistanceOffset = 100f;
 
         internal Vector3 _startPos;
 
@@ -220,26 +220,10 @@ namespace EditorEX.Essentials.Movement.Note
 
         private Vector3 _localPosition;
 
-        private readonly Vector3[] _randomRotations = new Vector3[]
-        {
-            new Vector3(-0.9543871f, -0.1183784f, 0.2741019f),
-            new Vector3(0.7680854f, -0.08805521f, 0.6342642f),
-            new Vector3(-0.6780157f, 0.306681f, -0.6680131f),
-            new Vector3(0.1255014f, 0.9398643f, 0.3176546f),
-            new Vector3(0.365105f, -0.3664974f, -0.8557909f),
-            new Vector3(-0.8790653f, -0.06244748f, -0.4725934f),
-            new Vector3(0.01886305f, -0.8065798f, 0.5908241f),
-            new Vector3(-0.1455435f, 0.8901445f, 0.4318099f),
-            new Vector3(0.07651193f, 0.9474725f, -0.3105508f),
-            new Vector3(0.1306983f, -0.2508438f, -0.9591639f)
-        };
-
         public const float kMissedTimeOffset = 0.15f;
 
         internal Quaternion _worldRotation;
 
-        internal Quaternion _inverseWorldRotation;
-
-        private bool _rotateTowardsPlayer;
+        internal Quaternion _inverseWorldRotation; 
     }
 }

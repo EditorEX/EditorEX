@@ -1,10 +1,6 @@
 ﻿using BeatmapEditor3D.DataModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+using Zenject;
 
 namespace EditorEX.Essentials.Visuals
 {
@@ -13,6 +9,13 @@ namespace EditorEX.Essentials.Visuals
         private GameObject _basicRoot;
 
         private bool active;
+
+        [Inject]
+        private void Construct()
+        {
+            _basicRoot = transform?.Find("NoteCube")?.gameObject ?? gameObject;
+            Disable();
+        }
 
         public void Init(BaseEditorData editorData)
         {
@@ -28,6 +31,7 @@ namespace EditorEX.Essentials.Visuals
 
         public void Enable()
         {
+            Plugin.Log.Info("hi?");
             _basicRoot?.SetActive(true);
             active = true;
         }

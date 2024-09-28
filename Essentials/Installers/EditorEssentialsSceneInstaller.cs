@@ -57,6 +57,7 @@ namespace EditorEX.Essentials.Installers
 
             Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "normal" }, typeof(EditorNoteBasicVisuals)));
             Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorNoteGameVisuals)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorBombGameVisuals)));
 
 
 

@@ -31,7 +31,7 @@ namespace EditorEX.Essentials.Visuals
 
             if (pickedProvider == null)
             {
-                Plugin.Log.Error($"Something has gone horribly wrong! No Visuals Provider could be found for the present conditions. Viewing Mode {viewingMode}");
+                Plugin.Log.Error($"Something has gone horribly wrong! No Visuals Provider could be found for the present conditions. Viewing Mode {viewingMode} types: {string.Join(",", availableTypes.Select(x=>x.Name))}");
             }
 
             return pickedProvider;
