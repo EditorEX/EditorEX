@@ -18,9 +18,11 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<ButtonFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<IconButtonFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ToggleFactory>().AsSingle();
+            Container.BindInterfacesAndSelfTo<StringInputFactory>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<MoreCoverFileTypes>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditDifficultyBeatmapPatches>().AsSingle();
+            Container.BindInterfacesAndSelfTo<MapFilteringPatches>().AsSingle();
         }
     }
 }

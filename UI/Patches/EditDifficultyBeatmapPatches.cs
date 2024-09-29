@@ -15,7 +15,7 @@ namespace EditorEX.UI.Patches
 {
     internal class EditDifficultyBeatmapPatches : IAffinity
     {
-        private IconButtonFactory _iconButtonFactory;
+        private IconButtonFactory _iconButtonFactory;               
 
         public EditDifficultyBeatmapPatches(IconButtonFactory iconButtonFactory) 
         {
@@ -24,7 +24,7 @@ namespace EditorEX.UI.Patches
 
         [AffinityPatch(typeof(DifficultyBeatmapView), nameof(DifficultyBeatmapView.SetData))]
         [AffinityPostfix]
-        private void SetVersionAvailableOptions(DifficultyBeatmapView __instance)
+        private void Modify(DifficultyBeatmapView __instance)
         {
             var v4 = LevelContext.Version >= BeatmapProjectFileHelper.version400;
 
@@ -66,7 +66,6 @@ namespace EditorEX.UI.Patches
 
                 button = _iconButtonFactory.Create(wrapper.transform, "#IconOpen", () =>
                 {
-                    Plugin.Log.Info("silly");
                 });
             }
 

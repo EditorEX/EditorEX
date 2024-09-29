@@ -366,15 +366,18 @@
     <Compile Include="UI\Collectors\ColorCollector.cs" />
     <Compile Include="UI\Collectors\PrefabCollector.cs" />
     <Compile Include="UI\Collectors\FontCollector.cs" />
+    <Compile Include="UI\Factories\StringInputFactory.cs" />
     <Compile Include="UI\Factories\ToggleFactory.cs" />
     <Compile Include="UI\Factories\IconButtonFactory.cs" />
     <Compile Include="UI\Factories\ButtonFactory.cs" />
     <Compile Include="UI\Factories\TextFactory.cs" />
     <Compile Include="UI\Installers\EditorUIModelsInstaller.cs" />
     <Compile Include="UI\Patches\EditDifficultyBeatmapPatches.cs" />
+    <Compile Include="UI\Patches\MapFilteringPatches.cs" />
     <Compile Include="UI\Patches\MoreCoverFileTypes.cs" />
     <Compile Include="UI\SideBar\SideBarUIView.cs" />
     <Compile Include="Util\BackingFieldUtil.cs" />
+    <Compile Include="Util\BeatmapFilterUtil.cs" />
     <Compile Include="Util\CustomBeatmapDataExtensions.cs" />
     <Compile Include="Util\CustomDataExtensions.cs" />
     <Compile Include="Util\SpawnDataAssociationExtensions.cs" />
@@ -395,13 +398,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Essentials\Patches\Visuals\" />
-    <Folder Include="UI\DataTypes\" />
+    <Folder Include="MapData\SaveDataSavers\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\Resources\lockcamera.png" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="EditorEX.csproj.user" />
+    <EmbeddedResource Include="UI\Resources\filter.png" />
+    <EmbeddedResource Include="UI\Resources\heart.png" />
+    <EmbeddedResource Include="UI\Resources\lily.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

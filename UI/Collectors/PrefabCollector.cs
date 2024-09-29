@@ -1,5 +1,6 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.Views;
+using HMUI;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -15,6 +16,8 @@ namespace EditorEX.UI.Collectors
         private Button _buttonPrefab;
         private Button _iconButtonPrefab;
         private Toggle _togglePrefab;
+        private TextSegmentedControl _segmentedControlPrefab;
+        private TMP_InputField _inputFieldPrefab;
 
         [Inject]
         private void Construct(DiContainer container)
@@ -33,6 +36,16 @@ namespace EditorEX.UI.Collectors
             var beatmapEditorSettingsViewController = _container.Resolve<BeatmapEditorSettingsViewController>();
 
             _togglePrefab = beatmapEditorSettingsViewController._fullscreenToggle;
+
+
+            var editBeatmapViewController = _container.Resolve<EditBeatmapViewController>();
+
+            _segmentedControlPrefab = editBeatmapViewController._eventBoxesView._eventBoxButtonsTextSegmentedControl;
+
+
+            var editBeatmapLevelViewController = _container.Resolve<EditBeatmapLevelViewController>();
+
+            _inputFieldPrefab = editBeatmapLevelViewController._songNameInputValidator.GetComponent<TMP_InputField>();
         }
 
         public Button GetButtonPrefab()
@@ -43,6 +56,16 @@ namespace EditorEX.UI.Collectors
         public Button GetIconButtonPrefab()
         {
             return _iconButtonPrefab;
+        }
+
+        public TextSegmentedControl GetSegmentedControlPrefab()
+        {
+            return _segmentedControlPrefab;
+        }
+
+        public TMP_InputField GetInputFieldPrefab()
+        {
+            return _inputFieldPrefab;
         }
     }
 }
