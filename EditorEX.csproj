@@ -363,19 +363,25 @@
     <Compile Include="NoodleExtensions\ObjectData\EditorNoodleSliderData.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\Collectors\ColorCollector.cs" />
-    <Compile Include="UI\Collectors\PrefabCollector.cs" />
-    <Compile Include="UI\Collectors\FontCollector.cs" />
-    <Compile Include="UI\Factories\StringInputFactory.cs" />
-    <Compile Include="UI\Factories\ToggleFactory.cs" />
-    <Compile Include="UI\Factories\IconButtonFactory.cs" />
-    <Compile Include="UI\Factories\ButtonFactory.cs" />
-    <Compile Include="UI\Factories\TextFactory.cs" />
-    <Compile Include="UI\Installers\EditorUIModelsInstaller.cs" />
+    <Compile Include="SDKImplementation\EditorExSettingsViewContent.cs" />
+    <Compile Include="SDK\Base\LayoutData.cs" />
+    <Compile Include="SDK\Factories\ImageFactory.cs" />
+    <Compile Include="SDK\Factories\TextSegmentedControlFactory.cs" />
+    <Compile Include="SDK\Settings\SettingsViewData.cs" />
+    <Compile Include="SDK\ViewContent\IViewContent.cs" />
+    <Compile Include="SDK\Collectors\ColorCollector.cs" />
+    <Compile Include="SDK\Collectors\PrefabCollector.cs" />
+    <Compile Include="SDK\Collectors\FontCollector.cs" />
+    <Compile Include="SDK\Factories\StringInputFactory.cs" />
+    <Compile Include="SDK\Factories\ToggleFactory.cs" />
+    <Compile Include="SDK\Factories\IconButtonFactory.cs" />
+    <Compile Include="SDK\Factories\ButtonFactory.cs" />
+    <Compile Include="SDK\Factories\TextFactory.cs" />
+    <Compile Include="UI\Installers\EditorUIViewControllersInstaller.cs" />
     <Compile Include="UI\Patches\EditDifficultyBeatmapPatches.cs" />
     <Compile Include="UI\Patches\MapFilteringPatches.cs" />
     <Compile Include="UI\Patches\MoreCoverFileTypes.cs" />
-    <Compile Include="UI\SideBar\SideBarUIView.cs" />
+    <Compile Include="UI\Patches\SDK\AddSettingsPatches.cs" />
     <Compile Include="Util\BackingFieldUtil.cs" />
     <Compile Include="Util\BeatmapFilterUtil.cs" />
     <Compile Include="Util\CustomBeatmapDataExtensions.cs" />
@@ -405,7 +411,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="EditorEX.csproj.user" />
-    <EmbeddedResource Include="UI\Resources\filter.png" />
     <EmbeddedResource Include="UI\Resources\heart.png" />
     <EmbeddedResource Include="UI\Resources\lily.jpg" />
   </ItemGroup>

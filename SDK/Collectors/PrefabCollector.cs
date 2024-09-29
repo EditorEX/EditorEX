@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace EditorEX.UI.Collectors
+namespace EditorEX.SDK.Collectors
 {
     public class PrefabCollector : IInitializable
     {
@@ -40,7 +40,7 @@ namespace EditorEX.UI.Collectors
 
             var editBeatmapViewController = _container.Resolve<EditBeatmapViewController>();
 
-            _segmentedControlPrefab = editBeatmapViewController._eventBoxesView._eventBoxButtonsTextSegmentedControl;
+            _segmentedControlPrefab = editBeatmapViewController.transform.Find("StatusBarView").Find("PaginationView").Find("Wrapper").Find("BasicEventsPagination").Find("BeatmapEditorTextSegmentedView").GetComponent<TextSegmentedControl>();
 
 
             var editBeatmapLevelViewController = _container.Resolve<EditBeatmapLevelViewController>();
@@ -56,6 +56,11 @@ namespace EditorEX.UI.Collectors
         public Button GetIconButtonPrefab()
         {
             return _iconButtonPrefab;
+        }
+
+        public Toggle GetTogglePrefab()
+        {
+            return _togglePrefab;
         }
 
         public TextSegmentedControl GetSegmentedControlPrefab()

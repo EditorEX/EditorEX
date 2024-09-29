@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using Zenject;
 
-namespace EditorEX.UI.Collectors
+namespace EditorEX.SDK.Collectors
 {
     public class FontCollector : IInitializable
     {

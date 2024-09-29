@@ -11,8 +11,6 @@ using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.ViewMode;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Essentials.Visuals.Universal;
-using EditorEX.Heck.Patches;
-using EditorEX.UI.SideBar;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -65,8 +63,6 @@ namespace EditorEX.Essentials.Installers
 
             Container.BindInterfacesAndSelfTo<ProcessNewEditorData>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PreviewToggler>().AsSingle().NonLazy();
-
-            Container.Bind<SideBarUI>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<ViewModeSwappingUI>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<ViewModeSwapper>().AsSingle().NonLazy();

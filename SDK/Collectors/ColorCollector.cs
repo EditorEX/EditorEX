@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace EditorEX.UI.Collectors
+namespace EditorEX.SDK.Collectors
 {
     public class ColorCollector : IInitializable
     {

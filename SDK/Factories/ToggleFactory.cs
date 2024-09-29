@@ -1,31 +1,39 @@
-﻿using EditorEX.UI.Collectors;
+﻿using EditorEX.SDK.Collectors;
 using HMUI;
-using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using Zenject;
 
-namespace EditorEX.UI.Factories
+namespace EditorEX.SDK.Factories
 {
     // This class MUST be injected using Zenject. You cannot create it manually.
     public class ToggleFactory
     {
         private PrefabCollector _prefabCollector;
+        private DiContainer _container;
 
         [Inject]
-        private void Construct(PrefabCollector prefabCollector)
+        private void Construct(
+             PrefabCollector prefabCollector,
+             DiContainer container)
         {
             _prefabCollector = prefabCollector;
+            _container = container;
         }
 
-        public Button Create(Transform parent, string text, Action onClick)
+        public Toggle Create(Transform parent, string text, UnityAction<bool> onClick)
         {
-            var button = GameObject.Instantiate(_prefabCollector.GetButtonPrefab(), parent, false);
-            button.name = "ExButton";
-            button.interactable = true;
+            var toggle = _container.InstantiatePrefab(_prefabCollector.GetTogglePrefab()).GetComponent<Toggle>();
+            toggle.transform.SetParent(parent, false);
+            toggle.name = "ExToggle";
+            toggle.interactable = true;
 
-            GameObject gameObject = button.gameObject;
+            GameObject gameObject = toggle.gameObject;
             gameObject.SetActive(true);
+
+            toggle.onValueChanged.RemoveAllListeners();
+            toggle.onValueChanged.AddListener(onClick);
 
             var textObj = gameObject.transform.Find("BeatmapEditorLabel").GetComponent<CurvedTextMeshPro>();
             textObj.text = text;
@@ -35,7 +43,7 @@ namespace EditorEX.UI.Factories
             buttonSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
             buttonSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-            return button;
+            return toggle;
         }
     }
 }
