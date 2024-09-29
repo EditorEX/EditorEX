@@ -2,6 +2,7 @@
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Visuals;
 using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.Visuals;
 using IPA.Config.Data;
 using System;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }
 
-        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData)
+        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData as BaseSliderEditorData;
             Vector3 localPosition = transform.localPosition;
@@ -39,6 +40,16 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
                 list.Add(new LocalKeyword(material.shader, "BEATMAP_EDITOR_ONLY"));
                 material.enabledKeywords = list.ToArray();
             }
+        }
+
+        public void Enable()
+        {
+
+        }
+
+        public void Disable()
+        {
+
         }
 
         public void Setup(BaseEditorData editorData)

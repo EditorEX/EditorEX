@@ -1,10 +1,9 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
-using EditorEX.Essentials.SpawnProcessing;
-using EditorEX.Heck.Deserializer;
+using EditorEX.Essentials.Visuals;
+using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
-using Heck;
 using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
@@ -12,8 +11,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
-using static BeatmapLevelSO.GetBeatmapLevelDataResult;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 {
@@ -99,7 +96,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             return noodleData?.Length * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance ?? @default;
         }
 
-        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData)
+        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _stretchableObstacle = GetComponent<StretchableObstacle>();
             _selection = GetComponent<ObstacleViewSelection>();
@@ -172,20 +169,18 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             noodleData.InternalNoteOffset = noteOffset;
         }
 
-        protected void Awake()
+        public void Enable()
         {
+
         }
 
-        protected void OnDestroy()
+        public void Disable()
         {
+
         }
 
         public void Setup(BaseEditorData editorData)
         {
-            if (!_editorDeserializedData.Resolve(editorData, out EditorNoodleObstacleData? noodleData))
-            {
-                return;
-            }
         }
 
         private bool NoodleGetPosForTime(float time, out Vector3 __result)
@@ -193,7 +188,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             __result = default;
             if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleObstacleData? noodleData))
             {
-                return true;
+                return false;
             }
 
             float jumpTime = Mathf.Clamp((time - _move1Duration) / (_move2Duration + _obstacleDuration), 0, 1);
@@ -201,7 +196,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
             if (!position.HasValue)
             {
-                return true;
+                return false;
             }
 
             Vector3 noteOffset = noodleData.InternalNoteOffset;
@@ -216,7 +211,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 __result = definitePosition;
             }
 
-            return false;
+            return true;
         }
 
         private Vector3 GetPosForTime(float time)
@@ -225,6 +220,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             {
                 return result;
             }
+
             Vector3 vector;
             if (time < _move1Duration)
             {
@@ -246,8 +242,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             return vector;
         }
 
-
-        public void ManualUpdate()
+        public void NoodleUpdate()
         {
             if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleObstacleData? noodleData))
             {
@@ -321,7 +316,6 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 {
                     worldRotationQuatnerion *= localRotationOffset.Value;
                 }
-
                 transform.localRotation = worldRotationQuatnerion;
             }
 
@@ -342,22 +336,23 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             {
                 transform.localScale = scaleOffset.Value;
             }
+        }
 
-            if (dissolve.HasValue)
-            {
-                //_cutoutManager.ObstacleCutoutEffects[__instance].SetCutout(dissolve.Value);
-            }
 
-            float num = this._audioTimeSyncController.songTime - _startTimeOffset;
+        public void ManualUpdate()
+        {
+            NoodleUpdate();
+
+            float num = _audioTimeSyncController.songTime - _startTimeOffset;
             Vector3 posForTime = GetPosForTime(num);
             transform.localPosition = _worldRotation * posForTime;
-            if (!this._passedThreeQuartersOfMove2Reported && num > this._move1Duration + this._move2Duration * 0.75f)
+            if (!_passedThreeQuartersOfMove2Reported && num > _move1Duration + _move2Duration * 0.75f)
             {
-                this._passedThreeQuartersOfMove2Reported = true;
+                _passedThreeQuartersOfMove2Reported = true;
             }
-            if (!this._passedAvoidedMarkReported && num > this._passedAvoidedMarkTime)
+            if (!_passedAvoidedMarkReported && num > _passedAvoidedMarkTime)
             {
-                this._passedAvoidedMarkReported = true;
+                _passedAvoidedMarkReported = true;
             }
         }
     }

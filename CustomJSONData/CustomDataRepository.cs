@@ -17,7 +17,7 @@ namespace EditorEX.CustomJSONData
 
         public HashSet<ValuePair<BasicEventEditorData, BeatmapEventData>> ChromaBasicEventConversions = new HashSet<ValuePair<BasicEventEditorData, BeatmapEventData>>();
 
-        public CustomBeatmapSaveData customBeatmapSaveData;
+        public Version3CustomBeatmapSaveData customBeatmapSaveData;
 
         public CustomBeatmapData customLivePreviewBeatmapData;
 
@@ -141,22 +141,22 @@ namespace EditorEX.CustomJSONData
             return existing?.First;
         }
 
-        public static void SetCustomBeatmapSaveData(CustomBeatmapSaveData customData)
+        public static void SetCustomBeatmapSaveData(Version3CustomBeatmapSaveData customData)
         {
             _repoData.customBeatmapSaveData = customData;
         }
 
-        public static CustomBeatmapSaveData GetCustomBeatmapSaveData()
+        public static Version3CustomBeatmapSaveData GetCustomBeatmapSaveData()
         {
             return _repoData.customBeatmapSaveData;
         }
 
-        public static void SetCustomLivePreviewBeatmapData(CustomBeatmapData customData)
+        public static void SetBeatmapData(CustomBeatmapData customData)
         {
             _repoData.customLivePreviewBeatmapData = customData;
         }
 
-        public static CustomBeatmapData GetCustomLivePreviewBeatmapData()
+        public static CustomBeatmapData GetBeatmapData()
         {
             return _repoData.customLivePreviewBeatmapData;
         }

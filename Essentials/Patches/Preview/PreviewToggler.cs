@@ -1,4 +1,5 @@
 ﻿using BeatmapEditor3D;
+using BeatmapEditor3D.Views;
 using BeatmapEditor3D.Visuals;
 using EditorEX.Essentials.ViewMode;
 using SiraUtil.Affinity;
@@ -16,11 +17,10 @@ namespace EditorEX.Essentials.Patches.Preview
         private ActiveViewMode _activeViewMode;
 
         private GameObject grid;
-        private GameObject hover;
+        private BeatmapObjectGridHoverView hover;
         private GameObject selection;
-        private BeatlineContainer[] beatlines;
         private Transform currentLine;
-        private BeatNumberContainer beatNumbers;
+        private BeatGridContainer container;
         private GameObject lanes;
 
         public PreviewToggler(ActiveViewMode activeViewMode)
@@ -34,15 +34,11 @@ namespace EditorEX.Essentials.Patches.Preview
         private void Patch(BeatmapObjectsContainer __instance)
         {
             grid = __instance.transform.Find("BeatmapObjectSelectionGridView").gameObject;
-            hover = __instance.transform.Find("BeatmapObjectGridHoverView").gameObject;
+            hover = __instance.transform.Find("BeatmapObjectGridHoverView").GetComponent<BeatmapObjectGridHoverView>();
             selection = __instance.transform.Find("BeatmapObjectSelectionView").gameObject;
-            var container = __instance.GetComponentInChildren<BeatGridContainer>();
+            container = __instance.GetComponentInChildren<BeatGridContainer>();
             currentLine = container._currentBeatLineTransform;
-            beatlines = new BeatlineContainer[] { container._mainBeatlineContainer, container._normalBeatlineContainer };
-            beatNumbers = container._beatNumberContainer;
             lanes = __instance.transform.Find("BeatGridContainer").Find("GridLanes").gameObject;
-
-            TogglePreview();
         }
 
         public void Dispose()
@@ -52,26 +48,17 @@ namespace EditorEX.Essentials.Patches.Preview
 
         private void TogglePreview()
         {
-            bool showGrid = _activeViewMode.Mode != "Preview";
+            bool showGrid = _activeViewMode.Mode.ShowGridAndSelection;
             grid.SetActive(showGrid);
-            foreach (var beatline in beatlines)
-            {
-                if (showGrid)
-                {
-                    beatline.Enable();
-                }
-                else
-                {
-                    beatline.Disable();
-                }
-            }
+            hover.gameObject.SetActive(showGrid);
+            selection.gameObject.SetActive(showGrid);
             if (showGrid)
             {
-                beatNumbers.Enable();
+                container.Enable();
             }
             else
             {
-                beatNumbers.Disable();
+                container.Disable();
             }
             currentLine.gameObject.SetActive(showGrid);
             lanes.SetActive(showGrid);

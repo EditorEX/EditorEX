@@ -1,9 +1,9 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.SpawnProcessing;
-using EditorEX.Heck.Deserializer;
+using EditorEX.Essentials.Visuals;
+using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
-using Heck;
 using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
@@ -60,7 +60,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             _state = state;
         }
 
-        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData)
+        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _editorBeatmapObjectSpawnMovementData = movementData;
             var noteEditorData = editorData as NoteEditorData;
@@ -82,12 +82,12 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             moveEndPos.z += _zOffset;
             jumpEndPos.z += _zOffset;
 
-            _floorMovement.Init(editorData as NoteEditorData, worldRotation, moveStartPos, moveEndPos, moveDuration, beatTime - moveDuration - jumpDuration * 0.5f);
+            _floorMovement.Init(editorData as NoteEditorData, worldRotation, moveStartPos, moveEndPos, moveDuration, beatTime - moveDuration - jumpDuration * 0.5f, getVisualRoot);
             _position = _floorMovement.SetToStart();
             _prevPosition = _position;
             _localPosition = (_prevLocalPosition = _floorMovement.localPosition);
 
-            _jump.Init(editorData as NoteEditorData, beatTime, worldRotation, moveEndPos, jumpEndPos, jumpDuration, jumpGravity, flipYSide, endRotation);
+            _jump.Init(editorData as NoteEditorData, beatTime, worldRotation, moveEndPos, jumpEndPos, jumpDuration, jumpGravity, flipYSide, endRotation, getVisualRoot);
 
             movementPhase = MovementPhase.MovingOnTheFloor;
 
@@ -147,6 +147,16 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
                 float yOffset = (startVerticalVelocity * num2) - (jumpGravity * num2 * num2 * 0.5f);
                 noodleData.InternalNoteOffset = new Vector3(jumpEndPos.x, moveEndPos.y + yOffset, 0);
             }
+        }
+
+        public void Enable()
+        {
+
+        }
+
+        public void Disable()
+        {
+
         }
 
         protected void Awake()

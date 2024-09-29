@@ -148,7 +148,6 @@ public class SliceMap
         _walls.Sort((x, y) => x.beat.CompareTo(y.beat));
         Cuts = GetCutData(_blocks, _bombs, walls, isRightHand);
         stopwatch.Stop();
-        Plugin.Log.Info($"SliceMap took {stopwatch.ElapsedMilliseconds}ms to generate.");
     }
 
     public void WriteBeatCutDataToList(List<BeatCutData> inOutCutData)
@@ -284,7 +283,7 @@ public class SliceMap
 
             // If time since dodged exceeds a set amount in seconds, undo dodge
             var undodgeCheckTime = 0.35f;
-            if (PopulateBeatmap._beatmapDataModel.bpmData.BeatToSeconds(notesInSwing.Last().beat - _lastWallTime) > undodgeCheckTime) { _playerXOffset = 0; }
+            if (PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(notesInSwing.Last().beat - _lastWallTime) > undodgeCheckTime) { _playerXOffset = 0; }
 
             // Work out Parity
             List<NoteEditorData> bombsBetweenSwings = bombs.FindAll(x => x.beat > lastNote.beat && x.beat < notesInSwing.Last().beat);
@@ -441,7 +440,7 @@ public class SliceMap
                 // Create a new swing with inverse parity to the last.
                 BeatCutData emptySwing = new BeatCutData();
                 emptySwing.sliceParity = (swings[i].sliceParity == Parity.Forehand) ? Parity.Backhand : Parity.Forehand;
-                emptySwing.sliceStartBeat = swings[i - 1].sliceEndBeat + PopulateBeatmap._beatmapDataModel.bpmData.BeatToSeconds(0.15f);
+                emptySwing.sliceStartBeat = swings[i - 1].sliceEndBeat + PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(0.15f);
                 emptySwing.sliceEndBeat = emptySwing.sliceStartBeat + 0.2f;
                 emptySwing.SetStartPosition(lastNote.column, lastNote.row);
 
@@ -526,7 +525,7 @@ public class SliceMap
     // Calculates the effective BPM of a swing
     private float SwingEBPM(float beatDiff)
     {
-        var seconds = PopulateBeatmap._beatmapDataModel.bpmData.BeatToSeconds(beatDiff);
+        var seconds = PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(beatDiff);
         TimeSpan time = TimeSpan.FromSeconds(seconds);
 
         return (float)((60000 / time.TotalMilliseconds) / 2);

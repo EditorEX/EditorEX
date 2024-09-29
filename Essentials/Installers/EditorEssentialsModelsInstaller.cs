@@ -8,8 +8,6 @@ namespace EditorEX.Essentials.Installers
         public override void InstallBindings()
         {
             EditorSpawnDataRepository.ClearAll();
-
-
         }
     }
 }

@@ -5,6 +5,7 @@ using EditorEX.Essentials.Movement.Arc;
 using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Movement.Obstacle;
 using HarmonyLib;
+using SiraUtil.Affinity;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -12,8 +13,8 @@ using UnityEngine;
 
 namespace EditorEX.Essentials.Patches.Movement
 {
-    [HarmonyPatch]
-    public static class InitMovement
+    [AffinityPatch]
+    public class InitMovement : IAffinity
     {
         private static readonly MethodInfo _init = AccessTools.Method(typeof(InitMovement), "Init", null, null);
         private static readonly MethodInfo _initObstacle = AccessTools.Method(typeof(InitMovement), "InitObstacle", null, null);
@@ -37,9 +38,9 @@ namespace EditorEX.Essentials.Patches.Movement
             arcView.gameObject.GetComponent<EditorArcController>().Init(editorData as ArcEditorData);
         }
 
-        [HarmonyPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.InsertObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.InsertObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret
@@ -52,9 +53,9 @@ namespace EditorEX.Essentials.Patches.Movement
             return result;
         }
 
-        [HarmonyPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.InsertObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerObstacle(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.InsertObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerObstacle(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret
@@ -67,9 +68,9 @@ namespace EditorEX.Essentials.Patches.Movement
             return result;
         }
 
-        [HarmonyPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.InsertObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerArc(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.InsertObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerArc(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret

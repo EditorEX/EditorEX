@@ -22,29 +22,29 @@ namespace EditorEX.Essentials.Patches.Preview
         [AffinityPrefix]
         private bool SetMaterialPropertyBlock()
         {
-            return _activeViewMode.Mode != "Preview";
+            return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
         [AffinityPatch(typeof(ArcView), nameof(ArcView.UpdateHighlight))]
         [AffinityPrefix]
         private bool DisableSelectionViews()
         {
-            return _activeViewMode.Mode != "Preview";
+            return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
         [AffinityPatch(typeof(ArcView), nameof(ArcView.UpdateState))]
         [AffinityPrefix]
         private bool DisableSelectionViews2()
         {
-            return _activeViewMode.Mode != "Preview";
+            return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
         [AffinityPatch(typeof(ArcHandleView), nameof(ArcView.Init))]
         [AffinityPrefix]
         private void DisableHandles(ref bool showHandle, ref bool showMoveHandle)
         {
-            showHandle &= _activeViewMode.Mode != "Preview";
-            showMoveHandle &= _activeViewMode.Mode != "Preview";
+            showHandle &= _activeViewMode.Mode.ShowGridAndSelection;
+            showMoveHandle &= _activeViewMode.Mode.ShowGridAndSelection;
         }
     }
 }

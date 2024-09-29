@@ -51,17 +51,11 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
         private void RefreshObstacleMovement()
         {
-            var components = gameObject?.GetComponents<IObjectMovement>();
-            if (components == null) return;
-            var types = components?.Select(x => x.GetType())?.ToArray();
-            var type = _movementTypeProvider.GetNoteMovement(types);
-
-            if (_obstacleMovement != null && type == _obstacleMovement.GetType())
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _obstacleMovement, out IObjectMovement newNoteMovement))
             {
-                return; // No need to refresh if the type is the same
+                _obstacleMovement = newNoteMovement;
+                _obstacleMovement.Enable();
             }
-
-            _obstacleMovement = GetComponent(type) as IObjectMovement;
         }
 
         public void Init(ObstacleEditorData obstacleData)
@@ -71,7 +65,7 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
             RefreshObstacleMovement();
 
-            _obstacleMovement.Init(obstacleData, _movementData);
+            _obstacleMovement.Init(obstacleData, _movementData, null);
 
             ManualUpdate();
         }

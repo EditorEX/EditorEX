@@ -7,31 +7,22 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using Zenject;
+using SiraUtil.Affinity;
 
 namespace EditorEX.CustomJSONData.Patches
 {
-    [HarmonyPatch(typeof(BeatmapEditorDataModelsInstaller), nameof(BeatmapEditorDataModelsInstaller.Install))]
-    public static class PreviewCustomBeatmap
+    [AffinityPatch]
+    public class PreviewCustomBeatmap : IAffinity
     {
-        private static readonly ConstructorInfo _beatmapDataCtor = AccessTools.FirstConstructor(typeof(BeatmapData), (ConstructorInfo _) => true);
-        private static readonly MethodInfo _createCustomBeatmapData = AccessTools.Method(typeof(PreviewCustomBeatmap), "CreateBeatmapData", null, null);
+        private readonly ConstructorInfo _beatmapDataCtor = AccessTools.FirstConstructor(typeof(BeatmapData), (ConstructorInfo _) => true);
+        private readonly MethodInfo _createCustomBeatmapData = AccessTools.Method(typeof(PreviewCustomBeatmap), "CreateBeatmapData", null, null);
 
-        private static readonly MethodInfo _bindLivePreviewDataModel = AccessTools.Method(typeof(DiContainer), "BindInterfacesAndSelfTo", new Type[] { }, new Type[] { typeof(BeatmapLivePreviewDataModel) });
-        private static readonly MethodInfo _bindCustomLivePreviewModel = AccessTools.Method(typeof(PreviewCustomBeatmap), "BindCustomLivePreviewModel", null, null);
+        private readonly MethodInfo _bindLivePreviewDataModel = AccessTools.Method(typeof(DiContainer), "BindInterfacesAndSelfTo", new Type[] { }, new Type[] { typeof(BeatmapLivePreviewDataModel) });
+        private readonly MethodInfo _bindCustomLivePreviewModel = AccessTools.Method(typeof(PreviewCustomBeatmap), "BindCustomLivePreviewModel", null, null);
 
-        private static CustomBeatmapData CreateBeatmapData(int numberOfLines)
-        {
-            var beatmapData = new CustomBeatmapData(numberOfLines, false, null, null, null);
-            CustomDataRepository.SetCustomLivePreviewBeatmapData(beatmapData);
-            return beatmapData;
-        }
-
-        private static void BindCustomLivePreviewModel(DiContainer container)
-        {
-            container.BindInterfacesAndSelfTo<CustomBeatmapLivePreviewDataModel>().AsSingle();
-        }
-
-        public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(BeatmapEditorDataModelsInstaller), nameof(BeatmapEditorDataModelsInstaller.Install))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null).MatchForward(false, new CodeMatch[]
             {
@@ -48,8 +39,19 @@ namespace EditorEX.CustomJSONData.Patches
                 new CodeInstruction(OpCodes.Ldarg_0),
                 new CodeInstruction(OpCodes.Call, _bindCustomLivePreviewModel)
             }).InstructionEnumeration();
-
             return result;
+        }
+
+        private static CustomBeatmapData CreateBeatmapData(int numberOfLines)
+        {
+            var beatmapData = new CustomBeatmapData(numberOfLines, null, null, null, null);
+            CustomDataRepository.SetBeatmapData(beatmapData);
+            return beatmapData;
+        }
+
+        private static void BindCustomLivePreviewModel(DiContainer container)
+        {
+            container.BindInterfacesAndSelfTo<CustomBeatmapLivePreviewDataModel>().AsSingle();
         }
     }
 }

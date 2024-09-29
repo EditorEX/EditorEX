@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Chroma;
+using Chroma.Lighting;
 using EditorEX.Chroma.Events;
 using EditorEX.CustomJSONData;
-using EditorEX.Heck.Deserializer;
-using Chroma;
-using Chroma.Lighting;
-using Heck;
+using EditorEX.Heck.Deserialize;
 using SiraUtil.Affinity;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 

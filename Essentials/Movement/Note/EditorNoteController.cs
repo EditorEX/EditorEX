@@ -1,14 +1,9 @@
-﻿using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
-using EditorEX.Essentials.Movement.Note.MovementProvider;
-using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.ViewMode;
-using EditorEX.Heck.Deserializer;
-using EditorEX.NoodleExtensions.ObjectData;
-using IPA.Utilities;
-using NoodleExtensions.Animation;
+using EditorEX.Essentials.Visuals;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;
@@ -17,37 +12,44 @@ namespace EditorEX.Essentials.Movement.Note
 {
     internal class EditorNoteController : MonoBehaviour, IDisposable
     {
-        private IReadonlyBeatmapState _state;
-
         private IObjectMovement _noteMovement;
+        private IObjectVisuals _noteVisuals;
+
+        private IReadonlyBeatmapState _state;
         private MovementTypeProvider _movementTypeProvider;
+        private VisualsTypeProvider _visualsTypeProvider;
         private ActiveViewMode _activeViewMode;
+        private EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
         private NoteEditorData _data;
 
-        private EditorBasicBeatmapObjectSpawnMovementData _movementData;
-
         [Inject]
-        private void Construct(IReadonlyBeatmapState state, ActiveViewMode activeViewMode, MovementTypeProvider movementTypeProvider, EditorBasicBeatmapObjectSpawnMovementData movementData)
+        private void Construct(
+            IReadonlyBeatmapState state,
+            ActiveViewMode activeViewMode,
+            MovementTypeProvider movementTypeProvider,
+            VisualsTypeProvider visualsTypeProvider,
+            EditorBasicBeatmapObjectSpawnMovementData movementData)
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
+            _visualsTypeProvider = visualsTypeProvider;
             _movementData = movementData;
 
             _activeViewMode = activeViewMode;
-            _activeViewMode.ModeChanged += RefreshNoteMovementAndInit;
+            _activeViewMode.ModeChanged += RefreshNoteMovementVisualsAndInit;
         }
 
         public void Dispose()
         {
-            _activeViewMode.ModeChanged -= RefreshNoteMovementAndInit;
+            _activeViewMode.ModeChanged -= RefreshNoteMovementVisualsAndInit;
         }
 
-        private void RefreshNoteMovementAndInit()
+        private void RefreshNoteMovementVisualsAndInit()
         {
             try
             {
-                RefreshNoteMovement();
+                RefreshNoteMovementVisuals();
                 Init(_data);
             }
             catch
@@ -56,19 +58,19 @@ namespace EditorEX.Essentials.Movement.Note
             }
         }
 
-        private void RefreshNoteMovement()
+        private void RefreshNoteMovementVisuals()
         {
-            var components = gameObject?.GetComponents<IObjectMovement>();
-            if (components == null) return;
-            var types = components?.Select(x => x.GetType())?.ToArray();
-            var type = _movementTypeProvider.GetNoteMovement(types);
-
-            if (_noteMovement != null && type == _noteMovement.GetType())
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _noteMovement, out IObjectMovement newNoteMovement))
             {
-                return; // No need to refresh if the type is the same
+                _noteMovement = newNoteMovement;
+                _noteMovement.Enable();
             }
 
-            _noteMovement = GetComponent(type) as IObjectMovement;
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _visualsTypeProvider, _noteVisuals, out IObjectVisuals newNoteVisuals))
+            {
+                _noteVisuals = newNoteVisuals;
+                _noteVisuals.Enable();
+            }
         }
 
         public void Init(NoteEditorData noteData)
@@ -76,22 +78,27 @@ namespace EditorEX.Essentials.Movement.Note
             if (noteData == null) return;
             _data = noteData;
 
-            RefreshNoteMovement();
+            RefreshNoteMovementVisuals();
 
-            _noteMovement.Init(noteData, _movementData);
+            _noteMovement.Init(noteData, _movementData, () => _noteVisuals);
+            _noteVisuals.Init(noteData);
 
             ManualUpdate();
         }
 
+        // Use our own prevBeat field as _state.prevBeat only updates when playing or scrubbing which will cause constant updates after scrubbing while paused.
         float _prevBeat = 9999f;
 
         public void Update()
         {
-            if (!_state.isPlaying && _prevBeat == _state.beat) return;
+            if (!_state.isPlaying && _prevBeat == _state.beat) return; //Don't update if not playing for performance, but force an update if scrubbing manually.
+
+            // If we rewind we should reinit the note to stop issues
             if (_prevBeat > _state.beat)
             {
                 Init(_data);
             }
+
             _prevBeat = _state.beat;
 
             ManualUpdate();
@@ -99,14 +106,15 @@ namespace EditorEX.Essentials.Movement.Note
 
         public void ManualUpdate()
         {
-            if (_noteMovement == null)
+            if (_noteMovement == null || _noteVisuals == null)
             {
-                RefreshNoteMovementAndInit();
+                RefreshNoteMovementVisualsAndInit();
             }
 
             _noteMovement.Setup(_data);
 
             _noteMovement.ManualUpdate();
+            _noteVisuals.ManualUpdate();
         }
     }
 }

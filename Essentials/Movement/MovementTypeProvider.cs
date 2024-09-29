@@ -1,6 +1,7 @@
 ﻿using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Movement.Types;
 using EditorEX.Essentials.ViewMode;
+using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,30 +9,35 @@ using Zenject;
 
 namespace EditorEX.Essentials.Movement
 {
-    public class MovementTypeProvider
+    public class MovementTypeProvider : ITypeProvider
     {
-        private ActiveViewMode _activeViewMode;
-        private List<ValueTuple<string[], Type>> _providers;
+        private readonly SiraLog _siraLog;
+        private readonly ActiveViewMode _activeViewMode;
+        private readonly List<ValueTuple<string[], Type>> _providers;
 
         [Inject]
-        private MovementTypeProvider(ActiveViewMode activeViewMode, [Inject(Id = "Movement")] List<ValueTuple<string[], Type>> providers)
+        private MovementTypeProvider(
+            SiraLog siraLog,
+            ActiveViewMode activeViewMode, 
+            [Inject(Id = "Movement")] List<ValueTuple<string[], Type>> providers)
         {
+            _siraLog = siraLog;
             _activeViewMode = activeViewMode;
-            _providers = providers; //providers.Select(x => (x.ViewModes, x.Type)).ToList();
+            _providers = providers;
         }
 
-        public Type GetNoteMovement(Type[] availableTypes)
+        public Type GetProvidedType(Type[] availableTypes, bool REDACTED)
         {
-            var viewingMode = _activeViewMode.Mode;
+            var viewingMode = _activeViewMode.Mode.ID;
 
             // Provider name to use, fallback if none exist.
-            var provider = _providers.Any(x => x.Item1.Contains(viewingMode)) ? viewingMode : "Normal";
+            var provider = _providers.Any(x => x.Item1.Contains(viewingMode)) ? viewingMode : "normal";
 
             var pickedProvider = _providers.FirstOrDefault(x => x.Item1.Contains(provider) && availableTypes.Contains(x.Item2)).Item2;
 
             if (pickedProvider == null)
             {
-                Plugin.Log.Error($"Something has gone horribly wrong! No NoteMovement provider could be found for the present conditions. Viewing Mode {viewingMode}");
+                _siraLog.Error($"Something has gone horribly wrong! No Movement Provider could be found for the present conditions. Viewing Mode {viewingMode}");
             }
 
             return pickedProvider;

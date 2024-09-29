@@ -1,11 +1,12 @@
-﻿using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Visuals;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.SpawnProcessing;
-using EditorEX.Heck.Deserializer;
+using EditorEX.Essentials.Visuals;
+using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using NoodleExtensions.Animation;
+using System;
 using System.Linq;
 using UnityEngine;
 using Zenject;
@@ -113,7 +114,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             SliderShaderHelper.SetInitialProperties(materialPropertyBlock.materialPropertyBlock, _initColor * _sliderIntensityEffect.colorIntensity, _headNoteGravity, _tailNoteGravity, noteJumpMovementSpeed, _jumpDistance, _zDistanceBetweenNotes, _sliderMeshController.pathLength, EditorSpawnDataRepository.GetSpawnData(_sliderEditorData).hasHeadNote, EditorSpawnDataRepository.GetSpawnData(_sliderEditorData).hasTailNote, _randomValue);
         }
 
-        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData)
+        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             var arcvView = GetComponent<ArcView>();
             _sliderMeshController = arcvView._arcMeshController;
@@ -152,12 +153,14 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             ManualUpdate();
         }
 
-        protected void Awake()
+        public void Enable()
         {
+
         }
 
-        protected void OnDestroy()
+        public void Disable()
         {
+
         }
 
         public void Setup(BaseEditorData editorData)

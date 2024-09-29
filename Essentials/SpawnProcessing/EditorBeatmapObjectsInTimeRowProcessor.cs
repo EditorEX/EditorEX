@@ -65,14 +65,11 @@ namespace EditorEX.Essentials.SpawnProcessing
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            BeatmapLevelDataModel beatmapLevelDataModel = PopulateBeatmap._beatmapLevelDataModel;
-
-            var objects = beatmapLevelDataModel.allBeatmapObjects.Cast<BaseEditorData>();
+            var objects = PopulateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.Cast<BaseEditorData>();
             foreach (var obj in objects)
             {
                 if (obj is NoteEditorData noteData)
                 {
-                    //Plugin.Log.Info("Processing note");
                     ProcessNote(noteData);
                 }
                 else if (obj is BaseSliderEditorData sliderData)
@@ -82,7 +79,6 @@ namespace EditorEX.Essentials.SpawnProcessing
             }
 
             stopwatch.Stop();
-            Plugin.Log.Info($"bdf {stopwatch.ElapsedMilliseconds}");
         }
 
         public void ProcessNote(NoteEditorData noteData)
@@ -176,20 +172,18 @@ namespace EditorEX.Essentials.SpawnProcessing
                 {
                     list.Add(noteData);
                 }
-                //Plugin.Log.Info("hi2asdf! " + list.Count);
             }
             for (int k = 0; k < _notesInColumnsReusableProcessingListOfLists.Length; k++)
             {
                 List<NoteEditorData> list2 = _notesInColumnsReusableProcessingListOfLists[k];
                 for (int l = 0; l < list2.Count; l++)
                 {
-                    //Plugin.Log.Info("hi! " + list2.Count);
                     list2[l].SetBeforeJumpNoteLineLayer((NoteLineLayer)l);
                 }
             }
 
             float offset = 4 / 2f;
-            bool v2 = CustomDataRepository.GetCustomLivePreviewBeatmapData().version2_6_0AndEarlier;
+            bool v2 = CustomDataRepository.GetBeatmapData().version.Major == 2;
             IReadOnlyList<BaseBeatmapObjectEditorData> containerItems = allObjectsTimeSlice.items.Where(x => x is BaseBeatmapObjectEditorData).Select(x => x as BaseBeatmapObjectEditorData).ToList();
             IEnumerable<NoteEditorData> notesInTimeRow = containerItems.OfType<NoteEditorData>().ToArray();
             Dictionary<float, List<NoteEditorData>> notesInColumns = new();
@@ -198,7 +192,6 @@ namespace EditorEX.Essentials.SpawnProcessing
                 CustomData customData = noteData.GetCustomData();
                 if (customData == null)
                 {
-                    Plugin.Log.Info("NERD");
                     continue;
                 }
                 IEnumerable<float?>? position = customData.GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
@@ -277,7 +270,6 @@ namespace EditorEX.Essentials.SpawnProcessing
                 {
                     if (noteData.GetCustomData() == null)
                     {
-                        Plugin.Log.Info("NERD");
                         continue;
                     }
                     IEnumerable<float?>? notePosition = noteData.GetCustomData().GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
@@ -395,7 +387,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                 return;
             }
 
-            bool v2 = CustomDataRepository.GetCustomLivePreviewBeatmapData().version2_6_0AndEarlier;
+            bool v2 = CustomDataRepository.GetBeatmapData().version.Major == 2;
 
             float[] lineIndexes = new float[2];
             float[] lineLayers = new float[2];
@@ -472,7 +464,6 @@ namespace EditorEX.Essentials.SpawnProcessing
             NoteEditorData noteData3 = items[1];
             if (noteData2.type != noteData3.type && ((noteData2.type == ColorType.ColorA && noteData2.column > noteData3.column) || (noteData2.type == ColorType.ColorB && noteData2.column < noteData3.column)))
             {
-                //Plugin.Log.Info("Hello");
                 noteData2.SetNoteFlipToNote(noteData3);
                 noteData3.SetNoteFlipToNote(noteData2);
             }

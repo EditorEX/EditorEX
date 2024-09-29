@@ -1,6 +1,8 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.Visuals;
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Zenject;
@@ -19,11 +21,21 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }
 
-        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData)
+        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData as NoteEditorData;
             float z = _beatmapObjectPlacementHelper.BeatToPosition(editorData.beat);
             transform.localPosition = new Vector3((_editorData.column - 1.5f) * 0.8f, 0.5f + _editorData.row * 0.8f, z);
+        }
+
+        public void Enable()
+        {
+
+        }
+
+        public void Disable()
+        {
+
         }
 
         public void Setup(BaseEditorData editorData)

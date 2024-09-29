@@ -51,17 +51,11 @@ namespace EditorEX.Essentials.Movement.Arc
 
         private void RefreshArcMovement()
         {
-            var components = gameObject?.GetComponents<IObjectMovement>();
-            if (components == null) return;
-            var types = components?.Select(x => x.GetType())?.ToArray();
-            var type = _movementTypeProvider.GetNoteMovement(types);
-
-            if (_arcMovement != null && type == _arcMovement.GetType())
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _arcMovement, out IObjectMovement newNoteMovement))
             {
-                return; // No need to refresh if the type is the same
+                _arcMovement = newNoteMovement;
+                _arcMovement.Enable();
             }
-
-            _arcMovement = GetComponent(type) as IObjectMovement;
         }
 
         public void Init(ArcEditorData editorData)
@@ -71,7 +65,7 @@ namespace EditorEX.Essentials.Movement.Arc
 
             RefreshArcMovement();
 
-            _arcMovement.Init(editorData, _movementData);
+            _arcMovement.Init(editorData, _movementData, null);
 
             ManualUpdate();
         }

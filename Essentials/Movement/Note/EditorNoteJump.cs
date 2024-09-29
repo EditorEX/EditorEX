@@ -1,11 +1,9 @@
-﻿using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
-using EditorEX.Heck.Deserializer;
+﻿using BeatmapEditor3D.DataModels;
+using EditorEX.Essentials.Visuals;
+using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
-using Heck;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
-using NoodleExtensions.HarmonyPatches.Objects;
 using System;
 using UnityEngine;
 using Zenject;
@@ -32,7 +30,7 @@ namespace EditorEX.Essentials.Movement.Note
             PlayerTransforms playerTransforms,
             IAudioTimeSource audioTimeSyncController,
             AnimationHelper animationHelper,
-            [Inject(Id = NoodleController.ID)]EditorDeserializedData editorDeserializedData)
+            [Inject(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData)
         {
             _playerTransforms = playerTransforms;
             _audioTimeSyncController = audioTimeSyncController;
@@ -40,7 +38,7 @@ namespace EditorEX.Essentials.Movement.Note
             _editorDeserializedData = editorDeserializedData;
         }
 
-        public void Init(NoteEditorData editorData, float beatTime, float worldRotation, Vector3 startPos, Vector3 endPos, float jumpDuration, float gravity, float flipYSide, float endRotation)
+        public void Init(NoteEditorData editorData, float beatTime, float worldRotation, Vector3 startPos, Vector3 endPos, float jumpDuration, float gravity, float flipYSide, float endRotation, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData;
             if (!_editorDeserializedData.Resolve(_editorData, out NoodleData))
@@ -48,8 +46,7 @@ namespace EditorEX.Essentials.Movement.Note
                 NoodleData = null;
             }
 
-            _rotatedObject = transform.Find("NoteCube");
-            if (_rotatedObject == null) _rotatedObject = transform;
+            _rotatedObject = getVisualRoot;
             _worldRotation = Quaternion.Euler(0f, worldRotation, 0f);
             _inverseWorldRotation = Quaternion.Euler(0f, -worldRotation, 0f);
             _startPos = startPos;
@@ -148,7 +145,7 @@ namespace EditorEX.Essentials.Movement.Note
                 quaternion = Quaternion.Slerp(_middleRotation, _endRotation, Mathf.Sin((num2Clamped - 0.125f) * 3.1415927f * 2f));
             }
 
-            _rotatedObject.localRotation = quaternion;
+            _rotatedObject().GetVisualRoot().transform.localRotation = quaternion;
 
             if (num2 >= 0.5f && !_halfJumpMarkReported)
             {
@@ -183,13 +180,13 @@ namespace EditorEX.Essentials.Movement.Note
 
         private NoteEditorData _editorData;
 
-        private Transform _rotatedObject;
+        private Func<IObjectVisuals> _rotatedObject;
 
         private float _yAvoidanceUp = 0.45f;
 
         private float _yAvoidanceDown = 0.15f;
 
-        private float _endDistanceOffset = 500f;
+        private float _endDistanceOffset = 100f;
 
         internal Vector3 _startPos;
 
@@ -223,26 +220,10 @@ namespace EditorEX.Essentials.Movement.Note
 
         private Vector3 _localPosition;
 
-        private readonly Vector3[] _randomRotations = new Vector3[]
-        {
-            new Vector3(-0.9543871f, -0.1183784f, 0.2741019f),
-            new Vector3(0.7680854f, -0.08805521f, 0.6342642f),
-            new Vector3(-0.6780157f, 0.306681f, -0.6680131f),
-            new Vector3(0.1255014f, 0.9398643f, 0.3176546f),
-            new Vector3(0.365105f, -0.3664974f, -0.8557909f),
-            new Vector3(-0.8790653f, -0.06244748f, -0.4725934f),
-            new Vector3(0.01886305f, -0.8065798f, 0.5908241f),
-            new Vector3(-0.1455435f, 0.8901445f, 0.4318099f),
-            new Vector3(0.07651193f, 0.9474725f, -0.3105508f),
-            new Vector3(0.1306983f, -0.2508438f, -0.9591639f)
-        };
-
         public const float kMissedTimeOffset = 0.15f;
 
         internal Quaternion _worldRotation;
 
-        internal Quaternion _inverseWorldRotation;
-
-        private bool _rotateTowardsPlayer;
+        internal Quaternion _inverseWorldRotation; 
     }
 }

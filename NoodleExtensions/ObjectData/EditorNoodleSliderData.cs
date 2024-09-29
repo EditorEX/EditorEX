@@ -2,6 +2,7 @@
 using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
+using Heck.Deserialize;
 using IPA.Utilities;
 using NoodleExtensions;
 using System;
@@ -36,7 +37,7 @@ namespace EditorEX.NoodleExtensions.ObjectData
             }
             catch (Exception e)
             {
-                Plugin.Log.Error(e);
+                throw e;
             }
         }
     }

@@ -1,9 +1,10 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Views;
-using EditorEX.Heck.Deserializer;
+using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.ObjectData;
 using HarmonyLib;
 using Heck.Animation;
+using SiraUtil.Affinity;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -12,16 +13,15 @@ using UnityEngine;
 // Heavily based on https://github.com/Aeroluna/Heck/blob/master/Heck/HarmonyPatches/GameObjectTracker.cs
 namespace EditorEX.Heck.Patches
 {
-    [HarmonyPatch]
-    public static class EditorGameObjectTracker
+    public class EditorGameObjectTracker : IAffinity
     {
         private static readonly MethodInfo _addObject = AccessTools.Method(typeof(EditorGameObjectTracker), "AddObject", null, null);
         private static readonly MethodInfo _removeObject = AccessTools.Method(typeof(EditorGameObjectTracker), "RemoveObject", null, null);
         private static readonly MethodInfo _removeNote = AccessTools.Method(typeof(EditorGameObjectTracker), "RemoveNote", null, null);
 
-        [HarmonyPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.InsertObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.InsertObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret
@@ -46,9 +46,9 @@ namespace EditorEX.Heck.Patches
             }
         }
 
-        [HarmonyPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.DeleteObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerRemoveNote(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.DeleteObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerRemoveNote(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret
@@ -61,9 +61,9 @@ namespace EditorEX.Heck.Patches
             return result;
         }
 
-        [HarmonyPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.InsertObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerObstacle(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.InsertObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerObstacle(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret
@@ -76,9 +76,9 @@ namespace EditorEX.Heck.Patches
             return result;
         }
 
-        [HarmonyPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.DeleteObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerRemoveObstacle(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.DeleteObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerRemoveObstacle(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret
@@ -91,9 +91,9 @@ namespace EditorEX.Heck.Patches
             return result;
         }
 
-        [HarmonyPatch(typeof(ChainBeatmapObjectsView), nameof(ChainBeatmapObjectsView.InsertObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerChain(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(ChainBeatmapObjectsView), nameof(ChainBeatmapObjectsView.InsertObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerChain(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret
@@ -106,9 +106,9 @@ namespace EditorEX.Heck.Patches
             return result;
         }
 
-        [HarmonyPatch(typeof(ObstacleBeatmapObjectView), nameof(ChainBeatmapObjectsView.DeleteObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerRemoveChain(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(ObstacleBeatmapObjectView), nameof(ChainBeatmapObjectsView.DeleteObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerRemoveChain(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret
@@ -121,9 +121,9 @@ namespace EditorEX.Heck.Patches
             return result;
         }
 
-        [HarmonyPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.InsertObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerArc(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.InsertObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerArc(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret
@@ -136,9 +136,9 @@ namespace EditorEX.Heck.Patches
             return result;
         }
 
-        [HarmonyPatch(typeof(ObstacleBeatmapObjectView), nameof(ArcBeatmapObjectsView.DeleteObject))]
-        [HarmonyTranspiler]
-        public static IEnumerable<CodeInstruction> TranspilerRemoveArc(IEnumerable<CodeInstruction> instructions)
+        [AffinityPatch(typeof(ObstacleBeatmapObjectView), nameof(ArcBeatmapObjectsView.DeleteObject))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerRemoveArc(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
                 .End().Advance(-1) // before ret
@@ -157,8 +157,6 @@ namespace EditorEX.Heck.Patches
             {
                 return;
             }
-
-            //Plugin.Log.Info($"Added {obj.name} to {track.Count} track(s)");
 
             track.ForEach(n => n.AddGameObject(obj));
         }

@@ -4,7 +4,7 @@ namespace EditorEX.Essentials.ViewMode
 {
     public class ActiveViewMode
     {
-        public string Mode { get; set; } = "Preview";
+        public ViewMode Mode { get; set; }
         public bool NoodleExtensions { get; set; } = true;
 
         public Action ModeChanged;

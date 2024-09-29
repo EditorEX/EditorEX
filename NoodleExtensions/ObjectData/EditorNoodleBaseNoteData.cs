@@ -52,7 +52,7 @@ namespace EditorEX.NoodleExtensions.ObjectData
             }
             catch (Exception e)
             {
-                Plugin.Log.Error(e);
+                throw e;
             }
         }
     }

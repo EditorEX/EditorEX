@@ -1,8 +1,7 @@
-﻿using EditorEX.Chroma.Events;
+﻿using Chroma;
+using EditorEX.Chroma.Events;
 using EditorEX.CustomJSONData;
-using EditorEX.Heck.Deserializer;
-using Chroma;
-using Heck;
+using EditorEX.Heck.Deserialize;
 using SiraUtil.Affinity;
 using UnityEngine;
 using Zenject;
