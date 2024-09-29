@@ -32,8 +32,6 @@ namespace EditorEX.MapData.SaveDataLoaders
 
         public void Load(string projectPath)
         {
-            Plugin.Log.Info("Loading V2...");
-
             CustomDataRepository.ClearAll();
 
             CustomLevelInfoSaveData standardLevelInfoSaveData = CustomLevelInfoSaveData.Deserialize(File.ReadAllText(Path.Combine(projectPath, "Info.dat")));
@@ -114,7 +112,6 @@ namespace EditorEX.MapData.SaveDataLoaders
                 }
             }
             _beatmapLevelDataModel.UpdateWith(standardLevelInfoSaveData.songName, standardLevelInfoSaveData.songSubName, standardLevelInfoSaveData.songAuthorName, new float?(standardLevelInfoSaveData.beatsPerMinute), new float?(standardLevelInfoSaveData.songTimeOffset), new float?(standardLevelInfoSaveData.previewStartTime), new float?(standardLevelInfoSaveData.previewDuration), "", item2, item, item4, item3, standardLevelInfoSaveData.environmentName, beatmapLevelColorSchemes, dictionary, true);
-            Plugin.Log.Info("Loaded v2");
         }
     }
 }

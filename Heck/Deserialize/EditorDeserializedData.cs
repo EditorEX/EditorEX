@@ -2,6 +2,7 @@
 using EditorEX.CustomJSONData.CustomEvents;
 using Heck;
 using Heck.Deserialize;
+using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -9,7 +10,10 @@ namespace EditorEX.Heck.Deserialize
 {
     public class EditorDeserializedData
     {
-        internal EditorDeserializedData(Dictionary<CustomEventEditorData, ICustomEventCustomData> customEventCustomDatas, Dictionary<BasicEventEditorData, IEventCustomData> eventCustomDatas, Dictionary<BaseEditorData, IObjectCustomData> objectCustomDatas)
+        internal EditorDeserializedData(
+            Dictionary<CustomEventEditorData, ICustomEventCustomData> customEventCustomDatas, 
+            Dictionary<BasicEventEditorData, IEventCustomData> eventCustomDatas, 
+            Dictionary<BaseEditorData, IObjectCustomData> objectCustomDatas)
         {
             _customEventCustomDatas = customEventCustomDatas;
             _eventCustomDatas = eventCustomDatas;
@@ -20,7 +24,6 @@ namespace EditorEX.Heck.Deserialize
         {
             if (customEventData == null)
             {
-                Plugin.Log.Error("EditorDeserializedData | customEventData is null");
                 result = default;
                 return false;
             }
@@ -31,8 +34,6 @@ namespace EditorEX.Heck.Deserialize
         {
             if (beatmapEventData == null)
             {
-                //Plugin.Log.Error($"NULL {Environment.StackTrace}");
-                Plugin.Log.Error("EditorDeserializedData | beatmapEventData is null");
                 result = default;
                 return false;
             }
@@ -43,7 +44,6 @@ namespace EditorEX.Heck.Deserialize
         {
             if (beatmapObjectData == null)
             {
-                Plugin.Log.Error("EditorDeserializedData | beatmapObjectData is null");
                 result = default;
                 return false;
             }

@@ -54,8 +54,6 @@ namespace EditorEX.NoodleExtensions.Animation
 
                 foreach (GameObject go in track.GameObjects)
                 {
-                    Plugin.Log.Info($"hi {gameObject.name} {go == null}");
-                    Plugin.Log.Info($" - hi2 {go.name}");
                     ParentToObject(go.transform);
                 }
 
@@ -106,7 +104,7 @@ namespace EditorEX.NoodleExtensions.Animation
 
         private static void OnTrackGameObjectRemoved(GameObject trackGameObject)
         {
-            trackGameObject.transform.SetParent(null, false);
+            //trackGameObject.transform.SetParent(null, false);
         }
 
         private void OnTrackGameObjectAdded(GameObject trackGameObject)
@@ -116,7 +114,7 @@ namespace EditorEX.NoodleExtensions.Animation
 
         private void ParentToObject(Transform childTransform)
         {
-            childTransform.SetParent(transform, _worldPositionStays);
+            //childTransform.SetParent(transform, _worldPositionStays);
         }
 
         private void OnDestroy()

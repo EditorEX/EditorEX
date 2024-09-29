@@ -21,7 +21,7 @@ namespace EditorEX.Heck.ObjectData
             }
             catch (Exception e)
             {
-                Plugin.Log.Error(e);
+                throw e;
             }
         }
     }

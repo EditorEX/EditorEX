@@ -174,6 +174,7 @@ namespace EditorEX.Heck.Deserialize
 
             object[] inputs =
             {
+                _log,
                 _objectDataModel,
                 _eventsDataModel,
                 CustomDataRepository.GetBeatmapData(),

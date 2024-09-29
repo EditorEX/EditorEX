@@ -17,7 +17,6 @@ namespace EditorEX.UI.Collectors
                 if (color.name.StartsWith("BeatmapEditor"))
                 {
                     string remappedName = color.name.Substring(14).Replace(".", "/");
-                    Plugin.Log.Info(remappedName);
                     _colors[remappedName] = color;
                 }
             }

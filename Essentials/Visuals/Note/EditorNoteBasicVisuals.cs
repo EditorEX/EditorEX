@@ -31,7 +31,6 @@ namespace EditorEX.Essentials.Visuals
 
         public void Enable()
         {
-            Plugin.Log.Info("hi?");
             _basicRoot?.SetActive(true);
             active = true;
         }

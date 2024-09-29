@@ -33,7 +33,6 @@ namespace EditorEX.CustomJSONData.Patches.Loading
 
             if (hasV2BpmInfo)
             {
-                Plugin.Log.Info("Loading v2 BpmData");
                 bpmData = _v2BeatmapBpmDataVersionedLoader.Load(projectPath);
                 if (bpmData == null)
                 {
@@ -44,7 +43,6 @@ namespace EditorEX.CustomJSONData.Patches.Loading
 
             if (hasV4BpmInfo)
             {
-                Plugin.Log.Info("Loading v4 BpmData");
                 BeatmapLevelSaveDataVersion4.AudioSaveData audioSaveData = BeatmapProjectFileHelper.LoadBeatmapJsonObject<BeatmapLevelSaveDataVersion4.AudioSaveData>(projectPath, audioDataFilename);
                 if (audioSaveData == null)
                 {

@@ -1,6 +1,7 @@
 ﻿using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Movement.Types;
 using EditorEX.Essentials.ViewMode;
+using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +11,19 @@ namespace EditorEX.Essentials.Movement
 {
     public class MovementTypeProvider : ITypeProvider
     {
-        private ActiveViewMode _activeViewMode;
-        private List<ValueTuple<string[], Type>> _providers;
+        private readonly SiraLog _siraLog;
+        private readonly ActiveViewMode _activeViewMode;
+        private readonly List<ValueTuple<string[], Type>> _providers;
 
         [Inject]
-        private MovementTypeProvider(ActiveViewMode activeViewMode, [Inject(Id = "Movement")] List<ValueTuple<string[], Type>> providers)
+        private MovementTypeProvider(
+            SiraLog siraLog,
+            ActiveViewMode activeViewMode, 
+            [Inject(Id = "Movement")] List<ValueTuple<string[], Type>> providers)
         {
+            _siraLog = siraLog;
             _activeViewMode = activeViewMode;
-            _providers = providers; //providers.Select(x => (x.ViewModes, x.Type)).ToList();
+            _providers = providers;
         }
 
         public Type GetProvidedType(Type[] availableTypes, bool REDACTED)
@@ -31,7 +37,7 @@ namespace EditorEX.Essentials.Movement
 
             if (pickedProvider == null)
             {
-                Plugin.Log.Error($"Something has gone horribly wrong! No Movement Provider could be found for the present conditions. Viewing Mode {viewingMode}");
+                _siraLog.Error($"Something has gone horribly wrong! No Movement Provider could be found for the present conditions. Viewing Mode {viewingMode}");
             }
 
             return pickedProvider;

@@ -11,7 +11,7 @@ namespace EditorEX.NoodleExtensions.Installers
         {
             Container.Bind<AnimationHelper>().AsSingle();
 
-            Container.BindInterfacesTo<EditorAssignTrackParent>().AsSingle();
+            //Container.BindInterfacesTo<EditorAssignTrackParent>().AsSingle();
             Container.BindInterfacesTo<EditorAssignPlayerToTrack>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<EditorSpawnDataManager>().AsSingle();

@@ -7,17 +7,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Heck.Deserialize;
+using SiraUtil.Logging;
 
 namespace EditorEX.Heck.EventData
 {
     public class EditorCoroutineEventData : ICustomEventCustomData
     {
+        private readonly SiraLog _siraLog;
+
         public EditorCoroutineEventData(
+            SiraLog siraLog,
             CustomEventEditorData customEventData,
             Dictionary<string, List<object>> pointDefinitions,
             Dictionary<string, Track> beatmapTracks,
             bool v2)
         {
+            _siraLog = siraLog;
             CustomData data = customEventData.customData;
 
             IEnumerable<Track> tracks = data.GetTrackArray(beatmapTracks, v2);
@@ -78,7 +83,7 @@ namespace EditorEX.Heck.EventData
                         IPropertyBuilder builder = Track.GetPathBuilder(name);
                         if (builder == null)
                         {
-                            Plugin.Log.Error($"Could not find path property [{name}]");
+                            _siraLog.Error($"Could not find path property [{name}]");
                             return;
                         }
 
@@ -90,7 +95,7 @@ namespace EditorEX.Heck.EventData
                         IPropertyBuilder builder = Track.GetBuilder(name);
                         if (builder == null)
                         {
-                            Plugin.Log.Error($"Could not find property [{name}]");
+                            _siraLog.Error($"Could not find property [{name}]");
                             return;
                         }
 

@@ -25,9 +25,7 @@ namespace EditorEX.MapData.LevelDataLoaders
 
             var customLevelInfoSaveData = CustomLevelInfoSaveData.Deserialize(File.ReadAllText(Path.Combine(projectPath, "Info.dat")));
 
-            Plugin.Log.Info($"Loading {Path.Combine(projectPath, filename)}");
             Version2_6_0AndEarlierCustomBeatmapSaveData beatmapSaveData = Version2_6_0AndEarlierCustomBeatmapSaveData.Deserialize(File.ReadAllText(Path.Combine(projectPath, filename)));
-            Plugin.Log.Info($"Loaded {beatmapSaveData.notes.Count} notes; {beatmapSaveData.events.Count} events");
             notes = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.notes.Where(x => x.type != NoteType.GhostNote && x.type != NoteType.None)
                 .Cast<Version2_6_0AndEarlierCustomBeatmapSaveData.NoteSaveData>(),

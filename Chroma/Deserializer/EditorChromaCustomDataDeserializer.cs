@@ -10,6 +10,7 @@ using EditorEX.Heck.Deserialize;
 using Heck.Animation;
 using Heck.Deserialize;
 using IPA.Utilities;
+using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace EditorEX.Chroma.Deserializer
 {
     internal class EditorChromaCustomDataDeserializer : IEditorEarlyDeserializer, IEditorObjectsDeserializer, IEditorCustomEventsDeserializer, IEditorEventsDeserializer
     {
+        private readonly SiraLog _siraLog;
         private readonly BeatmapBasicEventsDataModel _beatmapBasicEventsDataModel;
         private readonly BeatmapObjectsDataModel _beatmapObjectsDataModel;
         private readonly Dictionary<string, Track> _tracks;
@@ -28,6 +30,7 @@ namespace EditorEX.Chroma.Deserializer
         private readonly bool _v2;
 
         private EditorChromaCustomDataDeserializer(
+            SiraLog siraLog,
             BeatmapBasicEventsDataModel beatmapBasicEventsDataModel,
             BeatmapObjectsDataModel beatmapObjectsDataModel,
             Dictionary<string, Track> beatmapTracks,
@@ -35,6 +38,7 @@ namespace EditorEX.Chroma.Deserializer
             TrackBuilder trackBuilder,
             bool v2)
         {
+            _siraLog = siraLog;
             _beatmapBasicEventsDataModel = beatmapBasicEventsDataModel;
             _beatmapObjectsDataModel = beatmapObjectsDataModel;
             _tracks = beatmapTracks;
@@ -97,7 +101,7 @@ namespace EditorEX.Chroma.Deserializer
                 }
                 catch (Exception e)
                 {
-                    Plugin.Log.Error(e);
+                    _siraLog.Error(e);
                 }
             }
         }
@@ -140,7 +144,7 @@ namespace EditorEX.Chroma.Deserializer
                 }
                 catch (Exception e)
                 {
-                    Plugin.Log.Error(e);
+                    _siraLog.Error(e);
                 }
             }
 
@@ -160,7 +164,7 @@ namespace EditorEX.Chroma.Deserializer
                     CustomData customData = beatmapObjectData.GetCustomData();
                     if (customData == null)
                     {
-                        Plugin.Log.Warn("Chroma | customData is null...");
+                        _siraLog.Warn("Chroma | customData is null...");
                         continue;
                     }
                     switch (beatmapObjectData)
@@ -187,7 +191,7 @@ namespace EditorEX.Chroma.Deserializer
                 }
                 catch (Exception e)
                 {
-                    Plugin.Log.Error(e);
+                    _siraLog.Error(e);
                 }
             }
 
@@ -214,7 +218,7 @@ namespace EditorEX.Chroma.Deserializer
                 }
                 catch (Exception e)
                 {
-                    Plugin.Log.Error(e);
+                    _siraLog.Error(e);
                 }
             }
 

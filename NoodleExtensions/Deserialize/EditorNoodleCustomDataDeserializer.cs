@@ -11,11 +11,13 @@ using System;
 using System.Collections.Generic;
 using Heck.Deserialize;
 using EditorEX.Heck.Deserialize;
+using SiraUtil.Logging;
 
 namespace EditorEX.NoodleExtensions.Deserialize
 {
     internal class EditorNoodleCustomDataDeserializer : IEditorCustomEventsDeserializer, IEditorEarlyDeserializer, IEditorObjectsDeserializer
     {
+        private readonly SiraLog _siraLog;
         private readonly BeatmapObjectsDataModel _beatmapObjectsDataModel;
         private readonly Dictionary<string, Track> _tracks;
         private readonly Dictionary<string, List<object>> _pointDefinitions;
@@ -23,12 +25,14 @@ namespace EditorEX.NoodleExtensions.Deserialize
         private readonly bool _v2;
 
         private EditorNoodleCustomDataDeserializer(
+            SiraLog siraLog,
             BeatmapObjectsDataModel beatmapObjectsDataModel,
             Dictionary<string, Track> beatmapTracks,
             Dictionary<string, List<object>> pointDefinitions,
             TrackBuilder trackBuilder,
             bool v2)
         {
+            _siraLog = siraLog;
             _beatmapObjectsDataModel = beatmapObjectsDataModel;
             _tracks = beatmapTracks;
             _pointDefinitions = pointDefinitions;
@@ -58,7 +62,7 @@ namespace EditorEX.NoodleExtensions.Deserialize
                 }
                 catch (Exception e)
                 {
-                    Plugin.Log.Error(e);
+                    _siraLog.Error(e);
                 }
             }
         }
@@ -131,7 +135,7 @@ namespace EditorEX.NoodleExtensions.Deserialize
                 }
                 catch (Exception e)
                 {
-                    Plugin.Log.Error(e);
+                    _siraLog.Error(e);
                 }
             }
             return dictionary;

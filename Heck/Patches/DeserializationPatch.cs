@@ -39,7 +39,6 @@ namespace EditorEX.Heck.Patches
             var standardLevelInfoSaveData = CustomLevelInfoSaveData.Deserialize(File.ReadAllText(Path.Combine(projectPath, "Info.dat")));
             var customBeatmapSaveData = CustomDataRepository.GetCustomBeatmapSaveData();
             var beatmapData = CustomDataRepository.GetBeatmapData();
-            Plugin.Log.Info("Loading custom data into beatmap data " + (beatmapData == null) + " " + (customBeatmapSaveData == null) + " " + (standardLevelInfoSaveData == null));
 
             beatmapVersion = BeatmapProjectFileHelper.GetVersionedJSONVersion(projectPath, beatmapFilename);
 

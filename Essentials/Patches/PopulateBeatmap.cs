@@ -1,6 +1,5 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
-using HarmonyLib;
 using SiraUtil.Affinity;
 using Zenject;
 
@@ -9,7 +8,7 @@ namespace EditorEX.Essentials.Patches
     [AffinityPatch]
     public class PopulateBeatmap : IAffinity
     {
-        internal static BeatmapObjectsDataModel _beatmapObjectsDataModel;   
+        internal static BeatmapObjectsDataModel _beatmapObjectsDataModel;
         internal static BeatmapLevelDataModel _beatmapLevelDataModel;
         internal static BeatmapDataModel _beatmapDataModel;
         internal static AudioDataModel _audioDataModel;
