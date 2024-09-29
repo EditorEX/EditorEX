@@ -101,7 +101,8 @@ namespace EditorEX.Essentials.Visuals
 
             var noteColor = _colorManager.ColorForType(_editorData.type);
 
-            _colorPropertyBlockControllers.Do(x=> { 
+            _colorPropertyBlockControllers.Do(x =>
+            {
                 x.materialPropertyBlock.SetColor(ColorNoteVisuals._colorId, noteColor.ColorWithAlpha(1f));
                 x.ApplyChanges();
             });
@@ -175,9 +176,9 @@ namespace EditorEX.Essentials.Visuals
                 out float? dissolveArrow,
                 out float? cuttable);
 
-            _noteCutout.SetCutout(1f-dissolveNote.GetValueOrDefault(1f));
+            _noteCutout.SetCutout(1f - dissolveNote.GetValueOrDefault(1f));
 
-            _arrowCutout.SetCutout(1f-dissolveArrow.GetValueOrDefault(1f));
+            _arrowCutout.SetCutout(1f - dissolveArrow.GetValueOrDefault(1f));
 
             _arrowObjects[1].SetActive(_editorData.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f);
         }

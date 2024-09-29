@@ -47,7 +47,7 @@ namespace EditorEX.Analyzer.Swings
 
             var sliceMapRight = new SliceMap(notes, obstacles, true);
             var sliceMapLeft = new SliceMap(notes, obstacles, false);
-            
+
             _swingTrackGeneratorLeft = new SwingTrackGenerator(sliceMapLeft, false, _levelUtils);
             _swingTrackGeneratorRight = new SwingTrackGenerator(sliceMapRight, true, _levelUtils);
         }

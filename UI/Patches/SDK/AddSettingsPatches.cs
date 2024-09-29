@@ -22,8 +22,8 @@ namespace EditorEX.UI.Patches.SDK
 
         private AddSettingsPatches(
             List<IViewContent<SettingsViewData>> viewContents,
-            TextSegmentedControlFactory textSegmentedControlFactory) 
-        { 
+            TextSegmentedControlFactory textSegmentedControlFactory)
+        {
             _viewContents = viewContents;
             _viewNames = _viewContents.Select(x => x.GetViewData().Name).ToList();
             _viewNames.Insert(0, "Official");
@@ -35,7 +35,7 @@ namespace EditorEX.UI.Patches.SDK
         [AffinityPatch(typeof(BeatmapEditorSettingsViewController), nameof(BeatmapEditorSettingsViewController.DidActivate))]
         [AffinityPostfix]
         private void AddUI(BeatmapEditorSettingsViewController __instance, bool firstActivation)
-        { 
+        {
             if (firstActivation)
             {
                 var segmentedControl = _textSegmentedControlFactory.Create(__instance.transform, _viewNames.ToArray(), Selected);
@@ -54,7 +54,7 @@ namespace EditorEX.UI.Patches.SDK
 
                 for (int i = 0; i < _viewContents.Count; i++)
                 {
-                    var settingsObject = new GameObject(_viewNames[i+1]);
+                    var settingsObject = new GameObject(_viewNames[i + 1]);
                     settingsObject.transform.SetParent(container.transform, false);
                     settingsObject.transform.localPosition = new Vector3(0f, 500f);
 

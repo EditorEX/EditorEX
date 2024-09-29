@@ -254,7 +254,7 @@ namespace EditorEX.NoodleExtensions.Managers
 
             if (!inputNjs.HasValue && !inputOffset.HasValue && _movementData._noteJumpValueType == BeatmapObjectSpawnMovementData.NoteJumpValueType.JumpDuration)
             {
-            	return _movementData.jumpDuration;
+                return _movementData.jumpDuration;
             }
 
             float oneBeatDuration = 60f / PopulateBeatmap._beatmapLevelDataModel.beatsPerMinute;

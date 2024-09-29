@@ -40,13 +40,13 @@ namespace EditorEX.MapData.Converters
         {
             ILookup<bool, v2CustomNoteSaveData> lookup = oldSaveData.notes
                 .OrderBy((v2NoteSaveData n) => n)
-                .Select(x=>(v2CustomNoteSaveData)x)
+                .Select(x => (v2CustomNoteSaveData)x)
                 .ToLookup((v2CustomNoteSaveData n) => n.type == BeatmapSaveDataVersion2_6_0AndEarlier.NoteType.Bomb);
 
             List<v3NoteSaveData> colorNotes = lookup[false]
                 .Select((v2CustomNoteSaveData n) => new v3CustomNoteSaveData(
-                    n.time, 
-                    n.lineIndex, 
+                    n.time,
+                    n.lineIndex,
                     (int)n.lineLayer,
                     (n.type == BeatmapSaveDataVersion2_6_0AndEarlier.NoteType.NoteA) ? NoteColorType.ColorA : NoteColorType.ColorB,
                     n.cutDirection,
@@ -57,9 +57,9 @@ namespace EditorEX.MapData.Converters
 
             List<v3BombSaveData> bombNotes = lookup[true]
                 .Select((v2CustomNoteSaveData n) => new v3CustomBombSaveData(
-                    n.time, 
-                    n.lineIndex, 
-                    (int)n.lineLayer, 
+                    n.time,
+                    n.lineIndex,
+                    (int)n.lineLayer,
                     n.customData))
                 .Cast<v3BombSaveData>()
                 .ToList();
@@ -70,8 +70,8 @@ namespace EditorEX.MapData.Converters
                 .Select((v2CustomObstacleSaveData n) => new v3CustomObstacleSaveData(
                     n.time,
                     n.lineIndex,
-                    BeatmapDataLoaderVersion2_6_0AndEarlier.BeatmapDataLoader.ObstacleConverter.GetLayerForObstacleType(n.type), 
-                    n.duration, 
+                    BeatmapDataLoaderVersion2_6_0AndEarlier.BeatmapDataLoader.ObstacleConverter.GetLayerForObstacleType(n.type),
+                    n.duration,
                     n.width,
                     BeatmapDataLoaderVersion2_6_0AndEarlier.BeatmapDataLoader.ObstacleConverter.GetHeightForObstacleType(n.type),
                     n.customData))
@@ -82,18 +82,18 @@ namespace EditorEX.MapData.Converters
                 .Cast<v2CustomSliderSaveData>()
                 .OrderBy((v2CustomSliderSaveData n) => n)
                 .Select((v2CustomSliderSaveData n) => new v3CustomSliderSaveData(
-                    (n.colorType == BeatmapSaveDataVersion2_6_0AndEarlier.ColorType.ColorA) ? NoteColorType.ColorA : NoteColorType.ColorB, 
-                    n.time, 
-                    n.headLineIndex, 
-                    (int)n.headLineLayer, 
-                    n.headControlPointLengthMultiplier, 
-                    n.headCutDirection, 
-                    n.tailTime, 
-                    n.tailLineIndex, 
-                    (int)n.tailLineLayer, 
-                    n.tailControlPointLengthMultiplier, 
-                    n.tailCutDirection, 
-                    n.sliderMidAnchorMode, 
+                    (n.colorType == BeatmapSaveDataVersion2_6_0AndEarlier.ColorType.ColorA) ? NoteColorType.ColorA : NoteColorType.ColorB,
+                    n.time,
+                    n.headLineIndex,
+                    (int)n.headLineLayer,
+                    n.headControlPointLengthMultiplier,
+                    n.headCutDirection,
+                    n.tailTime,
+                    n.tailLineIndex,
+                    (int)n.tailLineLayer,
+                    n.tailControlPointLengthMultiplier,
+                    n.tailCutDirection,
+                    n.sliderMidAnchorMode,
                     n.customData))
                 .Cast<v3SliderSaveData>()
                 .ToList();
@@ -102,10 +102,10 @@ namespace EditorEX.MapData.Converters
                 .Cast<v2CustomWaypointSaveData>()
                 .OrderBy((v2CustomWaypointSaveData n) => n)
                 .Select((v2CustomWaypointSaveData n) => new v3CustomWaypointSaveData(
-                    n.time, 
-                    n.lineIndex, 
-                    (int)n.lineLayer, 
-                    n.offsetDirection, 
+                    n.time,
+                    n.lineIndex,
+                    (int)n.lineLayer,
+                    n.offsetDirection,
                     n.customData))
                 .Cast<v3WaypointSaveData>()
                 .ToList();

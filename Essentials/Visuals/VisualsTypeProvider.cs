@@ -16,7 +16,7 @@ namespace EditorEX.Essentials.Visuals
         [Inject]
         private VisualsTypeProvider(
             SiraLog _siraLog,
-            ActiveViewMode activeViewMode, 
+            ActiveViewMode activeViewMode,
             [Inject(Id = "Visuals")] List<ValueTuple<string[], Type>> providers)
         {
             _activeViewMode = activeViewMode;

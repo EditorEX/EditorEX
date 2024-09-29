@@ -10,9 +10,9 @@ namespace EditorEX.Essentials.ViewMode
     {
         private static List<ViewMode> viewModes = new List<ViewMode>();
 
-        public static bool RegisterViewMode(ViewMode viewMode) 
+        public static bool RegisterViewMode(ViewMode viewMode)
         {
-            if (viewModes.Any(x=>x.ID==viewMode.ID))
+            if (viewModes.Any(x => x.ID == viewMode.ID))
             {
                 return false;
             }

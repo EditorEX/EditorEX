@@ -224,6 +224,6 @@ namespace EditorEX.Essentials.Movement.Note
 
         internal Quaternion _worldRotation;
 
-        internal Quaternion _inverseWorldRotation; 
+        internal Quaternion _inverseWorldRotation;
     }
 }

@@ -32,7 +32,6 @@ namespace EditorEX.SDK.Factories
             textObj.text = text;
             textObj.richText = true;
 
-
             ContentSizeFitter sizeFitter = textObj.gameObject.AddComponent<ContentSizeFitter>();
             sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
@@ -44,8 +43,8 @@ namespace EditorEX.SDK.Factories
             inputField.onValueChanged.RemoveAllListeners();
             inputField.onValueChanged.AddListener(onChange);
 
-            UnityEngine.Object.Destroy(inputField.GetComponent<StringInputFieldValidator>());
-            UnityEngine.Object.Destroy(field.transform.Find("ModifiedHint").gameObject);
+            Object.Destroy(inputField.GetComponent<StringInputFieldValidator>());
+            Object.Destroy(field.transform.Find("ModifiedHint").gameObject);
 
             return inputField;
         }

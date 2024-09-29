@@ -94,7 +94,7 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
                 _palmOrientDrag = _maxPalmOrientDrag,
                 _wristPositDrag = _maxWristPositDrag,
                 _wristOrientation = -10f,
-                _palmOrientation = 0.0f,    
+                _palmOrientation = 0.0f,
                 _wristPosition = _targetWristPosition
             };
 
@@ -103,7 +103,7 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
             _targetWristPositDrag = _maxWristPositDrag;
 
             handFrames.Add(lastFrame);
-            for (int i = 1; i < totalFrames-1; i++)
+            for (int i = 1; i < totalFrames - 1; i++)
             {
                 float second = i * secondsPerFrame;
                 float _beatTime = PopulateBeatmap._audioDataModel.bpmData.SecondsToBeat(second);

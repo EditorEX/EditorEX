@@ -33,63 +33,63 @@ namespace EditorEX.MapData.LevelDataLoaders
             Version version = BeatmapSaveDataHelpers.GetVersion(File.ReadAllText(fullPath));
 
             Version3CustomBeatmapSaveData beatmapSaveData = Version3CustomBeatmapSaveData.Deserialize(File.ReadAllText(fullPath));
-            
+
             notes = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.colorNotes
-                .Cast<Version3CustomBeatmapSaveData.ColorNoteSaveData>(), 
+                .Cast<Version3CustomBeatmapSaveData.ColorNoteSaveData>(),
                 BeatmapDataModelsLoader.CreateColorNoteEditorData_v3)
                 .ToList();
-            
+
             notes.AddRange(LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.bombNotes
-                .Cast<Version3CustomBeatmapSaveData.BombNoteSaveData>(), 
+                .Cast<Version3CustomBeatmapSaveData.BombNoteSaveData>(),
                 BeatmapDataModelsLoader.CreateBombNoteEditorData_v3)
                 .ToList());
-            
+
             waypoints = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.waypoints
-                .Cast<Version3CustomBeatmapSaveData.WaypointSaveData>(), 
+                .Cast<Version3CustomBeatmapSaveData.WaypointSaveData>(),
                 BeatmapDataModelsLoader.CreateWaypointEditorData_v3)
                 .ToList();
-            
+
             obstacles = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.obstacles
-                .Cast<Version3CustomBeatmapSaveData.ObstacleSaveData>(), 
+                .Cast<Version3CustomBeatmapSaveData.ObstacleSaveData>(),
                 BeatmapDataModelsLoader.CreateObstacleEditorData_v3)
                 .ToList();
 
             arcs = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.sliders
-                .Cast<Version3CustomBeatmapSaveData.SliderSaveData>(), 
+                .Cast<Version3CustomBeatmapSaveData.SliderSaveData>(),
                 BeatmapDataModelsLoader.CreateArcEditorData_v3)
                 .ToList();
-            
+
             chains = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.burstSliders
-                .Cast<Version3CustomBeatmapSaveData.BurstSliderSaveData>(), 
+                .Cast<Version3CustomBeatmapSaveData.BurstSliderSaveData>(),
                 BeatmapDataModelsLoader.CreateChainEditorData_v3)
                 .ToList();
-            
+
             basicEvents = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.basicBeatmapEvents
-                .Cast<Version3CustomBeatmapSaveData.BasicEventSaveData>(), 
+                .Cast<Version3CustomBeatmapSaveData.BasicEventSaveData>(),
                 BeatmapDataModelsLoader.CreateEventEditorData_v3)
                 .ToList();
-            
+
             basicEvents.AddRange(LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.colorBoostBeatmapEvents
-                .Cast<Version3CustomBeatmapSaveData.ColorBoostEventSaveData>(), 
+                .Cast<Version3CustomBeatmapSaveData.ColorBoostEventSaveData>(),
                 BeatmapDataModelsLoader.CreateEventEditorDataFromColorBoost_v3)
                 .ToList());
-            
+
             basicEvents.AddRange(LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.rotationEvents
-                .Cast<Version3CustomBeatmapSaveData.RotationEventSaveData>(), 
+                .Cast<Version3CustomBeatmapSaveData.RotationEventSaveData>(),
                 BeatmapDataModelsLoader.CreateEventEditorDataFromRotation_v3)
                 .ToList());
-            
+
             var customEvents = LevelDataLoaderUtil.GetEditorData(
-                beatmapSaveData.customEvents, 
+                beatmapSaveData.customEvents,
                 CreateCustomEventEditorData)
                 .ToList();
 

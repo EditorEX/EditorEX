@@ -51,7 +51,6 @@ namespace EditorEX.UI.Patches
             }
         }
 
-
         [AffinityPatch(typeof(BeatmapsListViewController), nameof(BeatmapsListViewController.HandleBeatmapsCollectionDataModelUpdated))]
         [AffinityPrefix]
         private bool KeepFilter(BeatmapsListViewController __instance)

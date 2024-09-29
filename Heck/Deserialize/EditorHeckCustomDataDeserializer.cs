@@ -23,9 +23,9 @@ namespace EditorEX.Heck.Deserialize
 
         private EditorHeckCustomDataDeserializer(
             SiraLog siraLog,
-            BeatmapObjectsDataModel beatmapObjectsDataModel, 
-            Dictionary<string, Track> beatmapTracks, 
-            Dictionary<string, List<object>> pointDefinitions, 
+            BeatmapObjectsDataModel beatmapObjectsDataModel,
+            Dictionary<string, Track> beatmapTracks,
+            Dictionary<string, List<object>> pointDefinitions,
             bool v2)
         {
             _siraLog = siraLog;

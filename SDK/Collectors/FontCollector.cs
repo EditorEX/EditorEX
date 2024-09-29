@@ -12,7 +12,7 @@ namespace EditorEX.SDK.Collectors
 
         public void Initialize()
         {
-            var text = Resources.FindObjectsOfTypeAll<TMP_Text>().FirstOrDefault(x=>x.font.name.StartsWith("NotoSans-Medium"));
+            var text = Resources.FindObjectsOfTypeAll<TMP_Text>().FirstOrDefault(x => x.font.name.StartsWith("NotoSans-Medium"));
             _font = Object.Instantiate(text.font);
             _material = Object.Instantiate(text.fontSharedMaterial);
         }
