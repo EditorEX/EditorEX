@@ -367,6 +367,7 @@
     <Compile Include="SDK\Base\LayoutData.cs" />
     <Compile Include="SDK\Factories\ImageFactory.cs" />
     <Compile Include="SDK\Factories\TextSegmentedControlFactory.cs" />
+    <Compile Include="SDK\NavBar\NavBarViewData.cs" />
     <Compile Include="SDK\Settings\SettingsViewData.cs" />
     <Compile Include="SDK\ViewContent\IViewContent.cs" />
     <Compile Include="SDK\Collectors\ColorCollector.cs" />

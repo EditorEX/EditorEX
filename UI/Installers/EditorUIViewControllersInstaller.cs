@@ -3,7 +3,6 @@ using EditorEX.SDK.Factories;
 using EditorEX.SDK.Settings;
 using EditorEX.SDK.ViewContent;
 using EditorEX.SDKImplementation;
-using EditorEX.UI.Factories;
 using EditorEX.UI.Patches;
 using EditorEX.UI.Patches.SDK;
 using Zenject;

@@ -1,15 +1,15 @@
-﻿using EditorEX.Chroma.Colorizer;
-using EditorEX.Chroma.EnvironmentEnhancement;
-using EditorEX.Chroma.Events;
-using EditorEX.Chroma.Lighting;
-using EditorEX.Chroma.Patches;
-using EditorEX.Chroma.Patches.Events;
-using Chroma;
+﻿using Chroma;
 using Chroma.EnvironmentEnhancement;
-using Chroma.EnvironmentEnhancement.Component;
 using Chroma.HarmonyPatches.Colorizer.Initialize;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using Chroma.Lighting;
+using EditorEx.Chroma.EnvironmentEnhancement;
+using EditorEx.Chroma.EnvironmentEnhancement.Component;
+using EditorEX.Chroma.Colorizer;
+using EditorEX.Chroma.EnvironmentEnhancement;
+using EditorEX.Chroma.Events;
+using EditorEX.Chroma.Lighting;
+using EditorEX.Chroma.Patches.Events;
 using Heck;
 using Zenject;
 

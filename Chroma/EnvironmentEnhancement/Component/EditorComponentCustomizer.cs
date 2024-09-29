@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Chroma.EnvironmentEnhancement.Component;
 using CustomJSONData.CustomBeatmap;
 using JetBrains.Annotations;
+using System.Collections.Generic;
 using UnityEngine;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
 
-namespace Chroma.EnvironmentEnhancement.Component
+namespace EditorEx.Chroma.EnvironmentEnhancement.Component
 {
     internal class EditorComponentCustomizer
     {

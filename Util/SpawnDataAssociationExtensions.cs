@@ -2,7 +2,7 @@
 using EditorEX.Essentials.SpawnProcessing;
 using IPA.Utilities;
 
-namespace EditorEX.NoodleExtensions.Util
+namespace EditorEX.Util
 {
     public static class SpawnDataAssociationExtensions
     {

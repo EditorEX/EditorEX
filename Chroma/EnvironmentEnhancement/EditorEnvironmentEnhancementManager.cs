@@ -1,7 +1,9 @@
-﻿using Chroma.EnvironmentEnhancement.Component;
+﻿using Chroma.EnvironmentEnhancement;
+using Chroma.EnvironmentEnhancement.Component;
 using Chroma.EnvironmentEnhancement.Saved;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using CustomJSONData.CustomBeatmap;
+using EditorEx.Chroma.EnvironmentEnhancement.Component;
 using EditorEX.Chroma.EnvironmentEnhancement;
 using EditorEX.CustomJSONData;
 using EditorEX.MapData.Contexts;
@@ -19,7 +21,7 @@ using static Chroma.ChromaController;
 using static Heck.HeckController;
 using Object = UnityEngine.Object;
 
-namespace Chroma.EnvironmentEnhancement
+namespace EditorEx.Chroma.EnvironmentEnhancement
 {
     internal class EditorEnvironmentEnhancementManager : MonoBehaviour
     {

@@ -2,9 +2,8 @@
 using Chroma;
 using Chroma.Lighting;
 using CustomJSONData.CustomBeatmap;
-using EditorEX.Chroma.Deserializer;
 using EditorEX.Chroma.Lighting;
-using EditorEX.CustomJSONData.Util;
+using EditorEX.Util;
 using Heck.Animation;
 using Heck.Deserialize;
 using System;

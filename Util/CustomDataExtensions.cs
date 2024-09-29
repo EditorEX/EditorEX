@@ -1,12 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EditorEX.CustomJSONData;
 
-namespace EditorEX.CustomJSONData.Util
+namespace EditorEX.Util
 {
     public static class CustomDataExtensions
     {
