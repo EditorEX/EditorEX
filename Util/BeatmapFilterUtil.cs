@@ -19,24 +19,43 @@ namespace EditorEX.Util
 
             foreach (var beatmapInfo in beatmapInfos)
             {
-                var points = 0;
+                float points = 0;
 
                 for (var i = 0; i < terms.Length; i++)
                 {
                     var term = terms[i];
+                    var termMultiplier = 1f;
+                    termMultiplier = (term.Length / 5f) + 1f;
                     if (!string.IsNullOrWhiteSpace(term))
                     {
+                        float pointsToGo = 0f;
                         if (beatmapInfo.songSubName.IndexOf(term, 0, StringComparison.CurrentCultureIgnoreCase) != -1)
-                            points += 1;
+                            pointsToGo += 4f;
 
                         if (beatmapInfo.songAuthorName.IndexOf(term, 0, StringComparison.CurrentCultureIgnoreCase) != -1)
-                            points += 3;
+                            pointsToGo += 12f;
 
                         if (beatmapInfo.levelAuthorName.IndexOf(term, 0, StringComparison.CurrentCultureIgnoreCase) != -1)
-                            points += 4;
+                            pointsToGo += 16f;
 
                         if (beatmapInfo.songName.IndexOf(term, 0, StringComparison.CurrentCultureIgnoreCase) != -1)
-                            points += 5;
+                            pointsToGo += 20f;
+
+                        if (beatmapInfo.songSubName.Equals(term, StringComparison.CurrentCultureIgnoreCase))
+                            pointsToGo *= 3f;
+
+                        if (beatmapInfo.songAuthorName.Equals(term, StringComparison.CurrentCultureIgnoreCase))
+                            pointsToGo *= 3f;
+
+                        if (beatmapInfo.levelAuthorName.Equals(term, StringComparison.CurrentCultureIgnoreCase))
+                            pointsToGo *= 3f;
+
+                        if (beatmapInfo.songName.Equals(term, StringComparison.CurrentCultureIgnoreCase))
+                            pointsToGo *= 3f;
+
+                        pointsToGo *= termMultiplier;
+
+                        points += pointsToGo;
                     }
                 }
 
@@ -51,10 +70,10 @@ namespace EditorEX.Util
 
         private struct BeatmapSortInfo
         {
-            public readonly int Points;
+            public readonly float Points;
             public readonly BeatmapInfoData BeatmapInfoData;
 
-            public BeatmapSortInfo(int points, BeatmapInfoData beatmapInfoData)
+            public BeatmapSortInfo(float points, BeatmapInfoData beatmapInfoData)
             {
                 Points = points;
                 BeatmapInfoData = beatmapInfoData;

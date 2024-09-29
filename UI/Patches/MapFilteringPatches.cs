@@ -1,18 +1,10 @@
 ﻿using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
-using EditorEX.UI.Factories;
+using EditorEX.SDK.Factories;
 using EditorEX.Util;
-using HarmonyLib;
-using IPA.Utilities;
 using SiraUtil.Affinity;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using static BeatmapEditor3D.DataModels.BeatmapsCollectionDataModel;
 
 namespace EditorEX.UI.Patches
 {
@@ -38,7 +30,7 @@ namespace EditorEX.UI.Patches
                 {
                     ApplyFilter(__instance);
                 });
-                _filterInput.transform.parent.localPosition = new Vector3(-950f, 130f, 0f);
+                _filterInput.transform.parent.position = new Vector3(40f, 670f, 0f);
                 (_filterInput.transform.parent as RectTransform).sizeDelta = new Vector2(400f, 40f);
             }
         }
