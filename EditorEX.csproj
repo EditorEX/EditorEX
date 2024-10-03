@@ -127,7 +127,7 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="SiraUtil">
+    <Reference Include="SiraUtil" Publicize="true">
       <HintPath>$(BeatSaberDir)\Plugins\SiraUtil.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
@@ -269,20 +269,22 @@
     <Compile Include="Chroma\Patches\Events\EditorRingStepChromafier.cs" />
     <Compile Include="Chroma\Patches\InitializeLightIDTable.cs" />
     <Compile Include="Chroma\Patches\InjectCustomDataIntoLivePreview.cs" />
+    <Compile Include="CustomDataModels\LevelCustomDataModel.cs" />
     <Compile Include="CustomJSONData\CustomDataRepository.cs" />
     <Compile Include="CustomJSONData\CustomEvents\CustomEventEditorData.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataAppInstaller.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataModelsInstaller.cs" />
+    <Compile Include="Essentials\Installers\EditorEssentialsAppInstaller.cs" />
     <Compile Include="Essentials\Patches\HideUI.cs" />
     <Compile Include="Essentials\Patches\CameraLock.cs" />
     <Compile Include="Essentials\Patches\FixAudioTimeSource.cs" />
+    <Compile Include="Essentials\Patches\PopulateBeatmap.cs" />
     <Compile Include="MapData\Contexts\LevelContext.cs" />
     <Compile Include="MapData\Contexts\MapContext.cs" />
     <Compile Include="CustomJSONData\Patches\DisableConversion.cs" />
     <Compile Include="CustomJSONData\Patches\Loading\BeatmapDataModelsLoaderPatch.cs" />
     <Compile Include="CustomJSONData\Patches\Loading\BeatmapLevelDataModelLoaderPatch.cs" />
     <Compile Include="CustomJSONData\Patches\Loading\AudioDataLoaderPatch.cs" />
-    <Compile Include="Essentials\Installers\EditorEssentialsAppInstaller.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsModelsInstaller.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsSceneInstaller.cs" />
     <Compile Include="Essentials\IObjectComponent.cs" />
@@ -322,7 +324,6 @@
     <Compile Include="Essentials\Patches\Movement\DisableMovement.cs" />
     <Compile Include="Essentials\Patches\Movement\InitMovement.cs" />
     <Compile Include="Essentials\Patches\Movement\InstallMovement.cs" />
-    <Compile Include="Essentials\Patches\PopulateBeatmap.cs" />
     <Compile Include="Essentials\SpawnProcessing\EditorBeatmapObjectsInTimeRowProcessor.cs" />
     <Compile Include="Essentials\SpawnProcessing\EditorObjectSpawnData.cs" />
     <Compile Include="Essentials\SpawnProcessing\EditorSpawnDataRepository.cs" />

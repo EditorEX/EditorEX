@@ -1,4 +1,5 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using EditorEX;
 using EditorEX.Essentials.Patches;
 using System;
@@ -124,6 +125,7 @@ public class SliceMap
     private static bool _rightHand;
     private int _playerXOffset = 0;
     private float _lastWallTime = 0;
+    private AudioDataModel _audioDataModel;
 
     public int GetSliceCount()
     {
@@ -135,8 +137,10 @@ public class SliceMap
         return Cuts[index];
     }
 
-    public SliceMap(List<NoteEditorData> blocks, List<ObstacleEditorData> walls, bool isRightHand)
+    public SliceMap(List<NoteEditorData> blocks, List<ObstacleEditorData> walls, bool isRightHand, AudioDataModel audioDataModel)
     {
+        _audioDataModel = audioDataModel;
+
         var stopwatch = new System.Diagnostics.Stopwatch();
         stopwatch.Start();
         _blocks = new List<NoteEditorData>(blocks);
@@ -292,7 +296,7 @@ public class SliceMap
 
             // If time since dodged exceeds a set amount in seconds, undo dodge
             var undodgeCheckTime = 0.35f;
-            if (PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(notesInSwing.Last().beat - _lastWallTime) > undodgeCheckTime) { _playerXOffset = 0; }
+            if (_audioDataModel.bpmData.BeatToSeconds(notesInSwing.Last().beat - _lastWallTime) > undodgeCheckTime) { _playerXOffset = 0; }
 
             // Work out Parity
             List<NoteEditorData> bombsBetweenSwings = bombs.FindAll(x => x.beat > lastNote.beat && x.beat < notesInSwing.Last().beat);
@@ -452,7 +456,7 @@ public class SliceMap
                 // Create a new swing with inverse parity to the last.
                 BeatCutData emptySwing = new BeatCutData();
                 emptySwing.sliceParity = (swings[i].sliceParity == Parity.Forehand) ? Parity.Backhand : Parity.Forehand;
-                emptySwing.sliceStartBeat = swings[i - 1].sliceEndBeat + PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(0.15f);
+                emptySwing.sliceStartBeat = swings[i - 1].sliceEndBeat + _audioDataModel.bpmData.BeatToSeconds(0.15f);
                 emptySwing.sliceEndBeat = emptySwing.sliceStartBeat + 0.2f;
                 emptySwing.SetStartPosition(lastNote.column, lastNote.row);
 
@@ -540,7 +544,7 @@ public class SliceMap
     // Calculates the effective BPM of a swing
     private float SwingEBPM(float beatDiff)
     {
-        var seconds = PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(beatDiff);
+        var seconds = _audioDataModel.bpmData.BeatToSeconds(beatDiff);
         TimeSpan time = TimeSpan.FromSeconds(seconds);
 
         return (float)((60000 / time.TotalMilliseconds) / 2);

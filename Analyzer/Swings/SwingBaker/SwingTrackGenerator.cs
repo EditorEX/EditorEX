@@ -1,4 +1,5 @@
-﻿using EditorEX.Essentials.Patches;
+﻿using BeatmapEditor3D;
+using EditorEX.Essentials.Patches;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,16 +13,18 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
         private BakedSwingTrack _track;
 
         private LevelUtils _levelUtils;
+        private AudioDataModel _audioDataModel;
 
         private int totalFrames;
         private float secondsPerFrame = 1 / 24f;
 
-        public SwingTrackGenerator(SliceMap sliceMap, bool rightHand, LevelUtils levelUtils)
+        public SwingTrackGenerator(SliceMap sliceMap, bool rightHand, LevelUtils levelUtils, AudioDataModel audioDataModel)
         {
             _levelUtils = levelUtils;
+            _audioDataModel = audioDataModel;
             _sliceMap = sliceMap;
             _track = new BakedSwingTrack();
-            totalFrames = (int)Mathf.Ceil(PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(_sliceMap.Cuts.Last().sliceEndBeat) * 24);
+            totalFrames = (int)Mathf.Ceil(_audioDataModel.bpmData.BeatToSeconds(_sliceMap.Cuts.Last().sliceEndBeat) * 24);
 
             var handFrames = ProcessHandFrames(rightHand);
             _handFrames = handFrames;
@@ -106,11 +109,11 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
             for (int i = 1; i < totalFrames - 1; i++)
             {
                 float second = i * secondsPerFrame;
-                float _beatTime = PopulateBeatmap._audioDataModel.bpmData.SecondsToBeat(second);
+                float _beatTime = _audioDataModel.bpmData.SecondsToBeat(second);
 
                 float _timeToReachSabers = -Mathf.Abs((Mathf.Abs(-30f) - 3.0f) / 75f);
 
-                float _beatTimeToReachSabers = PopulateBeatmap._audioDataModel.bpmData.SecondsToBeat(_timeToReachSabers);
+                float _beatTimeToReachSabers = _audioDataModel.bpmData.SecondsToBeat(_timeToReachSabers);
                 float _beatTimeToPrepareSwing = _beatTimeToReachSabers * 0.5f;
 
                 if (_sliceIndex < _sliceMap.GetSliceCount())
@@ -131,7 +134,7 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
                         if (_sliceIndex < _sliceMap.GetSliceCount())
                         {
                             BeatCutData nextCutData = _sliceMap.GetBeatCutData(_sliceIndex);
-                            float timeTilNextBeat = PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(nextCutData.sliceStartBeat - cutData.sliceEndBeat);
+                            float timeTilNextBeat = _audioDataModel.bpmData.BeatToSeconds(nextCutData.sliceStartBeat - cutData.sliceEndBeat);
                             SetTimeToNextBeat(timeTilNextBeat, lastFrame);
                         }
                     }

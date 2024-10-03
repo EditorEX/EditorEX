@@ -61,12 +61,13 @@ namespace EditorEX.Essentials.SpawnProcessing
         [Inject]
         public void Construct(
             SiraLog siraLog,
-            [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData)
+            [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData,
+            PopulateBeatmap populateBeatmap)
         {
             _siraLog = siraLog;
             editorDeserializedData = deserializedData;
 
-            var objects = PopulateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.Cast<BaseEditorData>();
+            var objects = populateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.Cast<BaseEditorData>();
             foreach (var obj in objects)
             {
                 if (obj is NoteEditorData noteData)

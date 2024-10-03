@@ -1,4 +1,5 @@
-﻿using BeatmapEditor3D.Commands;
+﻿using BeatmapEditor3D;
+using BeatmapEditor3D.Commands;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Analyzer.Swings.SwingBaker;
 using EditorEX.Essentials.Patches;
@@ -25,31 +26,38 @@ namespace EditorEX.Analyzer.Swings
         private SwingTrackGenerator _swingTrackGeneratorLeft;
         private SwingTrackGenerator _swingTrackGeneratorRight;
 
+        private AudioDataModel _audioDataModel;
+        private BeatmapObjectsDataModel _beatmapObjectsDataModel;
+
         [Inject]
         private void Construct(
             SaberManager saberManager,
             IReadonlyBeatmapState state,
-            LevelUtils levelUtils)
+            LevelUtils levelUtils,
+            AudioDataModel audioDataModel,
+            BeatmapObjectsDataModel beatmapObjectsDataModel)
         {
             _saberManager = saberManager;
             _leftSaber = _saberManager.leftSaber;
             _rightSaber = _saberManager.rightSaber;
             _state = state;
             _levelUtils = levelUtils;
+            _audioDataModel = audioDataModel;
+            _beatmapObjectsDataModel = beatmapObjectsDataModel;
         }
 
         public void Initialize()
         {
             Resources.FindObjectsOfTypeAll<CuttingManager>().FirstOrDefault().enabled = false;
 
-            var notes = PopulateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.OfType<NoteEditorData>().ToList();
-            var obstacles = PopulateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.OfType<ObstacleEditorData>().ToList();
+            var notes = _beatmapObjectsDataModel.allBeatmapObjects.OfType<NoteEditorData>().ToList();
+            var obstacles = _beatmapObjectsDataModel.allBeatmapObjects.OfType<ObstacleEditorData>().ToList();
 
-            var sliceMapRight = new SliceMap(notes, obstacles, true);
-            var sliceMapLeft = new SliceMap(notes, obstacles, false);
+            var sliceMapRight = new SliceMap(notes, obstacles, true, _audioDataModel);
+            var sliceMapLeft = new SliceMap(notes, obstacles, false, _audioDataModel);
 
-            _swingTrackGeneratorLeft = new SwingTrackGenerator(sliceMapLeft, false, _levelUtils);
-            _swingTrackGeneratorRight = new SwingTrackGenerator(sliceMapRight, true, _levelUtils);
+            _swingTrackGeneratorLeft = new SwingTrackGenerator(sliceMapLeft, false, _levelUtils, _audioDataModel);
+            _swingTrackGeneratorRight = new SwingTrackGenerator(sliceMapRight, true, _levelUtils, _audioDataModel);
         }
 
         float _prevBeat = 999f;
@@ -77,8 +85,8 @@ namespace EditorEX.Analyzer.Swings
 
             _prevBeat = _beatTime;
 
-            int leftFrame = (int)(PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(_beatTime) * 24f);
-            int rightFrame = (int)(PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(_beatTime) * 24f);
+            int leftFrame = (int)(_audioDataModel.bpmData.BeatToSeconds(_beatTime) * 24f);
+            int rightFrame = (int)(_audioDataModel.bpmData.BeatToSeconds(_beatTime) * 24f);
 
             if (_swingTrackLeft.frames.Count > leftFrame)
             {

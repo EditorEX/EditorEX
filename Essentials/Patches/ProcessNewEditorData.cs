@@ -10,13 +10,16 @@ namespace EditorEX.Essentials.Patches
     {
         private SiraLog _siraLog;
         private EditorBeatmapObjectsInTimeRowProcessor _processor;
+        private PopulateBeatmap _populateBeatmap;
 
         public ProcessNewEditorData(
             EditorBeatmapObjectsInTimeRowProcessor processor,
-            SiraLog siraLog)
+            SiraLog siraLog,
+            PopulateBeatmap populateBeatmap)
         {
             _siraLog = siraLog;
             _processor = processor;
+            _populateBeatmap = populateBeatmap;
         }
 
         [AffinityPostfix]
@@ -24,7 +27,7 @@ namespace EditorEX.Essentials.Patches
         private void AddData()
         {
             _processor.Reset();
-            _processor.Construct(_siraLog, _processor.editorDeserializedData);
+            _processor.Construct(_siraLog, _processor.editorDeserializedData, _populateBeatmap);
         }
 
         [AffinityPostfix]
@@ -33,7 +36,7 @@ namespace EditorEX.Essentials.Patches
         {
             EditorSpawnDataRepository.RemoveSpawnData(data);
             _processor.Reset();
-            _processor.Construct(_siraLog, _processor.editorDeserializedData);
+            _processor.Construct(_siraLog, _processor.editorDeserializedData, _populateBeatmap);
         }
     }
 }

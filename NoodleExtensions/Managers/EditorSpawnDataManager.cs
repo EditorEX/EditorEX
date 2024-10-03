@@ -16,16 +16,18 @@ namespace EditorEX.NoodleExtensions.Managers
         private readonly SiraLog _siraLog;
         private readonly EditorDeserializedData _editorDeserializedData;
         private readonly EditorBasicBeatmapObjectSpawnMovementData _movementData;
+        private readonly BeatmapLevelDataModel _beatmapLevelDataModel;
 
-        [UsedImplicitly]
         private EditorSpawnDataManager(
             SiraLog siraLog,
             EditorBasicBeatmapObjectSpawnMovementData editorBasicBeatmapObjectSpawnMovementData,
-            [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData)
+            [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData,
+            PopulateBeatmap populateBeatmap)
         {
             _siraLog = siraLog;
             _movementData = editorBasicBeatmapObjectSpawnMovementData;
             _editorDeserializedData = deserializedData;
+            _beatmapLevelDataModel = populateBeatmap._beatmapLevelDataModel;
         }
 
         internal static Vector2 Get2DNoteOffset(float lineIndex, int noteLinesCount, float lineLayer)
@@ -259,7 +261,7 @@ namespace EditorEX.NoodleExtensions.Managers
                 return _movementData.jumpDuration;
             }
 
-            float oneBeatDuration = 60f / PopulateBeatmap._beatmapLevelDataModel.beatsPerMinute;
+            float oneBeatDuration = 60f / _beatmapLevelDataModel.beatsPerMinute;
             float halfJumpDurationInBeats = CoreMathUtils.CalculateHalfJumpDurationInBeats(
                 _movementData._startHalfJumpDurationInBeats,
                 _movementData._maxHalfJumpDistance,

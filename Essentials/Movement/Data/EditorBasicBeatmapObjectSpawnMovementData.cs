@@ -23,14 +23,14 @@ namespace EditorEX.Essentials.Movement.Data
         public float jumpOffsetY => _jumpOffsetYProvider.jumpOffsetY;
 
         [Inject]
-        private void Construct(EditorSpawnDataManager editorSpawnDataManager, [Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData, PlayerDataModel playerDataModel)
+        private void Construct(
+            EditorSpawnDataManager editorSpawnDataManager, 
+            PlayerDataModel playerDataModel,
+            PopulateBeatmap populateBeatmap)
         {
             _editorSpawnDataManager = editorSpawnDataManager;
 
-            BeatmapDataModel beatmapDataModel = PopulateBeatmap._beatmapDataModel;
-            BeatmapLevelDataModel beatmapLevelDataModel = PopulateBeatmap._beatmapLevelDataModel;
-
-            var difficultyBeatmap = beatmapLevelDataModel.difficultyBeatmaps[(beatmapDataModel.beatmapCharacteristic, beatmapDataModel.beatmapDifficulty)];
+            var difficultyBeatmap = populateBeatmap._beatmapLevelDataModel.difficultyBeatmaps[(populateBeatmap._beatmapDataModel.beatmapCharacteristic, populateBeatmap._beatmapDataModel.beatmapDifficulty)];
 
             var offsetProvider = new StaticJumpOffsetYProvider();
             offsetProvider.SetField("_initData", new StaticJumpOffsetYProvider.InitData(0));
@@ -40,7 +40,7 @@ namespace EditorEX.Essentials.Movement.Data
 
             BeatmapObjectSpawnControllerHelpers.GetNoteJumpValues(playerDataModel.playerData.playerSpecificSettings, difficultyBeatmap.noteJumpStartBeatOffset, out jumpValueType, out jumpValue);
 
-            Init(4, difficultyBeatmap.noteJumpMovementSpeed, beatmapLevelDataModel.beatsPerMinute, jumpValueType, jumpValue, offsetProvider, Vector3.right, Vector3.forward);
+            Init(4, difficultyBeatmap.noteJumpMovementSpeed, populateBeatmap._beatmapLevelDataModel.beatsPerMinute, jumpValueType, jumpValue, offsetProvider, Vector3.right, Vector3.forward);
         }
 
         public void Init(int noteLinesCount, float startNoteJumpMovementSpeed, float startBpm, BeatmapObjectSpawnMovementData.NoteJumpValueType noteJumpValueType, float noteJumpValue, IJumpOffsetYProvider jumpOffsetYProvider, Vector3 rightVec, Vector3 forwardVec)

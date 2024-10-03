@@ -13,6 +13,7 @@ using EditorEX.Essentials.Visuals;
 using EditorEX.Essentials.Visuals.Universal;
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using Zenject;
 
@@ -20,8 +21,13 @@ namespace EditorEX.Essentials.Installers
 {
     public class EditorEssentialsSceneInstaller : Installer
     {
+        [Inject]
+        private PopulateBeatmap populateBeatmap;
+
         public override void InstallBindings()
         {
+            Container.BindInstance(populateBeatmap).AsSingle().NonLazy();
+
             Container.Bind<ActiveViewMode>().AsSingle();
 
             //TODO: Improve this
@@ -31,7 +37,6 @@ namespace EditorEX.Essentials.Installers
             Container.BindInterfacesAndSelfTo<InstallMovement>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<InitMovement>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<DisableMovement>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<PopulateBeatmap>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<ArcPreview>().AsSingle().NonLazy();
 
