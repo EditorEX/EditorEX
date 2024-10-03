@@ -61,8 +61,11 @@ namespace EditorEX.Essentials.Installers
 
             Container.Bind<EditorBeatmapObjectsInTimeRowProcessor>().AsSingle();
 
+            Container.BindInterfacesAndSelfTo<FixAudioTimeSource>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<ProcessNewEditorData>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PreviewToggler>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<CameraLock>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<HideUI>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<ViewModeSwappingUI>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<ViewModeSwapper>().AsSingle().NonLazy();

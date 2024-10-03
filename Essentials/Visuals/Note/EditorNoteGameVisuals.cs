@@ -134,11 +134,6 @@ namespace EditorEX.Essentials.Visuals
 
         public void ManualUpdate()
         {
-            //float currentSeconds = PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(_state.beat);
-            //float _dataSeconds = PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(_editorData.beat);
-            //float time = _dataSeconds - currentSeconds;
-            //float dissolve = Mathf.Pow(Mathf.Clamp(time, -0.05f, 0f) * -20f, 2f);
-
             if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleBaseNoteData? noodleData))
             {
                 return;

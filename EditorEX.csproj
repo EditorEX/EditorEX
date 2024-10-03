@@ -273,6 +273,9 @@
     <Compile Include="CustomJSONData\CustomEvents\CustomEventEditorData.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataAppInstaller.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataModelsInstaller.cs" />
+    <Compile Include="Essentials\Patches\HideUI.cs" />
+    <Compile Include="Essentials\Patches\CameraLock.cs" />
+    <Compile Include="Essentials\Patches\FixAudioTimeSource.cs" />
     <Compile Include="MapData\Contexts\LevelContext.cs" />
     <Compile Include="MapData\Contexts\MapContext.cs" />
     <Compile Include="CustomJSONData\Patches\DisableConversion.cs" />
@@ -379,6 +382,7 @@
     <Compile Include="SDK\Factories\ButtonFactory.cs" />
     <Compile Include="SDK\Factories\TextFactory.cs" />
     <Compile Include="UI\Installers\EditorUIViewControllersInstaller.cs" />
+    <Compile Include="UI\Patches\EditBeatmapLevelPatches.cs" />
     <Compile Include="UI\Patches\EditDifficultyBeatmapPatches.cs" />
     <Compile Include="UI\Patches\MapFilteringPatches.cs" />
     <Compile Include="UI\Patches\MoreCoverFileTypes.cs" />

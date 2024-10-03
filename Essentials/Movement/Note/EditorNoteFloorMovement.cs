@@ -1,4 +1,5 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
