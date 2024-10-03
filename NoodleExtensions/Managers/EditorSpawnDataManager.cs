@@ -5,6 +5,7 @@ using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using JetBrains.Annotations;
 using NoodleExtensions;
+using SiraUtil.Logging;
 using UnityEngine;
 using Zenject;
 
@@ -12,14 +13,17 @@ namespace EditorEX.NoodleExtensions.Managers
 {
     internal class EditorSpawnDataManager
     {
+        private readonly SiraLog _siraLog;
         private readonly EditorDeserializedData _editorDeserializedData;
         private readonly EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
         [UsedImplicitly]
         private EditorSpawnDataManager(
+            SiraLog siraLog,
             EditorBasicBeatmapObjectSpawnMovementData editorBasicBeatmapObjectSpawnMovementData,
             [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData)
         {
+            _siraLog = siraLog;
             _movementData = editorBasicBeatmapObjectSpawnMovementData;
             _editorDeserializedData = deserializedData;
         }
@@ -250,8 +254,6 @@ namespace EditorEX.NoodleExtensions.Managers
             float? inputNjs,
             float? inputOffset)
         {
-            // We always use beat offset
-
             if (!inputNjs.HasValue && !inputOffset.HasValue && _movementData._noteJumpValueType == BeatmapObjectSpawnMovementData.NoteJumpValueType.JumpDuration)
             {
                 return _movementData.jumpDuration;

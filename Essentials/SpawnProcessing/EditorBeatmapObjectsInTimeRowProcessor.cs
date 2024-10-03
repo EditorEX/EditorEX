@@ -3,10 +3,14 @@ using BeatmapEditor3D.Types;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.Essentials.Patches;
+using EditorEX.Heck.Deserialize;
+using EditorEX.NoodleExtensions.ObjectData;
 using EditorEX.Util;
 using Heck;
 using IPA.Utilities;
+using NoodleExtensions;
 using NoodleExtensions.Managers;
+using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,6 +24,9 @@ namespace EditorEX.Essentials.SpawnProcessing
 {
     public class EditorBeatmapObjectsInTimeRowProcessor
     {
+        private SiraLog _siraLog;
+        public EditorDeserializedData editorDeserializedData;
+
         public EditorBeatmapObjectsInTimeRowProcessor()
         {
             Reset();
@@ -52,10 +59,12 @@ namespace EditorEX.Essentials.SpawnProcessing
         }
 
         [Inject]
-        public void Construct()
+        public void Construct(
+            SiraLog siraLog,
+            [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData)
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            _siraLog = siraLog;
+            editorDeserializedData = deserializedData;
 
             var objects = PopulateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.Cast<BaseEditorData>();
             foreach (var obj in objects)
@@ -69,8 +78,6 @@ namespace EditorEX.Essentials.SpawnProcessing
                     ProcessSlider(sliderData);
                 }
             }
-
-            stopwatch.Stop();
         }
 
         public void ProcessNote(NoteEditorData noteData)
@@ -236,6 +243,14 @@ namespace EditorEX.Essentials.SpawnProcessing
                 {
                     customData[INTERNAL_FLIPLINEINDEX] = lineIndex;
                     customData[INTERNAL_FLIPYSIDE] = 0;
+                }
+
+
+                if (editorDeserializedData.Resolve(noteData, out EditorNoodleBaseNoteData? noodleData))
+                {
+                    noodleData.InternalFlipYSide = customData.Get<float?>(INTERNAL_FLIPYSIDE);
+                    noodleData.InternalFlipLineIndex = customData.Get<float?>(INTERNAL_FLIPLINEINDEX);
+                    noodleData.InternalStartNoteLineLayer = customData.Get<float>(INTERNAL_STARTNOTELINELAYER);
                 }
             }
 
@@ -423,6 +438,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                 {
                     flipYSide *= -1f;
                 }
+                _siraLog.Info("set flipside lol");
 
                 customData[INTERNAL_FLIPYSIDE] = flipYSide;
             }
@@ -490,21 +506,21 @@ namespace EditorEX.Essentials.SpawnProcessing
             float num = ((noteData3.cutDirection == NoteCutDirection.Any) ? new Vector2(0f, 1f) : noteData3.cutDirection.Direction()).SignedAngleToLine(vector);
             if (noteData4.cutDirection == NoteCutDirection.Any && noteData3.cutDirection == NoteCutDirection.Any)
             {
-                noteData3.SetField("angle", (int)num);
-                noteData4.SetField("angle", (int)num);
+                noteData3.SetCutDirectionAngleOffset(num);
+                noteData4.SetCutDirectionAngleOffset(num);
                 return;
             }
             if (Mathf.Abs(num) > 40f)
             {
                 return;
             }
-            noteData3.SetField("angle", (int)num);
+            noteData3.SetCutDirectionAngleOffset(num);
             if (noteData4.cutDirection == NoteCutDirection.Any && !noteData3.cutDirection.IsMainDirection())
             {
-                noteData4.SetField("angle", (int)num + 45);
+                noteData4.SetCutDirectionAngleOffset(num + 45f);
                 return;
             }
-            noteData4.SetField("angle", (int)num);
+            noteData4.SetCutDirectionAngleOffset(num);
         }
 
         private static bool SliderHeadPositionOverlapsWithNote(BaseSliderEditorData slider, NoteEditorData note)

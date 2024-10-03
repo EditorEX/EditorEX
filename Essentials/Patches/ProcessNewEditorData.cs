@@ -2,15 +2,20 @@
 using EditorEX.Analyzer.Swings;
 using EditorEX.Essentials.SpawnProcessing;
 using SiraUtil.Affinity;
+using SiraUtil.Logging;
 
 namespace EditorEX.Essentials.Patches
 {
     internal class ProcessNewEditorData : IAffinity
     {
+        private SiraLog _siraLog;
         private EditorBeatmapObjectsInTimeRowProcessor _processor;
 
-        public ProcessNewEditorData(EditorBeatmapObjectsInTimeRowProcessor processor)
+        public ProcessNewEditorData(
+            EditorBeatmapObjectsInTimeRowProcessor processor,
+            SiraLog siraLog)
         {
+            _siraLog = siraLog;
             _processor = processor;
         }
 
@@ -19,7 +24,7 @@ namespace EditorEX.Essentials.Patches
         private void AddData()
         {
             _processor.Reset();
-            _processor.Construct();
+            _processor.Construct(_siraLog, _processor.editorDeserializedData);
         }
 
         [AffinityPostfix]
@@ -28,7 +33,7 @@ namespace EditorEX.Essentials.Patches
         {
             EditorSpawnDataRepository.RemoveSpawnData(data);
             _processor.Reset();
-            _processor.Construct();
+            _processor.Construct(_siraLog, _processor.editorDeserializedData);
         }
     }
 }

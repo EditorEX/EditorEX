@@ -8,11 +8,11 @@ namespace EditorEX.NoodleExtensions.ObjectData
 {
     internal class EditorNoodleBaseNoteData : EditorNoodleObjectData
     {
-        internal float? InternalFlipYSide { get; }
+        internal float? InternalFlipYSide { get; set; }
 
-        internal float? InternalFlipLineIndex { get; }
+        internal float? InternalFlipLineIndex { get; set; }
 
-        internal float InternalStartNoteLineLayer { get; }
+        internal float InternalStartNoteLineLayer { get; set; }
 
         internal bool DisableGravity { get; }
 

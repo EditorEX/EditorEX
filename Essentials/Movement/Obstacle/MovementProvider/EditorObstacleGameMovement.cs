@@ -23,6 +23,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
         private IReadonlyBeatmapState _state;
         private ColorManager _colorManager;
         private IAudioTimeSource _audioTimeSyncController;
+        private AudioDataModel _audioDataModel;
 
         // Obstacle related fields
         private ObstacleEditorData _editorData;
@@ -55,13 +56,15 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             AnimationHelper animationHelper,
             IReadonlyBeatmapState state,
             ColorManager colorManager,
-            IAudioTimeSource audioTimeSyncController)
+            IAudioTimeSource audioTimeSyncController,
+            AudioDataModel audioDataModel)
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
             _state = state;
             _colorManager = colorManager;
             _audioTimeSyncController = audioTimeSyncController;
+            _audioDataModel = audioDataModel;
         }
 
         private Quaternion GetWorldRotation(ObstacleEditorData obstacleData, float @default)
@@ -119,7 +122,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             _endPos = obstacleSpawnData.jumpEndPos + vector;
             _move1Duration = obstacleSpawnData.moveDuration;
             _move2Duration = obstacleSpawnData.jumpDuration;
-            _startTimeOffset = _editorData.beat - _move1Duration - _move2Duration * 0.5f;
+            _startTimeOffset = _audioDataModel.bpmData.BeatToSeconds(_editorData.beat) - _move1Duration - _move2Duration * 0.5f;
             float num = (_endPos - _midPos).magnitude / _move2Duration;
             _length = GetCustomLength(num * _editorData.duration, _editorData);
             _stretchableObstacle.SetSizeAndColor(_width * 0.98f, _height, _length, _color);
@@ -269,7 +272,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             }
             else
             {
-                float elapsedTime = _audioTimeSyncController.songTime - _startTimeOffset;
+                float elapsedTime =  _audioTimeSyncController.songTime - _startTimeOffset;
                 normalTime = (elapsedTime - _move1Duration) / (_move2Duration + _obstacleDuration);
             }
 
