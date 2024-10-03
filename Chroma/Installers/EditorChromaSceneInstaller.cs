@@ -5,6 +5,8 @@ using Chroma.HarmonyPatches.EnvironmentComponent;
 using Chroma.Lighting;
 using EditorEx.Chroma.EnvironmentEnhancement;
 using EditorEx.Chroma.EnvironmentEnhancement.Component;
+using EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize;
+using EditorEx.Chroma.Lighting;
 using EditorEX.Chroma.Colorizer;
 using EditorEX.Chroma.EnvironmentEnhancement;
 using EditorEX.Chroma.Events;

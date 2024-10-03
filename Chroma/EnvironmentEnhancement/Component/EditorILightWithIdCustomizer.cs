@@ -1,5 +1,5 @@
-﻿using Chroma.HarmonyPatches.Colorizer.Initialize;
-using CustomJSONData.CustomBeatmap;
+﻿using CustomJSONData.CustomBeatmap;
+using EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize;
 using EditorEX.Chroma.Colorizer;
 using JetBrains.Annotations;
 using SiraUtil.Logging;

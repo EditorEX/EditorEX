@@ -1,8 +1,7 @@
 ﻿using EditorEX.Chroma.Lighting;
-using Chroma.Lighting;
 using SiraUtil.Affinity;
 
-namespace Chroma.HarmonyPatches.Colorizer.Initialize
+namespace EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize
 {
     internal class EditorLightColorizerInitialize : IAffinity
     {

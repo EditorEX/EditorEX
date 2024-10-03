@@ -1,8 +1,8 @@
 ﻿using Chroma.EnvironmentEnhancement;
 using Chroma.EnvironmentEnhancement.Component;
-using Chroma.HarmonyPatches.Colorizer.Initialize;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using Chroma.Settings;
+using EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize;
 using HarmonyLib;
 using Heck.Animation.Transform;
 using IPA.Utilities;

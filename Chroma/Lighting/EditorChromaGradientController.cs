@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Chroma;
 using EditorEX.Chroma.Colorizer;
-using Chroma.Colorizer;
 using Heck.Animation;
 using IPA.Utilities;
 using JetBrains.Annotations;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace Chroma.Lighting
+namespace EditorEx.Chroma.Lighting
 {
     [UsedImplicitly]
     internal class EditorChromaGradientController : ITickable

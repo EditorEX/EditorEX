@@ -29,6 +29,7 @@ namespace EditorEX.UI.Installers
 
             Container.BindInterfacesAndSelfTo<MoreCoverFileTypes>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditDifficultyBeatmapPatches>().AsSingle();
+            Container.BindInterfacesAndSelfTo<EditBeatmapLevelPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<MapFilteringPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<AddSettingsPatches>().AsSingle();
         }
