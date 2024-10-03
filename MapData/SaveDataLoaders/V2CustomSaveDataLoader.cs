@@ -111,7 +111,7 @@ namespace EditorEX.MapData.SaveDataLoaders
                     }
                 }
             }
-            _beatmapLevelDataModel.UpdateWith(standardLevelInfoSaveData.songName, standardLevelInfoSaveData.songSubName, standardLevelInfoSaveData.songAuthorName, new float?(standardLevelInfoSaveData.beatsPerMinute), new float?(standardLevelInfoSaveData.songTimeOffset), new float?(standardLevelInfoSaveData.previewStartTime), new float?(standardLevelInfoSaveData.previewDuration), "", item2, item, item4, item3, standardLevelInfoSaveData.environmentName, beatmapLevelColorSchemes, dictionary, true);
+            _beatmapLevelDataModel.UpdateWith(standardLevelInfoSaveData.songName, standardLevelInfoSaveData.songSubName, standardLevelInfoSaveData.songAuthorName, new float?(standardLevelInfoSaveData.beatsPerMinute), new float?(standardLevelInfoSaveData.songTimeOffset), new float?(standardLevelInfoSaveData.previewStartTime), new float?(standardLevelInfoSaveData.previewDuration), "BPMInfo.dat", item2, item, item4, item3, standardLevelInfoSaveData.environmentName, beatmapLevelColorSchemes, dictionary, true);
         }
     }
 }
