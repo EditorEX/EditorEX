@@ -32,7 +32,7 @@ namespace EditorEX.Essentials.Movement.Note
             PlayerTransforms playerTransforms,
             IAudioTimeSource audioTimeSyncController,
             AnimationHelper animationHelper,
-            [Inject(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData,
+            [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData,
             AudioDataModel audioDataModel)
         {
             _playerTransforms = playerTransforms;
@@ -45,7 +45,7 @@ namespace EditorEX.Essentials.Movement.Note
         public void Init(NoteEditorData editorData, float beatTime, float worldRotation, Vector3 startPos, Vector3 endPos, float jumpDuration, float gravity, float flipYSide, float endRotation, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData;
-            if (!_editorDeserializedData.Resolve(_editorData, out NoodleData))
+            if (!(_editorDeserializedData?.Resolve(editorData, out NoodleData) ?? false))
             {
                 NoodleData = null;
             }

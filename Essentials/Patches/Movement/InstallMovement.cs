@@ -6,6 +6,8 @@ using EditorEX.Essentials.Movement.Note.MovementProvider;
 using EditorEX.Essentials.Movement.Obstacle;
 using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
 using EditorEX.Essentials.Visuals;
+using EditorEX.Essentials.Visuals.Note;
+using EditorEX.Essentials.Visuals.Obstacle;
 using HarmonyLib;
 using SiraUtil.Affinity;
 
@@ -36,6 +38,8 @@ namespace EditorEX.Essentials.Patches.Movement
 
             __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleBasicMovement>();
             __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleGameMovement>();
+            __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleBasicVisuals>();
+            __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleGameVisuals>();
             __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleController>();
 
             __instance._arcViewPrefab.gameObject.AddComponent<EditorArcBasicMovement>();

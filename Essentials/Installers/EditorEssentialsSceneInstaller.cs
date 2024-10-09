@@ -10,6 +10,8 @@ using EditorEX.Essentials.Patches.Preview;
 using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.ViewMode;
 using EditorEX.Essentials.Visuals;
+using EditorEX.Essentials.Visuals.Note;
+using EditorEX.Essentials.Visuals.Obstacle;
 using EditorEX.Essentials.Visuals.Universal;
 using System;
 using System.Linq;
@@ -39,6 +41,7 @@ namespace EditorEX.Essentials.Installers
             Container.BindInterfacesAndSelfTo<DisableMovement>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<ArcPreview>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<PreviewSelectionPatches>().AsSingle().NonLazy();
 
             // MOVEMENT
 
@@ -61,6 +64,9 @@ namespace EditorEX.Essentials.Installers
             Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "normal" }, typeof(EditorNoteBasicVisuals)));
             Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorNoteGameVisuals)));
             Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorBombGameVisuals)));
+
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "normal" }, typeof(EditorObstacleBasicVisuals)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorObstacleGameVisuals)));
 
 
 

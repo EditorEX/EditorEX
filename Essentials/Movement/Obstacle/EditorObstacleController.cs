@@ -1,6 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
+using BeatmapSaveDataVersion2_6_0AndEarlier;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.ViewMode;
+using EditorEX.Essentials.Visuals;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -10,37 +12,44 @@ namespace EditorEX.Essentials.Movement.Obstacle
 {
     internal class EditorObstacleController : MonoBehaviour, IDisposable
     {
-        private IReadonlyBeatmapState _state;
-
         private IObjectMovement _obstacleMovement;
+        private IObjectVisuals _obstacleVisuals;
+
+        private IReadonlyBeatmapState _state;
         private MovementTypeProvider _movementTypeProvider;
+        private VisualsTypeProvider _visualsTypeProvider;
         private ActiveViewMode _activeViewMode;
+        private EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
         private ObstacleEditorData _data;
 
-        private EditorBasicBeatmapObjectSpawnMovementData _movementData;
-
         [Inject]
-        private void Construct(IReadonlyBeatmapState state, ActiveViewMode activeViewMode, MovementTypeProvider movementTypeProvider, EditorBasicBeatmapObjectSpawnMovementData movementData)
+        private void Construct(
+            IReadonlyBeatmapState state, 
+            ActiveViewMode activeViewMode, 
+            MovementTypeProvider movementTypeProvider,
+            VisualsTypeProvider visualsTypeProvider,
+            EditorBasicBeatmapObjectSpawnMovementData movementData)
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
+            _visualsTypeProvider = visualsTypeProvider;
             _movementData = movementData;
 
             _activeViewMode = activeViewMode;
-            _activeViewMode.ModeChanged += RefreshObstacleMovementAndInit;
+            _activeViewMode.ModeChanged += RefreshObstacleMovementVisualsAndInit;
         }
 
         public void Dispose()
         {
-            _activeViewMode.ModeChanged -= RefreshObstacleMovementAndInit;
+            _activeViewMode.ModeChanged -= RefreshObstacleMovementVisualsAndInit;
         }
 
-        private void RefreshObstacleMovementAndInit()
+        private void RefreshObstacleMovementVisualsAndInit()
         {
             try
             {
-                RefreshObstacleMovement();
+                RefreshObstacleMovementVisuals();
                 Init(_data);
             }
             catch
@@ -49,12 +58,18 @@ namespace EditorEX.Essentials.Movement.Obstacle
             }
         }
 
-        private void RefreshObstacleMovement()
+        private void RefreshObstacleMovementVisuals()
         {
-            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _obstacleMovement, out IObjectMovement newNoteMovement))
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _obstacleMovement, out IObjectMovement newObstacleMovement))
             {
-                _obstacleMovement = newNoteMovement;
+                _obstacleMovement = newObstacleMovement;
                 _obstacleMovement.Enable();
+            }
+
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _visualsTypeProvider, _obstacleVisuals, out IObjectVisuals newObstacleVisuals))
+            {
+                _obstacleVisuals = newObstacleVisuals;
+                _obstacleVisuals.Enable();
             }
         }
 
@@ -63,18 +78,22 @@ namespace EditorEX.Essentials.Movement.Obstacle
             if (obstacleData == null) return;
             _data = obstacleData;
 
-            RefreshObstacleMovement();
+            RefreshObstacleMovementVisuals();
 
             _obstacleMovement.Init(obstacleData, _movementData, null);
+            _obstacleVisuals.Init(obstacleData);
 
             ManualUpdate();
         }
 
+        // Use our own prevBeat field as _state.prevBeat only updates when playing or scrubbing which will cause constant updates after scrubbing while paused.
         float _prevBeat = 9999f;
 
         public void Update()
         {
-            if (!_state.isPlaying && _prevBeat == _state.beat) return;
+            if (!_state.isPlaying && _prevBeat == _state.beat) return; //Don't update if not playing for performance, but force an update if scrubbing manually.
+
+            // If we rewind we should reinit the note to stop issues
             if (_prevBeat > _state.beat)
             {
                 Init(_data);
@@ -86,14 +105,15 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
         public void ManualUpdate()
         {
-            if (_obstacleMovement == null)
+            if (_obstacleMovement == null || _obstacleVisuals == null)
             {
-                RefreshObstacleMovementAndInit();
+                RefreshObstacleMovementVisualsAndInit();
             }
 
             _obstacleMovement.Setup(_data);
 
             _obstacleMovement.ManualUpdate();
+            _obstacleVisuals.ManualUpdate();
         }
     }
 }

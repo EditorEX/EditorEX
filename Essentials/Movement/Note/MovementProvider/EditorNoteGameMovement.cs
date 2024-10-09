@@ -1,6 +1,7 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using BeatmapSaveDataVersion2_6_0AndEarlier;
+using EditorEX.CustomJSONData;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.Visuals;
@@ -8,6 +9,7 @@ using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using Heck.Animation;
 using Heck.Deserialize;
+using Newtonsoft.Json;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
 using System;
@@ -56,7 +58,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 
         [Inject]
         private void Construct(
-            [Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
             IReadonlyBeatmapState state,
             AudioDataModel audioDataModel)
@@ -69,7 +71,8 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 
         public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
-            _editorDeserializedData.Resolve(editorData, out EditorNoodleBaseNoteData? noodleData);
+            EditorNoodleBaseNoteData? noodleData = null;
+            _editorDeserializedData?.Resolve(editorData, out noodleData);
 
             _editorBeatmapObjectSpawnMovementData = movementData;
             var noteEditorData = editorData as NoteEditorData;
@@ -204,7 +207,8 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 
         public void Setup(BaseEditorData editorData)
         {
-            if (!_editorDeserializedData.Resolve(editorData, out EditorNoodleBaseNoteData? noodleData))
+            EditorNoodleBaseNoteData? noodleData = null;
+            if (!(_editorDeserializedData?.Resolve(editorData, out noodleData) ?? false))
             {
                 return;
             }
@@ -225,8 +229,14 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             else
             {
                 float jumpDuration = _jump.jumpDuration;
-                float elapsedTime = _state.beat - (editorData.beat - (jumpDuration * 0.5f));
+                float elapsedTime = _audioDataModel.bpmData.BeatToSeconds(_state.beat) - (_audioDataModel.bpmData.BeatToSeconds(editorData.beat) - (jumpDuration * 0.5f));
                 normalTime = elapsedTime / jumpDuration;
+            }
+
+            if (editorData.beat == 17.5f)
+            {
+                Debug.Log(CustomDataRepository.GetCustomData(editorData).ToString());
+                Debug.Log((tracks[0]._properties["position"] as Property<Vector3>).Value);
             }
 
             _animationHelper.GetObjectOffset(

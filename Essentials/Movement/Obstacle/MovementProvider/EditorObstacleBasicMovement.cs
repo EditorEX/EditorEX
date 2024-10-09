@@ -17,7 +17,8 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
         private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper;
 
         [Inject]
-        public void Construct(BeatmapObjectPlacementHelper beatmapObjectPlacementHelper)
+        public void Construct(
+            BeatmapObjectPlacementHelper beatmapObjectPlacementHelper)
         {
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }

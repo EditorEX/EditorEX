@@ -61,7 +61,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 
         [Inject]
         private void Construct(
-            [Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
             IReadonlyBeatmapState state,
             ColorManager colorManager,
@@ -111,7 +111,20 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 
         private SliderData CreateSliderData(float headTime, float tailTime, float controlPointLength, NoteCutDirection cutDirection, float tailControlPointLength, NoteCutDirection tailCutDirection, SliderMidAnchorMode midAnchorMode)
         {
-            return SliderData.CreateSliderData(ColorType.None, headTime, _sliderEditorData.column, (NoteLineLayer)_sliderEditorData.row, (NoteLineLayer)_sliderEditorData.row, controlPointLength, cutDirection, tailTime, _sliderEditorData.tailColumn, (NoteLineLayer)_sliderEditorData.tailRow, (NoteLineLayer)_sliderEditorData.tailRow, tailControlPointLength, tailCutDirection, midAnchorMode);
+            return SliderData.CreateSliderData(
+                ColorType.None, 
+                headTime, 
+                _audioDataModel.bpmData.SecondsToBeat(headTime),
+                _sliderEditorData.column, 
+                (NoteLineLayer)_sliderEditorData.row, 
+                (NoteLineLayer)_sliderEditorData.row, 
+                controlPointLength, cutDirection, 
+                tailTime, _sliderEditorData.tailColumn, 
+                (NoteLineLayer)_sliderEditorData.tailRow, 
+                (NoteLineLayer)_sliderEditorData.tailRow, 
+                tailControlPointLength, 
+                tailCutDirection, 
+                midAnchorMode);
         }
 
         public void SetInitialProperties(MaterialPropertyBlockController materialPropertyBlock, float noteJumpMovementSpeed)
@@ -173,10 +186,6 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 
         public void Setup(BaseEditorData editorData)
         {
-            if (!_editorDeserializedData.Resolve(editorData, out EditorNoodleSliderData? noodleData))
-            {
-                return;
-            }
         }
 
         public void ManualUpdate()
