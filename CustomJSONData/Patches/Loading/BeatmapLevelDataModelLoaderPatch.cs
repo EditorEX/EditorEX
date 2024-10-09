@@ -1,5 +1,6 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
+using EditorEX.CustomDataModels;
 using EditorEX.MapData.Contexts;
 using EditorEX.MapData.SaveDataLoaders;
 using SiraUtil.Affinity;
@@ -14,16 +15,19 @@ namespace EditorEX.CustomJSONData.Patches.Loading
     {
         private readonly SiraLog _siraLog;
         private List<ICustomSaveDataLoader> _loaders;
+        private LevelCustomDataModel _levelCustomDataModel;
         private SignalBus _signalBus;
 
         [Inject]
         public BeatmapLevelDataModelLoaderPatch(
             SiraLog siraLog,
             List<ICustomSaveDataLoader> saveDataLoaders,
+            LevelCustomDataModel levelCustomDataModel,
             SignalBus signalBus)
         {
             _siraLog = siraLog;
             _loaders = saveDataLoaders;
+            _levelCustomDataModel = levelCustomDataModel;
             _signalBus = signalBus;
         }
 
@@ -39,6 +43,7 @@ namespace EditorEX.CustomJSONData.Patches.Loading
 
             if (version >= BeatmapProjectFileHelper.version400)
             {
+                _levelCustomDataModel.UpdateWith(null);
                 return true;
             }
 

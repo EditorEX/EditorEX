@@ -1,5 +1,6 @@
 ﻿using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomDataModels;
 using EditorEX.CustomJSONData;
 using System;
 using System.Collections.Generic;
@@ -13,15 +14,18 @@ namespace EditorEX.MapData.SaveDataLoaders
     {
         private BeatmapCharacteristicCollection _beatmapCharacteristicCollection;
         private BeatmapLevelDataModel _beatmapLevelDataModel;
+        private LevelCustomDataModel _levelCustomDataModel;
         private CustomLevelLoader _customLevelLoader;
 
         [Inject]
         private void Construct(BeatmapCharacteristicCollection beatmapCharacteristicCollection,
             BeatmapLevelDataModel beatmapLevelDataModel,
+            LevelCustomDataModel levelCustomDataModel,
             CustomLevelLoader customLevelLoader)
         {
             _beatmapCharacteristicCollection = beatmapCharacteristicCollection;
             _beatmapLevelDataModel = beatmapLevelDataModel;
+            _levelCustomDataModel = levelCustomDataModel;
             _customLevelLoader = customLevelLoader;
         }
 
@@ -111,6 +115,8 @@ namespace EditorEX.MapData.SaveDataLoaders
                     }
                 }
             }
+
+            _levelCustomDataModel.UpdateWith(standardLevelInfoSaveData.levelAuthorName);
             _beatmapLevelDataModel.UpdateWith(standardLevelInfoSaveData.songName, standardLevelInfoSaveData.songSubName, standardLevelInfoSaveData.songAuthorName, new float?(standardLevelInfoSaveData.beatsPerMinute), new float?(standardLevelInfoSaveData.songTimeOffset), new float?(standardLevelInfoSaveData.previewStartTime), new float?(standardLevelInfoSaveData.previewDuration), "BPMInfo.dat", item2, item, item4, item3, standardLevelInfoSaveData.environmentName, beatmapLevelColorSchemes, dictionary, true);
         }
     }

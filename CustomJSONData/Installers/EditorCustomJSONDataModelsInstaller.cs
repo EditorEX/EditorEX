@@ -1,4 +1,5 @@
-﻿using EditorEX.CustomJSONData.Patches;
+﻿using EditorEX.CustomDataModels;
+using EditorEX.CustomJSONData.Patches;
 using EditorEX.CustomJSONData.Patches.Loading;
 using EditorEX.MapData.LevelDataLoaders;
 using EditorEX.MapData.SaveDataLoaders;
@@ -20,6 +21,7 @@ namespace EditorEX.CustomJSONData.Installers
             Container.Bind<LevelDataLoaderV3>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapDataModelsLoaderPatch>().AsSingle().NonLazy();
 
+            Container.Bind<LevelCustomDataModel>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<DisableConversion>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<InjectCustomEvents>().AsSingle().NonLazy();
