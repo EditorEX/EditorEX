@@ -2,6 +2,7 @@
 using BeatmapEditor3D.Views;
 using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.ObjectData;
+using EditorEX.MapData.Contexts;
 using HarmonyLib;
 using Heck.Animation;
 using SiraUtil.Affinity;
@@ -153,6 +154,11 @@ namespace EditorEX.Heck.Patches
 
         private static void AddObject(BaseEditorData editorData, GameObject obj)
         {
+            if (MapContext.Version.Major > 3)
+            {
+                return;
+            }
+
             if (!TryGetTrack(editorData, out List<Track> track))
             {
                 return;
@@ -163,6 +169,11 @@ namespace EditorEX.Heck.Patches
 
         private static void RemoveObject(BaseEditorData editorData, Component obj)
         {
+            if (MapContext.Version.Major > 3)
+            {
+                return;
+            }
+
             if (!TryGetTrack(editorData, out List<Track> track))
             {
                 return;

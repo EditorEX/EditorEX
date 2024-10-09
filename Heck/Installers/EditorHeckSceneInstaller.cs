@@ -15,7 +15,7 @@ namespace EditorEX.Heck.Installers
     {
         public override void InstallBindings()
         {
-            var beatmapTracks = EditorDeserializedDataContainer.Tracks;
+            var beatmapTracks = EditorDeserializedDataContainer.Tracks ?? new Dictionary<string, Track>();
             var deserializedDatas = EditorDeserializedDataContainer.DeserializeDatas;
 
             Container.Bind<Dictionary<string, Track>>().FromInstance(beatmapTracks).AsSingle();

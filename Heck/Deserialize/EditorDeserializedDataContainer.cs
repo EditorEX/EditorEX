@@ -14,7 +14,7 @@ namespace EditorEX.Heck.Deserialize
 
         public static EditorDeserializedData GetDeserializedData(object key)
         {
-            if (DeserializeDatas.TryGetValue(key, out EditorDeserializedData data))
+            if (DeserializeDatas?.TryGetValue(key, out EditorDeserializedData data) ?? false)
             {
                 return data;
             }

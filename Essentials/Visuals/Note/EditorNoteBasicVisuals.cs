@@ -2,7 +2,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace EditorEX.Essentials.Visuals
+namespace EditorEX.Essentials.Visuals.Note
 {
     internal class EditorNoteBasicVisuals : MonoBehaviour, IObjectVisuals
     {

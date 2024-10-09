@@ -23,8 +23,6 @@ namespace EditorEX.Heck.Patches
         private static readonly FieldInfo _customBeatmapDataCustomData = BackingFieldUtil.GetBackingField<CustomBeatmapData>("customData");
         private static readonly FieldInfo _customBeatmapDataBeatmapCustomData = BackingFieldUtil.GetBackingField<CustomBeatmapData>("beatmapCustomData");
 
-        internal static Version beatmapVersion;
-
         private DeserializationPatch(EditorDeserializerManager editorDeserializerManager)
         {
             _editorDeserializerManager = editorDeserializerManager;
@@ -34,13 +32,15 @@ namespace EditorEX.Heck.Patches
         [AffinityPostfix]
         private void LoadToDataModelPatch(BeatmapDataModelsLoader __instance, string projectPath, string beatmapFilename, string lightshowFilename)
         {
+            var beatmapVersion = BeatmapProjectFileHelper.GetVersionedJSONVersion(projectPath, beatmapFilename);
+
+            MapContext.Version = beatmapVersion;
+
             if (lightshowFilename != "") return;
 
             var standardLevelInfoSaveData = CustomLevelInfoSaveData.Deserialize(File.ReadAllText(Path.Combine(projectPath, "Info.dat")));
             var customBeatmapSaveData = CustomDataRepository.GetCustomBeatmapSaveData();
             var beatmapData = CustomDataRepository.GetBeatmapData();
-
-            beatmapVersion = BeatmapProjectFileHelper.GetVersionedJSONVersion(projectPath, beatmapFilename);
 
             _customBeatmapDataV2?.SetValue(beatmapData, beatmapVersion);
             _customBeatmapDataCustomData?.SetValue(beatmapData, customBeatmapSaveData.customData);
@@ -48,8 +48,6 @@ namespace EditorEX.Heck.Patches
             _customBeatmapDataBeatmapCustomData?.SetValue(beatmapData, beatmapCustomData);
 
             bool v2 = beatmapVersion < __instance._version300;
-
-            MapContext.Version = beatmapVersion;
 
             Dictionary<string, Track> beatmapTracks;
             HashSet<ValueTuple<object, EditorDeserializedData>> deserializedDatas;

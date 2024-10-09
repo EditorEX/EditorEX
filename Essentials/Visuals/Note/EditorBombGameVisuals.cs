@@ -1,18 +1,11 @@
 ﻿using BeatmapEditor3D.DataModels;
-using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Visuals.Universal;
 using EditorEX.Heck.Deserialize;
-using EditorEX.NoodleExtensions.ObjectData;
-using HarmonyLib;
-using Heck.Animation;
-using NoodleExtensions;
 using NoodleExtensions.Animation;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace EditorEX.Essentials.Visuals
+namespace EditorEX.Essentials.Visuals.Note
 {
     internal class EditorBombGameVisuals : MonoBehaviour, IObjectVisuals
     {
@@ -28,7 +21,7 @@ namespace EditorEX.Essentials.Visuals
 
         [Inject]
         private void Construct(
-            [Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
             ColorManager colorManager,

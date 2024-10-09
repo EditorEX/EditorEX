@@ -66,6 +66,10 @@ namespace EditorEx.Chroma.EnvironmentEnhancement
 
         private void Start()
         {
+            if (MapContext.Version.Major > 3)
+            {
+                return;
+            }
             StartCoroutine(DelayedStart());
         }
 

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace EditorEX.Essentials.Visuals
+namespace EditorEX.Essentials.Visuals.Note
 {
     internal class EditorNoteGameVisuals : MonoBehaviour, IObjectVisuals
     {
@@ -36,7 +36,7 @@ namespace EditorEX.Essentials.Visuals
 
         [Inject]
         private void Construct(
-            [Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
             ColorManager colorManager,
@@ -68,7 +68,6 @@ namespace EditorEX.Essentials.Visuals
         {
             _gameRoot = Instantiate(_visualAssetProvider.gameNotePrefab.transform.Find("NoteCube"), transform, false).gameObject;
             _gameRoot.name = "GamerNoterCuber";
-            _gameRoot.GetComponent<MeshRenderer>().sharedMaterial = _visualAssetProvider.gameNoteMaterial;
 
             _arrowObjects = new[] { _gameRoot.transform.Find("NoteArrow").gameObject, _gameRoot.transform.Find("NoteArrowGlow").gameObject };
             _circleObject = _gameRoot.transform.Find("NoteCircleGlow").gameObject;
@@ -113,11 +112,6 @@ namespace EditorEX.Essentials.Visuals
 
             _noteCutout.SetCutout(0f);
             _arrowCutout.SetCutout(0f);
-
-            if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleNoteData? noodleData))
-            {
-                return;
-            }
         }
 
         public void Enable()
@@ -134,7 +128,8 @@ namespace EditorEX.Essentials.Visuals
 
         public void ManualUpdate()
         {
-            if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleBaseNoteData? noodleData))
+            EditorNoodleBaseNoteData? noodleData = null;
+            if (!(_editorDeserializedData?.Resolve(_editorData, out noodleData) ?? false))
             {
                 return;
             }

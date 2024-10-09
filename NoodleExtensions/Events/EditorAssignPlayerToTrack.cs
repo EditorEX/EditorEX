@@ -27,7 +27,7 @@ namespace EditorEX.NoodleExtensions.Events
         private EditorAssignPlayerToTrack(
             IInstantiator container,
             PlayerTransforms playerTransforms,
-            [Inject(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData)
+            [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData)
         {
             _container = container;
             _playerTransforms = playerTransforms;
@@ -36,7 +36,7 @@ namespace EditorEX.NoodleExtensions.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_editorDeserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out NoodlePlayerTrackEventData? noodlePlayerData))
+            if (!(_editorDeserializedData?.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out NoodlePlayerTrackEventData? noodlePlayerData) ?? false))
             {
                 return;
             }

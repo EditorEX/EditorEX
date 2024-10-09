@@ -6,6 +6,7 @@ using Chroma.EnvironmentEnhancement;
 using Chroma.EnvironmentEnhancement.Saved;
 using Chroma.Settings;
 using CustomJSONData.CustomBeatmap;
+using EditorEX.MapData.Contexts;
 using Heck.Animation;
 using IPA.Utilities;
 using JetBrains.Annotations;
@@ -47,15 +48,20 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             Config config)
         {
             CustomBeatmapData beatmapData = (CustomBeatmapData)readonlyBeatmap;
-            _v2 = beatmapData.version.Major == 2;
+            _v2 = LevelContext.Version.Major == 2;
             _environmentMaterialsManager = environmentMaterialsManager;
             _beatmapTracks = beatmapTracks;
             _materialColorAnimator = materialColorAnimator;
 
+            if (beatmapData == null)
+            {
+                return;
+            }
+
             CustomData? materialsData = null;
             if (!config.EnvironmentEnhancementsDisabled)
             {
-                materialsData = beatmapData.customData.Get<CustomData>(_v2 ? V2_MATERIALS : MATERIALS);
+                materialsData = beatmapData?.customData?.Get<CustomData>(_v2 ? V2_MATERIALS : MATERIALS);
             }
 
             if (materialsData == null && config.CustomEnvironmentEnabled)

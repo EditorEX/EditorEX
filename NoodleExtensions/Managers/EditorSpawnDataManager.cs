@@ -21,7 +21,7 @@ namespace EditorEX.NoodleExtensions.Managers
         private EditorSpawnDataManager(
             SiraLog siraLog,
             EditorBasicBeatmapObjectSpawnMovementData editorBasicBeatmapObjectSpawnMovementData,
-            [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData,
+            [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData deserializedData,
             PopulateBeatmap populateBeatmap)
         {
             _siraLog = siraLog;
@@ -38,7 +38,7 @@ namespace EditorEX.NoodleExtensions.Managers
 
         internal bool GetObstacleSpawnData(ObstacleEditorData obstacleData, out BeatmapObjectSpawnMovementData.ObstacleSpawnData? result)
         {
-            if (!_editorDeserializedData.Resolve(obstacleData, out EditorNoodleObstacleData? noodleData))
+            if (!(_editorDeserializedData?.Resolve(obstacleData, out EditorNoodleObstacleData noodleData) ?? false))
             {
                 result = null;
                 return false;
@@ -90,7 +90,7 @@ namespace EditorEX.NoodleExtensions.Managers
 
         internal bool GetJumpingNoteSpawnData(NoteEditorData noteData, out BeatmapObjectSpawnMovementData.NoteSpawnData? result)
         {
-            if (!_editorDeserializedData.Resolve(noteData, out EditorNoodleBaseNoteData? noodleData))
+            if (!(_editorDeserializedData?.Resolve(noteData, out EditorNoodleBaseNoteData? noodleData) ?? false))
             {
                 result = null;
                 return false;
@@ -142,7 +142,7 @@ namespace EditorEX.NoodleExtensions.Managers
 
         internal bool GetSliderSpawnData(BaseSliderEditorData sliderData, out BeatmapObjectSpawnMovementData.SliderSpawnData? result)
         {
-            if (!_editorDeserializedData.Resolve(sliderData, out EditorNoodleSliderData? noodleData))
+            if (!(_editorDeserializedData?.Resolve(sliderData, out EditorNoodleSliderData? noodleData) ?? false))
             {
                 result = null;
                 return false;
