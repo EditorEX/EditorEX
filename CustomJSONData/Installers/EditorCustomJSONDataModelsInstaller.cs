@@ -25,6 +25,7 @@ namespace EditorEX.CustomJSONData.Installers
 
             Container.BindInterfacesAndSelfTo<DisableConversion>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<InjectCustomEvents>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<BetterClearEvents>().AsSingle().NonLazy();
         }
     }
 }

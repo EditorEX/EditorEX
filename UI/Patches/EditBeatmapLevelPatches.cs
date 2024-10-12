@@ -56,7 +56,7 @@ namespace EditorEX.UI.Patches
             _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
         }
 
-        [AffinityPostfix]
+        [AffinityPostfix]                                   
         [AffinityPatch(typeof(EditBeatmapLevelViewController), nameof(EditBeatmapLevelViewController.HandleBeatmapProjectSaved))]
         private void HandleBeatmapProjectSaved(EditBeatmapLevelViewController __instance)
         {
@@ -129,7 +129,7 @@ namespace EditorEX.UI.Patches
                     __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, x, null, null, null, null, null, null, null, null, null));
                 };
 
-                _levelAuthorInputValidator.transform.parent.Find("Label").GetComponent<TextMeshProUGUI>().text = "Level Author Name"
+                _levelAuthorInputValidator.transform.parent.Find("Label").GetComponent<TextMeshProUGUI>().text = "Level Author Name";
 
                 var timingInfo = beatmapInfoContainer.Find("TimingInfo");
 
@@ -149,11 +149,16 @@ namespace EditorEX.UI.Patches
             {
                 _segmentedControl.cells[1].OnPointerClick(new PointerEventData(null));
             });
-        }
 
-        private void _levelAuthorInputValidator_onInputValidated(string obj)
-        {
-            throw new System.NotImplementedException();
+            _keyboardBinder.AddBinding(KeyCode.Mouse5, KeyboardBinder.KeyBindingType.KeyDown, x =>
+            {
+                _segmentedControl.cells[0].OnPointerClick(new PointerEventData(null));
+            });
+
+            _keyboardBinder.AddBinding(KeyCode.Mouse6, KeyboardBinder.KeyBindingType.KeyDown, x =>
+            {
+                _segmentedControl.cells[1].OnPointerClick(new PointerEventData(null));
+            });
         }
 
         [AffinityPostfix]

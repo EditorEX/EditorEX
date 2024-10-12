@@ -174,6 +174,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                     list.Add(noteData);
                 }
             }
+
             for (int k = 0; k < _notesInColumnsReusableProcessingListOfLists.Length; k++)
             {
                 List<NoteEditorData> list2 = _notesInColumnsReusableProcessingListOfLists[k];

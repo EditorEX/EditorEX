@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using BeatmapEditor3D.Commands;
 using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
@@ -55,6 +57,7 @@ namespace EditorEX.NoodleExtensions.Animation
 
                 foreach (GameObject go in track.GameObjects)
                 {
+                    if (go == null) continue;
                     ParentToObject(go.transform);
                 }
 

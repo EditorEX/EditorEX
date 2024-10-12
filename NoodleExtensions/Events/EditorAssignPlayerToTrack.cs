@@ -13,6 +13,7 @@ using UnityEngine;
 using Zenject;
 using EditorEX.Heck.Deserialize;
 using EditorEX.CustomJSONData;
+using BeatmapEditor3D.Controller;
 
 namespace EditorEX.NoodleExtensions.Events
 {
@@ -23,6 +24,7 @@ namespace EditorEX.NoodleExtensions.Events
         private readonly PlayerTransforms _playerTransforms;
         private readonly EditorDeserializedData _editorDeserializedData;
         private readonly Dictionary<PlayerTrackObject, PlayerTrack> _playerTracks = new();
+        private readonly BeatmapEditor360CameraController _beatmapEditor360CameraController;
 
         private EditorAssignPlayerToTrack(
             IInstantiator container,
@@ -32,6 +34,7 @@ namespace EditorEX.NoodleExtensions.Events
             _container = container;
             _playerTransforms = playerTransforms;
             _editorDeserializedData = editorDeserializedData;
+            _beatmapEditor360CameraController = Resources.FindObjectsOfTypeAll<BeatmapEditor360CameraController>().FirstOrDefault();
         }
 
         public void Callback(CustomEventData customEventData)
@@ -63,6 +66,11 @@ namespace EditorEX.NoodleExtensions.Events
                 PlayerTrackObject.RightHand => _playerTransforms._rightHandTransform,
                 _ => throw new ArgumentOutOfRangeException(nameof(playerTrackObject), playerTrackObject, null)
             };
+
+            if (playerTrackObject == PlayerTrackObject.Root)
+            {
+                _beatmapEditor360CameraController.transform.SetParent(origin, true);
+            }
 
             origin.SetParent(target.parent, false);
             target.SetParent(origin, true);

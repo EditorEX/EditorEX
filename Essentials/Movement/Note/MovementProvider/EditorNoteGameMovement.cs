@@ -233,12 +233,6 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
                 normalTime = elapsedTime / jumpDuration;
             }
 
-            if (editorData.beat == 17.5f)
-            {
-                Debug.Log(CustomDataRepository.GetCustomData(editorData).ToString());
-                Debug.Log((tracks[0]._properties["position"] as Property<Vector3>).Value);
-            }
-
             _animationHelper.GetObjectOffset(
                 animationObject,
                 tracks,

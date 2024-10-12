@@ -197,7 +197,7 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
+    <Reference Include="UnityEngine.CoreModule" Publicize="true">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -282,13 +282,13 @@
     <Compile Include="Chroma\Patches\Events\EditorLightRotationChromafier.cs" />
     <Compile Include="Chroma\Patches\Events\EditorRingRotationChromafier.cs" />
     <Compile Include="Chroma\Patches\Events\EditorRingStepChromafier.cs" />
-    <Compile Include="Chroma\Patches\InitializeLightIDTable.cs" />
     <Compile Include="Chroma\Patches\InjectCustomDataIntoLivePreview.cs" />
     <Compile Include="CustomDataModels\LevelCustomDataModel.cs" />
     <Compile Include="CustomJSONData\CustomDataRepository.cs" />
     <Compile Include="CustomJSONData\CustomEvents\CustomEventEditorData.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataAppInstaller.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataModelsInstaller.cs" />
+    <Compile Include="CustomJSONData\Patches\BetterClearEvents.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsAppInstaller.cs" />
     <Compile Include="Essentials\Patches\HideUI.cs" />
     <Compile Include="Essentials\Patches\CameraLock.cs" />
@@ -411,6 +411,7 @@
     <Compile Include="Util\BeatmapFilterUtil.cs" />
     <Compile Include="Util\CustomBeatmapDataExtensions.cs" />
     <Compile Include="Util\CustomDataExtensions.cs" />
+    <Compile Include="Util\ReversibleDictionary.cs" />
     <Compile Include="Util\SpawnDataAssociationExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

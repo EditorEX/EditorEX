@@ -31,7 +31,7 @@ namespace EditorEX.NoodleExtensions.Events
             {
                 return;
             }
-            GameObject parentGameObject = new GameObject("ParentObject");
+            GameObject parentGameObject = new GameObject($"ParentObject {customEventData.customData.Get<string>("_parentTrack")}");
             EditorParentObject instance = parentGameObject.AddComponent<EditorParentObject>();
             instance.Init(noodleData, _leftHanded, _parentObjects);
             if (_version.Major == 2)

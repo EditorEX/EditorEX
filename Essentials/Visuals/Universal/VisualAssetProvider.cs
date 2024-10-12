@@ -35,7 +35,7 @@ namespace EditorEX.Essentials.Visuals.Universal
             obstaclePrefab = Instantiate(Resources.FindObjectsOfTypeAll<BeatmapObjectsInstaller>().FirstOrDefault()._obstaclePrefab.gameObject);
             obstaclePrefab.SetActive(false);
 
-            onFinishLoading();
+            onFinishLoading?.Invoke();
 
             SceneManager.UnloadSceneAsync("StandardGameplay");
         }

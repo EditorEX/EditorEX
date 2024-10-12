@@ -28,9 +28,24 @@ namespace EditorEX.CustomJSONData.Patches.Loading
             _v2BeatmapBpmDataVersionedLoader = v2BeatmapBpmDataVersionedLoader;
         }
 
+        [AffinityPatch(typeof(BeatmapProjectFileHelper), nameof(BeatmapProjectFileHelper.CopyBeatmapFile), AffinityMethodType.Normal, null, new Type[] { typeof(string), typeof(string), typeof(string), typeof(string) })]
+        [AffinityPrefix]
+        private bool FixCopyFile(string sourceProjectPath, string destinationProjectPath, string sourceBeatmapFileFilename, string destinationBeatmapFileName)
+        {
+            if (sourceBeatmapFileFilename == "")
+            {
+                return false;
+            }
+            if (sourceBeatmapFileFilename == "BPMInfo.dat")
+            {
+                return File.Exists(Path.Combine(sourceProjectPath, sourceBeatmapFileFilename));
+            }
+            return true;
+        }
+
         [AffinityPatch(typeof(BeatmapProjectFileHelper), nameof(BeatmapProjectFileHelper.CopyBeatmapFile), AffinityMethodType.Normal, null, new Type[] { typeof(string), typeof(string), typeof(string) })]
         [AffinityPrefix]
-        private bool FixCopyFile(string sourceProjectPath, string destinationProjectPath, string beatmapFileFilename)
+        private bool FixCopyFile2(string sourceProjectPath, string destinationProjectPath, string beatmapFileFilename)
         {
             if (beatmapFileFilename == "")
             {
@@ -39,6 +54,21 @@ namespace EditorEX.CustomJSONData.Patches.Loading
             if (beatmapFileFilename == "BPMInfo.dat")
             {
                 return File.Exists(Path.Combine(sourceProjectPath, beatmapFileFilename));
+            }
+            return true;
+        }
+
+        [AffinityPatch(typeof(BeatmapProjectFileHelper), nameof(BeatmapProjectFileHelper.CopyBeatmapLevel), AffinityMethodType.Normal, null, new Type[] { typeof(string), typeof(string), typeof(string), typeof(string) })]
+        [AffinityPrefix]
+        private bool FixCopyFile3(string fromProjectPath, string fromBeatmapLevelFilename, string toProjectPath, string toBeatmapLevelFilename)
+        {
+            if (fromBeatmapLevelFilename == "")
+            {
+                return false;
+            }
+            if (fromBeatmapLevelFilename == "BPMInfo.dat")
+            {
+                return File.Exists(Path.Combine(fromProjectPath, fromBeatmapLevelFilename));
             }
             return true;
         }

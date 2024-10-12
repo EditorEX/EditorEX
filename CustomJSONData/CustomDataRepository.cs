@@ -4,18 +4,20 @@ using CustomJSONData.CustomBeatmap;
 using ModestTree.Util;
 using System.Collections.Generic;
 using System.Linq;
+using EditorEX.Util;
+using BeatmapSaveDataVersion3;
 
 namespace EditorEX.CustomJSONData
 {
     public class RepoData
     {
-        public Dictionary<BaseEditorData, CustomData> CustomData = new Dictionary<BaseEditorData, CustomData>();
+        public Dictionary<BaseEditorData, CustomData> CustomData = new();
 
-        public List<CustomEventEditorData> CustomEvents = new List<CustomEventEditorData>();
+        public List<CustomEventEditorData> CustomEvents = new();
 
-        public HashSet<ValuePair<CustomEventEditorData, CustomEventData>> CustomEventConversions = new HashSet<ValuePair<CustomEventEditorData, CustomEventData>>();
+        public ReversibleDictionary<CustomEventEditorData, CustomEventData> CustomEventConversions = new();
 
-        public HashSet<ValuePair<BasicEventEditorData, BeatmapEventData>> ChromaBasicEventConversions = new HashSet<ValuePair<BasicEventEditorData, BeatmapEventData>>();
+        public ReversibleDictionary<BasicEventEditorData, BeatmapEventData> ChromaBasicEventConversions = new();
 
         public Version3CustomBeatmapSaveData customBeatmapSaveData;
 
@@ -48,97 +50,65 @@ namespace EditorEX.CustomJSONData
 
         public static CustomData GetCustomData(BaseEditorData data)
         {
-            if (_repoData.CustomData.ContainsKey(data))
-            {
-                return _repoData.CustomData[data];
-            }
-            else
-            {
-                return null;
-            }
+            return _repoData.CustomData[data];
         }
 
         public static void AddCustomEventConversion(CustomEventEditorData editorData, CustomEventData customData)
         {
-            var existing = _repoData.CustomEventConversions.FirstOrDefault(x => x.First == editorData);
-            if (existing != null)
-            {
-                _repoData.CustomEventConversions.Remove(existing);
-            }
-            _repoData.CustomEventConversions.Add(new ValuePair<CustomEventEditorData, CustomEventData>(editorData, customData));
+            _repoData.CustomEventConversions.Add(editorData, customData);
         }
 
         public static void RemoveCustomEventConversion(CustomEventEditorData editorData)
         {
-            var existing = _repoData.CustomEventConversions.FirstOrDefault(x => x.First == editorData);
-            if (existing != null)
-            {
-                _repoData.CustomEventConversions.Remove(existing);
-            }
+            _repoData.CustomEventConversions.Remove(editorData);
+        }
+
+        public static void RemoveCustomEventConversion(CustomEventData customEventData)
+        {
+            _repoData.CustomEventConversions.Remove(customEventData);
         }
 
         public static CustomEventData GetCustomEventConversion(CustomEventEditorData editorData)
         {
-            var existing = _repoData.CustomEventConversions.FirstOrDefault(x => x.First == editorData);
-            if (existing != null)
-            {
-                return existing.Second;
-            }
-            else
-            {
-                return null;
-            }
+            CustomEventData result = null;
+            _repoData.CustomEventConversions.TryGetValue(editorData, out result);
+            return result;
         }
 
         public static CustomEventEditorData GetCustomEventConversion(CustomEventData data)
         {
-            var existing = _repoData.CustomEventConversions.FirstOrDefault(x => x.Second == data);
-            if (existing != null)
-            {
-                return existing.First;
-            }
-            else
-            {
-                return null;
-            }
+            CustomEventEditorData result = null;
+            _repoData.CustomEventConversions.TryGetKey(data, out result);
+            return result;
         }
 
         public static void AddBasicEventConversion(BasicEventEditorData editorData, BeatmapEventData customData)
         {
-            var existing = _repoData.ChromaBasicEventConversions.FirstOrDefault(x => x.First == editorData);
-            if (existing != null)
-            {
-                _repoData.ChromaBasicEventConversions.Remove(existing);
-            }
-            _repoData.ChromaBasicEventConversions.Add(new ValuePair<BasicEventEditorData, BeatmapEventData>(editorData, customData));
+            _repoData.ChromaBasicEventConversions.Add(editorData, customData);
         }
 
         public static void RemoveBasicEventConversion(BasicEventEditorData editorData)
         {
-            var existing = _repoData.ChromaBasicEventConversions.FirstOrDefault(x => x.First == editorData);
-            if (existing != null)
-            {
-                _repoData.ChromaBasicEventConversions.Remove(existing);
-            }
+            _repoData.ChromaBasicEventConversions.Remove(editorData);
+        }
+
+        public static void RemoveBasicEventConversion(BeatmapEventData data)
+        {
+            _repoData.ChromaBasicEventConversions.Remove(data);
         }
 
         public static BeatmapEventData GetBasicEventConversion(BasicEventEditorData editorData)
         {
-            var existing = _repoData.ChromaBasicEventConversions.FirstOrDefault(x => x.First == editorData);
-            if (existing != null)
-            {
-                return existing.Second;
-            }
-            else
-            {
-                return null;
-            }
+            BeatmapEventData result = null;
+            _repoData.ChromaBasicEventConversions.TryGetValue(editorData, out result);
+            return result;
         }
 
         public static BasicEventEditorData GetBasicEventConversion(BeatmapEventData data)
         {
-            var existing = _repoData.ChromaBasicEventConversions.FirstOrDefault(x => x.Second == data);
-            return existing?.First;
+            BasicEventEditorData result = null;
+            _repoData.ChromaBasicEventConversions.TryGetKey(data, out result);
+            return result;
         }
 
         public static void SetCustomBeatmapSaveData(Version3CustomBeatmapSaveData customData)
