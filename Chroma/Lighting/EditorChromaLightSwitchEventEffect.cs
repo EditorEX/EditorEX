@@ -2,6 +2,7 @@
 using Chroma;
 using Chroma.Extras;
 using Chroma.Lighting;
+using EditorEx.Chroma.Lighting;
 using EditorEX.Chroma.Colorizer;
 using EditorEX.Chroma.Events;
 using EditorEX.CustomJSONData;
@@ -26,7 +27,7 @@ namespace EditorEX.Chroma.Lighting
         private readonly SongTimeTweeningManager _tweeningManager;
         private readonly BeatmapCallbacksController _callbacksController;
         private readonly ColorManager _colorManager;
-        private readonly EditorDeserializedData _deserializedData;
+        private readonly EditorDeserializedData _editorDeserializedData;
         private readonly EditorChromaGradientController? _gradientController;
 
         private readonly BeatmapDataCallbackWrapper _basicCallbackWrapper;
@@ -56,7 +57,7 @@ namespace EditorEX.Chroma.Lighting
             EditorLightColorizerManager lightColorizerManager,
             BeatmapCallbacksController callbacksController,
             ColorManager colorManager,
-            [Inject(Id = ChromaController.ID)] EditorDeserializedData deserializedData,
+            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData,
             [InjectOptional] EditorChromaGradientController? gradientController)
         {
             LightSwitchEventEffect = lightSwitchEventEffect;
@@ -66,7 +67,7 @@ namespace EditorEX.Chroma.Lighting
             _tweeningManager = tweeningManager;
             _callbacksController = callbacksController;
             _colorManager = colorManager;
-            _deserializedData = deserializedData;
+            _editorDeserializedData = deserializedData;
             _gradientController = gradientController;
 
             EventType = lightSwitchEventEffect._event;
@@ -80,7 +81,7 @@ namespace EditorEX.Chroma.Lighting
             Initialize(lightSwitchEventEffect._highlightColor1, ref _highlightColor1Mult);
             Initialize(lightSwitchEventEffect._lightColor0Boost, ref _lightColor0BoostMult);
             Initialize(lightSwitchEventEffect._lightColor1Boost, ref _lightColor1BoostMult);
-            Initialize(lightSwitchEventEffect._highlightColor0Boost, ref _highlightColor0BoostMult);
+            Initialize(lightSwitchEventEffect._highlightColor0Boost, ref _highlightColor0BoostMult); 
             Initialize(lightSwitchEventEffect._highlightColor1Boost, ref _highlightColor1BoostMult);
 
             Colorizer = lightColorizerManager.Create(this);
@@ -299,9 +300,10 @@ namespace EditorEX.Chroma.Lighting
                 // this code is UGLY
                 void CheckNextEventForFadeBetter()
                 {
-                    _deserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(previousEvent), out EditorChromaEventData? eventData);
+                    _editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(previousEvent), out EditorChromaEventData? eventData);
                     Dictionary<int, BasicEventEditorData>? nextSameTypesDict = eventData?.NextSameTypeEvent;
                     BasicBeatmapEventData? nextSameTypeEvent = null;
+                    return;
                     if (nextSameTypesDict == null)
                     {
                         nextSameTypeEvent = previousEvent.nextSameTypeEventData; //clean up
@@ -325,7 +327,7 @@ namespace EditorEX.Chroma.Lighting
                     EnvironmentColorType nextColorType = BeatmapEventDataLightsExtensions.GetLightColorTypeFromEventDataValue(nextSameTypeEvent.value);
                     Color nextColor;
 
-                    _deserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(nextSameTypeEvent), out EditorChromaEventData? nextEventData);
+                    _editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(nextSameTypeEvent), out EditorChromaEventData? nextEventData);
                     Color? nextColorData = nextEventData?.ColorData;
                     if (nextColorType != EnvironmentColorType.ColorW &&
                         nextColorData.HasValue)
@@ -426,7 +428,7 @@ namespace EditorEX.Chroma.Lighting
                 throw new InvalidOperationException("Chroma Features requires the gradient controller.");
             }
 
-            if (_deserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(beatmapEventData), out EditorChromaEventData? chromaData))
+            if (_editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(beatmapEventData), out EditorChromaEventData? chromaData))
             {
                 Color? color = null;
 

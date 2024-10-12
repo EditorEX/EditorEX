@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace EditorEX.Essentials.Visuals
+namespace EditorEX.Essentials.Visuals.Note
 {
     internal class EditorNoteGameVisuals : MonoBehaviour, IObjectVisuals
     {
@@ -36,7 +36,7 @@ namespace EditorEX.Essentials.Visuals
 
         [Inject]
         private void Construct(
-            [Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
             ColorManager colorManager,
@@ -68,7 +68,6 @@ namespace EditorEX.Essentials.Visuals
         {
             _gameRoot = Instantiate(_visualAssetProvider.gameNotePrefab.transform.Find("NoteCube"), transform, false).gameObject;
             _gameRoot.name = "GamerNoterCuber";
-            _gameRoot.GetComponent<MeshRenderer>().sharedMaterial = _visualAssetProvider.gameNoteMaterial;
 
             _arrowObjects = new[] { _gameRoot.transform.Find("NoteArrow").gameObject, _gameRoot.transform.Find("NoteArrowGlow").gameObject };
             _circleObject = _gameRoot.transform.Find("NoteCircleGlow").gameObject;
@@ -101,7 +100,8 @@ namespace EditorEX.Essentials.Visuals
 
             var noteColor = _colorManager.ColorForType(_editorData.type);
 
-            _colorPropertyBlockControllers.Do(x=> { 
+            _colorPropertyBlockControllers.Do(x =>
+            {
                 x.materialPropertyBlock.SetColor(ColorNoteVisuals._colorId, noteColor.ColorWithAlpha(1f));
                 x.ApplyChanges();
             });
@@ -112,11 +112,6 @@ namespace EditorEX.Essentials.Visuals
 
             _noteCutout.SetCutout(0f);
             _arrowCutout.SetCutout(0f);
-
-            if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleNoteData? noodleData))
-            {
-                return;
-            }
         }
 
         public void Enable()
@@ -133,12 +128,8 @@ namespace EditorEX.Essentials.Visuals
 
         public void ManualUpdate()
         {
-            //float currentSeconds = PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(_state.beat);
-            //float _dataSeconds = PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(_editorData.beat);
-            //float time = _dataSeconds - currentSeconds;
-            //float dissolve = Mathf.Pow(Mathf.Clamp(time, -0.05f, 0f) * -20f, 2f);
-
-            if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleBaseNoteData? noodleData))
+            EditorNoodleBaseNoteData? noodleData = null;
+            if (!(_editorDeserializedData?.Resolve(_editorData, out noodleData) ?? false))
             {
                 return;
             }
@@ -175,9 +166,9 @@ namespace EditorEX.Essentials.Visuals
                 out float? dissolveArrow,
                 out float? cuttable);
 
-            _noteCutout.SetCutout(1f-dissolveNote.GetValueOrDefault(1f));
+            _noteCutout.SetCutout(1f - dissolveNote.GetValueOrDefault(1f));
 
-            _arrowCutout.SetCutout(1f-dissolveArrow.GetValueOrDefault(1f));
+            _arrowCutout.SetCutout(1f - dissolveArrow.GetValueOrDefault(1f));
 
             _arrowObjects[1].SetActive(_editorData.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f);
         }

@@ -1,26 +1,23 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Types;
-using EditorEX.CustomJSONData;
-using EditorEX.CustomJSONData.Util;
-using EditorEX.Essentials.Patches;
-using EditorEX.Essentials.SpawnProcessing;
-using EditorEX.NoodleExtensions.Util;
 using CustomJSONData.CustomBeatmap;
-using HarmonyLib;
+using EditorEX.CustomJSONData;
+using EditorEX.Essentials.Patches;
+using EditorEX.Heck.Deserialize;
+using EditorEX.MapData.Contexts;
+using EditorEX.NoodleExtensions.ObjectData;
+using EditorEX.Util;
 using Heck;
 using IPA.Utilities;
-using NoodleExtensions.HarmonyPatches.ObjectProcessing;
+using NoodleExtensions;
 using NoodleExtensions.Managers;
+using SiraUtil.Logging;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using Zenject;
-using static BeatmapObjectsInTimeRowProcessor;
 using static Heck.HeckController;
 using static NoodleExtensions.NoodleController;
 
@@ -28,6 +25,9 @@ namespace EditorEX.Essentials.SpawnProcessing
 {
     public class EditorBeatmapObjectsInTimeRowProcessor
     {
+        private SiraLog _siraLog;
+        public EditorDeserializedData editorDeserializedData;
+
         public EditorBeatmapObjectsInTimeRowProcessor()
         {
             Reset();
@@ -60,12 +60,15 @@ namespace EditorEX.Essentials.SpawnProcessing
         }
 
         [Inject]
-        public void Construct()
+        public void Construct(
+            SiraLog siraLog,
+            [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData deserializedData,
+            PopulateBeatmap populateBeatmap)
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            _siraLog = siraLog;
+            editorDeserializedData = deserializedData;
 
-            var objects = PopulateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.Cast<BaseEditorData>();
+            var objects = populateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.Cast<BaseEditorData>();
             foreach (var obj in objects)
             {
                 if (obj is NoteEditorData noteData)
@@ -77,8 +80,6 @@ namespace EditorEX.Essentials.SpawnProcessing
                     ProcessSlider(sliderData);
                 }
             }
-
-            stopwatch.Stop();
         }
 
         public void ProcessNote(NoteEditorData noteData)
@@ -173,6 +174,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                     list.Add(noteData);
                 }
             }
+
             for (int k = 0; k < _notesInColumnsReusableProcessingListOfLists.Length; k++)
             {
                 List<NoteEditorData> list2 = _notesInColumnsReusableProcessingListOfLists[k];
@@ -183,195 +185,207 @@ namespace EditorEX.Essentials.SpawnProcessing
             }
 
             float offset = 4 / 2f;
-            bool v2 = CustomDataRepository.GetBeatmapData().version.Major == 2;
-            IReadOnlyList<BaseBeatmapObjectEditorData> containerItems = allObjectsTimeSlice.items.Where(x => x is BaseBeatmapObjectEditorData).Select(x => x as BaseBeatmapObjectEditorData).ToList();
-            IEnumerable<NoteEditorData> notesInTimeRow = containerItems.OfType<NoteEditorData>().ToArray();
-            Dictionary<float, List<NoteEditorData>> notesInColumns = new();
-            foreach (NoteEditorData noteData in notesInTimeRow)
+            bool v2 = MapContext.Version.Major == 2;
+            if (MapContext.Version.Major < 4)
             {
-                CustomData customData = noteData.GetCustomData();
-                if (customData == null)
-                {
-                    continue;
-                }
-                IEnumerable<float?>? position = customData.GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
-                float lineIndex = position?.ElementAtOrDefault(0) + offset ?? noteData.column;
-                float lineLayer = position?.ElementAtOrDefault(1) ?? (float)noteData.row;
-
-                if (!notesInColumns.TryGetValue(lineIndex, out List<NoteEditorData> list))
-                {
-                    list = new List<NoteEditorData>(1);
-                    notesInColumns.Add(lineIndex, list);
-                }
-
-                bool flag = false;
-                for (int k = 0; k < list.Count; k++)
-                {
-                    IEnumerable<float?>? listPosition = list[k].GetCustomData().GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET);
-                    float listLineLayer = listPosition?.ElementAtOrDefault(1) ?? (float)list[k].row;
-                    if (!(listLineLayer > lineLayer))
-                    {
-                        continue;
-                    }
-
-                    list.Insert(k, noteData);
-                    flag = true;
-                    break;
-                }
-
-                if (!flag)
-                {
-                    list.Add(noteData);
-                }
-
-                // Flippy stuff
-                IEnumerable<float?>? flip = customData.GetNullableFloats(v2 ? V2_FLIP : FLIP)?.ToList();
-                float? flipX = flip?.ElementAtOrDefault(0);
-                float? flipY = flip?.ElementAtOrDefault(1);
-                if (flipX.HasValue || flipY.HasValue)
-                {
-                    if (flipX.HasValue)
-                    {
-                        customData[INTERNAL_FLIPLINEINDEX] = flipX.Value + offset;
-                    }
-
-                    if (flipY.HasValue)
-                    {
-                        customData[INTERNAL_FLIPYSIDE] = flipY.Value;
-                    }
-                }
-                else if (!customData.ContainsKey(INTERNAL_FLIPYSIDE))
-                {
-                    customData[INTERNAL_FLIPLINEINDEX] = lineIndex;
-                    customData[INTERNAL_FLIPYSIDE] = 0;
-                }
-            }
-
-            foreach (KeyValuePair<float, List<NoteEditorData>> keyValue in notesInColumns)
-            {
-                List<NoteEditorData> list2 = keyValue.Value;
-                for (int m = 0; m < list2.Count; m++)
-                {
-                    list2[m].GetCustomData()[INTERNAL_STARTNOTELINELAYER] = m;
-                }
-            }
-
-            IEnumerable<BaseSliderEditorData> slidersInTimeRow = containerItems.OfType<BaseSliderEditorData>().ToArray();
-            foreach (BaseSliderEditorData sliderData in slidersInTimeRow)
-            {
-                IEnumerable<float?>? headPosition = sliderData.GetCustomData().GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
-                float headX = headPosition?.ElementAtOrDefault(0) + offset ?? sliderData.column;
-                float headY = headPosition?.ElementAtOrDefault(1) ?? (float)sliderData.row;
-                IEnumerable<float?>? tailPosition = sliderData.GetCustomData().GetNullableFloats(TAIL_NOTE_OFFSET)?.ToList();
-                float tailX = tailPosition?.ElementAtOrDefault(0) + offset ?? sliderData.tailColumn;
-                float tailY = tailPosition?.ElementAtOrDefault(1) ?? (float)sliderData.tailRow;
-
+                IReadOnlyList<BaseBeatmapObjectEditorData> containerItems = allObjectsTimeSlice.items.Where(x => x is BaseBeatmapObjectEditorData).Select(x => x as BaseBeatmapObjectEditorData).ToList();
+                IEnumerable<NoteEditorData> notesInTimeRow = containerItems.OfType<NoteEditorData>().ToArray();
+                Dictionary<float, List<NoteEditorData>> notesInColumns = new();
                 foreach (NoteEditorData noteData in notesInTimeRow)
                 {
-                    if (noteData.GetCustomData() == null)
+                    CustomData customData = noteData.GetCustomData();
+                    if (customData == null)
                     {
                         continue;
                     }
-                    IEnumerable<float?>? notePosition = noteData.GetCustomData().GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
-                    float noteX = notePosition?.ElementAtOrDefault(0) + offset ?? noteData.column;
-                    float noteY = notePosition?.ElementAtOrDefault(1) ?? (float)noteData.row;
+                    IEnumerable<float?>? position = customData.GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
+                    float lineIndex = position?.ElementAtOrDefault(0) + offset ?? noteData.column;
+                    float lineLayer = position?.ElementAtOrDefault(1) ?? (float)noteData.row;
 
-                    if (!Mathf.Approximately(headX, noteX) || !Mathf.Approximately(headY, noteY))
+                    if (!notesInColumns.TryGetValue(lineIndex, out List<NoteEditorData> list))
                     {
-                        continue;
+                        list = new List<NoteEditorData>(1);
+                        notesInColumns.Add(lineIndex, list);
                     }
 
-                    sliderData.SetHasHeadNote(true);
-                    sliderData.GetCustomData()[INTERNAL_STARTNOTELINELAYER] = noteData.GetCustomData()[INTERNAL_STARTNOTELINELAYER];
-                    if (sliderData is ChainEditorData)
+                    bool flag = false;
+                    for (int k = 0; k < list.Count; k++)
                     {
-                        noteData.ChangeToBurstSliderHead();
-                        if (noteData.cutDirection != sliderData.cutDirection)
+                        IEnumerable<float?>? listPosition = list[k].GetCustomData().GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET);
+                        float listLineLayer = listPosition?.ElementAtOrDefault(1) ?? (float)list[k].row;
+                        if (!(listLineLayer > lineLayer))
                         {
                             continue;
                         }
 
-                        Vector2 line = SpawnDataManager.Get2DNoteOffset(noteX, 4, noteY) -
-                                       SpawnDataManager.Get2DNoteOffset(tailX, 4, tailY);
-                        float num = noteData.cutDirection.Direction().SignedAngleToLine(line);
-                        if (!(Mathf.Abs(num) <= 40f))
+                        list.Insert(k, noteData);
+                        flag = true;
+                        break;
+                    }
+
+                    if (!flag)
+                    {
+                        list.Add(noteData);
+                    }
+
+                    // Flippy stuff
+                    IEnumerable<float?>? flip = customData.GetNullableFloats(v2 ? V2_FLIP : FLIP)?.ToList();
+                    float? flipX = flip?.ElementAtOrDefault(0);
+                    float? flipY = flip?.ElementAtOrDefault(1);
+                    if (flipX.HasValue || flipY.HasValue)
+                    {
+                        if (flipX.HasValue)
+                        {
+                            customData[INTERNAL_FLIPLINEINDEX] = flipX.Value + offset;
+                        }
+
+                        if (flipY.HasValue)
+                        {
+                            customData[INTERNAL_FLIPYSIDE] = flipY.Value;
+                        }
+                    }
+                    else if (!customData.ContainsKey(INTERNAL_FLIPYSIDE))
+                    {
+                        customData[INTERNAL_FLIPLINEINDEX] = lineIndex;
+                        customData[INTERNAL_FLIPYSIDE] = 0;
+                    }
+
+
+                    if (editorDeserializedData?.Resolve(noteData, out EditorNoodleBaseNoteData? noodleData) ?? false)
+                    {
+                        noodleData.InternalFlipYSide = customData.Get<float?>(INTERNAL_FLIPYSIDE);
+                        noodleData.InternalFlipLineIndex = customData.Get<float?>(INTERNAL_FLIPLINEINDEX);
+                        noodleData.InternalStartNoteLineLayer = customData.Get<float>(INTERNAL_STARTNOTELINELAYER);
+                    }
+                }
+
+                foreach (KeyValuePair<float, List<NoteEditorData>> keyValue in notesInColumns)
+                {
+                    List<NoteEditorData> list2 = keyValue.Value;
+                    for (int m = 0; m < list2.Count; m++)
+                    {
+                        list2[m].GetCustomData()[INTERNAL_STARTNOTELINELAYER] = m;
+                    }
+                }
+
+                IEnumerable<BaseSliderEditorData> slidersInTimeRow = containerItems.OfType<BaseSliderEditorData>().ToArray();
+                foreach (BaseSliderEditorData sliderData in slidersInTimeRow)
+                {
+                    IEnumerable<float?>? headPosition = sliderData.GetCustomData().GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
+                    float headX = headPosition?.ElementAtOrDefault(0) + offset ?? sliderData.column;
+                    float headY = headPosition?.ElementAtOrDefault(1) ?? (float)sliderData.row;
+                    IEnumerable<float?>? tailPosition = sliderData.GetCustomData().GetNullableFloats(TAIL_NOTE_OFFSET)?.ToList();
+                    float tailX = tailPosition?.ElementAtOrDefault(0) + offset ?? sliderData.tailColumn;
+                    float tailY = tailPosition?.ElementAtOrDefault(1) ?? (float)sliderData.tailRow;
+
+                    foreach (NoteEditorData noteData in notesInTimeRow)
+                    {
+                        if (noteData.GetCustomData() == null)
+                        {
+                            continue;
+                        }
+                        IEnumerable<float?>? notePosition = noteData.GetCustomData().GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
+                        float noteX = notePosition?.ElementAtOrDefault(0) + offset ?? noteData.column;
+                        float noteY = notePosition?.ElementAtOrDefault(1) ?? (float)noteData.row;
+
+                        if (!Mathf.Approximately(headX, noteX) || !Mathf.Approximately(headY, noteY))
                         {
                             continue;
                         }
 
-                        noteData.SetCutDirectionAngleOffset(num);
-                        sliderData.SetCutDirectionAngleOffset(num, num);
-                    }
-                }
-            }
-
-            foreach (EditorSliderTailData sliderTailData in containerItems.OfType<EditorSliderTailData>())
-            {
-                BaseSliderEditorData sliderData = sliderTailData.slider;
-                IEnumerable<float?>? tailPosition = sliderData.GetCustomData().GetNullableFloats(TAIL_NOTE_OFFSET)?.ToList();
-                float tailX = tailPosition?.ElementAtOrDefault(0) + offset ?? sliderData.tailColumn;
-                float tailY = tailPosition?.ElementAtOrDefault(1) ?? (float)sliderData.tailRow;
-                foreach (NoteEditorData noteData in notesInTimeRow)
-                {
-                    IEnumerable<float?>? notePosition = noteData.GetCustomData().GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
-                    float noteX = notePosition?.ElementAtOrDefault(0) + offset ?? noteData.column;
-                    float noteY = notePosition?.ElementAtOrDefault(1) ?? (float)noteData.row;
-
-                    if (!Mathf.Approximately(tailX, noteX) || !Mathf.Approximately(tailY, noteY))
-                    {
-                        continue;
-                    }
-
-                    sliderData.SetHasTailNote(true);
-                    sliderData.GetCustomData()[INTERNAL_TAILSTARTNOTELINELAYER] = noteData.GetCustomData()[INTERNAL_STARTNOTELINELAYER];
-                    sliderData.SetTailBeforeJumpLineLayer(EditorSpawnDataRepository.GetSpawnData(noteData).beforeJumpNoteLineLayer);
-                }
-            }
-
-            return;
-            foreach (BaseSliderEditorData sliderData in enumerable2)
-            {
-                foreach (NoteEditorData noteData2 in enumerable)
-                {
-                    if (SliderHeadPositionOverlapsWithNote(sliderData, noteData2))
-                    {
                         sliderData.SetHasHeadNote(true);
-                        sliderData.SetHeadBeforeJumpLineLayer(EditorSpawnDataRepository.GetSpawnData(noteData2).beforeJumpNoteLineLayer);
+                        sliderData.GetCustomData()[INTERNAL_STARTNOTELINELAYER] = noteData.GetCustomData()[INTERNAL_STARTNOTELINELAYER];
                         if (sliderData is ChainEditorData)
                         {
-                            noteData2.ChangeToBurstSliderHead();
+                            noteData.ChangeToBurstSliderHead();
+                            if (noteData.cutDirection != sliderData.cutDirection)
+                            {
+                                continue;
+                            }
+
+                            Vector2 line = SpawnDataManager.Get2DNoteOffset(noteX, 4, noteY) -
+                                           SpawnDataManager.Get2DNoteOffset(tailX, 4, tailY);
+                            float num = noteData.cutDirection.Direction().SignedAngleToLine(line);
+                            if (!(Mathf.Abs(num) <= 40f))
+                            {
+                                continue;
+                            }
+
+                            noteData.SetCutDirectionAngleOffset(num);
+                            sliderData.SetCutDirectionAngleOffset(num, num);
                         }
                     }
                 }
-            }
-            foreach (BaseSliderEditorData sliderData2 in enumerable2)
-            {
-                foreach (BaseSliderEditorData sliderData3 in enumerable2)
+
+                foreach (EditorSliderTailData sliderTailData in containerItems.OfType<EditorSliderTailData>())
                 {
-                    if (sliderData2 != sliderData3 && SliderHeadPositionOverlapsWithBurstTail(sliderData2, sliderData3))
+                    BaseSliderEditorData sliderData = sliderTailData.slider;
+                    IEnumerable<float?>? tailPosition = sliderData.GetCustomData().GetNullableFloats(TAIL_NOTE_OFFSET)?.ToList();
+                    float tailX = tailPosition?.ElementAtOrDefault(0) + offset ?? sliderData.tailColumn;
+                    float tailY = tailPosition?.ElementAtOrDefault(1) ?? (float)sliderData.tailRow;
+                    foreach (NoteEditorData noteData in notesInTimeRow)
                     {
-                        sliderData2.SetHasHeadNote(true);
-                        sliderData2.SetHeadBeforeJumpLineLayer(EditorSpawnDataRepository.GetSpawnData(sliderData3).tailBeforeJumpLineLayer);
+                        IEnumerable<float?>? notePosition = noteData.GetCustomData().GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
+                        float noteX = notePosition?.ElementAtOrDefault(0) + offset ?? noteData.column;
+                        float noteY = notePosition?.ElementAtOrDefault(1) ?? (float)noteData.row;
+
+                        if (!Mathf.Approximately(tailX, noteX) || !Mathf.Approximately(tailY, noteY))
+                        {
+                            continue;
+                        }
+
+                        sliderData.SetHasTailNote(true);
+                        sliderData.GetCustomData()[INTERNAL_TAILSTARTNOTELINELAYER] = noteData.GetCustomData()[INTERNAL_STARTNOTELINELAYER];
+                        sliderData.SetTailBeforeJumpLineLayer(EditorSpawnDataRepository.GetSpawnData(noteData).beforeJumpNoteLineLayer);
                     }
                 }
-                foreach (EditorSliderTailData sliderTailData in enumerable3)
+            }
+            else
+            {
+                foreach (BaseSliderEditorData sliderData in enumerable2)
                 {
-                    if (SliderHeadPositionOverlapsWithBurstTail(sliderData2, sliderTailData.slider))
+                    foreach (NoteEditorData noteData2 in enumerable)
                     {
-                        sliderData2.SetHasHeadNote(true);
-                        sliderData2.SetHeadBeforeJumpLineLayer(EditorSpawnDataRepository.GetSpawnData(sliderTailData.slider).tailBeforeJumpLineLayer);
+                        if (SliderHeadPositionOverlapsWithNote(sliderData, noteData2))
+                        {
+                            sliderData.SetHasHeadNote(true);
+                            sliderData.SetHeadBeforeJumpLineLayer(EditorSpawnDataRepository.GetSpawnData(noteData2).beforeJumpNoteLineLayer);
+                            if (sliderData is ChainEditorData)
+                            {
+                                noteData2.ChangeToBurstSliderHead();
+                            }
+                        }
                     }
                 }
-            }
-            foreach (EditorSliderTailData sliderTailData2 in enumerable3)
-            {
-                BaseSliderEditorData slider = sliderTailData2.slider;
-                foreach (NoteEditorData noteData3 in enumerable)
+                foreach (BaseSliderEditorData sliderData2 in enumerable2)
                 {
-                    if (SliderTailPositionOverlapsWithNote(slider, noteData3))
+                    foreach (BaseSliderEditorData sliderData3 in enumerable2)
                     {
-                        slider.SetHasTailNote(true);
-                        slider.SetTailBeforeJumpLineLayer(EditorSpawnDataRepository.GetSpawnData(noteData3).beforeJumpNoteLineLayer);
+                        if (sliderData2 != sliderData3 && SliderHeadPositionOverlapsWithBurstTail(sliderData2, sliderData3))
+                        {
+                            sliderData2.SetHasHeadNote(true);
+                            sliderData2.SetHeadBeforeJumpLineLayer(EditorSpawnDataRepository.GetSpawnData(sliderData3).tailBeforeJumpLineLayer);
+                        }
+                    }
+                    foreach (EditorSliderTailData sliderTailData in enumerable3)
+                    {
+                        if (SliderHeadPositionOverlapsWithBurstTail(sliderData2, sliderTailData.slider))
+                        {
+                            sliderData2.SetHasHeadNote(true);
+                            sliderData2.SetHeadBeforeJumpLineLayer(EditorSpawnDataRepository.GetSpawnData(sliderTailData.slider).tailBeforeJumpLineLayer);
+                        }
+                    }
+                }
+                foreach (EditorSliderTailData sliderTailData2 in enumerable3)
+                {
+                    BaseSliderEditorData slider = sliderTailData2.slider;
+                    foreach (NoteEditorData noteData3 in enumerable)
+                    {
+                        if (SliderTailPositionOverlapsWithNote(slider, noteData3))
+                        {
+                            slider.SetHasTailNote(true);
+                            slider.SetTailBeforeJumpLineLayer(EditorSpawnDataRepository.GetSpawnData(noteData3).beforeJumpNoteLineLayer);
+                        }
                     }
                 }
             }
@@ -379,60 +393,63 @@ namespace EditorEX.Essentials.SpawnProcessing
 
         private void HandleCurrentTimeSliceColorNotesDidFinishTimeSlice(EditorTimeSliceContainer<NoteEditorData> currentTimeSlice, float nextTimeSliceTime)
         {
-            float offset = 4 / 2f;
-            IReadOnlyList<NoteEditorData> colorNotesData = currentTimeSlice.items;
-            int customNoteCount = colorNotesData.Count;
-            if (customNoteCount != 2)
-            {
-                return;
-            }
+            bool v2 = MapContext.Version.Major == 2;
 
-            bool v2 = CustomDataRepository.GetBeatmapData().version.Major == 2;
-
-            float[] lineIndexes = new float[2];
-            float[] lineLayers = new float[2];
-            for (int i = 0; i < 2; i++)
+            if (MapContext.Version.Major < 4)
             {
-                if (colorNotesData[i] is not NoteEditorData noteData)
+                float offset = 4 / 2f;
+                IReadOnlyList<NoteEditorData> colorNotesData = currentTimeSlice.items;
+                int customNoteCount = colorNotesData.Count;
+                if (customNoteCount != 2)
                 {
-                    continue;
+                    return;
                 }
 
-                CustomData customData = noteData.GetCustomData();
-                IEnumerable<float?>? position = customData.GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
-                lineIndexes[i] = position?.ElementAtOrDefault(0) + offset ?? colorNotesData[i].column;
-                lineLayers[i] = position?.ElementAtOrDefault(1) ?? (float)colorNotesData[i].row;
-            }
-
-            if (colorNotesData[0].type == colorNotesData[1].type ||
-                ((colorNotesData[0].type != ColorType.ColorA || !(lineIndexes[0] > lineIndexes[1])) &&
-                 (colorNotesData[0].type != ColorType.ColorB || !(lineIndexes[0] < lineIndexes[1]))))
-            {
-                return;
-            }
-
-            for (int i = 0; i < 2; i++)
-            {
-                if (colorNotesData[i] is not NoteEditorData noteData)
+                float[] lineIndexes = new float[2];
+                float[] lineLayers = new float[2];
+                for (int i = 0; i < 2; i++)
                 {
-                    continue;
+                    if (colorNotesData[i] is not NoteEditorData noteData)
+                    {
+                        continue;
+                    }
+
+                    CustomData customData = noteData.GetCustomData();
+                    IEnumerable<float?>? position = customData.GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)?.ToList();
+                    lineIndexes[i] = position?.ElementAtOrDefault(0) + offset ?? colorNotesData[i].column;
+                    lineLayers[i] = position?.ElementAtOrDefault(1) ?? (float)colorNotesData[i].row;
                 }
 
-                // apparently I can use customData to store my own variables in noteData, neat
-                // ^ comment from a very young and naive aero
-                CustomData customData = noteData.GetCustomData();
-                customData[INTERNAL_FLIPLINEINDEX] = lineIndexes[1 - i];
-
-                float flipYSide = (lineIndexes[i] > lineIndexes[1 - i]) ? 1 : -1;
-                if ((lineIndexes[i] > lineIndexes[1 - i] &&
-                     lineLayers[i] < lineLayers[1 - i]) ||
-                    (lineIndexes[i] < lineIndexes[1 - i] &&
-                     lineLayers[i] > lineLayers[1 - i]))
+                if (colorNotesData[0].type == colorNotesData[1].type ||
+                    ((colorNotesData[0].type != ColorType.ColorA || !(lineIndexes[0] > lineIndexes[1])) &&
+                     (colorNotesData[0].type != ColorType.ColorB || !(lineIndexes[0] < lineIndexes[1]))))
                 {
-                    flipYSide *= -1f;
+                    return;
                 }
 
-                customData[INTERNAL_FLIPYSIDE] = flipYSide;
+                for (int i = 0; i < 2; i++)
+                {
+                    if (colorNotesData[i] is not NoteEditorData noteData)
+                    {
+                        continue;
+                    }
+
+                    // apparently I can use customData to store my own variables in noteData, neat
+                    // ^ comment from a very young and naive aero
+                    CustomData customData = noteData.GetCustomData();
+                    customData[INTERNAL_FLIPLINEINDEX] = lineIndexes[1 - i];
+
+                    float flipYSide = (lineIndexes[i] > lineIndexes[1 - i]) ? 1 : -1;
+                    if ((lineIndexes[i] > lineIndexes[1 - i] &&
+                         lineLayers[i] < lineLayers[1 - i]) ||
+                        (lineIndexes[i] < lineIndexes[1 - i] &&
+                         lineLayers[i] > lineLayers[1 - i]))
+                    {
+                        flipYSide *= -1f;
+                    }
+
+                    customData[INTERNAL_FLIPYSIDE] = flipYSide;
+                }
             }
 
             IReadOnlyList<NoteEditorData> items = currentTimeSlice.items;
@@ -498,21 +515,21 @@ namespace EditorEX.Essentials.SpawnProcessing
             float num = ((noteData3.cutDirection == NoteCutDirection.Any) ? new Vector2(0f, 1f) : noteData3.cutDirection.Direction()).SignedAngleToLine(vector);
             if (noteData4.cutDirection == NoteCutDirection.Any && noteData3.cutDirection == NoteCutDirection.Any)
             {
-                noteData3.SetField("angle", (int)num);
-                noteData4.SetField("angle", (int)num);
+                noteData3.SetCutDirectionAngleOffset(num);
+                noteData4.SetCutDirectionAngleOffset(num);
                 return;
             }
             if (Mathf.Abs(num) > 40f)
             {
                 return;
             }
-            noteData3.SetField("angle", (int)num);
+            noteData3.SetCutDirectionAngleOffset(num);
             if (noteData4.cutDirection == NoteCutDirection.Any && !noteData3.cutDirection.IsMainDirection())
             {
-                noteData4.SetField("angle", (int)num + 45);
+                noteData4.SetCutDirectionAngleOffset(num + 45f);
                 return;
             }
-            noteData4.SetField("angle", (int)num);
+            noteData4.SetCutDirectionAngleOffset(num);
         }
 
         private static bool SliderHeadPositionOverlapsWithNote(BaseSliderEditorData slider, NoteEditorData note)

@@ -1,4 +1,5 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
@@ -24,24 +25,27 @@ namespace EditorEX.Essentials.Movement.Note
         private IAudioTimeSource _audioTimeSyncController;
         private AnimationHelper _animationHelper;
         private EditorDeserializedData _editorDeserializedData;
+        private AudioDataModel _audioDataModel;
 
         [Inject]
         public void Construct(
             PlayerTransforms playerTransforms,
             IAudioTimeSource audioTimeSyncController,
             AnimationHelper animationHelper,
-            [Inject(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData)
+            [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData,
+            AudioDataModel audioDataModel)
         {
             _playerTransforms = playerTransforms;
             _audioTimeSyncController = audioTimeSyncController;
             _animationHelper = animationHelper;
             _editorDeserializedData = editorDeserializedData;
+            _audioDataModel = audioDataModel;
         }
 
         public void Init(NoteEditorData editorData, float beatTime, float worldRotation, Vector3 startPos, Vector3 endPos, float jumpDuration, float gravity, float flipYSide, float endRotation, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData;
-            if (!_editorDeserializedData.Resolve(_editorData, out NoodleData))
+            if (!(_editorDeserializedData?.Resolve(editorData, out NoodleData) ?? false))
             {
                 NoodleData = null;
             }
@@ -186,7 +190,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         private float _yAvoidanceDown = 0.15f;
 
-        private float _endDistanceOffset = 100f;
+        private float _endDistanceOffset = 500f;
 
         internal Vector3 _startPos;
 
@@ -224,6 +228,6 @@ namespace EditorEX.Essentials.Movement.Note
 
         internal Quaternion _worldRotation;
 
-        internal Quaternion _inverseWorldRotation; 
+        internal Quaternion _inverseWorldRotation;
     }
 }

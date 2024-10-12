@@ -16,16 +16,16 @@ namespace EditorEX.Chroma.Patches
         private static readonly MethodInfo _oldConvert = AccessTools.Method(typeof(BeatmapBasicEventConverter), "ConvertBasicEvent", null, null);
         private static readonly MethodInfo _newConvert = AccessTools.Method(typeof(InjectCustomDataIntoLivePreview), "ConvertBasicEvent", null, null);
 
-        BeatmapEventData ConvertBasicEvent(BasicEventEditorData e, IBeatToTimeConverter timeConverter)
+        BeatmapEventData ConvertBasicEvent(BasicEventEditorData e)
         {
             BeatmapEventData result;
             if (e.type == BasicBeatmapEventType.Event5)
             {
-                result = new CustomColorBoostBeatmapEventData(timeConverter.ConvertBeatToTime(e.beat), e.value == 1, CustomDataRepository.GetCustomData(e), MapContext.Version);
+                result = new CustomColorBoostBeatmapEventData(e.beat, e.value == 1, CustomDataRepository.GetCustomData(e), MapContext.Version);
             }
             else
             {
-                result = new CustomBasicBeatmapEventData(timeConverter.ConvertBeatToTime(e.beat), e.type, e.value, e.floatValue, CustomDataRepository.GetCustomData(e), MapContext.Version);
+                result = new CustomBasicBeatmapEventData(e.beat, e.type, e.value, e.floatValue, CustomDataRepository.GetCustomData(e), MapContext.Version);
             }
             CustomDataRepository.AddBasicEventConversion(e, result);
             return result;
@@ -33,9 +33,9 @@ namespace EditorEX.Chroma.Patches
 
         [AffinityPatch(typeof(BeatmapBasicEventConverter), nameof(BeatmapBasicEventConverter.ConvertBasicEvent))]
         [AffinityPrefix]
-        public bool Prefix(BasicEventEditorData e, IBeatToTimeConverter timeConverter, ref BeatmapEventData __result)
+        public bool Prefix(BasicEventEditorData e, ref BeatmapEventData __result)
         {
-            __result = ConvertBasicEvent(e, timeConverter);
+            __result = ConvertBasicEvent(e);
             return false;
         }
 

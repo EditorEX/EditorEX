@@ -21,12 +21,18 @@ namespace EditorEX.Heck.Deserialize
         private static readonly HashSet<EditorDataDeserializer> _customDataDeserializers = new();
         private BeatmapObjectsDataModel _objectDataModel;
         private BeatmapBasicEventsDataModel _eventsDataModel;
+        private BeatmapLevelDataModel _beatmapLevelDataModel;
 
-        private EditorDeserializerManager(SiraLog log, BeatmapObjectsDataModel objectDataModel, BeatmapBasicEventsDataModel eventsDataModel)
+        private EditorDeserializerManager(
+            SiraLog log,
+            BeatmapObjectsDataModel objectDataModel, 
+            BeatmapBasicEventsDataModel eventsDataModel,
+            PopulateBeatmap populateBeatmap)
         {
             _log = log;
             _objectDataModel = objectDataModel;
             _eventsDataModel = eventsDataModel;
+            _beatmapLevelDataModel = populateBeatmap._beatmapLevelDataModel;
         }
 
         internal static EditorDataDeserializer Register<T>(string id)
@@ -170,7 +176,7 @@ namespace EditorEX.Heck.Deserialize
             // Currently used by Chroma.GameObjectTrackController
             beatmapTracks = trackManager.Tracks;
 
-            float bpm = PopulateBeatmap._beatmapLevelDataModel.beatsPerMinute;
+            float bpm = _beatmapLevelDataModel.beatsPerMinute;
 
             object[] inputs =
             {

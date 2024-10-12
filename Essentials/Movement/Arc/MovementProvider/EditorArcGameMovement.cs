@@ -1,4 +1,5 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Visuals;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.SpawnProcessing;
@@ -23,6 +24,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         private IReadonlyBeatmapState _state;
         private ColorManager _colorManager;
         private IAudioTimeSource _audioTimeSyncController;
+        private AudioDataModel _audioDataModel;
 
         // Arc related fields
         private LengthType _lengthType;
@@ -58,11 +60,13 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         private EditorSliderIntensityEffect _sliderIntensityEffect;
 
         [Inject]
-        private void Construct([Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+        private void Construct(
+            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
             IReadonlyBeatmapState state,
             ColorManager colorManager,
-            IAudioTimeSource audioTimeSyncController)
+            IAudioTimeSource audioTimeSyncController,
+            AudioDataModel audioDataModel)
         {
             _randomValue = UnityEngine.Random.value; // Set this here insted of Init to avoid random value changing during reinits
 
@@ -71,13 +75,14 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             _state = state;
             _colorManager = colorManager;
             _audioTimeSyncController = audioTimeSyncController;
+            _audioDataModel = audioDataModel;
         }
 
-        public static LengthType GetLengthFromSliderData(BaseSliderEditorData sliderNoteData, BeatmapObjectSpawnMovementData.SliderSpawnData sliderSpawnData)
+        public LengthType GetLengthFromSliderData(BaseSliderEditorData sliderNoteData, BeatmapObjectSpawnMovementData.SliderSpawnData sliderSpawnData)
         {
             float jumpDuration = sliderSpawnData.jumpDuration;
             float num = (sliderSpawnData.headJumpEndPos.z - sliderSpawnData.headJumpStartPos.z) / jumpDuration;
-            float num2 = sliderNoteData.beat - sliderNoteData.tailBeat;
+            float num2 = _audioDataModel.bpmData.BeatToSeconds(sliderNoteData.beat) - _audioDataModel.bpmData.BeatToSeconds(sliderNoteData.tailBeat);
             float num3 = num * num2;
             if (num3 >= 15f)
             {
@@ -104,9 +109,22 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             materialPropertyBlockController.ApplyChanges();
         }
 
-        private SliderData CreateSliderData(float controlPointLength, NoteCutDirection cutDirection, float tailControlPointLength, NoteCutDirection tailCutDirection, SliderMidAnchorMode midAnchorMode)
+        private SliderData CreateSliderData(float headTime, float tailTime, float controlPointLength, NoteCutDirection cutDirection, float tailControlPointLength, NoteCutDirection tailCutDirection, SliderMidAnchorMode midAnchorMode)
         {
-            return SliderData.CreateSliderData(ColorType.None, 0f, _sliderEditorData.column, (NoteLineLayer)_sliderEditorData.row, (NoteLineLayer)_sliderEditorData.row, controlPointLength, cutDirection, 1f, _sliderEditorData.tailColumn, (NoteLineLayer)_sliderEditorData.tailRow, (NoteLineLayer)_sliderEditorData.tailRow, tailControlPointLength, tailCutDirection, midAnchorMode);
+            return SliderData.CreateSliderData(
+                ColorType.None, 
+                headTime, 
+                _audioDataModel.bpmData.SecondsToBeat(headTime),
+                _sliderEditorData.column, 
+                (NoteLineLayer)_sliderEditorData.row, 
+                (NoteLineLayer)_sliderEditorData.row, 
+                controlPointLength, cutDirection, 
+                tailTime, _sliderEditorData.tailColumn, 
+                (NoteLineLayer)_sliderEditorData.tailRow, 
+                (NoteLineLayer)_sliderEditorData.tailRow, 
+                tailControlPointLength, 
+                tailCutDirection, 
+                midAnchorMode);
         }
 
         public void SetInitialProperties(MaterialPropertyBlockController materialPropertyBlock, float noteJumpMovementSpeed)
@@ -121,26 +139,29 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             _materialPropertyBlockController = arcvView._arcMaterialPropertyBlockController;
             _sliderIntensityEffect = GetComponent<EditorSliderIntensityEffect>();
 
+            _sliderEditorData = editorData as ArcEditorData;
+
             var material = _sliderMeshController.GetComponent<MeshRenderer>().sharedMaterial;
             material.enabledKeywords = material.enabledKeywords.Where(x => x.name != "BEATMAP_EDITOR_ONLY").ToArray();
 
+            float headTime = _audioDataModel.bpmData.BeatToSeconds(_sliderEditorData.beat);
+            float tailTime = _audioDataModel.bpmData.BeatToSeconds(_sliderEditorData.tailBeat);
+
             _editorBeatmapObjectSpawnMovementData = movementData;
-            _sliderEditorData = editorData as ArcEditorData;
-            _sliderData = CreateSliderData(_sliderEditorData.controlPointLengthMultiplier, _sliderEditorData.cutDirection, _sliderEditorData.tailControlPointLengthMultiplier, _sliderEditorData.tailCutDirection, _sliderEditorData.midAnchorMode);
+            _sliderData = CreateSliderData(headTime, tailTime, _sliderEditorData.controlPointLengthMultiplier, _sliderEditorData.cutDirection, _sliderEditorData.tailControlPointLengthMultiplier, _sliderEditorData.tailCutDirection, _sliderEditorData.midAnchorMode);
 
             var sliderSpawnData = _editorBeatmapObjectSpawnMovementData.GetSliderSpawnData(_sliderEditorData);
 
             float worldRotation = 0f;
 
             _lengthType = GetLengthFromSliderData(_sliderEditorData, sliderSpawnData);
-            //this._cutoutAnimateEffect.ResetEffect();
-            MovementInit(_sliderEditorData.beat, _sliderEditorData.tailBeat, worldRotation, sliderSpawnData.headJumpStartPos, sliderSpawnData.headJumpEndPos, sliderSpawnData.jumpDuration, sliderSpawnData.headJumpGravity, sliderSpawnData.tailJumpGravity);
-            _sliderDuration = _sliderEditorData.tailBeat - _sliderEditorData.beat;
+            MovementInit(headTime, tailTime, worldRotation, sliderSpawnData.headJumpStartPos, sliderSpawnData.headJumpEndPos, sliderSpawnData.jumpDuration, sliderSpawnData.headJumpGravity, sliderSpawnData.tailJumpGravity);
+            _sliderDuration = tailTime - headTime;
             _initColor = _colorManager.ColorForType(_sliderEditorData.colorType);
             float num = sliderSpawnData.jumpDuration * 0.5f;
             _sliderIntensityEffect.Init(_sliderDuration, num, EditorSpawnDataRepository.GetSpawnData(editorData).hasHeadNote);
             float noteJumpMovementSpeed = _editorBeatmapObjectSpawnMovementData.noteJumpMovementSpeed;
-            _zDistanceBetweenNotes = (_sliderEditorData.tailBeat - _sliderEditorData.beat) * noteJumpMovementSpeed;
+            _zDistanceBetweenNotes = (tailTime - headTime) * noteJumpMovementSpeed;
             _jumpDistance = noteJumpMovementSpeed * sliderSpawnData.jumpDuration;
             Vector3 vector = new Vector3(sliderSpawnData.headJumpEndPos.x, sliderSpawnData.headJumpStartPos.y + _headNoteGravity * num * num * 0.5f, 0f);
             Vector3 vector2 = new Vector3(sliderSpawnData.tailJumpEndPos.x, sliderSpawnData.tailJumpStartPos.y + _tailNoteGravity * num * num * 0.5f, _zDistanceBetweenNotes);
@@ -165,10 +186,6 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 
         public void Setup(BaseEditorData editorData)
         {
-            if (!_editorDeserializedData.Resolve(editorData, out EditorNoodleSliderData? noodleData))
-            {
-                return;
-            }
         }
 
         public void ManualUpdate()
@@ -185,7 +202,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             float num = songTime - (_tailNoteTime - _jumpDuration * 0.5f);
             float num2 = _timeSinceHeadNoteJump / _jumpDuration;
             float num3 = num / _jumpDuration;
-            _localPosition.z = Mathf.LerpUnclamped(_headNoteJumpStartPos.z, _headNoteJumpEndPos.z, num2);
+            _localPosition.z = Mathf.LerpUnclamped(_headNoteJumpStartPos.z, _headNoteJumpEndPos.z, num2) + 0.225f;
             Vector3 vector = _worldRotation * _localPosition;
             transform.localPosition = vector;
             if (!_headDidMovePastCutMarkReported && num2 > 0.5f)

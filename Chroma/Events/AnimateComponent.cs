@@ -25,7 +25,7 @@ namespace EditorEX.Chroma.Events
         private readonly IBpmController _bpmController;
         private readonly IAudioTimeSource _audioTimeSource;
         private readonly CoroutineDummy _coroutineDummy;
-        private readonly EditorDeserializedData _deserializedData;
+        private readonly EditorDeserializedData _editorDeserializedData;
         private readonly Dictionary<string, Dictionary<Track, Coroutine>> _allCoroutines = new();
 
         [UsedImplicitly]
@@ -33,17 +33,17 @@ namespace EditorEX.Chroma.Events
             IBpmController bpmController,
             IAudioTimeSource audioTimeSource,
             CoroutineDummy coroutineDummy,
-            [Inject(Id = "Chroma")] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData)
         {
             _bpmController = bpmController;
             _audioTimeSource = audioTimeSource;
             _coroutineDummy = coroutineDummy;
-            _deserializedData = deserializedData;
+            _editorDeserializedData = deserializedData;
         }
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out ChromaAnimateComponentData? chromaData))
+            if (!_editorDeserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out ChromaAnimateComponentData? chromaData))
             {
                 return;
             }
@@ -52,7 +52,7 @@ namespace EditorEX.Chroma.Events
             duration = 60f * duration / _bpmController.currentBpm; // Convert to real time;
 
             Functions easing = chromaData.Easing;
-            List<Track> tracks = chromaData.Track;
+            IReadOnlyList<Track> tracks = chromaData.Track;
 
             foreach ((string componentName, Dictionary<string, PointDefinition<float>?> properties) in chromaData.CoroutineInfos)
             {

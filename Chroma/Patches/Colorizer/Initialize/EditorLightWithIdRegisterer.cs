@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Chroma.Lighting;
 using EditorEX.Chroma.Colorizer;
-using Chroma.Colorizer;
-using Chroma.Lighting;
 using SiraUtil.Affinity;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Chroma.HarmonyPatches.Colorizer.Initialize
+namespace EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize
 {
     internal class EditorLightWithIdRegisterer : IAffinity
     {

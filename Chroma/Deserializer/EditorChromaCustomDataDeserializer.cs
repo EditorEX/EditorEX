@@ -5,8 +5,8 @@ using EditorEX.Chroma.Events;
 using EditorEX.Chroma.Lighting;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
-using EditorEX.CustomJSONData.Util;
 using EditorEX.Heck.Deserialize;
+using EditorEX.Util;
 using Heck.Animation;
 using Heck.Deserialize;
 using IPA.Utilities;
@@ -14,7 +14,6 @@ using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using static EditorEX.Chroma.Constants;
 
 namespace EditorEX.Chroma.Deserializer

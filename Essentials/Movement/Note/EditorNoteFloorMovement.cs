@@ -1,4 +1,5 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
@@ -29,14 +30,14 @@ namespace EditorEX.Essentials.Movement.Note
 
         public Vector3 localPosition => _localPosition;
 
-        [Inject(Id = "NoodleExtensions")] private EditorDeserializedData _editorDeserializedData;
+        [InjectOptional(Id = "NoodleExtensions")] private EditorDeserializedData _editorDeserializedData;
 
         [Inject] private AnimationHelper _animationHelper;
 
         public void Init(NoteEditorData editorData, float worldRotation, Vector3 startPos, Vector3 endPos, float moveDuration, float startTime, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData;
-            if (!_editorDeserializedData.Resolve(_editorData, out NoodleData))
+            if (!(_editorDeserializedData?.Resolve(editorData, out NoodleData) ?? false))
             {
                 NoodleData = null;
             }

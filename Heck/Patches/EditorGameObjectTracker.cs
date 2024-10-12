@@ -2,10 +2,12 @@
 using BeatmapEditor3D.Views;
 using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.ObjectData;
+using EditorEX.MapData.Contexts;
 using HarmonyLib;
 using Heck.Animation;
 using SiraUtil.Affinity;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using UnityEngine;
@@ -24,7 +26,7 @@ namespace EditorEX.Heck.Patches
         private IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
-                .End().Advance(-1) // before ret
+                .End() // before ret
                 .Insert(new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_1),
@@ -51,7 +53,7 @@ namespace EditorEX.Heck.Patches
         private IEnumerable<CodeInstruction> TranspilerRemoveNote(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
-                .End().Advance(-1) // before ret
+                .End() // before ret
                 .Insert(new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_0),
@@ -66,14 +68,15 @@ namespace EditorEX.Heck.Patches
         private IEnumerable<CodeInstruction> TranspilerObstacle(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
-                .End().Advance(-1) // before ret
+                .End() // before ret
                 .Insert(new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_1),
                     new CodeInstruction(OpCodes.Ldloc_2),
                     new CodeInstruction(OpCodes.Call, _addObject)
                 }).InstructionEnumeration();
-            return result;
+            //return result;
+            return instructions;
         }
 
         [AffinityPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.DeleteObject))]
@@ -88,7 +91,8 @@ namespace EditorEX.Heck.Patches
                     new CodeInstruction(OpCodes.Ldloc_0),
                     new CodeInstruction(OpCodes.Call, _removeObject)
                 }).InstructionEnumeration();
-            return result;
+            //return result;
+            return instructions;
         }
 
         [AffinityPatch(typeof(ChainBeatmapObjectsView), nameof(ChainBeatmapObjectsView.InsertObject))]
@@ -96,7 +100,7 @@ namespace EditorEX.Heck.Patches
         private IEnumerable<CodeInstruction> TranspilerChain(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
-                .End().Advance(-1) // before ret
+                .End() // before ret
                 .Insert(new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_1),
@@ -106,12 +110,12 @@ namespace EditorEX.Heck.Patches
             return result;
         }
 
-        [AffinityPatch(typeof(ObstacleBeatmapObjectView), nameof(ChainBeatmapObjectsView.DeleteObject))]
+        [AffinityPatch(typeof(ChainBeatmapObjectsView), nameof(ChainBeatmapObjectsView.DeleteObject))]
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerRemoveChain(IEnumerable<CodeInstruction> instructions)
         {
             var result = new CodeMatcher(instructions, null)
-                .End().Advance(-1) // before ret
+                .End()// before ret
                 .Insert(new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_1),
@@ -153,16 +157,26 @@ namespace EditorEX.Heck.Patches
 
         private static void AddObject(BaseEditorData editorData, GameObject obj)
         {
-            if (!TryGetTrack(editorData, out List<Track> track))
+            if (MapContext.Version.Major > 3)
             {
                 return;
             }
 
+            if (!TryGetTrack(editorData, out List<Track> track))
+            {
+                return;
+            }
+            //Debug.Log("Adding object to track " + editorData.beat);
             track.ForEach(n => n.AddGameObject(obj));
         }
 
         private static void RemoveObject(BaseEditorData editorData, Component obj)
         {
+            if (MapContext.Version.Major > 3)
+            {
+                return;
+            }
+
             if (!TryGetTrack(editorData, out List<Track> track))
             {
                 return;

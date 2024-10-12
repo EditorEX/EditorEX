@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using CustomJSONData.CustomBeatmap;
+using EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize;
 using EditorEX.Chroma.Colorizer;
-using Chroma.Colorizer;
-using Chroma.HarmonyPatches.Colorizer.Initialize;
-using CustomJSONData.CustomBeatmap;
 using JetBrains.Annotations;
 using SiraUtil.Logging;
+using System.Collections.Generic;
+using System.Linq;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
 
-namespace Chroma.EnvironmentEnhancement.Component
+namespace EditorEx.Chroma.EnvironmentEnhancement.Component
 {
     internal class EditorILightWithIdCustomizer
     {

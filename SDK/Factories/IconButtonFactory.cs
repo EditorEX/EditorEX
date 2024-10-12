@@ -1,12 +1,12 @@
 ﻿using BeatSaberMarkupLanguage;
-using EditorEX.UI.Collectors;
+using EditorEX.SDK.Collectors;
 using HMUI;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using Zenject;
 
-namespace EditorEX.UI.Factories
+namespace EditorEX.SDK.Factories
 {
     // This class MUST be injected using Zenject. You cannot create it manually.
     public class IconButtonFactory
@@ -16,7 +16,7 @@ namespace EditorEX.UI.Factories
 
         [Inject]
         private void Construct(
-            PrefabCollector prefabCollector, 
+            PrefabCollector prefabCollector,
             DiContainer container)
         {
             _prefabCollector = prefabCollector;

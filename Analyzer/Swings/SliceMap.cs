@@ -1,4 +1,5 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using EditorEX;
 using EditorEX.Essentials.Patches;
 using System;
@@ -124,6 +125,7 @@ public class SliceMap
     private static bool _rightHand;
     private int _playerXOffset = 0;
     private float _lastWallTime = 0;
+    private AudioDataModel _audioDataModel;
 
     public int GetSliceCount()
     {
@@ -135,8 +137,10 @@ public class SliceMap
         return Cuts[index];
     }
 
-    public SliceMap(List<NoteEditorData> blocks, List<ObstacleEditorData> walls, bool isRightHand)
+    public SliceMap(List<NoteEditorData> blocks, List<ObstacleEditorData> walls, bool isRightHand, AudioDataModel audioDataModel)
     {
+        _audioDataModel = audioDataModel;
+
         var stopwatch = new System.Diagnostics.Stopwatch();
         stopwatch.Start();
         _blocks = new List<NoteEditorData>(blocks);
@@ -180,15 +184,16 @@ public class SliceMap
 
             // If precision falls under "Slider", or time stamp is the same, run
             // checks to figure out if it is a slider, window, stack ect..
-            if (Mathf.Abs(currentNote.beat - nextNote.beat) <= sliderPrecision) {
+            if (Mathf.Abs(currentNote.beat - nextNote.beat) <= sliderPrecision)
+            {
                 if ((int)nextNote.cutDirection == 8 || (int)notesInSwing.Last().cutDirection == 8 ||
                     currentNote.cutDirection == nextNote.cutDirection || Mathf.Abs(ForehandDict[(int)currentNote.cutDirection] - ForehandDict[(int)nextNote.cutDirection]) <= 45 ||
                      Mathf.Abs(BackhandDict[(int)currentNote.cutDirection] - BackhandDict[(int)nextNote.cutDirection]) <= 45)
-                    { continue; }
+                { continue; }
             }
-            
+
             // Re-order the notesInCut in the event all the notes are on the same snap and not dots
-            if(notesInSwing.All(x => (int)x.cutDirection != 8) && notesInSwing.Count > 1)
+            if (notesInSwing.All(x => (int)x.cutDirection != 8) && notesInSwing.Count > 1)
             {
                 // Find the two notes that are furthest apart
                 var furthestNotes = (from c1 in notesInSwing
@@ -205,9 +210,10 @@ public class SliceMap
                 Vector2 ATB = noteBPos - noteAPos;
 
                 Vector2 noteACutVector = directionalVectorToCutDirection.FirstOrDefault(x => x.Value == (int)noteA.cutDirection).Key;
-                if (Vector2.Dot(noteACutVector, ATB) < 0) {
+                if (Vector2.Dot(noteACutVector, ATB) < 0)
+                {
                     ATB = -ATB;   // B before A
-                } 
+                }
 
                 // Sort the cubes according to their position along the direction vector
                 notesInSwing.Sort((a, b) => Vector2.Dot(new Vector2(a.column, a.row) - new Vector2(noteA.column, noteA.row), ATB).CompareTo(Vector2.Dot(new Vector2(b.column, b.row) - new Vector2(noteA.column, noteA.row), ATB)));
@@ -223,8 +229,10 @@ public class SliceMap
             sData.SetEndPosition(notesInSwing.Last().column, notesInSwing.Last().row);
 
             // If first swing, figure out starting orientation based on cut direction
-            if (result.Count == 0) {
-                if (currentNote.cutDirection == 0 || (int)currentNote.cutDirection == 4 || (int)currentNote.cutDirection == 5) {
+            if (result.Count == 0)
+            {
+                if (currentNote.cutDirection == 0 || (int)currentNote.cutDirection == 4 || (int)currentNote.cutDirection == 5)
+                {
                     sData.sliceParity = Parity.Backhand;
 
                     sData.SetStartAngle(BackhandDict[(int)notesInSwing[0].cutDirection]);
@@ -240,7 +248,8 @@ public class SliceMap
             NoteEditorData lastNote = lastSwing.notesInCut.Last();
 
             // Re-order the notesInCut in the event all the notes are dots and same snap
-            if (sData.notesInCut.Count > 1 && sData.notesInCut.All(x => (int)x.cutDirection == 8)) {
+            if (sData.notesInCut.Count > 1 && sData.notesInCut.All(x => (int)x.cutDirection == 8))
+            {
                 sData.notesInCut = new(DotStackSort(lastSwing, sData.notesInCut));
                 sData.SetStartPosition(notesInSwing[0].column, notesInSwing[0].row);
                 sData.SetEndPosition(notesInSwing.Last().column, notesInSwing.Last().row);
@@ -268,13 +277,17 @@ public class SliceMap
 
             // Work out current player XOffset for bomb calculations
             List<ObstacleEditorData> wallsInBetween = walls.FindAll(x => x.beat > lastNote.beat && x.beat < notesInSwing.Last().beat);
-            if(wallsInBetween.Count != 0) {
-                foreach(ObstacleEditorData wall in wallsInBetween)
+            if (wallsInBetween.Count != 0)
+            {
+                foreach (ObstacleEditorData wall in wallsInBetween)
                 {
-                    if (wall.column == 1 || wall.column == 0 && wall.width > 1) {
+                    if (wall.column == 1 || wall.column == 0 && wall.width > 1)
+                    {
                         _playerXOffset = 1;
                         _lastWallTime = wall.beat;
-                    } else if (wall.column == 2) {
+                    }
+                    else if (wall.column == 2)
+                    {
                         _playerXOffset = -1;
                         _lastWallTime = wall.beat;
                     }
@@ -283,7 +296,7 @@ public class SliceMap
 
             // If time since dodged exceeds a set amount in seconds, undo dodge
             var undodgeCheckTime = 0.35f;
-            if (PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(notesInSwing.Last().beat - _lastWallTime) > undodgeCheckTime) { _playerXOffset = 0; }
+            if (_audioDataModel.bpmData.BeatToSeconds(notesInSwing.Last().beat - _lastWallTime) > undodgeCheckTime) { _playerXOffset = 0; }
 
             // Work out Parity
             List<NoteEditorData> bombsBetweenSwings = bombs.FindAll(x => x.beat > lastNote.beat && x.beat < notesInSwing.Last().beat);
@@ -334,7 +347,8 @@ public class SliceMap
 
     #region Dots and Bombs Checks
 
-    private List<NoteEditorData> DotStackSort(BeatCutData lastSwing, List<NoteEditorData> nextNotes) {
+    private List<NoteEditorData> DotStackSort(BeatCutData lastSwing, List<NoteEditorData> nextNotes)
+    {
 
         // Find the two notes that are furthest apart
         var furthestNotes = (from c1 in nextNotes
@@ -356,7 +370,8 @@ public class SliceMap
         // Convert the cut direction to a directional vector then do the dot product between noteA to noteB and last swing direction
         Vector2 noteACutVector = directionalVectorToCutDirection.FirstOrDefault(x => x.Value == opposingCutDict[lastNoteClosestCutDir]).Key;
 
-        if (Vector2.Dot(noteACutVector, ATB) < 0) {
+        if (Vector2.Dot(noteACutVector, ATB) < 0)
+        {
             ATB = -ATB;
         }
 
@@ -396,7 +411,8 @@ public class SliceMap
 
         int orientation = CutDirFromNoteToNote(lastNote, dotNote);
 
-        if (dotNote.column == lastNote.column && dotNote.row == lastNote.row) {
+        if (dotNote.column == lastNote.column && dotNote.row == lastNote.row)
+        {
             orientation = opposingCutDict[orientation];
         }
 
@@ -440,16 +456,19 @@ public class SliceMap
                 // Create a new swing with inverse parity to the last.
                 BeatCutData emptySwing = new BeatCutData();
                 emptySwing.sliceParity = (swings[i].sliceParity == Parity.Forehand) ? Parity.Backhand : Parity.Forehand;
-                emptySwing.sliceStartBeat = swings[i - 1].sliceEndBeat + PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(0.15f);
+                emptySwing.sliceStartBeat = swings[i - 1].sliceEndBeat + _audioDataModel.bpmData.BeatToSeconds(0.15f);
                 emptySwing.sliceEndBeat = emptySwing.sliceStartBeat + 0.2f;
                 emptySwing.SetStartPosition(lastNote.column, lastNote.row);
 
                 // If the last hit was a dot, pick the opposing direction based on parity.
                 float angle;
-                if ((int)lastNote.cutDirection == 8) {
+                if ((int)lastNote.cutDirection == 8)
+                {
                     angle = (emptySwing.sliceParity == Parity.Forehand) ?
                         ForehandDict[1] : BackhandDict[0];
-                } else {
+                }
+                else
+                {
                     // If the last hit was arrowed, figure out the opposing cut direction and use that.
                     angle = (emptySwing.sliceParity == Parity.Forehand) ?
                         ForehandDict[opposingCutDict[(int)lastNote.cutDirection]] :
@@ -525,7 +544,7 @@ public class SliceMap
     // Calculates the effective BPM of a swing
     private float SwingEBPM(float beatDiff)
     {
-        var seconds = PopulateBeatmap._audioDataModel.bpmData.BeatToSeconds(beatDiff);
+        var seconds = _audioDataModel.bpmData.BeatToSeconds(beatDiff);
         TimeSpan time = TimeSpan.FromSeconds(seconds);
 
         return (float)((60000 / time.TotalMilliseconds) / 2);

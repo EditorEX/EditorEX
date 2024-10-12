@@ -11,8 +11,8 @@ namespace EditorEX.Heck.Deserialize
     public class EditorDeserializedData
     {
         internal EditorDeserializedData(
-            Dictionary<CustomEventEditorData, ICustomEventCustomData> customEventCustomDatas, 
-            Dictionary<BasicEventEditorData, IEventCustomData> eventCustomDatas, 
+            Dictionary<CustomEventEditorData, ICustomEventCustomData> customEventCustomDatas,
+            Dictionary<BasicEventEditorData, IEventCustomData> eventCustomDatas,
             Dictionary<BaseEditorData, IObjectCustomData> objectCustomDatas)
         {
             _customEventCustomDatas = customEventCustomDatas;

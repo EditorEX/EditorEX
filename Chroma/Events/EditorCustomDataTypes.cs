@@ -2,9 +2,8 @@
 using Chroma;
 using Chroma.Lighting;
 using CustomJSONData.CustomBeatmap;
-using EditorEX.Chroma.Deserializer;
 using EditorEX.Chroma.Lighting;
-using EditorEX.CustomJSONData.Util;
+using EditorEX.Util;
 using Heck.Animation;
 using Heck.Deserialize;
 using System;
@@ -56,8 +55,8 @@ namespace EditorEX.Chroma.Events
                 {
                     GradientObject = new GradientObjectData(
                         gradientObject.Get<float>(V2_DURATION),
-                        CustomDataDeserializer.GetColorFromData(gradientObject, V2_START_COLOR) ?? Color.white,
-                        CustomDataDeserializer.GetColorFromData(gradientObject, V2_END_COLOR) ?? Color.white,
+                        gradientObject.GetColor(V2_START_COLOR) ?? Color.white,
+                        gradientObject.GetColor(V2_END_COLOR) ?? Color.white,
                         gradientObject.GetStringToEnum<Functions?>(V2_EASING) ?? Functions.easeLinear);
                 }
             }

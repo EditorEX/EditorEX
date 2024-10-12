@@ -17,7 +17,7 @@ namespace EditorEX.Chroma.Events
     internal class EditorFogAnimatorV2 : ITickable, IDisposable, ICustomEvent
     {
         private readonly BloomFogSO _bloomFog;
-        private readonly EditorDeserializedData _deserializedData;
+        private readonly EditorDeserializedData _editorDeserializedData;
 
         private readonly BloomFogEnvironmentParams _transitionFogParams;
         private Track? _track;
@@ -25,10 +25,10 @@ namespace EditorEX.Chroma.Events
         [UsedImplicitly]
         private EditorFogAnimatorV2(
             BloomFogSO bloomFog,
-            [Inject(Id = "Chroma")] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData)
         {
             _bloomFog = bloomFog;
-            _deserializedData = deserializedData;
+            _editorDeserializedData = deserializedData;
 
             _transitionFogParams = ScriptableObject.CreateInstance<BloomFogEnvironmentParams>();
             BloomFogEnvironmentParams defaultParams = bloomFog.defaultForParams;
@@ -41,7 +41,7 @@ namespace EditorEX.Chroma.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out ChromaAssignFogEventData? chromaData))
+            if (_editorDeserializedData?.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out ChromaAssignFogEventData? chromaData) ?? false)
             {
                 _track = chromaData.Track;
             }

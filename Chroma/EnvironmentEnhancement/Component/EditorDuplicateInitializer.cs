@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Chroma.HarmonyPatches.Colorizer.Initialize;
+﻿using Chroma.EnvironmentEnhancement;
+using Chroma.EnvironmentEnhancement.Component;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using Chroma.Settings;
+using EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize;
 using HarmonyLib;
 using Heck.Animation.Transform;
 using IPA.Utilities;
 using JetBrains.Annotations;
 using SiraUtil.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Chroma.EnvironmentEnhancement.Component
+namespace EditorEx.Chroma.EnvironmentEnhancement.Component
 {
     internal class EditorDuplicateInitializer
     {

@@ -15,14 +15,14 @@ namespace EditorEX.Chroma.Patches.Events
         private readonly Dictionary<TrackLaneRingsRotationEffect, ChromaRingsRotationEffect> _chromaRings = new();
 
         private readonly ChromaRingsRotationEffect.Factory _factory;
-        private readonly EditorDeserializedData _deserializedData;
+        private readonly EditorDeserializedData _editorDeserializedData;
 
         private EditorRingRotationChromafier(
             ChromaRingsRotationEffect.Factory factory,
-            [Inject(Id = ChromaController.ID)] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData)
         {
             _factory = factory;
-            _deserializedData = deserializedData;
+            _editorDeserializedData = deserializedData;
         }
 
         [AffinityPrefix]
@@ -70,7 +70,7 @@ namespace EditorEX.Chroma.Patches.Events
             float ____rotationFlexySpeed,
             TrackLaneRingsRotationEffectSpawner.RotationStepType ____rotationStepType)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(basicBeatmapEventData), out EditorChromaEventData? chromaData))
+            if (!_editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(basicBeatmapEventData), out EditorChromaEventData? chromaData))
             {
                 return false;
             }

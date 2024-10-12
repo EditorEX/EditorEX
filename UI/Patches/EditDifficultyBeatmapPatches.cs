@@ -1,13 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Views;
 using EditorEX.MapData.Contexts;
-using EditorEX.UI.Factories;
+using EditorEX.SDK.Factories;
 using SiraUtil.Affinity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,9 +10,9 @@ namespace EditorEX.UI.Patches
 {
     internal class EditDifficultyBeatmapPatches : IAffinity
     {
-        private IconButtonFactory _iconButtonFactory;               
+        private IconButtonFactory _iconButtonFactory;
 
-        public EditDifficultyBeatmapPatches(IconButtonFactory iconButtonFactory) 
+        public EditDifficultyBeatmapPatches(IconButtonFactory iconButtonFactory)
         {
             _iconButtonFactory = iconButtonFactory;
         }
@@ -37,7 +32,7 @@ namespace EditorEX.UI.Patches
             var difficultyLabel = __instance.transform.Find("DifficultyLabel");
             var button = __instance.transform?.Find("LabelWrapper")?.Find("ExIconButton")?.GetComponent<Button>();
 
-            if(difficultyLabel == null)
+            if (difficultyLabel == null)
             {
                 difficultyLabel = __instance.transform.Find("LabelWrapper").Find("DifficultyLabel");
             }

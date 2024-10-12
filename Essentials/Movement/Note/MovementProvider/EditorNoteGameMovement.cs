@@ -1,10 +1,15 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
+using BeatmapSaveDataVersion2_6_0AndEarlier;
+using EditorEX.CustomJSONData;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using Heck.Animation;
+using Heck.Deserialize;
+using Newtonsoft.Json;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
 using System;
@@ -49,25 +54,32 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
         private EditorDeserializedData _editorDeserializedData;
         private AnimationHelper _animationHelper;
         private IReadonlyBeatmapState _state;
+        private AudioDataModel _audioDataModel;
 
         [Inject]
-        private void Construct([Inject(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+        private void Construct(
+            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
-            IReadonlyBeatmapState state)
+            IReadonlyBeatmapState state,
+            AudioDataModel audioDataModel)
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
             _state = state;
+            _audioDataModel = audioDataModel;
         }
 
         public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
+            EditorNoodleBaseNoteData? noodleData = null;
+            _editorDeserializedData?.Resolve(editorData, out noodleData);
+
             _editorBeatmapObjectSpawnMovementData = movementData;
             var noteEditorData = editorData as NoteEditorData;
             var spawnDataAssociation = EditorSpawnDataRepository.GetSpawnData(editorData);
             var noteSpawnData = _editorBeatmapObjectSpawnMovementData.GetJumpingNoteSpawnData(noteEditorData);
 
-            float beatTime = editorData.beat;
+            float beatTime = _audioDataModel.bpmData.BeatToSeconds(editorData.beat);
             float worldRotation = 0f;
             Vector3 moveStartPos = noteSpawnData.moveStartPos;
             Vector3 moveEndPos = noteSpawnData.moveEndPos;
@@ -75,7 +87,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             float moveDuration = noteSpawnData.moveDuration;
             float jumpDuration = noteSpawnData.jumpDuration;
             float jumpGravity = noteSpawnData.jumpGravity;
-            float flipYSide = spawnDataAssociation.flipYSide;
+            float flipYSide = noodleData?.InternalFlipYSide ?? spawnDataAssociation.flipYSide;
             float endRotation = noteEditorData.cutDirection.RotationAngle() + spawnDataAssociation.cutDirectionAngleOffset;
 
             moveStartPos.z += _zOffset;
@@ -93,7 +105,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 
             //NoteController.Init postfix for noodle(lol)
 
-            if (_editorDeserializedData.Resolve(editorData, out EditorNoodleBaseNoteData? noodleData))
+            if (noodleData != null)
             {
                 float zOffset = _zOffset;
                 moveStartPos.z += zOffset;
@@ -195,7 +207,8 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 
         public void Setup(BaseEditorData editorData)
         {
-            if (!_editorDeserializedData.Resolve(editorData, out EditorNoodleBaseNoteData? noodleData))
+            EditorNoodleBaseNoteData? noodleData = null;
+            if (!(_editorDeserializedData?.Resolve(editorData, out noodleData) ?? false))
             {
                 return;
             }
@@ -216,7 +229,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             else
             {
                 float jumpDuration = _jump.jumpDuration;
-                float elapsedTime = _state.beat - (editorData.beat - (jumpDuration * 0.5f));
+                float elapsedTime = _audioDataModel.bpmData.BeatToSeconds(_state.beat) - (_audioDataModel.bpmData.BeatToSeconds(editorData.beat) - (jumpDuration * 0.5f));
                 normalTime = elapsedTime / jumpDuration;
             }
 

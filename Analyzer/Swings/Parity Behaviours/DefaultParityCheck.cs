@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public interface IParityMethod {
+public interface IParityMethod
+{
     Parity ParityCheck(BeatCutData lastCut, ref BeatCutData currentSwing, List<NoteEditorData> bombs, float playerXOffset, bool rightHand);
     bool UpsideDown { get; }
 }
@@ -85,7 +86,7 @@ public class DefaultParityCheck : IParityMethod
             SliceMap.ForehandDict[(int)lastCut.notesInCut[0].cutDirection];
 
         int orient = (int)nextNote.cutDirection;
-        if(orient == 8) orient = (lastCut.sliceParity == Parity.Forehand) ?
+        if (orient == 8) orient = (lastCut.sliceParity == Parity.Forehand) ?
                 SliceMap.BackhandDict.FirstOrDefault(x => x.Value == Math.Round(lastCut.endPositioning.angle / 45.0) * 45).Key :
                 SliceMap.ForehandDict.FirstOrDefault(x => x.Value == Math.Round(lastCut.endPositioning.angle / 45.0) * 45).Key;
 
@@ -97,10 +98,12 @@ public class DefaultParityCheck : IParityMethod
         _upsideDown = false;
 
         // Determines if potentially an upside down hit based on note cut direction and last swing angle
-        if (lastCut.sliceParity == Parity.Backhand && lastCut.endPositioning.angle > 0 && ((int)nextNote.cutDirection == 0 || (int)nextNote.cutDirection == 8)) {
+        if (lastCut.sliceParity == Parity.Backhand && lastCut.endPositioning.angle > 0 && ((int)nextNote.cutDirection == 0 || (int)nextNote.cutDirection == 8))
+        {
             _upsideDown = true;
         }
-        else if (lastCut.sliceParity == Parity.Forehand && lastCut.endPositioning.angle > 0 && ((int)nextNote.cutDirection == 1 || (int)nextNote.cutDirection == 8)) {
+        else if (lastCut.sliceParity == Parity.Forehand && lastCut.endPositioning.angle > 0 && ((int)nextNote.cutDirection == 1 || (int)nextNote.cutDirection == 8))
+        {
             _upsideDown = true;
         }
 
@@ -111,9 +114,11 @@ public class DefaultParityCheck : IParityMethod
         // Checks whether resetting will cause another reset, which helps to catch some edge cases
         // in bomb detection where it triggers for decor bombs.
         bool bombResetParityImplied = false;
-        if (bombResetIndicated) {
+        if (bombResetIndicated)
+        {
             if ((int)nextNote.cutDirection == 8 && lastCut.notesInCut.All(x => (int)x.cutDirection == 8)) bombResetParityImplied = true;
-            else {
+            else
+            {
                 // In case of dots, calculate using previous swing swing-angle
                 int altOrient = (lastCut.sliceParity == Parity.Forehand) ?
                         SliceMap.ForehandDict.FirstOrDefault(x => x.Value == Math.Round(lastCut.endPositioning.angle / 45.0) * 45).Key :
@@ -122,7 +127,8 @@ public class DefaultParityCheck : IParityMethod
                 if (lastCut.sliceParity == Parity.Forehand)
                 {
                     if (Mathf.Abs(SliceMap.ForehandDict[altOrient] + SliceMap.BackhandDict[(int)nextNote.cutDirection]) >= 90) { bombResetParityImplied = true; }
-                } else
+                }
+                else
                 {
                     if (Mathf.Abs(SliceMap.BackhandDict[altOrient] + SliceMap.ForehandDict[(int)nextNote.cutDirection]) >= 90) { bombResetParityImplied = true; }
                 }
@@ -137,11 +143,15 @@ public class DefaultParityCheck : IParityMethod
         }
 
         // AKA, If a 180 anticlockwise (right) clockwise (left) rotation
-        if (lastCut.endPositioning.angle == 180) {
+        if (lastCut.endPositioning.angle == 180)
+        {
             var altNextAFN = 180 + nextAFN;
-            if(altNextAFN >= 0) {
+            if (altNextAFN >= 0)
+            {
                 return (lastCut.sliceParity == Parity.Forehand) ? Parity.Backhand : Parity.Forehand;
-            } else {
+            }
+            else
+            {
                 currentSwing.resetType = ResetType.Normal;
                 return (lastCut.sliceParity == Parity.Forehand) ? Parity.Forehand : Parity.Backhand;
             }

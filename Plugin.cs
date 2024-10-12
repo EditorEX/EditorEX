@@ -1,6 +1,5 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
-using EditorEX.Analyzer.Installers;
 using EditorEX.Chroma.Deserializer;
 using EditorEX.Chroma.Installers;
 using EditorEX.CustomJSONData.Installers;
@@ -11,7 +10,6 @@ using EditorEX.Heck.Installers;
 using EditorEX.NoodleExtensions.Deserialize;
 using EditorEX.NoodleExtensions.Installers;
 using EditorEX.UI.Installers;
-using EditorEX.UI.SideBar;
 using IPA;
 using SiraUtil.Zenject;
 using IPALogger = IPA.Logging.Logger;
@@ -29,7 +27,8 @@ namespace EditorEX
             zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorHeckModelsInstaller, BeatmapEditorDataModelsInstaller>();
-            zenjector.Install<EditorUIModelsInstaller, BeatmapEditorViewControllersInstaller>();
+
+            zenjector.Install<EditorUIViewControllersInstaller, BeatmapEditorViewControllersInstaller>();
 
             zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
@@ -49,15 +48,6 @@ namespace EditorEX
             ViewModeRepository.RegisterViewMode(new ViewMode("Normal", "normal", false, true, false));
             ViewModeRepository.RegisterViewMode(new ViewMode("Preview", "preview", true, false, false));
             ViewModeRepository.RegisterViewMode(new ViewMode("Preview w/ Camlock", "preview-lock-cam", true, false, true));
-        }
-
-        [OnStart]
-        public void OnApplicationStart()
-        {
-            SideBarUI.RegisterButton(BeatSaberMarkupLanguage.Utilities.FindSpriteInAssembly("EditorEX.UI.Resources.lockcamera.png"), "Lock Camera", (x) =>
-            {
-
-            });
         }
     }
 }

@@ -5,6 +5,7 @@ using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using JetBrains.Annotations;
 using NoodleExtensions;
+using SiraUtil.Logging;
 using UnityEngine;
 using Zenject;
 
@@ -12,16 +13,21 @@ namespace EditorEX.NoodleExtensions.Managers
 {
     internal class EditorSpawnDataManager
     {
+        private readonly SiraLog _siraLog;
         private readonly EditorDeserializedData _editorDeserializedData;
         private readonly EditorBasicBeatmapObjectSpawnMovementData _movementData;
+        private readonly BeatmapLevelDataModel _beatmapLevelDataModel;
 
-        [UsedImplicitly]
         private EditorSpawnDataManager(
+            SiraLog siraLog,
             EditorBasicBeatmapObjectSpawnMovementData editorBasicBeatmapObjectSpawnMovementData,
-            [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData deserializedData,
+            PopulateBeatmap populateBeatmap)
         {
+            _siraLog = siraLog;
             _movementData = editorBasicBeatmapObjectSpawnMovementData;
             _editorDeserializedData = deserializedData;
+            _beatmapLevelDataModel = populateBeatmap._beatmapLevelDataModel;
         }
 
         internal static Vector2 Get2DNoteOffset(float lineIndex, int noteLinesCount, float lineLayer)
@@ -32,7 +38,7 @@ namespace EditorEX.NoodleExtensions.Managers
 
         internal bool GetObstacleSpawnData(ObstacleEditorData obstacleData, out BeatmapObjectSpawnMovementData.ObstacleSpawnData? result)
         {
-            if (!_editorDeserializedData.Resolve(obstacleData, out EditorNoodleObstacleData? noodleData))
+            if (!(_editorDeserializedData?.Resolve(obstacleData, out EditorNoodleObstacleData noodleData) ?? false))
             {
                 result = null;
                 return false;
@@ -84,7 +90,7 @@ namespace EditorEX.NoodleExtensions.Managers
 
         internal bool GetJumpingNoteSpawnData(NoteEditorData noteData, out BeatmapObjectSpawnMovementData.NoteSpawnData? result)
         {
-            if (!_editorDeserializedData.Resolve(noteData, out EditorNoodleBaseNoteData? noodleData))
+            if (!(_editorDeserializedData?.Resolve(noteData, out EditorNoodleBaseNoteData? noodleData) ?? false))
             {
                 result = null;
                 return false;
@@ -136,7 +142,7 @@ namespace EditorEX.NoodleExtensions.Managers
 
         internal bool GetSliderSpawnData(BaseSliderEditorData sliderData, out BeatmapObjectSpawnMovementData.SliderSpawnData? result)
         {
-            if (!_editorDeserializedData.Resolve(sliderData, out EditorNoodleSliderData? noodleData))
+            if (!(_editorDeserializedData?.Resolve(sliderData, out EditorNoodleSliderData? noodleData) ?? false))
             {
                 result = null;
                 return false;
@@ -250,14 +256,12 @@ namespace EditorEX.NoodleExtensions.Managers
             float? inputNjs,
             float? inputOffset)
         {
-            // We always use beat offset
-
             if (!inputNjs.HasValue && !inputOffset.HasValue && _movementData._noteJumpValueType == BeatmapObjectSpawnMovementData.NoteJumpValueType.JumpDuration)
             {
-            	return _movementData.jumpDuration;
+                return _movementData.jumpDuration;
             }
 
-            float oneBeatDuration = 60f / PopulateBeatmap._beatmapLevelDataModel.beatsPerMinute;
+            float oneBeatDuration = 60f / _beatmapLevelDataModel.beatsPerMinute;
             float halfJumpDurationInBeats = CoreMathUtils.CalculateHalfJumpDurationInBeats(
                 _movementData._startHalfJumpDurationInBeats,
                 _movementData._maxHalfJumpDistance,

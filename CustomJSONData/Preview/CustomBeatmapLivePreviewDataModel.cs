@@ -1,19 +1,19 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
-using EditorEX.CustomJSONData.CustomEvents;
-using EditorEX.CustomJSONData.Util;
 using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData.CustomEvents;
+using EditorEX.Util;
 using System.Collections.Generic;
 
 namespace EditorEX.CustomJSONData.Preview
 {
     public class CustomBeatmapLivePreviewDataModel : BeatmapLivePreviewDataModel
     {
-        private readonly Dictionary<BeatmapEditorObjectId, CustomEventData> _livePreviewCustomEvents = new Dictionary<BeatmapEditorObjectId, CustomEventData>();
+        public readonly Dictionary<BeatmapEditorObjectId, CustomEventData> _livePreviewCustomEvents = new Dictionary<BeatmapEditorObjectId, CustomEventData>();
 
         public void AddLivePreviewCustomEvent(CustomEventEditorData evt)
         {
-            CustomEventData customEventData = new CustomEventData(_timeConverter.ConvertBeatToTime(evt.beat), evt.eventType, evt.customData, null);
+            CustomEventData customEventData = new CustomEventData(evt.beat, evt.eventType, evt.customData, null);
             CustomDataRepository.AddCustomEventConversion(evt, customEventData);
             _livePreviewCustomEvents[evt.id] = customEventData;
             (_livePreviewBeatmapData as CustomBeatmapData).InsertCustomEventData(customEventData);

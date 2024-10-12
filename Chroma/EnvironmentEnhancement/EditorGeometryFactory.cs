@@ -13,6 +13,7 @@ using UnityEngine.Rendering;
 using Zenject;
 using static Chroma.ChromaController;
 using Object = UnityEngine.Object;
+using EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize;
 
 namespace EditorEX.Chroma.EnvironmentEnhancement
 {

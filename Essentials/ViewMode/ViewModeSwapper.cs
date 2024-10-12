@@ -19,11 +19,13 @@ namespace EditorEX.Essentials.ViewMode
         {
             _activeViewMode = activeViewMode;
             _activeViewMode.Mode = ViewModeRepository.GetViewModes().FirstOrDefault(x => x.ID == "normal");
+            _activeViewMode.LastMode = _activeViewMode.Mode;
             _beatmapObjectsView = beatmapObjectsView;
         }
 
         private void SetMode(ViewMode mode)
         {
+            _activeViewMode.LastMode = _activeViewMode.Mode;
             _activeViewMode.Mode = mode;
             _activeViewMode.ModeChanged();
             _beatmapObjectsView._notesBeatmapObjectsView.ClearObjects();
@@ -37,10 +39,10 @@ namespace EditorEX.Essentials.ViewMode
             if (Input.GetKey(KeyCode.LeftControl))
             {
                 var modes = ViewModeRepository.GetViewModes();
-                for (int i = 1; i < modes.Count+1; i++)
+                for (int i = 1; i < modes.Count + 1; i++)
                 {
-                    var mode = modes[i-1];
-                    if(Input.GetKeyDown(KeyCode.Alpha1 + (i- 1)) && _activeViewMode.Mode != mode)
+                    var mode = modes[i - 1];
+                    if (Input.GetKeyDown(KeyCode.Alpha1 + (i - 1)) && _activeViewMode.Mode != mode)
                     {
                         SetMode(mode);
                     }

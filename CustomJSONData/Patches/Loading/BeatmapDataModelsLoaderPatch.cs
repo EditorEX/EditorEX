@@ -11,7 +11,6 @@ using Zenject;
 
 namespace EditorEX.CustomJSONData.Patches.Loading
 {
-    [AffinityPatch]
     internal class BeatmapDataModelsLoaderPatch : IAffinity
     {
         private LevelDataLoaderV2 _levelDataLoaderV2;

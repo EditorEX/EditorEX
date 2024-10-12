@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using BeatmapEditor3D.Commands;
 using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
@@ -30,7 +33,7 @@ namespace EditorEX.NoodleExtensions.Animation
             bool leftHanded,
             HashSet<EditorParentObject> parentObjects)
         {
-            List<Track> tracks = noodleData.ChildrenTracks;
+            IReadOnlyList<Track> tracks = noodleData.ChildrenTracks;
             Track parentTrack = noodleData.ParentTrack;
             if (tracks.Contains(parentTrack))
             {
@@ -54,6 +57,7 @@ namespace EditorEX.NoodleExtensions.Animation
 
                 foreach (GameObject go in track.GameObjects)
                 {
+                    if (go == null) continue;
                     ParentToObject(go.transform);
                 }
 
@@ -104,7 +108,7 @@ namespace EditorEX.NoodleExtensions.Animation
 
         private static void OnTrackGameObjectRemoved(GameObject trackGameObject)
         {
-            //trackGameObject.transform.SetParent(null, false);
+            trackGameObject.transform.SetParent(null, false);
         }
 
         private void OnTrackGameObjectAdded(GameObject trackGameObject)
@@ -114,7 +118,7 @@ namespace EditorEX.NoodleExtensions.Animation
 
         private void ParentToObject(Transform childTransform)
         {
-            //childTransform.SetParent(transform, _worldPositionStays);
+            childTransform.SetParent(transform, _worldPositionStays);
         }
 
         private void OnDestroy()

@@ -13,8 +13,8 @@ namespace EditorEX.Essentials.Visuals.Universal
 {
     public class VisualAssetProvider : MonoBehaviour
     {
-        public Material gameNoteMaterial;
         public GameObject gameNotePrefab;
+        public GameObject obstaclePrefab;
 
         public event Action onFinishLoading;
 
@@ -30,11 +30,12 @@ namespace EditorEX.Essentials.Visuals.Universal
 
             UnityEngine.Object[] allObjects = Resources.FindObjectsOfTypeAll<UnityEngine.Object>();
 
-            gameNoteMaterial = allObjects.FirstOrDefault(x => x.name == "NoteHD") as Material;
             gameNotePrefab = Instantiate(Resources.FindObjectsOfTypeAll<BeatmapObjectsInstaller>().FirstOrDefault()._normalBasicNotePrefab.gameObject);
             gameNotePrefab.SetActive(false);
+            obstaclePrefab = Instantiate(Resources.FindObjectsOfTypeAll<BeatmapObjectsInstaller>().FirstOrDefault()._obstaclePrefab.gameObject);
+            obstaclePrefab.SetActive(false);
 
-            onFinishLoading();
+            onFinishLoading?.Invoke();
 
             SceneManager.UnloadSceneAsync("StandardGameplay");
         }

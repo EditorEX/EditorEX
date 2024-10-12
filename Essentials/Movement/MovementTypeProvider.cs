@@ -18,7 +18,7 @@ namespace EditorEX.Essentials.Movement
         [Inject]
         private MovementTypeProvider(
             SiraLog siraLog,
-            ActiveViewMode activeViewMode, 
+            ActiveViewMode activeViewMode,
             [Inject(Id = "Movement")] List<ValueTuple<string[], Type>> providers)
         {
             _siraLog = siraLog;

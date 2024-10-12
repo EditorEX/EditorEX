@@ -1,9 +1,9 @@
-﻿using EditorEX.UI.Collectors;
+﻿using EditorEX.SDK.Collectors;
 using HMUI;
 using UnityEngine;
 using Zenject;
 
-namespace EditorEX.UI.Factories
+namespace EditorEX.SDK.Factories
 {
     // This class MUST be injected using Zenject. You cannot create it manually.
     public class TextFactory

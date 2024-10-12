@@ -16,10 +16,10 @@ namespace EditorEX.NoodleExtensions.Events
     [CustomEvent(new string[] { "AssignTrackParent" })]
     internal class EditorAssignTrackParent : ICustomEvent
     {
-        internal EditorAssignTrackParent(IReadonlyBeatmapData beatmapData, [Inject(Id = "NoodleExtensions")] EditorDeserializedData deserializedData, [Inject(Id = "leftHanded")] bool leftHanded, TransformControllerFactory transformControllerFactory)
+        internal EditorAssignTrackParent(IReadonlyBeatmapData beatmapData, [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData deserializedData, [Inject(Id = "leftHanded")] bool leftHanded, TransformControllerFactory transformControllerFactory)
         {
             _version = ((CustomBeatmapData)beatmapData).version;
-            _deserializedData = deserializedData;
+            _editorDeserializedData = deserializedData;
             _leftHanded = leftHanded;
             _transformControllerFactory = transformControllerFactory;
         }
@@ -27,11 +27,11 @@ namespace EditorEX.NoodleExtensions.Events
         public void Callback(CustomEventData customEventData)
         {
             NoodleParentTrackEventData noodleData;
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out noodleData))
+            if (!(_editorDeserializedData?.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out noodleData) ?? false))
             {
                 return;
             }
-            GameObject parentGameObject = new GameObject("ParentObject");
+            GameObject parentGameObject = new GameObject($"ParentObject {customEventData.customData.Get<string>("_parentTrack")}");
             EditorParentObject instance = parentGameObject.AddComponent<EditorParentObject>();
             instance.Init(noodleData, _leftHanded, _parentObjects);
             if (_version.Major == 2)
@@ -46,7 +46,7 @@ namespace EditorEX.NoodleExtensions.Events
 
         private readonly Version _version;
 
-        private readonly EditorDeserializedData _deserializedData;
+        private readonly EditorDeserializedData _editorDeserializedData;
 
         private readonly bool _leftHanded;
 

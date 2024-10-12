@@ -1,5 +1,7 @@
-﻿using CustomJSONData.CustomBeatmap;
+﻿using BeatmapEditor3D;
+using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
+using EditorEX.Essentials.Patches;
 using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.EventData;
 using Heck;
@@ -19,20 +21,23 @@ namespace EditorEX.Heck.Events
     {
         private readonly IBpmController _bpmController;
         private readonly IAudioTimeSource _audioTimeSource;
+        private readonly AudioDataModel _audioDataModel;
         private readonly CoroutineDummy _coroutineDummy;
-        private readonly EditorDeserializedData _deserializedData;
+        private readonly EditorDeserializedData _editorDeserializedData;
 
         [UsedImplicitly]
         private EditorCoroutineEvent(
             IBpmController bpmController,
             IAudioTimeSource audioTimeSource,
+            PopulateBeatmap populateBeatmap,
             CoroutineDummy coroutineDummy,
-            [Inject(Id = "Heck")] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = "Heck")] EditorDeserializedData deserializedData)
         {
             _bpmController = bpmController;
             _audioTimeSource = audioTimeSource;
+            _audioDataModel = populateBeatmap._audioDataModel;
             _coroutineDummy = coroutineDummy;
-            _deserializedData = deserializedData;
+            _editorDeserializedData = deserializedData;
         }
 
         public void Callback(CustomEventData customEventData)
@@ -54,7 +59,7 @@ namespace EditorEX.Heck.Events
 
         internal void StartEventCoroutine(CustomEventData customEventData, EventType eventType)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out EditorCoroutineEventData heckData))
+            if (!(_editorDeserializedData?.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out EditorCoroutineEventData? heckData) ?? false))
             {
                 return;
             }
@@ -62,7 +67,7 @@ namespace EditorEX.Heck.Events
             float duration = 60f * heckData.Duration / _bpmController.currentBpm; // Convert to real time;
             Functions easing = heckData.Easing;
             int repeat = heckData.Repeat;
-            bool noDuration = duration == 0 || customEventData.time + (duration * (repeat + 1)) < _audioTimeSource.songTime;
+            bool noDuration = duration == 0 || _audioDataModel.bpmData.BeatToSeconds(customEventData.time) + (duration * (repeat + 1)) < _audioTimeSource.songTime;
             foreach (EditorCoroutineEventData.CoroutineInfo coroutineInfo in heckData.CoroutineInfos)
             {
                 BaseProperty property = coroutineInfo.Property;
@@ -95,7 +100,7 @@ namespace EditorEX.Heck.Events
                                     property,
                                     coroutineInfo.Track,
                                     duration,
-                                    customEventData.time,
+                                    _audioDataModel.bpmData.BeatToSeconds(customEventData.time),
                                     easing,
                                     repeat,
                                     hasBase));
@@ -115,7 +120,7 @@ namespace EditorEX.Heck.Events
                                 property.Coroutine = _coroutineDummy.StartCoroutine(AssignPathAnimationCoroutine(
                                     interpolation,
                                     duration,
-                                    customEventData.time,
+                                    _audioDataModel.bpmData.BeatToSeconds(customEventData.time),
                                     easing));
                             }
 

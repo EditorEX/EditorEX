@@ -19,11 +19,11 @@ namespace EditorEX.Chroma.Patches.Events
 
         private readonly CodeInstruction _getPrecisionStep;
         private readonly CodeInstruction _getPrecisionSpeed;
-        private readonly EditorDeserializedData _deserializedData;
+        private readonly EditorDeserializedData _editorDeserializedData;
 
-        private EditorRingStepChromafier([Inject(Id = ChromaController.ID)] EditorDeserializedData deserializedData)
+        private EditorRingStepChromafier([InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData)
         {
-            _deserializedData = deserializedData;
+            _editorDeserializedData = deserializedData;
             _getPrecisionStep = InstanceTranspilers.EmitInstanceDelegate<Func<float, BasicBeatmapEventData, float>>(GetPrecisionStep);
             _getPrecisionSpeed = InstanceTranspilers.EmitInstanceDelegate<Func<float, BasicBeatmapEventData, float>>(GetPrecisionSpeed);
         }
@@ -63,13 +63,13 @@ namespace EditorEX.Chroma.Patches.Events
 
         private float GetPrecisionStep(float @default, BasicBeatmapEventData beatmapEventData)
         {
-            _deserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(beatmapEventData), out EditorChromaEventData? chromaData);
+            _editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(beatmapEventData), out EditorChromaEventData? chromaData);
             return chromaData is { Step: not null } ? chromaData.Step.Value : @default;
         }
 
         private float GetPrecisionSpeed(float @default, BasicBeatmapEventData beatmapEventData)
         {
-            _deserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(beatmapEventData), out EditorChromaEventData? chromaData);
+            _editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(beatmapEventData), out EditorChromaEventData? chromaData);
             return chromaData is { Speed: not null } ? chromaData.Speed.Value : @default;
         }
     }

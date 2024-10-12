@@ -24,7 +24,6 @@ namespace EditorEX.Heck.EventData
         {
             _siraLog = siraLog;
             CustomData data = customEventData.customData;
-
             IEnumerable<Track> tracks = data.GetTrackArray(beatmapTracks, v2);
 
             string[] excludedStrings = { Constants.V2_TRACK, Constants.V2_DURATION, Constants.V2_EASING, Constants.TRACK, Constants.DURATION, Constants.EASING, Constants.REPEAT };
