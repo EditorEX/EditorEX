@@ -1,8 +1,10 @@
 ﻿using EditorEX.SDK.Collectors;
+using EditorEX.SDK.ContextMenu;
 using EditorEX.SDK.Factories;
 using EditorEX.SDK.Settings;
 using EditorEX.SDK.ViewContent;
 using EditorEX.SDKImplementation;
+using EditorEX.UI.ContextMenu;
 using EditorEX.UI.Patches;
 using EditorEX.UI.Patches.SDK;
 using Zenject;
@@ -23,16 +25,24 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<IconButtonFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ToggleFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<StringInputFactory>().AsSingle();
+            Container.BindInterfacesAndSelfTo<ModalFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<TextSegmentedControlFactory>().AsSingle();
 
             Container.Bind<IViewContent<SettingsViewData>>().FromInstance(new EditorExSettingsViewContent());
 
+            Container.BindInterfacesAndSelfTo<AddBeatmapListContextMenu>().AsSingle();
             Container.BindInterfacesAndSelfTo<MoreCoverFileTypes>().AsSingle();
+            Container.BindInterfacesAndSelfTo<BeatmapsListViewControllerPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditDifficultyBeatmapPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditBeatmapLevelPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<MapFilteringPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<AddSettingsPatches>().AsSingle();
+            Container.BindInterfacesAndSelfTo<BeatmapsCollectionDataModelPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<SaveLevelAuthorNamePatch>().AsSingle();
+
+            Container.Bind<IContextMenuProvider>().To<DefaultEditorBeatmapListContextMenuProvider>().AsSingle();
+            Container.BindInterfacesAndSelfTo<ContextMenuComponent>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+
         }
     }
 }

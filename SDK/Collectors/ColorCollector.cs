@@ -7,7 +7,7 @@ namespace EditorEX.SDK.Collectors
 {
     public class ColorCollector : IInitializable
     {
-        private Dictionary<string, SimpleColorSO> _colors = new();
+        internal Dictionary<string, SimpleColorSO> _colors = new();
 
         public void Initialize()
         {
@@ -18,6 +18,7 @@ namespace EditorEX.SDK.Collectors
                 {
                     string remappedName = color.name.Substring(14).Replace(".", "/");
                     _colors[remappedName] = color;
+                    Debug.Log(remappedName);
                 }
             }
         }

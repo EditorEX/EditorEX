@@ -80,7 +80,65 @@ namespace EditorEX.Essentials.Patches
                 __instance._uiCameraMovementTransform.localRotation = toSetRotation.Value;
                 toSetRotation = null;
             }
-            return !_activeViewMode.Mode.LockCamera;
+
+            if (!_activeViewMode.Mode.LockCamera)
+            {
+                if (!__instance._beatmapState.cameraMoving)
+                {
+                    return false;
+                }
+                __instance._mouseLook.LookRotation(__instance._uiCameraMovementTransform, __instance._uiCameraTransform);
+                Vector3 vector = __instance._uiCameraMovementTransform.localPosition;
+                Vector3 vector2 = Vector3.zero;
+                if (Input.GetKey(KeyCode.W))
+                {
+                    vector2 = __instance._uiCameraTransform.forward;
+                }
+                if (Input.GetKey(KeyCode.S))
+                {
+                    vector2 = -__instance._uiCameraTransform.forward;
+                }
+                vector2 = __instance.transform.parent.InverseTransformVector(vector2);
+
+                Vector3 vector3 = Vector3.zero;
+                if (Input.GetKey(KeyCode.D))
+                {
+                    vector3 = __instance._uiCameraTransform.right;
+                }
+                if (Input.GetKey(KeyCode.A))
+                {
+                    vector3 = -__instance._uiCameraTransform.right;
+                }
+                vector3 = __instance.transform.parent.InverseTransformVector(vector3);
+
+                Vector3 vector4 = Vector3.zero;
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    vector4 = __instance.transform.up;
+                }
+                if (Input.GetKey(KeyCode.LeftControl))
+                {
+                    vector4 = -__instance.transform.up;
+                }
+                vector4 = __instance.transform.parent.InverseTransformVector(vector4);
+
+                if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+                {
+                    __instance._currentMoveIntensity = __instance._fastMoveIntensity;
+                }
+                if (Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt))
+                {
+                    __instance._currentMoveIntensity = __instance._slowMoveIntensity;
+                }
+                if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift) || Input.GetKeyUp(KeyCode.LeftAlt) || Input.GetKeyUp(KeyCode.RightAlt))
+                {
+                    __instance._currentMoveIntensity = __instance._defaultMoveIntensity;
+                }
+                vector += (vector2 + vector3 + vector4) * (__instance._currentMoveIntensity * Time.deltaTime);
+                __instance._uiCameraMovementTransform.localPosition = vector;
+            }
+
+            return false;
         }
 
         [AffinityPatch(typeof(BeatmapEditor360CameraController), nameof(BeatmapEditor360CameraController.Update))]

@@ -1,0 +1,36 @@
+﻿using EditorEX.SDK.ContextMenu;
+using EditorEX.UI.ContextMenu;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using Zenject;
+using static BeatmapEditor3D.DataModels.BeatmapsCollectionDataModel;
+
+namespace EditorEX.UI.Components
+{
+    public class BeatmapListContextMenu : MonoBehaviour, IPointerClickHandler
+    {
+        private ContextMenuComponent _contextMenu;
+
+        private BeatmapInfoData _beatmapInfoData;
+
+        [Inject]
+        private void Construct(
+            ContextMenuComponent contextMenu)
+        {
+            _contextMenu = contextMenu;
+        }
+
+        public void SetData(BeatmapInfoData beatmapInfoData)
+        {
+            _beatmapInfoData = beatmapInfoData;
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                _contextMenu.ShowContextMenu(new BeatmapListContextMenuObject(_beatmapInfoData), eventData.position);
+            }
+        }
+    }
+}

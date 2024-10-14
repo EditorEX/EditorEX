@@ -28,23 +28,19 @@ namespace EditorEX.SDK.Collectors
         public void Initialize()
         {
             var newBeatmapViewController = _container.Resolve<NewBeatmapViewController>();
-
             _buttonPrefab = newBeatmapViewController._saveAndOpenBeatmapButton;
             _iconButtonPrefab = newBeatmapViewController._openSongView._openFileButton;
 
 
             var beatmapEditorSettingsViewController = _container.Resolve<BeatmapEditorSettingsViewController>();
-
             _togglePrefab = beatmapEditorSettingsViewController._fullscreenToggle;
 
 
             var editBeatmapViewController = _container.Resolve<EditBeatmapViewController>();
-
             _segmentedControlPrefab = editBeatmapViewController.transform.Find("StatusBarView").Find("PaginationView").Find("Wrapper").Find("BasicEventsPagination").Find("BeatmapEditorTextSegmentedView").GetComponent<TextSegmentedControl>();
 
 
             var editBeatmapLevelViewController = _container.Resolve<EditBeatmapLevelViewController>();
-
             _inputFieldPrefab = editBeatmapLevelViewController._songNameInputValidator.GetComponent<TMP_InputField>();
         }
 

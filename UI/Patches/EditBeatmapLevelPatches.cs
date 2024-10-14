@@ -2,6 +2,7 @@
 using BeatmapEditor3D.DataModels;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.Contexts;
+using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
 using HMUI;
 using SiraUtil.Affinity;
@@ -15,14 +16,14 @@ using Zenject;
 // :dread:
 namespace EditorEX.UI.Patches
 {
-    internal class EditBeatmapLevelPatches : IAffinity, ITickable
+    internal class EditBeatmapLevelPatches : IAffinity
     {
         private readonly BeatmapLevelDataModel _beatmapLevelDataModel;
         private readonly TextSegmentedControlFactory _textSegmentedControlFactory;
-        private readonly KeyboardBinder _keyboardBinder;
         private readonly LevelCustomDataModel _levelCustomDataModel;
 
         private TextSegmentedControl _segmentedControl;
+        private TabbingSegmentedControlController _tabbingSegmentedControlController;
 
         private GameObject SongInfoRoot;
         private GameObject BeatmapsRoot;
@@ -37,7 +38,6 @@ namespace EditorEX.UI.Patches
             _beatmapLevelDataModel = beatmapLevelDataModel;
             _textSegmentedControlFactory = textSegmentedControlFactory;
             _levelCustomDataModel = levelCustomDataModel;
-            _keyboardBinder = new KeyboardBinder();
         }
 
         [AffinityPostfix]
@@ -71,6 +71,8 @@ namespace EditorEX.UI.Patches
             {
                 _segmentedControl = _textSegmentedControlFactory.Create(__instance.transform, new string[] { "Song Info | 1", "Beatmaps | 2" }, Selected);
                 (_segmentedControl.transform as RectTransform).anchoredPosition = new Vector2(0f, 500f);
+                _tabbingSegmentedControlController = _segmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
+                _tabbingSegmentedControlController.Setup(_segmentedControl);
 
                 __instance.gameObject.SetActive(false);
 
@@ -139,44 +141,25 @@ namespace EditorEX.UI.Patches
 
                 __instance.gameObject.SetActive(true);
             }
-
-            _keyboardBinder.AddBinding(KeyCode.Alpha1, KeyboardBinder.KeyBindingType.KeyDown, x =>
+            else
             {
-                _segmentedControl.cells[0].OnPointerClick(new PointerEventData(null));
-            });
+                _tabbingSegmentedControlController.AddBindings();
+            }
 
-            _keyboardBinder.AddBinding(KeyCode.Alpha2, KeyboardBinder.KeyBindingType.KeyDown, x =>
-            {
-                _segmentedControl.cells[1].OnPointerClick(new PointerEventData(null));
-            });
-
-            _keyboardBinder.AddBinding(KeyCode.Mouse5, KeyboardBinder.KeyBindingType.KeyDown, x =>
-            {
-                _segmentedControl.cells[0].OnPointerClick(new PointerEventData(null));
-            });
-
-            _keyboardBinder.AddBinding(KeyCode.Mouse6, KeyboardBinder.KeyBindingType.KeyDown, x =>
-            {
-                _segmentedControl.cells[1].OnPointerClick(new PointerEventData(null));
-            });
+            _tabbingSegmentedControlController.ClickCell(0);
         }
 
         [AffinityPostfix]
         [AffinityPatch(typeof(EditBeatmapLevelViewController), nameof(EditBeatmapLevelViewController.DidDeactivate))]
-        private void DidDeactivate(EditBeatmapLevelViewController __instance)
+        private void DidDeactivate()
         {
-            _keyboardBinder.ClearBindings();
+            _tabbingSegmentedControlController.ClearBindings();
         }
 
         private void Selected(SegmentedControl segmentedControl, int idx)
         {
             SongInfoRoot.SetActive(idx == 0);
             BeatmapsRoot.SetActive(idx == 1);
-        }
-
-        public void Tick()
-        {
-            _keyboardBinder.ManualUpdate();
         }
     }
 }

@@ -45,7 +45,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             Dictionary<string, Track> beatmapTracks,
             LazyInject<MaterialColorAnimator> materialColorAnimator,
             SavedEnvironmentLoader savedEnvironmentLoader,
-            Config config)
+            global::Chroma.Settings.Config config)
         {
             CustomBeatmapData beatmapData = (CustomBeatmapData)readonlyBeatmap;
             _v2 = LevelContext.Version.Major == 2;

@@ -1,6 +1,8 @@
 ﻿using EditorEX.SDK.Collectors;
 using HMUI;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Zenject;
 
@@ -21,12 +23,12 @@ namespace EditorEX.SDK.Factories
             _container = container;
         }
 
-        public TextSegmentedControl Create(Transform parent, string[] strings, Action<SegmentedControl, int> onSelected)
+        public TextSegmentedControl Create(Transform parent, IEnumerable<string> strings, Action<SegmentedControl, int> onSelected)
         {
             var segmentedControl = _container.InstantiatePrefab(_prefabCollector.GetSegmentedControlPrefab()).GetComponent<TextSegmentedControl>();
             segmentedControl.transform.SetParent(parent, false);
 
-            segmentedControl.SetTexts(strings);
+            segmentedControl.SetTexts(strings.ToArray());
 
             segmentedControl.didSelectCellEvent += onSelected;
 

@@ -2,6 +2,8 @@
 using BeatmapEditor3D.DataModels;
 using EditorEX.Chroma.Deserializer;
 using EditorEX.Chroma.Installers;
+using EditorEX.Config;
+using EditorEX.Config.Installers;
 using EditorEX.CustomJSONData.Installers;
 using EditorEX.Essentials.Installers;
 using EditorEX.Essentials.ViewMode;
@@ -11,6 +13,7 @@ using EditorEX.NoodleExtensions.Deserialize;
 using EditorEX.NoodleExtensions.Installers;
 using EditorEX.UI.Installers;
 using IPA;
+using IPA.Config.Stores;
 using SiraUtil.Zenject;
 using IPALogger = IPA.Logging.Logger;
 
@@ -20,8 +23,9 @@ namespace EditorEX
     public class Plugin
     {
         [Init]
-        public Plugin(IPALogger logger, Zenjector zenjector)
+        public Plugin(IPALogger logger, Zenjector zenjector, IPA.Config.Config conf)
         {
+            MainConfig config = conf.Generated<MainConfig>();
             zenjector.UseLogger(logger);
 
             zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
@@ -40,6 +44,7 @@ namespace EditorEX
 
             zenjector.Install<EditorCustomJSONDataAppInstaller>(Location.App);
             zenjector.Install<EditorEssentialsAppInstaller>(Location.App);
+            zenjector.Install<EditorConfigAppInstaller>(Location.App, config);
 
             EditorDeserializerManager.Register<EditorNoodleCustomDataDeserializer>("NoodleExtensions").Enabled = true;
             EditorDeserializerManager.Register<EditorHeckCustomDataDeserializer>("Heck").Enabled = true;

@@ -109,6 +109,7 @@ namespace EditorEX.Essentials.Visuals.Note
             bool anyDirection = _editorData.cutDirection == NoteCutDirection.Any;
             _arrowObjects.Do(x => x.SetActive(!anyDirection));
             _circleObject.SetActive(anyDirection);
+            _circleObject.GetComponent<MeshRenderer>().enabled = anyDirection;
 
             _noteCutout.SetCutout(0f);
             _arrowCutout.SetCutout(0f);

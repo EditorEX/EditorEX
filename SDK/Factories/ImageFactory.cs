@@ -1,13 +1,24 @@
 ﻿using BeatSaberMarkupLanguage;
 using EditorEX.SDK.Base;
+using EditorEX.SDK.Collectors;
 using HMUI;
 using UnityEngine;
+using Zenject;
 
 namespace EditorEX.SDK.Factories
 {
     // This class MUST be injected using Zenject. You cannot create it manually.
     public class ImageFactory
     {
+        private ColorCollector _colorCollector;
+
+        [Inject]
+        private void Construct(
+            ColorCollector colorCollector)
+        {
+            _colorCollector = colorCollector;
+        }
+
         public ImageView Create(Transform parent, Sprite sprite, LayoutData layoutData)
         {
             var image = Create(parent, layoutData);
@@ -28,7 +39,7 @@ namespace EditorEX.SDK.Factories
 
         private ImageView Create(Transform parent, LayoutData layoutData)
         {
-            GameObject gameObj = new("ExText")
+            GameObject gameObj = new("ExImage")
             {
                 layer = 5,
             };
@@ -36,12 +47,19 @@ namespace EditorEX.SDK.Factories
             gameObj.SetActive(false);
             gameObj.transform.SetParent(parent, false);
 
-            var rectTransform = gameObj.transform as RectTransform;
+            var rectTransform = gameObj.AddComponent<RectTransform>();
 
             rectTransform.sizeDelta = layoutData.sizeDelta ?? rectTransform.sizeDelta;
             rectTransform.anchoredPosition = layoutData.anchoredPosition ?? rectTransform.anchoredPosition;
 
-            var image = gameObj.GetComponent<ImageView>();
+            var image = gameObj.AddComponent<ImageView>();
+            image._colorSo = _colorCollector.GetColor("Button/Background/Normal");
+            image.useScriptableObjectColors = true;
+            image.type = UnityEngine.UI.Image.Type.Sliced;
+
+            gameObj.SetActive(true);
+
+            gameObj.transform.SetAsFirstSibling();
 
             return image;
         }

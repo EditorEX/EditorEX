@@ -30,7 +30,7 @@ namespace EditorEX.Heck.Patches
                 .Insert(new CodeInstruction[]
                 {
                     new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Ldloc_S, 5),
+                    new CodeInstruction(OpCodes.Ldloc_S, 6),
                     new CodeInstruction(OpCodes.Call, _addObject)
                 }).InstructionEnumeration();
             return result;
@@ -75,8 +75,8 @@ namespace EditorEX.Heck.Patches
                     new CodeInstruction(OpCodes.Ldloc_2),
                     new CodeInstruction(OpCodes.Call, _addObject)
                 }).InstructionEnumeration();
-            //return result;
-            return instructions;
+            return result;
+            //return instructions;
         }
 
         [AffinityPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.DeleteObject))]
@@ -91,8 +91,8 @@ namespace EditorEX.Heck.Patches
                     new CodeInstruction(OpCodes.Ldloc_0),
                     new CodeInstruction(OpCodes.Call, _removeObject)
                 }).InstructionEnumeration();
-            //return result;
-            return instructions;
+            return result;
+            //return instructions;
         }
 
         [AffinityPatch(typeof(ChainBeatmapObjectsView), nameof(ChainBeatmapObjectsView.InsertObject))]
@@ -155,7 +155,7 @@ namespace EditorEX.Heck.Patches
             return result;
         }
 
-        private static void AddObject(BaseEditorData editorData, GameObject obj)
+        private static void AddObject(BaseEditorData editorData, Component obj)
         {
             if (MapContext.Version.Major > 3)
             {
@@ -166,8 +166,8 @@ namespace EditorEX.Heck.Patches
             {
                 return;
             }
-            //Debug.Log("Adding object to track " + editorData.beat);
-            track.ForEach(n => n.AddGameObject(obj));
+            Debug.Log($"Adding object {obj.gameObject.name} {editorData.GetType().Name} to track {editorData.beat}");
+            track.ForEach(n => n.AddGameObject(obj.gameObject));
         }
 
         private static void RemoveObject(BaseEditorData editorData, Component obj)

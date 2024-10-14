@@ -50,7 +50,8 @@ namespace EditorEX.CustomJSONData
 
         public static CustomData GetCustomData(BaseEditorData data)
         {
-            return _repoData.CustomData[data];
+            _repoData.CustomData.TryGetValue(data, out var result);
+            return result;
         }
 
         public static void AddCustomEventConversion(CustomEventEditorData editorData, CustomEventData customData)
