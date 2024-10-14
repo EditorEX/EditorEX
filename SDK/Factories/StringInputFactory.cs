@@ -15,7 +15,8 @@ namespace EditorEX.SDK.Factories
         private PrefabCollector _prefabCollector;
 
         [Inject]
-        private void Construct(PrefabCollector prefabCollector)
+        private void Construct(
+            PrefabCollector prefabCollector)
         {
             _prefabCollector = prefabCollector;
         }

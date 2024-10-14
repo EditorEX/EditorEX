@@ -1,5 +1,6 @@
 ﻿using HMUI;
 using System;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace EditorEX.SDK.Components
@@ -19,6 +20,7 @@ namespace EditorEX.SDK.Components
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            Debug.Log(Environment.StackTrace.ToString());
             SetState(SelectionState.Pressed);
         }
 

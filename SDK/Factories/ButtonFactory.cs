@@ -17,8 +17,8 @@ namespace EditorEX.SDK.Factories
         [Inject]
         private void Construct(
             ImageFactory imageFactory,
-             PrefabCollector prefabCollector,
-             DiContainer container)
+            PrefabCollector prefabCollector,
+            DiContainer container)
         {
             _imageFactory = imageFactory;
             _prefabCollector = prefabCollector;
