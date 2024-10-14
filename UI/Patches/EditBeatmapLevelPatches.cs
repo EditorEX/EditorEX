@@ -6,6 +6,7 @@ using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
 using HMUI;
 using SiraUtil.Affinity;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,6 +22,7 @@ namespace EditorEX.UI.Patches
         private readonly BeatmapLevelDataModel _beatmapLevelDataModel;
         private readonly TextSegmentedControlFactory _textSegmentedControlFactory;
         private readonly LevelCustomDataModel _levelCustomDataModel;
+        private readonly IInstantiator _instantiator;
 
         private TextSegmentedControl _segmentedControl;
         private TabbingSegmentedControlController _tabbingSegmentedControlController;
@@ -29,15 +31,18 @@ namespace EditorEX.UI.Patches
         private GameObject BeatmapsRoot;
 
         private StringInputFieldValidator _levelAuthorInputValidator;
+        private StaticAudioWaveformView _staticAudioWaveformView;
 
         private EditBeatmapLevelPatches(
             BeatmapLevelDataModel beatmapLevelDataModel,
             TextSegmentedControlFactory textSegmentedControlFactory,
-            LevelCustomDataModel levelCustomDataModel)
+            LevelCustomDataModel levelCustomDataModel,
+            IInstantiator instantiator)
         {
             _beatmapLevelDataModel = beatmapLevelDataModel;
             _textSegmentedControlFactory = textSegmentedControlFactory;
             _levelCustomDataModel = levelCustomDataModel;
+            _instantiator = instantiator;
         }
 
         [AffinityPostfix]
@@ -54,6 +59,10 @@ namespace EditorEX.UI.Patches
             SongInfoRoot.SetActive(true); // Fix layout
 
             _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
+
+            _staticAudioWaveformView.SetAudioClip(_staticAudioWaveformView._audioDataModel.audioClip);
+
+            _staticAudioWaveformView.SetupWaveform();
         }
 
         [AffinityPostfix]                                   
@@ -138,6 +147,17 @@ namespace EditorEX.UI.Patches
                 var timingInfoSizeFitter = timingInfo.gameObject.AddComponent<ContentSizeFitter>();
                 timingInfoSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
                 timingInfoSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+                
+                var previewWaveform = new GameObject("PreviewWaveform");
+                previewWaveform.transform.SetParent(beatmapInfoContainer);
+
+                var audioWaveformController = _instantiator.InstantiateComponent<AudioWaveformController>(previewWaveform.gameObject);
+                _staticAudioWaveformView = _instantiator.InstantiateComponent<StaticAudioWaveformView>(previewWaveform.gameObject);
+                var image = previewWaveform.gameObject.AddComponent<RawImage>();
+                _staticAudioWaveformView._waveformImage = image;
+                _staticAudioWaveformView._audioWaveformController = audioWaveformController;
+                _staticAudioWaveformView._waveformImageRectTransform = image.rectTransform;
+                audioWaveformController._computeShader = Resources.FindObjectsOfTypeAll<ComputeShader>().FirstOrDefault(x=>x.name == "AudioWaveform");
 
                 __instance.gameObject.SetActive(true);
             }

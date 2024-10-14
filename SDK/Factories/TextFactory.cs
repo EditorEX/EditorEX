@@ -1,5 +1,6 @@
 ﻿using EditorEX.SDK.Collectors;
 using HMUI;
+using TMPro;
 using UnityEngine;
 using Zenject;
 
@@ -18,7 +19,7 @@ namespace EditorEX.SDK.Factories
             _fontCollector = fontCollector;
         }
 
-        public CurvedTextMeshPro Create(Transform parent, string text, float fontSize, string colorType)
+        public T Create<T>(Transform parent, string text, float fontSize, string colorType) where T : CurvedTextMeshPro
         {
             GameObject gameObj = new("ExText")
             {
@@ -28,12 +29,12 @@ namespace EditorEX.SDK.Factories
             gameObj.SetActive(false);
             gameObj.transform.SetParent(parent, false);
 
-            var textMesh = gameObj.AddComponent<CurvedTextMeshPro>();
+            var textMesh = gameObj.AddComponent<T>();
             textMesh.font = _fontCollector.GetFontAsset();
             textMesh.fontSharedMaterial = _fontCollector.GetMaterial();
             textMesh.fontSize = fontSize;
-            textMesh.useScriptableObjectColors = true;
-            textMesh._colorSo = _colorCollector.GetColor(colorType);
+            textMesh.useScriptableObjectColors = colorType != "None";
+            textMesh._colorSo = colorType != "None" ? _colorCollector.GetColor(colorType) : null;
             textMesh.text = text;
 
             textMesh.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);

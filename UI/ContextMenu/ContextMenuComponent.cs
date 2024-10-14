@@ -17,7 +17,7 @@ namespace EditorEX.UI.ContextMenu
     {
         private List<IContextMenuProvider> _contextMenuProviders;
         private ModalFactory _modalFactory;
-        private ButtonFactory _buttonFactory;
+        private ClickableTextFactory _clickableTextFactory;
 
         private EditorModalView _modal;
         private VerticalLayoutGroup _verticalLayoutGroup;
@@ -26,11 +26,11 @@ namespace EditorEX.UI.ContextMenu
         private void Construct(
             List<IContextMenuProvider> contextMenuProviders,
             ModalFactory modalFactory,
-            ButtonFactory buttonFactory)
+            ClickableTextFactory clickableTextFactory)
         {
             _contextMenuProviders = contextMenuProviders;
             _modalFactory = modalFactory;
-            _buttonFactory = buttonFactory;
+            _clickableTextFactory = clickableTextFactory;
         }
 
         private void Start()
@@ -64,10 +64,11 @@ namespace EditorEX.UI.ContextMenu
 
             foreach (var contextOption in contextOptions)
             {
-                var button = _buttonFactory.Create(_verticalLayoutGroup.transform, contextOption.GetText(), () =>
+                var clickable = _clickableTextFactory.Create(_verticalLayoutGroup.transform, contextOption.GetText(), 18f, () =>
                 {
                     contextOption.Invoke(data);
                 });
+                //clickable.GetComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             }
         }
 

@@ -35,6 +35,9 @@ namespace EditorEX.SDK.Factories
             };
 
             _imageFactory.Create(modalView.transform, "#Background8px", new Base.LayoutData())._colorSo = _colorCollector.GetColor("VerticalList/Background/Pressed");
+            var highlight = _imageFactory.Create(modalView.transform, "#Background8px", new Base.LayoutData());
+            highlight._colorSo = _colorCollector.GetColor("Button/Text/Highlighted");
+            highlight.transform.localScale = new Vector3(1.01f, 1.02f, 1f);
 
             return modalView;
         }

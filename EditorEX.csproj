@@ -169,7 +169,12 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Tweening">
+    <Reference Include="Transitions" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Transitions.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Tweening" Publicize="true">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Tweening.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
@@ -392,7 +397,10 @@
     <Compile Include="SDKImplementation\DefaultEditorBeatmapListContextMenuProvider.cs" />
     <Compile Include="SDKImplementation\EditorExSettingsViewContent.cs" />
     <Compile Include="SDK\Base\LayoutData.cs" />
+    <Compile Include="SDK\Collectors\TransitionCollector.cs" />
+    <Compile Include="SDK\Components\EditorClickableText.cs" />
     <Compile Include="SDK\Components\EditorModalView.cs" />
+    <Compile Include="SDK\Components\NoTransitionClickableTextSelectableStateController.cs" />
     <Compile Include="SDK\Components\TabbingSegmentedControlController.cs" />
     <Compile Include="SDK\ContextMenu\BeatmapListContextMenuObject.cs" />
     <Compile Include="SDK\ContextMenu\ContextOption.cs" />
@@ -400,6 +408,7 @@
     <Compile Include="SDK\ContextMenu\ContextMenuProvider.cs" />
     <Compile Include="SDK\ContextMenu\IContextOption.cs" />
     <Compile Include="SDK\ContextMenu\IContextMenuProvider.cs" />
+    <Compile Include="SDK\Factories\ClickableTextFactory.cs" />
     <Compile Include="SDK\Factories\ImageFactory.cs" />
     <Compile Include="SDK\Factories\ModalFactory.cs" />
     <Compile Include="SDK\Factories\TextSegmentedControlFactory.cs" />
@@ -428,6 +437,7 @@
     <Compile Include="UI\Patches\SDK\AddSettingsPatches.cs" />
     <Compile Include="Util\BackingFieldUtil.cs" />
     <Compile Include="Util\BeatmapFilterUtil.cs" />
+    <Compile Include="Util\ColorUtil.cs" />
     <Compile Include="Util\CustomBeatmapDataExtensions.cs" />
     <Compile Include="Util\CustomDataExtensions.cs" />
     <Compile Include="Util\FileUtil.cs" />

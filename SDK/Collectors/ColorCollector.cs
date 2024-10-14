@@ -1,5 +1,8 @@
-﻿using System;
+﻿using EditorEX.Util;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using UnityEngine;
 using Zenject;
 
@@ -18,9 +21,22 @@ namespace EditorEX.SDK.Collectors
                 {
                     string remappedName = color.name.Substring(14).Replace(".", "/");
                     _colors[remappedName] = color;
-                    Debug.Log(remappedName);
                 }
             }
+
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (var color in _colors)
+            {
+                var unityColor = color.Value.color;
+                var r = (int)(unityColor.r * 255);
+                var g = (int)(unityColor.g * 255);
+                var b = (int)(unityColor.b * 255);
+                var a = (int)(unityColor.a * 255);
+                var (invR, invG, invB) = ColorUtil.GetAdjustedInverseColor(r, g, b);
+                stringBuilder.AppendLine($"<span style=\"font-weight: bold; color:rgba({r}, {g}, {b}, {a}); background-color:rgba({invR}, {invG}, {invB});\">{color.Key}</span>");
+            }
+
+            File.WriteAllText("test.txt", stringBuilder.ToString());
         }
 
         public SimpleColorSO GetColor(string name)

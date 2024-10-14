@@ -16,10 +16,12 @@ namespace EditorEX.UI.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<ColorCollector>().AsSingle();
+            Container.BindInterfacesAndSelfTo<TransitionCollector>().AsSingle();
             Container.BindInterfacesAndSelfTo<FontCollector>().AsSingle();
             Container.BindInterfacesAndSelfTo<PrefabCollector>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<TextFactory>().AsSingle();
+            Container.BindInterfacesAndSelfTo<ClickableTextFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ImageFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ButtonFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<IconButtonFactory>().AsSingle();
