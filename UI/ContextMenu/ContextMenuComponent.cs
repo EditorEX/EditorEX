@@ -19,8 +19,9 @@ namespace EditorEX.UI.ContextMenu
         private ModalFactory _modalFactory;
         private ClickableTextFactory _clickableTextFactory;
 
-        private EditorModalView _modal;
         private VerticalLayoutGroup _verticalLayoutGroup;
+        
+        public EditorModalView modal { get; private set; }
 
         [Inject]
         private void Construct(
@@ -38,10 +39,10 @@ namespace EditorEX.UI.ContextMenu
             var mainScreen = GameObject.Find("MainScreen");
             transform.SetParent(mainScreen.transform, false);
 
-            _modal = _modalFactory.Create(transform);
-            _modal.gameObject.AddComponent<StackLayoutGroup>();
+            modal = _modalFactory.Create(transform);
+            modal.gameObject.AddComponent<StackLayoutGroup>();
 
-            var fitter = _modal.gameObject.AddComponent<ContentSizeFitter>();
+            var fitter = modal.gameObject.AddComponent<ContentSizeFitter>();
             fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
         }
@@ -54,7 +55,7 @@ namespace EditorEX.UI.ContextMenu
             }
 
             _verticalLayoutGroup = new GameObject().AddComponent<VerticalLayoutGroup>();
-            _verticalLayoutGroup.transform.SetParent(_modal.transform);
+            _verticalLayoutGroup.transform.SetParent(modal.transform);
             _verticalLayoutGroup.spacing = 5;
             _verticalLayoutGroup.padding = new RectOffset(5, 5, 5, 5);
 
@@ -68,7 +69,6 @@ namespace EditorEX.UI.ContextMenu
                 {
                     contextOption.Invoke(data);
                 });
-                //clickable.GetComponent<ContentSizeFitter>().horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             }
         }
 
@@ -84,20 +84,20 @@ namespace EditorEX.UI.ContextMenu
 
             CreateButtons(contextOptions, data);
 
-            var rectTransform = _modal.GetComponent<RectTransform>();
+            var rectTransform = modal.GetComponent<RectTransform>();
 
-            _modal.gameObject.SetActive(false);
-            _modal.gameObject.SetActive(true);
+            modal.gameObject.SetActive(false);
+            modal.gameObject.SetActive(true);
 
             position.x += rectTransform.sizeDelta.x / 2f;
             position.y -= rectTransform.sizeDelta.y / 2f;
 
-            if (_modal.isShown)
+            if (modal.isShown)
             {
-                _modal.Hide();
+                modal.Hide();
             }
             transform.position = position;
-            _modal.Show(true);
+            modal.Show(true);
         }
     }
 }

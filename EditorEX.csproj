@@ -435,6 +435,7 @@
     <Compile Include="UI\Patches\SaveLevelAuthorNamePatch.cs" />
     <Compile Include="UI\Patches\SDK\AddBeatmapListContextMenu.cs" />
     <Compile Include="UI\Patches\SDK\AddSettingsPatches.cs" />
+    <Compile Include="UI\Patches\SDK\DisableContextMenuPatches.cs" />
     <Compile Include="Util\BackingFieldUtil.cs" />
     <Compile Include="Util\BeatmapFilterUtil.cs" />
     <Compile Include="Util\ColorUtil.cs" />

@@ -32,6 +32,7 @@ namespace EditorEX.UI.Installers
 
             Container.Bind<IViewContent<SettingsViewData>>().FromInstance(new EditorExSettingsViewContent());
 
+            Container.BindInterfacesAndSelfTo<DisableContextMenuPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<AddBeatmapListContextMenu>().AsSingle();
             Container.BindInterfacesAndSelfTo<MoreCoverFileTypes>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapsListViewControllerPatches>().AsSingle();
