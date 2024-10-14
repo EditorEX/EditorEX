@@ -15,12 +15,14 @@ namespace EditorEX.SDK.Components
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            OnClickEvent?.Invoke(eventData);
+            if (eventData.button != PointerEventData.InputButton.Right)
+            {
+                OnClickEvent?.Invoke(eventData);
+            }
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            Debug.Log(Environment.StackTrace.ToString());
             SetState(SelectionState.Pressed);
         }
 

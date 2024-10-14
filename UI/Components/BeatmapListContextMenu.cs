@@ -22,6 +22,7 @@ namespace EditorEX.UI.Components
 
         public void SetData(BeatmapInfoData beatmapInfoData)
         {
+            _contextMenu.TryInvalidate(gameObject);
             _beatmapInfoData = beatmapInfoData;
         }
 
@@ -29,8 +30,13 @@ namespace EditorEX.UI.Components
         {
             if (eventData.button == PointerEventData.InputButton.Right)
             {
-                _contextMenu.ShowContextMenu(new BeatmapListContextMenuObject(_beatmapInfoData), eventData.position);
+                _contextMenu.ShowContextMenu(new BeatmapListContextMenuObject(_beatmapInfoData), eventData.position, gameObject);
             }
+        }
+
+        private void OnDisable()
+        {
+            _contextMenu.TryInvalidate(gameObject);
         }
     }
 }

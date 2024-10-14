@@ -58,6 +58,24 @@ namespace EditorEX.UI.Patches
 
                 (_segmentedControl.cells.Last().transform as RectTransform).sizeDelta = new Vector2(80f, 30f);
 
+                var ListParent = new GameObject("ListParent");
+                ListParent.transform.SetParent(__instance.transform, false);
+
+                var recentlyModified = __instance._recentBeatmapsView.transform.parent;
+                var beatmapsList = __instance._beatmapsListTableView.transform;
+                var search = __instance.transform.Find("ExStringInput");
+
+                recentlyModified.SetParent(ListParent.transform, true);
+                beatmapsList.SetParent(ListParent.transform, true);
+                search.SetParent(ListParent.transform, true);
+
+                gameObjects.Add(ListParent);
+
+                var NewSourceParent = new GameObject("NewSourceParent");
+                NewSourceParent.transform.SetParent(__instance.transform, false);
+
+                gameObjects.Add(NewSourceParent);
+
                 __instance.gameObject.SetActive(true);
             }
             else
@@ -81,6 +99,13 @@ namespace EditorEX.UI.Patches
             {
                 _sourcesConfig.SelectedSource = _sourcesConfig.Sources.Keys.ToList()[idx];
                 _beatmapsCollectionDataModel.RefreshCollection();
+            }
+
+            idx = (idx == segmentedControl.cells.Count - 1) ? 1 : 0;
+
+            for (int i = 0; i < gameObjects.Count; i++)
+            {
+                gameObjects[i].SetActive(i == idx);
             }
         }
 

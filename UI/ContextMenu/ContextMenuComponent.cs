@@ -20,6 +20,7 @@ namespace EditorEX.UI.ContextMenu
         private ClickableTextFactory _clickableTextFactory;
 
         private VerticalLayoutGroup _verticalLayoutGroup;
+        private object? _linkedObject;
         
         public EditorModalView modal { get; private set; }
 
@@ -45,6 +46,8 @@ namespace EditorEX.UI.ContextMenu
             var fitter = modal.gameObject.AddComponent<ContentSizeFitter>();
             fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
             fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            modal.gameObject.SetActive(false);
         }
 
         private void CreateButtons<T>(IEnumerable<IContextOption> contextOptions, T data) where T : IContextMenuObject
@@ -72,7 +75,7 @@ namespace EditorEX.UI.ContextMenu
             }
         }
 
-        public void ShowContextMenu<T>(T data, Vector2 position) where T: IContextMenuObject
+        public void ShowContextMenu<T>(T data, Vector2 position, object? linkedObject) where T: IContextMenuObject
         {
             var providers = _contextMenuProviders.OfType<ContextMenuProvider<T>>();
             if (providers == null || providers.Count() == 0)
@@ -98,6 +101,17 @@ namespace EditorEX.UI.ContextMenu
             }
             transform.position = position;
             modal.Show(true);
+
+            _linkedObject = linkedObject;
+        }
+
+        public void TryInvalidate(object instance)
+        {
+            if (_linkedObject == instance)
+            {
+                modal.Hide();
+                _linkedObject = null;
+            }
         }
     }
 }
