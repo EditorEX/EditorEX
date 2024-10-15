@@ -6,12 +6,9 @@ using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
 using HMUI;
 using SiraUtil.Affinity;
-using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 using Zenject;
 
 // :dread:
@@ -21,11 +18,12 @@ namespace EditorEX.UI.Patches
     {
         private readonly BeatmapLevelDataModel _beatmapLevelDataModel;
         private readonly TextSegmentedControlFactory _textSegmentedControlFactory;
+        private readonly ImageFactory _imageFactory;
         private readonly LevelCustomDataModel _levelCustomDataModel;
         private readonly IInstantiator _instantiator;
 
-        private TextSegmentedControl _segmentedControl;
-        private TabbingSegmentedControlController _tabbingSegmentedControlController;
+        private TextSegmentedControl _rootSegmentedControl;
+        private TabbingSegmentedControlController _rootTabbingSegmentedControlController;
 
         private GameObject SongInfoRoot;
         private GameObject BeatmapsRoot;
@@ -33,14 +31,25 @@ namespace EditorEX.UI.Patches
         private StringInputFieldValidator _levelAuthorInputValidator;
         private StaticAudioWaveformView _staticAudioWaveformView;
 
+
+
+        private TextSegmentedControl _extraSongInfoSegmentedControl;
+        private TabbingSegmentedControlController _extraSongInfoTabbingSegmentedControlController;
+
+        private GameObject EnvironmentRoot;
+        private GameObject ContributorsRoot;
+        private GameObject ModhcartRoot;
+
         private EditBeatmapLevelPatches(
             BeatmapLevelDataModel beatmapLevelDataModel,
             TextSegmentedControlFactory textSegmentedControlFactory,
+            ImageFactory imageFactory,
             LevelCustomDataModel levelCustomDataModel,
             IInstantiator instantiator)
         {
             _beatmapLevelDataModel = beatmapLevelDataModel;
             _textSegmentedControlFactory = textSegmentedControlFactory;
+            _imageFactory = imageFactory;
             _levelCustomDataModel = levelCustomDataModel;
             _instantiator = instantiator;
         }
@@ -54,18 +63,18 @@ namespace EditorEX.UI.Patches
                 return;
             }
             _levelAuthorInputValidator.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
-            
+
             SongInfoRoot.SetActive(false);
             SongInfoRoot.SetActive(true); // Fix layout
 
             _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
 
-            _staticAudioWaveformView.SetAudioClip(_staticAudioWaveformView._audioDataModel.audioClip);
+            //_staticAudioWaveformView.SetAudioClip(_staticAudioWaveformView._audioDataModel.audioClip);
 
-            _staticAudioWaveformView.SetupWaveform();
+            //_staticAudioWaveformView.SetupWaveform();
         }
 
-        [AffinityPostfix]                                   
+        [AffinityPostfix]
         [AffinityPatch(typeof(EditBeatmapLevelViewController), nameof(EditBeatmapLevelViewController.HandleBeatmapProjectSaved))]
         private void HandleBeatmapProjectSaved(EditBeatmapLevelViewController __instance)
         {
@@ -78,10 +87,10 @@ namespace EditorEX.UI.Patches
         {
             if (firstActivation)
             {
-                _segmentedControl = _textSegmentedControlFactory.Create(__instance.transform, new string[] { "Song Info | 1", "Beatmaps | 2" }, Selected);
-                (_segmentedControl.transform as RectTransform).anchoredPosition = new Vector2(0f, 500f);
-                _tabbingSegmentedControlController = _segmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
-                _tabbingSegmentedControlController.Setup(_segmentedControl);
+                _rootSegmentedControl = _textSegmentedControlFactory.Create(__instance.transform, new string[] { "Song Info | 1", "Beatmaps | 2" }, RootSelected);
+                (_rootSegmentedControl.transform as RectTransform).anchoredPosition = new Vector2(0f, 500f);
+                _rootTabbingSegmentedControlController = _rootSegmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
+                _rootTabbingSegmentedControlController.Setup(_rootSegmentedControl, false);
 
                 __instance.gameObject.SetActive(false);
 
@@ -134,7 +143,7 @@ namespace EditorEX.UI.Patches
                 songInfoSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
                 _levelAuthorInputValidator = GameObject.Instantiate(__instance._songAuthorNameInputValidator.transform.parent, songInfo.transform).GetComponentInChildren<StringInputFieldValidator>();
-                
+
                 _levelAuthorInputValidator.onInputValidated += x =>
                 {
                     __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, x, null, null, null, null, null, null, null, null, null));
@@ -147,39 +156,82 @@ namespace EditorEX.UI.Patches
                 var timingInfoSizeFitter = timingInfo.gameObject.AddComponent<ContentSizeFitter>();
                 timingInfoSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
                 timingInfoSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-                
+
                 var previewWaveform = new GameObject("PreviewWaveform");
                 previewWaveform.transform.SetParent(beatmapInfoContainer);
 
-                var audioWaveformController = _instantiator.InstantiateComponent<AudioWaveformController>(previewWaveform.gameObject);
-                _staticAudioWaveformView = _instantiator.InstantiateComponent<StaticAudioWaveformView>(previewWaveform.gameObject);
-                var image = previewWaveform.gameObject.AddComponent<RawImage>();
-                _staticAudioWaveformView._waveformImage = image;
-                _staticAudioWaveformView._audioWaveformController = audioWaveformController;
-                _staticAudioWaveformView._waveformImageRectTransform = image.rectTransform;
-                audioWaveformController._computeShader = Resources.FindObjectsOfTypeAll<ComputeShader>().FirstOrDefault(x=>x.name == "AudioWaveform");
+                //var audioWaveformController = _instantiator.InstantiateComponent<AudioWaveformController>(previewWaveform.gameObject);
+                //_staticAudioWaveformView = _instantiator.InstantiateComponent<StaticAudioWaveformView>(previewWaveform.gameObject);
+                //var image = previewWaveform.gameObject.AddComponent<RawImage>();
+                //_staticAudioWaveformView._waveformImage = image;
+                //_staticAudioWaveformView._audioWaveformController = audioWaveformController;
+                //_staticAudioWaveformView._waveformImageRectTransform = image.rectTransform;
+                //audioWaveformController._computeShader = Resources.FindObjectsOfTypeAll<ComputeShader>().FirstOrDefault(x=>x.name == "AudioWaveform");
+
+                var vertical = new GameObject("ExtraSongInfoRoot").AddComponent<VerticalLayoutGroup>();
+                vertical.transform.SetParent(SongInfoRoot.transform, false);
+                (vertical.transform as RectTransform).anchoredPosition = new Vector2(950f, -100f);
+
+                vertical.childAlignment = TextAnchor.MiddleCenter;
+                vertical.spacing = 10f;
+
+                _extraSongInfoSegmentedControl = _textSegmentedControlFactory.Create(vertical.transform, new string[] { "Environments | Q", "Contributors | W", "Modhcarting | E" }, ExtraSongInfoSelected);
+                _extraSongInfoTabbingSegmentedControlController = _extraSongInfoSegmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
+                _extraSongInfoTabbingSegmentedControlController.Setup(_extraSongInfoSegmentedControl, true);
+
+                var extraSongInfo = _imageFactory.Create(vertical.transform, "#Background8px", new() { anchoredPosition = new Vector2(0f, 0f), sizeDelta = new Vector2(800f, 800f) });
+                extraSongInfo.transform.SetAsLastSibling();
+                var layoutElement = extraSongInfo.gameObject.AddComponent<LayoutElement>();
+                layoutElement.minWidth = 800f;
+                layoutElement.minHeight = 800f;
+
+                EnvironmentRoot = new GameObject("EnvironmentRoot");
+                EnvironmentRoot.transform.SetParent(extraSongInfo.transform);
+                ContributorsRoot = new GameObject("ContributorsRoot");
+                ContributorsRoot.transform.SetParent(extraSongInfo.transform);
+                ModhcartRoot = new GameObject("ModhcartRoot");
+                ModhcartRoot.transform.SetParent(extraSongInfo.transform);
 
                 __instance.gameObject.SetActive(true);
             }
             else
             {
-                _tabbingSegmentedControlController.AddBindings();
+                _rootTabbingSegmentedControlController.AddBindings(false);
+                _extraSongInfoTabbingSegmentedControlController.AddBindings(true);
             }
 
-            _tabbingSegmentedControlController.ClickCell(0);
+            _rootTabbingSegmentedControlController.ClickCell(0); 
+            _extraSongInfoTabbingSegmentedControlController.ClickCell(0);
         }
 
         [AffinityPostfix]
         [AffinityPatch(typeof(EditBeatmapLevelViewController), nameof(EditBeatmapLevelViewController.DidDeactivate))]
         private void DidDeactivate()
         {
-            _tabbingSegmentedControlController.ClearBindings();
+            _rootTabbingSegmentedControlController.ClearBindings();
+            _extraSongInfoTabbingSegmentedControlController.ClearBindings();
         }
 
-        private void Selected(SegmentedControl segmentedControl, int idx)
+        private void RootSelected(SegmentedControl segmentedControl, int idx)
         {
             SongInfoRoot.SetActive(idx == 0);
             BeatmapsRoot.SetActive(idx == 1);
+
+            if (idx == 1)
+            {
+                _extraSongInfoTabbingSegmentedControlController.ClearBindings();
+            }
+            else
+            {
+                _extraSongInfoTabbingSegmentedControlController.AddBindings(true);
+            }
+        }
+
+        private void ExtraSongInfoSelected(SegmentedControl segmentedControl, int idx)
+        {
+            EnvironmentRoot.SetActive(idx == 0);
+            ContributorsRoot.SetActive(idx == 1);
+            ModhcartRoot.SetActive(idx == 2);
         }
     }
 }

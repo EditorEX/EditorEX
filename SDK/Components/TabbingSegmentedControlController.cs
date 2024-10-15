@@ -12,17 +12,18 @@ namespace EditorEX.SDK.Components
 {
     public class TabbingSegmentedControlController : MonoBehaviour
     {
+        private static readonly KeyCode[] _qwertyKeyBinds = new KeyCode[] { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, KeyCode.T, KeyCode.Y, KeyCode.U, KeyCode.I, KeyCode.O, KeyCode.P };
         private KeyboardBinder _keyboardBinder;
         private SegmentedControl _segmentedControl;
 
-        public void Setup(SegmentedControl segmentedControl)
+        public void Setup(SegmentedControl segmentedControl, bool qwerty)
         {   
             _segmentedControl = segmentedControl;
 
-            AddBindings();
+            AddBindings(qwerty);
         }
 
-        public void AddBindings()
+        public void AddBindings(bool qwerty)
         {
             if (_keyboardBinder == null)
                 _keyboardBinder = new KeyboardBinder();
@@ -30,7 +31,7 @@ namespace EditorEX.SDK.Components
             for (int i = 0; i < _segmentedControl.dataSource.NumberOfCells(); i++)
             {
                 int b = i;
-                _keyboardBinder.AddBinding(KeyCode.Alpha1 + i, KeyboardBinder.KeyBindingType.KeyDown, x =>
+                _keyboardBinder.AddBinding(qwerty ? _qwertyKeyBinds[i] : KeyCode.Alpha1 + i, KeyboardBinder.KeyBindingType.KeyDown, x =>
                 {
                     ClickCell(b);
                 });

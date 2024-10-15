@@ -57,7 +57,7 @@ namespace EditorEX.UI.Patches
                 _segmentedControl = _textSegmentedControlFactory.Create(__instance.transform, SetupSources(), Selected);
                 (_segmentedControl.transform as RectTransform).anchoredPosition = new Vector2(0f, 500f);
                 _tabbingSegmentedControlController = _segmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
-                _tabbingSegmentedControlController.Setup(_segmentedControl);
+                _tabbingSegmentedControlController.Setup(_segmentedControl, false);
 
                 (_segmentedControl.cells.Last().transform as RectTransform).sizeDelta = new Vector2(80f, 30f);
                 _segmentedControl.gameObject.name = "SourcesSegmentedControl";
@@ -106,7 +106,7 @@ namespace EditorEX.UI.Patches
             }
             else
             {
-                _tabbingSegmentedControlController.AddBindings();
+                _tabbingSegmentedControlController.AddBindings(false);
             }
 
             _tabbingSegmentedControlController.ClickCell(0);
@@ -123,7 +123,12 @@ namespace EditorEX.UI.Patches
         private IEnumerable<string> SetupSources()
         {
             var sources = _sourcesConfig.Sources.Keys.ToList();
-            sources.Add("<size=20>+");
+            sources.Add("<size=20>+</size><voffset=0.2em>");
+
+            for (int i = 0; i < sources.Count; i++)
+            {
+                sources[i] += $" | {i + 1}";
+            }
             return sources;
         }
 
