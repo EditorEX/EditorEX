@@ -10,7 +10,6 @@ namespace EditorEX.Config
 {
     internal class SourcesConfig
     {
-        public virtual string NewLevelSource { get; set; } = "Custom WIP Levels";
         public virtual string SelectedSource { get; set; } = "Custom Levels";
 
         [UseConverter(typeof(DictionaryConverter<List<string>, ListConverter<string>>))]

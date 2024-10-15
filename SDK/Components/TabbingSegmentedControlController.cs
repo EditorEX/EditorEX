@@ -1,4 +1,5 @@
-﻿using HMUI;
+﻿using EditorEX.Util;
+using HMUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,6 +49,8 @@ namespace EditorEX.SDK.Components
 
         public void ClickCell(int number)
         {
+            if (InputUtils.IsInputFieldActive())
+                return;
             _segmentedControl.cells[number].OnPointerClick(new PointerEventData(null));
         }
     }

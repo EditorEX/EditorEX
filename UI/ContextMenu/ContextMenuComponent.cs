@@ -41,11 +41,6 @@ namespace EditorEX.UI.ContextMenu
             transform.SetParent(mainScreen.transform, false);
 
             modal = _modalFactory.Create(transform);
-            modal.gameObject.AddComponent<StackLayoutGroup>();
-
-            var fitter = modal.gameObject.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             modal.gameObject.SetActive(false);
         }
@@ -60,7 +55,7 @@ namespace EditorEX.UI.ContextMenu
             _verticalLayoutGroup = new GameObject().AddComponent<VerticalLayoutGroup>();
             _verticalLayoutGroup.transform.SetParent(modal.transform);
             _verticalLayoutGroup.spacing = 5;
-            _verticalLayoutGroup.padding = new RectOffset(5, 5, 5, 5);
+            _verticalLayoutGroup.padding = new RectOffset(15, 15, 8, 8);
 
             var fitter = _verticalLayoutGroup.gameObject.AddComponent<ContentSizeFitter>();
             fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;

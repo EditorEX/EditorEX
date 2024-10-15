@@ -26,12 +26,11 @@ namespace EditorEX.UI.Patches
         {
             if (firstActivation)
             {
-                _filterInput = _stringInputFactory.Create(__instance.transform, "Filter", x =>
+                _filterInput = _stringInputFactory.Create(__instance.transform, "Filter", 250f, x =>
                 {
                     ApplyFilter(__instance);
                 });
-                _filterInput.transform.parent.position = new Vector3(40f, 670f, 0f);
-                (_filterInput.transform.parent as RectTransform).sizeDelta = new Vector2(400f, 40f);
+                _filterInput.transform.parent.position = new Vector3(130f, 670f, 0f);
             }
         }
 

@@ -21,6 +21,11 @@ namespace EditorEX.SDK.Factories
             _fontCollector = fontCollector;
         }
 
+        public CurvedTextMeshPro Create(Transform parent, string text, float fontSize, string colorType)
+        {
+            return Create<CurvedTextMeshPro>(parent, text, fontSize, colorType);
+        }
+
         public T Create<T>(Transform parent, string text, float fontSize, string colorType) where T : CurvedTextMeshPro
         {
             GameObject gameObj = new($"Ex{typeof(T).Name}")

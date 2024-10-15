@@ -1,4 +1,5 @@
 ﻿using EditorEX.SDK.Collectors;
+using EditorEX.SDK.Components;
 using EditorEX.SDK.ContextMenu;
 using EditorEX.SDK.Factories;
 using EditorEX.SDK.Settings;
@@ -33,6 +34,7 @@ namespace EditorEX.UI.Installers
             Container.Bind<IViewContent<SettingsViewData>>().FromInstance(new EditorExSettingsViewContent());
 
             Container.BindInterfacesAndSelfTo<DisableContextMenuPatches>().AsSingle();
+            Container.BindInterfacesAndSelfTo<AddSourceListContextMenu>().AsSingle();
             Container.BindInterfacesAndSelfTo<AddBeatmapListContextMenu>().AsSingle();
             Container.BindInterfacesAndSelfTo<MoreCoverFileTypes>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapsListViewControllerPatches>().AsSingle();
@@ -44,7 +46,10 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<SaveLevelAuthorNamePatch>().AsSingle();
 
             Container.Bind<IContextMenuProvider>().To<DefaultEditorBeatmapListContextMenuProvider>().AsSingle();
+            Container.Bind<IContextMenuProvider>().To<DefaultEditorSourceListContextMenuProvider>().AsSingle();
             Container.BindInterfacesAndSelfTo<ContextMenuComponent>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+
+            Container.BindInterfacesAndSelfTo<StringInputDialogModal>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
 
         }
     }

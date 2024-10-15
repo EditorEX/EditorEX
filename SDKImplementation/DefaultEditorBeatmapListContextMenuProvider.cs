@@ -1,11 +1,6 @@
-﻿using BeatmapEditor3D;
-using EditorEX.SDK.ContextMenu;
+﻿using EditorEX.SDK.ContextMenu;
+using EditorEX.SDK.ContextMenu.Objects;
 using EditorEX.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EditorEX.SDKImplementation
 {
@@ -22,7 +17,7 @@ namespace EditorEX.SDKImplementation
 
         private void OpenFolder(BeatmapListContextMenuObject contextObject)
         {
-            FileUtil.OpenFileBrowser(contextObject.beatmapInfoData.beatmapFolderPath);
+            FileUtil.OpenFileBrowser(contextObject.BeatmapInfoData.beatmapFolderPath);
         }
 
         private void Delete(BeatmapListContextMenuObject contextObject)

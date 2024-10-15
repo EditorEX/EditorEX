@@ -20,7 +20,6 @@ namespace EditorEX.SDK.Components
         private Transform _previousParent;
         public bool isShown;
         private bool _viewIsValid;
-        private Canvas _mainCanvas;
         private GameObject _blockerGO;
 
         public event Action blockerClickedEvent;
@@ -51,24 +50,6 @@ namespace EditorEX.SDK.Components
                 return;
             }
             gameObject.SetActive(true);
-            _mainCanvas = EssentialHelpers.GetOrAddComponent<Canvas>(gameObject);
-            if (screenTransform != null)
-            {
-                BaseRaycaster[] components = screenTransform.GetComponents<BaseRaycaster>();
-                for (int i = 0; i < components.Length; i++)
-                {
-                    Type type = components[i].GetType();
-                    if (gameObject.GetComponent(type) == null)
-                    {
-                        _container.InstantiateComponent(type, gameObject);
-                    }
-                }
-            }
-            else
-            {
-                EssentialHelpers.GetOrAddComponent<GraphicRaycaster>(gameObject);
-            }
-            EssentialHelpers.GetOrAddComponent<CanvasGroup>(gameObject).ignoreParentGroups = true;
             gameObject.transform.SetParent(screenTransform, true);
             gameObject.SetActive(false);
             _viewIsValid = true;
@@ -93,16 +74,13 @@ namespace EditorEX.SDK.Components
             {
                 return;
             }
-            Canvas canvas;
-            BeatmapEditorViewController viewControllerBase;
-            Transform modalRootTransform = GetModalRootTransform(transform.parent, out canvas, out viewControllerBase);
+            Transform modalRootTransform = GetModalRootTransform(transform.parent);
             _previousParent = transform.parent;
             if (!_viewIsValid)
             {
                 SetupView(modalRootTransform);
             }
             gameObject.SetActive(true);
-            gameObject.GetComponent<Canvas>().sortingLayerID = canvas.sortingLayerID;
             if (moveToCenter)
             {
                 transform.SetParent(modalRootTransform, false);
@@ -128,19 +106,18 @@ namespace EditorEX.SDK.Components
             RectTransform rectTransform = gameObject.AddComponent<RectTransform>();
             gameObject.AddComponent<CanvasRenderer>();
             Canvas canvas = null;
-            Transform transform = _mainCanvas.transform.parent;
-            while (transform != null)
+            Transform ftransform = transform.parent;
+            while (ftransform != null)
             {
-                canvas = transform.GetComponent<Canvas>();
+                canvas = ftransform.GetComponent<Canvas>();
                 if (canvas != null)
                 {
                     break;
                 }
-                transform = transform.parent;
+                ftransform = ftransform.parent;
             }
-            rectTransform.SetParent(_mainCanvas.transform.parent, false);
+            rectTransform.SetParent(transform.parent, false);
             rectTransform.SetAsFirstSibling();
-            //rectTransform.SetSiblingIndex(_mainCanvas.transform.GetSiblingIndex());
             rectTransform.anchorMin = Vector3.zero;
             rectTransform.anchorMax = Vector3.one;
             rectTransform.sizeDelta = Vector2.zero;
@@ -175,11 +152,11 @@ namespace EditorEX.SDK.Components
             action();
         }
 
-        private static Transform GetModalRootTransform(Transform transform, out Canvas canvas, out BeatmapEditorViewController viewController)
+        private static Transform GetModalRootTransform(Transform transform)
         {
             BeatmapEditorScreen componentInParent = transform.GetComponentInParent<BeatmapEditorScreen>();
-            canvas = componentInParent.GetComponentInChildren<Canvas>();
-            viewController = componentInParent.GetComponentInChildren<BeatmapEditorViewController>();
+            var canvas = componentInParent.GetComponentInChildren<Canvas>();
+            var viewController = componentInParent.GetComponentInChildren<BeatmapEditorViewController>();
             if (viewController != null)
             {
                 return viewController.transform;

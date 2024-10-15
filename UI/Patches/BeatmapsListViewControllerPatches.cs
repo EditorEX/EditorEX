@@ -1,15 +1,15 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Config;
-using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
 using HMUI;
 using SiraUtil.Affinity;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace EditorEX.UI.Patches
 {
@@ -17,6 +17,8 @@ namespace EditorEX.UI.Patches
     {
         private readonly TextSegmentedControlFactory _textSegmentedControlFactory;
         private readonly ButtonFactory _buttonFactory;
+        private readonly TextFactory _textFactory;
+        private readonly StringInputFactory _stringInputFactory;
         private readonly SourcesConfig _sourcesConfig;
         private readonly BeatmapsCollectionDataModel _beatmapsCollectionDataModel;
 
@@ -25,14 +27,21 @@ namespace EditorEX.UI.Patches
 
         private List<GameObject> gameObjects = new List<GameObject>();
 
+        // New Source
+        private TMP_InputField _tempNewSourceName;
+
         private BeatmapsListViewControllerPatches(
             TextSegmentedControlFactory textSegmentedControlFactory,
             ButtonFactory buttonFactory,
+            TextFactory textFactory,
+            StringInputFactory stringInputFactory,
             SourcesConfig sourcesConfig,
             BeatmapsCollectionDataModel beatmapsCollectionDataModel)
         {
             _textSegmentedControlFactory = textSegmentedControlFactory;
             _buttonFactory = buttonFactory;
+            _textFactory = textFactory;
+            _stringInputFactory = stringInputFactory;
             _sourcesConfig = sourcesConfig;
             _beatmapsCollectionDataModel = beatmapsCollectionDataModel;
         }
@@ -43,20 +52,17 @@ namespace EditorEX.UI.Patches
         {
             if (firstActivation)
             {
-                var sources = _sourcesConfig.Sources.Keys.ToList();
-                sources.Add("+");
-
                 __instance.gameObject.SetActive(false);
 
-                _segmentedControl = _textSegmentedControlFactory.Create(__instance.transform, sources, Selected);
+                _segmentedControl = _textSegmentedControlFactory.Create(__instance.transform, SetupSources(), Selected);
                 (_segmentedControl.transform as RectTransform).anchoredPosition = new Vector2(0f, 500f);
                 _tabbingSegmentedControlController = _segmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
                 _tabbingSegmentedControlController.Setup(_segmentedControl);
 
-                var button = _buttonFactory.Create(__instance.transform, "Add Path", AddPath);
-                button.transform.localPosition = new Vector2(800f, 500f);
-
                 (_segmentedControl.cells.Last().transform as RectTransform).sizeDelta = new Vector2(80f, 30f);
+                _segmentedControl.gameObject.name = "SourcesSegmentedControl";
+
+                _segmentedControl.ReloadData();
 
                 var ListParent = new GameObject("ListParent");
                 ListParent.transform.SetParent(__instance.transform, false);
@@ -73,6 +79,26 @@ namespace EditorEX.UI.Patches
 
                 var NewSourceParent = new GameObject("NewSourceParent");
                 NewSourceParent.transform.SetParent(__instance.transform, false);
+                NewSourceParent.transform.localPosition = new Vector3(0f, 200f, 0f);
+                NewSourceParent.AddComponent<RectTransform>().sizeDelta = new Vector2(400f, 100f);
+
+                var layout = NewSourceParent.AddComponent<VerticalLayoutGroup>();
+                layout.childAlignment = TextAnchor.UpperCenter;
+                layout.spacing = 50f;
+
+                var parentFitter = NewSourceParent.AddComponent<ContentSizeFitter>();
+                parentFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                parentFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+                var header = _textFactory.Create(NewSourceParent.transform, "New Map Source", 25f, "Button/Text/Normal");
+                var fitter = header.gameObject.AddComponent<ContentSizeFitter>();
+                fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+                fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+                _tempNewSourceName = _stringInputFactory.Create(NewSourceParent.transform, "Source Name", 200f, null);
+                (_tempNewSourceName.transform.parent as RectTransform).sizeDelta = new Vector2(400f, 40f);
+
+                _buttonFactory.Create(NewSourceParent.transform, "Add Source", AddSource);
 
                 gameObjects.Add(NewSourceParent);
 
@@ -84,6 +110,7 @@ namespace EditorEX.UI.Patches
             }
 
             _tabbingSegmentedControlController.ClickCell(0);
+            Selected(_segmentedControl, 0);
         }
 
         [AffinityPostfix]
@@ -91,6 +118,13 @@ namespace EditorEX.UI.Patches
         private void DidDeactivate()
         {
             _tabbingSegmentedControlController.ClearBindings();
+        }
+
+        private IEnumerable<string> SetupSources()
+        {
+            var sources = _sourcesConfig.Sources.Keys.ToList();
+            sources.Add("<size=20>+");
+            return sources;
         }
 
         private void Selected(SegmentedControl segmentedControl, int idx)
@@ -109,12 +143,26 @@ namespace EditorEX.UI.Patches
             }
         }
 
-        private void AddPath()
+        private void AddSource()
         {
-            var newSource = NativeFileDialogs.OpenDirectoryDialog("New Custom levels Directoy", _sourcesConfig.SelectedSource);
+            if (_tempNewSourceName.text != "")
+            {
+                _sourcesConfig.Sources.Add(_tempNewSourceName.text, new List<string>());
+                _tempNewSourceName.text = "";
 
-            if (newSource != null && Directory.Exists(newSource))
-                _sourcesConfig.Sources[_sourcesConfig.SelectedSource].Add(newSource.Replace("\\", "/"));
+                _segmentedControl.SetTexts(SetupSources().ToArray());
+                _segmentedControl.ReloadData();
+
+                _tabbingSegmentedControlController.ClickCell(_segmentedControl.cells.Count - 1);
+            }
+        }
+
+        public void ReloadCells()
+        {
+            _segmentedControl.SetTexts(SetupSources().ToArray());
+            _segmentedControl.ReloadData();
+
+            _beatmapsCollectionDataModel.RefreshCollection();
         }
     }
 }

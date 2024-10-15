@@ -1,6 +1,8 @@
 ﻿using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Components;
+using HMUI;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace EditorEX.SDK.Factories
@@ -34,10 +36,22 @@ namespace EditorEX.SDK.Factories
                 modalView.Hide();
             };
 
-            _imageFactory.Create(modalView.transform, "#Background8px", new Base.LayoutData())._colorSo = _colorCollector.GetColor("VerticalList/Background/Pressed");
+            var bg = _imageFactory.Create(modalView.transform, "#Background8px", new Base.LayoutData());
+            bg._colorSo = _colorCollector.GetColor("VerticalList/Background/Pressed");
+            
             var highlight = _imageFactory.Create(modalView.transform, "#Background8px", new Base.LayoutData());
             highlight._colorSo = _colorCollector.GetColor("Button/Text/Highlighted");
-            highlight.transform.localScale = new Vector3(1.01f, 1.02f, 1f);
+
+            bg.transform.SetParent(highlight.transform);
+            bg.rectTransform.sizeDelta = new Vector2(-5f, -5f);
+            bg.rectTransform.anchorMin = Vector2.zero;
+            bg.rectTransform.anchorMax = Vector2.one;
+
+            gameObject.AddComponent<StackLayoutGroup>();
+
+            var fitter = gameObject.AddComponent<ContentSizeFitter>();
+            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             return modalView;
         }
