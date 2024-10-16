@@ -31,7 +31,7 @@ namespace EditorEX.MapData.SaveDataLoaders
 
         public bool IsVersion(Version version)
         {
-            return version.Major < 4;
+            return version.Major == 2;
         }
 
         public void Load(string projectPath)
@@ -81,7 +81,7 @@ namespace EditorEX.MapData.SaveDataLoaders
             else
             {
                 authors = (from a in standardLevelInfoSaveData.levelAuthorName.Split(new char[] { ',', '&' })
-                           select a.Trim()).ToArray<string>();
+                           select a.Trim()).ToArray();
             }
 
             Dictionary<ValueTuple<BeatmapCharacteristicSO, BeatmapDifficulty>, DifficultyBeatmapData> dictionary = new Dictionary<ValueTuple<BeatmapCharacteristicSO, BeatmapDifficulty>, DifficultyBeatmapData>();
@@ -116,7 +116,13 @@ namespace EditorEX.MapData.SaveDataLoaders
                 }
             }
 
-            _levelCustomDataModel.UpdateWith(standardLevelInfoSaveData.levelAuthorName);
+            Dictionary<string, CustomData> beatmapCustomDatasByFilename = 
+                standardLevelInfoSaveData.difficultyBeatmapSets
+                .SelectMany(x => 
+                    x.difficultyBeatmaps.Select(x => (x.beatmapFilename, (x as CustomLevelInfoSaveData.DifficultyBeatmap).customData)))
+                .ToDictionary(x => x.beatmapFilename, x => x.customData);
+
+            _levelCustomDataModel.UpdateWith(standardLevelInfoSaveData.levelAuthorName, standardLevelInfoSaveData.allDirectionsEnvironmentName, standardLevelInfoSaveData.environmentName, standardLevelInfoSaveData.shuffle, standardLevelInfoSaveData.shufflePeriod, standardLevelInfoSaveData.customData, beatmapCustomDatasByFilename);
             _beatmapLevelDataModel.UpdateWith(standardLevelInfoSaveData.songName, standardLevelInfoSaveData.songSubName, standardLevelInfoSaveData.songAuthorName, new float?(standardLevelInfoSaveData.beatsPerMinute), new float?(standardLevelInfoSaveData.songTimeOffset), new float?(standardLevelInfoSaveData.previewStartTime), new float?(standardLevelInfoSaveData.previewDuration), "BPMInfo.dat", item2, item, item4, item3, standardLevelInfoSaveData.environmentName, beatmapLevelColorSchemes, dictionary, true);
         }
     }

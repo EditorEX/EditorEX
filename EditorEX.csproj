@@ -112,6 +112,11 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Hive.Versioning">
+      <HintPath>$(BeatSaberDir)\Libs\Hive.Versioning.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="HMRendering" Publicize="true">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMRendering.dll</HintPath>
       <Private>False</Private>
@@ -297,7 +302,9 @@
     <Compile Include="CustomJSONData\CustomEvents\CustomEventEditorData.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataAppInstaller.cs" />
     <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataModelsInstaller.cs" />
+    <Compile Include="CustomJSONData\Patches\BeatmapFileUtilsPatch.cs" />
     <Compile Include="CustomJSONData\Patches\BetterClearEvents.cs" />
+    <Compile Include="CustomJSONData\Patches\Saving\BeatmapLevelDataModelSaverPatch.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsAppInstaller.cs" />
     <Compile Include="Essentials\Patches\HideUI.cs" />
     <Compile Include="Essentials\Patches\CameraLock.cs" />
@@ -380,7 +387,13 @@
     <Compile Include="MapData\LevelDataLoaders\LevelDataLoaderV3.cs" />
     <Compile Include="MapData\SaveDataLoaders\ICustomSaveDataLoader.cs" />
     <Compile Include="MapData\SaveDataLoaders\V2BeatmapBpmDataVersionedLoader.cs" />
+    <Compile Include="MapData\SaveDataLoaders\V4CustomSaveDataLoader.cs" />
     <Compile Include="MapData\SaveDataLoaders\V2CustomSaveDataLoader.cs" />
+    <Compile Include="MapData\SaveDataSavers\ICustomSaveDataSaver.cs" />
+    <Compile Include="MapData\SaveDataSavers\V2CustomSaveDataSaver.cs" />
+    <Compile Include="MapData\SaveDataSavers\V4CustomSaveDataSaver.cs" />
+    <Compile Include="MapData\SerializedSaveData\SerializedCustomBeatmapLevelSaveData.cs" />
+    <Compile Include="MapData\SerializedSaveData\SerializedCustomLevelInfoSaveData.cs" />
     <Compile Include="NoodleExtensions\Animation\EditorParentObject.cs" />
     <Compile Include="NoodleExtensions\Deserialize\EditorNoodleCustomDataDeserializer.cs" />
     <Compile Include="NoodleExtensions\Events\EditorAssignPlayerToTrack.cs" />
@@ -465,9 +478,7 @@
     </PackageReference>
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="MapData\SaveDataSavers\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <EmbeddedResource Include="UI\Resources\lockcamera.png" />
   </ItemGroup>

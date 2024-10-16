@@ -11,15 +11,14 @@ using Zenject;
 
 namespace EditorEX.CustomJSONData.Patches.Loading
 {
-    public class BeatmapLevelDataModelLoaderPatch : IAffinity
+    internal class BeatmapLevelDataModelLoaderPatch : IAffinity
     {
         private readonly SiraLog _siraLog;
         private List<ICustomSaveDataLoader> _loaders;
         private LevelCustomDataModel _levelCustomDataModel;
         private SignalBus _signalBus;
 
-        [Inject]
-        public BeatmapLevelDataModelLoaderPatch(
+        private BeatmapLevelDataModelLoaderPatch(
             SiraLog siraLog,
             List<ICustomSaveDataLoader> saveDataLoaders,
             LevelCustomDataModel levelCustomDataModel,
@@ -41,16 +40,11 @@ namespace EditorEX.CustomJSONData.Patches.Loading
 
             LevelContext.Version = version;
 
-            if (version >= BeatmapProjectFileHelper.version400)
-            {
-                _levelCustomDataModel.UpdateWith(null);
-                return true;
-            }
-
             var loader = _loaders.FirstOrDefault(x => x.IsVersion(version));
             if (loader == null)
             {
                 _siraLog.Error("Could not find a viable save data loader ):");
+                return false;
             }
 
             loader.Load(projectPath);

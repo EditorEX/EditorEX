@@ -68,10 +68,6 @@ namespace EditorEX.UI.Patches
             SongInfoRoot.SetActive(true); // Fix layout
 
             _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
-
-            //_staticAudioWaveformView.SetAudioClip(_staticAudioWaveformView._audioDataModel.audioClip);
-
-            //_staticAudioWaveformView.SetupWaveform();
         }
 
         [AffinityPostfix]
@@ -160,14 +156,6 @@ namespace EditorEX.UI.Patches
                 var previewWaveform = new GameObject("PreviewWaveform");
                 previewWaveform.transform.SetParent(beatmapInfoContainer);
 
-                //var audioWaveformController = _instantiator.InstantiateComponent<AudioWaveformController>(previewWaveform.gameObject);
-                //_staticAudioWaveformView = _instantiator.InstantiateComponent<StaticAudioWaveformView>(previewWaveform.gameObject);
-                //var image = previewWaveform.gameObject.AddComponent<RawImage>();
-                //_staticAudioWaveformView._waveformImage = image;
-                //_staticAudioWaveformView._audioWaveformController = audioWaveformController;
-                //_staticAudioWaveformView._waveformImageRectTransform = image.rectTransform;
-                //audioWaveformController._computeShader = Resources.FindObjectsOfTypeAll<ComputeShader>().FirstOrDefault(x=>x.name == "AudioWaveform");
-
                 var vertical = new GameObject("ExtraSongInfoRoot").AddComponent<VerticalLayoutGroup>();
                 vertical.transform.SetParent(SongInfoRoot.transform, false);
                 (vertical.transform as RectTransform).anchoredPosition = new Vector2(950f, -100f);
@@ -175,7 +163,7 @@ namespace EditorEX.UI.Patches
                 vertical.childAlignment = TextAnchor.MiddleCenter;
                 vertical.spacing = 10f;
 
-                _extraSongInfoSegmentedControl = _textSegmentedControlFactory.Create(vertical.transform, new string[] { "Environments | Q", "Contributors | W", "Modhcarting | E" }, ExtraSongInfoSelected);
+                _extraSongInfoSegmentedControl = _textSegmentedControlFactory.Create(vertical.transform, new string[] { "Environments | Q", "Contributors | W" }, ExtraSongInfoSelected);
                 _extraSongInfoTabbingSegmentedControlController = _extraSongInfoSegmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
                 _extraSongInfoTabbingSegmentedControlController.Setup(_extraSongInfoSegmentedControl, true);
 
@@ -189,8 +177,8 @@ namespace EditorEX.UI.Patches
                 EnvironmentRoot.transform.SetParent(extraSongInfo.transform);
                 ContributorsRoot = new GameObject("ContributorsRoot");
                 ContributorsRoot.transform.SetParent(extraSongInfo.transform);
-                ModhcartRoot = new GameObject("ModhcartRoot");
-                ModhcartRoot.transform.SetParent(extraSongInfo.transform);
+                //ModhcartRoot = new GameObject("ModhcartRoot");
+                //ModhcartRoot.transform.SetParent(extraSongInfo.transform);
 
                 __instance.gameObject.SetActive(true);
             }
@@ -231,7 +219,7 @@ namespace EditorEX.UI.Patches
         {
             EnvironmentRoot.SetActive(idx == 0);
             ContributorsRoot.SetActive(idx == 1);
-            ModhcartRoot.SetActive(idx == 2);
+            //ModhcartRoot.SetActive(idx == 2);
         }
     }
 }

@@ -2,12 +2,7 @@
 using BeatmapEditor3D.SerializedData;
 using EditorEX.MapData.LevelDataLoaders;
 using SiraUtil.Affinity;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Zenject;
 
 namespace EditorEX.CustomJSONData.Patches.Loading
 {
@@ -16,8 +11,9 @@ namespace EditorEX.CustomJSONData.Patches.Loading
         private LevelDataLoaderV2 _levelDataLoaderV2;
         private LevelDataLoaderV3 _levelDataLoaderV3;
 
-        [Inject]
-        private void Construct(LevelDataLoaderV2 levelDataLoaderV2, LevelDataLoaderV3 levelDataLoaderV3)
+        private BeatmapDataModelsLoaderPatch(
+            LevelDataLoaderV2 levelDataLoaderV2,
+            LevelDataLoaderV3 levelDataLoaderV3)
         {
             _levelDataLoaderV2 = levelDataLoaderV2;
             _levelDataLoaderV3 = levelDataLoaderV3;

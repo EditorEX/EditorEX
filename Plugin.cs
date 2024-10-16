@@ -27,6 +27,7 @@ namespace EditorEX
         {
             MainConfig config = conf.Generated<MainConfig>();
             zenjector.UseLogger(logger);
+            zenjector.UseMetadataBinder<Plugin>();
 
             zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();

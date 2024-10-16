@@ -25,7 +25,7 @@ namespace EditorEX.Chroma.Events
         {
             CustomData customData = beatmapEventData.GetCustomData();
 
-            Color? color = global::Chroma.CustomDataDeserializer.GetColorFromData(customData, v2);
+            Color? color = CustomDataDeserializer.GetColorFromData(customData, v2);
             if (legacyLightHelper != null)
             {
                 color = color ?? legacyLightHelper.GetLegacyColor(beatmapEventData);

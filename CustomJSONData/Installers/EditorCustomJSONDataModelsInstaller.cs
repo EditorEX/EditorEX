@@ -1,8 +1,10 @@
 ﻿using EditorEX.CustomDataModels;
 using EditorEX.CustomJSONData.Patches;
 using EditorEX.CustomJSONData.Patches.Loading;
+using EditorEX.CustomJSONData.Patches.Saving;
 using EditorEX.MapData.LevelDataLoaders;
 using EditorEX.MapData.SaveDataLoaders;
+using EditorEX.MapData.SaveDataSavers;
 using Zenject;
 
 namespace EditorEX.CustomJSONData.Installers
@@ -12,7 +14,12 @@ namespace EditorEX.CustomJSONData.Installers
         public override void InstallBindings()
         {
             Container.Bind<ICustomSaveDataLoader>().To<V2CustomSaveDataLoader>().AsSingle();
+            Container.Bind<ICustomSaveDataLoader>().To<V4CustomSaveDataLoader>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapLevelDataModelLoaderPatch>().AsSingle().NonLazy();
+
+            Container.Bind<ICustomSaveDataSaver>().To<V4CustomSaveDataSaver>().AsSingle().NonLazy();
+            Container.Bind<ICustomSaveDataSaver>().To<V2CustomSaveDataSaver>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<BeatmapLevelDataModelSaverPatch>().AsSingle().NonLazy();
 
             Container.Bind<V2BeatmapBpmDataVersionedLoader>().AsSingle();
             Container.BindInterfacesAndSelfTo<AudioDataLoaderPatch>().AsSingle().NonLazy();
@@ -26,6 +33,7 @@ namespace EditorEX.CustomJSONData.Installers
             Container.BindInterfacesAndSelfTo<DisableConversion>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<InjectCustomEvents>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<BetterClearEvents>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<BeatmapFileUtilsPatch>().AsSingle().NonLazy();
         }
     }
 }

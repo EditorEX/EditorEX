@@ -2,25 +2,21 @@
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Types;
 using EditorEX.MapData.SaveDataLoaders;
-using HarmonyLib;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
 using System;
 using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
-using Zenject;
 
 namespace EditorEX.CustomJSONData.Patches.Loading
 {
-    public class AudioDataLoaderPatch : IAffinity
+    internal class AudioDataLoaderPatch : IAffinity
     {
         private readonly SiraLog _siraLog;
         private readonly V2BeatmapBpmDataVersionedLoader _v2BeatmapBpmDataVersionedLoader;
 
-        [Inject]
-        public AudioDataLoaderPatch(
+        private AudioDataLoaderPatch(
             SiraLog siraLog,
             V2BeatmapBpmDataVersionedLoader v2BeatmapBpmDataVersionedLoader)
         {
