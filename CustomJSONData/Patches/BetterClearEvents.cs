@@ -17,7 +17,6 @@ namespace EditorEX.CustomJSONData.Patches
 
         private static void InjectEvents(BeatmapLivePreviewDataModel self)
         {
-            Debug.Log("Clearing Events!");
             _BeatmapDataItemsPerTypeAndId.SetValue(self._livePreviewBeatmapData, new CustomBeatmapDataSortedListForTypeAndIds(new BeatmapDataSortedListForTypeAndIds<BeatmapDataItem>()));
             self._livePreviewBeatmapData._allBeatmapData.items.Clear();
             self._livePreviewBeatmapData._allBeatmapDataItemToNodeMap.Clear();

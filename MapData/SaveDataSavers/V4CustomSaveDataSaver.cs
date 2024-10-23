@@ -39,7 +39,6 @@ namespace EditorEX.MapData.SaveDataSavers
 
         public void Save(BeatmapProjectManager beatmapProjectManager, bool clearDirty)
         {
-            Debug.Log("hi");
             SerializedCustomBeatmapLevelSaveData.ColorScheme[] array = _beatmapLevelDataModel.colorSchemes.Select((BeatmapLevelColorSchemeEditorData colorScheme) => new SerializedCustomBeatmapLevelSaveData.ColorScheme
             {
                 colorSchemeName = colorScheme.colorSchemeName,

@@ -25,7 +25,6 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
         private readonly ParametricBoxControllerTransformOverride _parametricBoxControllerTransformOverride;
         private TubeBloomPrePassLight? _originalTubeBloomPrePassLight = Resources.FindObjectsOfTypeAll<TubeBloomPrePassLight>().FirstOrDefault();
 
-        [UsedImplicitly]
         private EditorGeometryFactory(
             IInstantiator instantiator,
             EditorMaterialsManager materialsManager,

@@ -166,7 +166,7 @@ namespace EditorEX.Heck.Patches
             {
                 return;
             }
-            Debug.Log($"Adding object {obj.gameObject.name} {editorData.GetType().Name} to track {editorData.beat}");
+
             track.ForEach(n => n.AddGameObject(obj.gameObject));
         }
 

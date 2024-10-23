@@ -1,19 +1,27 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Config;
+using EditorEX.SDK.AddressableHelpers;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
+using EditorEX.Util;
 using HMUI;
 using SiraUtil.Affinity;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.UI;
+using Zenject;
+using static UnityEngine.SpookyHash;
 
 namespace EditorEX.UI.Patches
 {
-    internal class BeatmapsListViewControllerPatches : IAffinity
+    internal class BeatmapsListViewControllerPatches : IAffinity, IInitializable
     {
         private readonly TextSegmentedControlFactory _textSegmentedControlFactory;
         private readonly ButtonFactory _buttonFactory;
@@ -21,6 +29,8 @@ namespace EditorEX.UI.Patches
         private readonly StringInputFactory _stringInputFactory;
         private readonly SourcesConfig _sourcesConfig;
         private readonly BeatmapsCollectionDataModel _beatmapsCollectionDataModel;
+
+        private Material _roundedCornersMaterial;
 
         private TextSegmentedControl _segmentedControl;
         private TabbingSegmentedControlController _tabbingSegmentedControlController;
@@ -44,6 +54,34 @@ namespace EditorEX.UI.Patches
             _stringInputFactory = stringInputFactory;
             _sourcesConfig = sourcesConfig;
             _beatmapsCollectionDataModel = beatmapsCollectionDataModel;
+        }
+
+        public void Initialize()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            List<string> locationsList = new();
+
+            foreach (var locator in Addressables.ResourceLocators)
+            {
+                foreach (var key in locator.Keys)
+                {
+                    IList<IResourceLocation> locations = new List<IResourceLocation>();
+                    if (locator.Locate(key, typeof(object), out locations))
+                    {
+                        foreach (var location in locations)
+                        {
+                            locationsList.Add(location.PrimaryKey);
+                        }
+                    }
+                }
+            }
+
+            foreach (var location in locationsList.Distinct())
+            {
+                stringBuilder.AppendLine(location.ToString());
+            }
+
+            File.WriteAllText("test.txt", stringBuilder.ToString());
         }
 
         [AffinityPostfix]

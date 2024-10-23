@@ -12,7 +12,6 @@ using Object = UnityEngine.Object;
 
 namespace EditorEX.Chroma.Colorizer
 {
-    [UsedImplicitly]
     public class EditorLightColorizerManager
     {
         private const int COLOR_FIELDS = EditorLightColorizer.COLOR_FIELDS;
@@ -37,16 +36,13 @@ namespace EditorEX.Chroma.Colorizer
 
         public void Colorize(BasicBeatmapEventType eventType, bool refresh, params Color?[] colors) => GetColorizer(eventType).Colorize(refresh, colors);
 
-        [PublicAPI]
         public void Colorize(BasicBeatmapEventType eventType, IEnumerable<ILightWithId> selectLights, params Color?[] colors) => GetColorizer(eventType).Colorize(selectLights, colors);
 
-        [PublicAPI]
         public void GlobalColorize(IEnumerable<ILightWithId>? selectLights, params Color?[] colors)
         {
             GlobalColorize(true, selectLights, colors);
         }
 
-        [PublicAPI]
         public void GlobalColorize(bool refresh, params Color?[] colors)
         {
             GlobalColorize(refresh, null, colors);
@@ -133,7 +129,6 @@ namespace EditorEX.Chroma.Colorizer
         }
     }
 
-    [UsedImplicitly]
     public class EditorLightColorizer
     {
         internal const int COLOR_FIELDS = 4;
@@ -321,7 +316,6 @@ namespace EditorEX.Chroma.Colorizer
             return result;
         }
 
-        [UsedImplicitly]
         internal class Factory : PlaceholderFactory<EditorChromaLightSwitchEventEffect, EditorLightColorizer>
         {
         }

@@ -25,7 +25,6 @@ namespace EditorEX.Heck.Events
         private readonly CoroutineDummy _coroutineDummy;
         private readonly EditorDeserializedData _editorDeserializedData;
 
-        [UsedImplicitly]
         private EditorCoroutineEvent(
             IBpmController bpmController,
             IAudioTimeSource audioTimeSource,

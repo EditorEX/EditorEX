@@ -47,7 +47,6 @@ namespace EditorEX.Chroma.Lighting
 
         private bool _usingBoostColors;
 
-        [UsedImplicitly]
         private EditorChromaLightSwitchEventEffect(
             SiraLog log,
             LightSwitchEventEffect lightSwitchEventEffect,
@@ -496,7 +495,6 @@ namespace EditorEX.Chroma.Lighting
             Refresh(false, null);
         }
 
-        [UsedImplicitly]
         internal class Factory : PlaceholderFactory<LightSwitchEventEffect, EditorChromaLightSwitchEventEffect>
         {
         }

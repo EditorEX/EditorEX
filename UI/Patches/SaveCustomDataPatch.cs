@@ -1,22 +1,16 @@
 ﻿using EditorEX.CustomDataModels;
 using HarmonyLib;
 using SiraUtil.Affinity;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 using static BeatmapEditor3D.DataModels.BeatmapDataModelSignals;
 
 namespace EditorEX.UI.Patches
 {
-    internal class SaveLevelAuthorNamePatch : IAffinity
+    internal class SaveCustomDataPatch : IAffinity
     {
         private readonly LevelCustomDataModel _levelCustomDataModel;
 
-        private SaveLevelAuthorNamePatch(
+        private SaveCustomDataPatch(
             LevelCustomDataModel levelCustomDataModel)
         {
             _levelCustomDataModel = levelCustomDataModel;
@@ -38,7 +32,7 @@ namespace EditorEX.UI.Patches
         [AffinityPostfix]
         private void Execute(UpdateBeatmapDataCommand __instance)
         {
-            _levelCustomDataModel.UpdateWith(__instance._signal.levelAuthorName);
+            _levelCustomDataModel.UpdateWith(__instance._signal.levelAuthorName, __instance._signal.allDirectionsEnvironmentName, __instance._signal.environmentName);
         }
     }
 }

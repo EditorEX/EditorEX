@@ -42,8 +42,10 @@ namespace EditorEX.SDK.Factories
             textObj.richText = true;
 
             var sizeFitter = textObj.gameObject.AddComponent<ContentSizeFitter>();
-            sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            sizeFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            textObj.rectTransform.sizeDelta = new Vector2(inputWidth / 5f, 25f);
 
             var inputField = field.transform.Find("InputField").GetComponent<TMP_InputField>();
             inputField.text = string.Empty;
@@ -64,6 +66,8 @@ namespace EditorEX.SDK.Factories
             textArea.sizeDelta = new Vector2(200f, 20f);
             var border = inputField.transform.Find("Border").GetComponent<RectTransform>();
             border.sizeDelta = new Vector2(200f, 1f);
+
+            border.GetComponent<ImageView>().maskable = true;
 
             Object.Destroy(inputField.GetComponent<StringInputFieldValidator>());
             Object.Destroy(field.transform.Find("ModifiedHint").gameObject);

@@ -1,6 +1,8 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using EditorEX.Config;
 using EditorEX.SDK.Factories;
+using EditorEX.Util;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
 using System;
@@ -9,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace EditorEX.UI.Patches
 {
@@ -94,7 +97,7 @@ namespace EditorEX.UI.Patches
             {
                 if (Directory.Exists(path))
                 {
-                    var projectDirectories = BeatmapProjectFileHelper.GetProjectDirectories(path);
+                    var projectDirectories = DirectorySearchUtil.GetDirectoriesWithInfoDat(path);
                     __instance._beatmapInfos.AddRange(projectDirectories.Select(new Func<string, BeatmapsCollectionDataModel.BeatmapInfoData>(__instance.CreateBeatmapLevelInfoData)).ToList());
                 }
                 else

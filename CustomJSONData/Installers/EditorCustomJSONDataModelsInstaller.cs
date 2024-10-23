@@ -29,6 +29,7 @@ namespace EditorEX.CustomJSONData.Installers
             Container.BindInterfacesAndSelfTo<BeatmapDataModelsLoaderPatch>().AsSingle().NonLazy();
 
             Container.Bind<LevelCustomDataModel>().AsSingle();
+            Container.BindInterfacesAndSelfTo<CustomPlatformsListModel>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<DisableConversion>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<InjectCustomEvents>().AsSingle().NonLazy();

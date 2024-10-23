@@ -11,6 +11,7 @@ using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.Installers;
 using EditorEX.NoodleExtensions.Deserialize;
 using EditorEX.NoodleExtensions.Installers;
+using EditorEX.SDK.Installers;
 using EditorEX.UI.Installers;
 using IPA;
 using IPA.Config.Stores;
@@ -32,8 +33,10 @@ namespace EditorEX
             zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorHeckModelsInstaller, BeatmapEditorDataModelsInstaller>();
+            zenjector.Install<EditorSDKModelsInstaller, BeatmapEditorDataModelsInstaller>();
 
             zenjector.Install<EditorUIViewControllersInstaller, BeatmapEditorViewControllersInstaller>();
+            zenjector.Install<EditorSDKViewControllersInstaller, BeatmapEditorViewControllersInstaller>();
 
             zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();

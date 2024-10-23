@@ -31,13 +31,15 @@ namespace EditorEX.SDK.Factories
             var clickableImage = _imageFactory.Create<EditorClickableImage>(parent, location, layoutData);
             clickableImage.OnClickEvent += onClick;
 
+            clickableImage.useScriptableObjectColors = false;
+
             clickableImage.gameObject.SetActive(false);
 
             var selectableStateController = _instantiator.InstantiateComponent<NoTransitionClickableImageSelectableStateController>(clickableImage.gameObject);
             selectableStateController._component = clickableImage;
 
             var transition = clickableImage.gameObject.AddComponent<ColorGraphicStateTransition>();
-            transition._transition = _transitionCollector.GetTransition<ColorTransitionSO>("Button/Text");
+            transition._transition = _transitionCollector.GetTransition<ColorTransitionSO>("ClickableImage/Image");
             transition._selectableStateController = selectableStateController;
             transition._component = clickableImage;
 

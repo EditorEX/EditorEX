@@ -247,12 +247,12 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.VRModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Zenject">
+    <Reference Include="Zenject" Publicize="true">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Zenject-usage">
+    <Reference Include="Zenject-usage" Publicize="true">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject-usage.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
@@ -297,6 +297,7 @@
     <Compile Include="Config\CameraConfig.cs" />
     <Compile Include="Config\Installers\EditorConfigAppInstaller.cs" />
     <Compile Include="Config\MainConfig.cs" />
+    <Compile Include="CustomDataModels\CustomPlatformsListModel.cs" />
     <Compile Include="CustomDataModels\LevelCustomDataModel.cs" />
     <Compile Include="CustomJSONData\CustomDataRepository.cs" />
     <Compile Include="CustomJSONData\CustomEvents\CustomEventEditorData.cs" />
@@ -410,10 +411,19 @@
     <Compile Include="SDKImplementation\DefaultEditorSourceListContextMenuProvider.cs" />
     <Compile Include="SDKImplementation\DefaultEditorBeatmapListContextMenuProvider.cs" />
     <Compile Include="SDKImplementation\EditorExSettingsViewContent.cs" />
+    <Compile Include="SDKImplementation\Patches\AllowSignalInterfacesPatches.cs" />
+    <Compile Include="SDK\AddressableHelpers\AddressableSignalBus.cs" />
+    <Compile Include="SDK\AddressableHelpers\DefaultAddressableCollectorItem.cs" />
+    <Compile Include="SDK\AddressableHelpers\IAddressableCollectorItem.cs" />
+    <Compile Include="SDK\AddressableHelpers\SignalBusAddressableExtensions.cs" />
     <Compile Include="SDK\Base\LayoutData.cs" />
+    <Compile Include="SDK\Collectors\AddressableCollector.cs" />
     <Compile Include="SDK\Collectors\TransitionCollector.cs" />
+    <Compile Include="SDK\Components\EditorClickableImage.cs" />
     <Compile Include="SDK\Components\EditorClickableText.cs" />
     <Compile Include="SDK\Components\EditorModalView.cs" />
+    <Compile Include="SDK\Components\EditorScrollViewContent.cs" />
+    <Compile Include="SDK\Components\NoTransitionClickableImageSelectableStateController.cs" />
     <Compile Include="SDK\Components\NoTransitionClickableTextSelectableStateController.cs" />
     <Compile Include="SDK\Components\StringInputDialogModal.cs" />
     <Compile Include="SDK\Components\TabbingSegmentedControlController.cs" />
@@ -424,12 +434,19 @@
     <Compile Include="SDK\ContextMenu\ContextMenuProvider.cs" />
     <Compile Include="SDK\ContextMenu\IContextOption.cs" />
     <Compile Include="SDK\ContextMenu\IContextMenuProvider.cs" />
+    <Compile Include="SDK\Factories\DropdownFactory.cs" />
+    <Compile Include="SDK\Factories\ScrollViewFactory.cs" />
+    <Compile Include="SDK\Factories\ClickableImageFactory.cs" />
     <Compile Include="SDK\Factories\ClickableTextFactory.cs" />
     <Compile Include="SDK\Factories\ImageFactory.cs" />
     <Compile Include="SDK\Factories\ModalFactory.cs" />
     <Compile Include="SDK\Factories\TextSegmentedControlFactory.cs" />
+    <Compile Include="SDK\Installers\EditorSDKModelsInstaller.cs" />
+    <Compile Include="SDK\Installers\EditorSDKViewControllersInstaller.cs" />
     <Compile Include="SDK\NavBar\NavBarViewData.cs" />
     <Compile Include="SDK\Settings\SettingsViewData.cs" />
+    <Compile Include="SDK\Signals\AddressableCollectorItemLoadedSignal.cs" />
+    <Compile Include="SDK\Signals\IAddressableCollectorItemLoadedSignal.cs" />
     <Compile Include="SDK\ViewContent\IViewContent.cs" />
     <Compile Include="SDK\Collectors\ColorCollector.cs" />
     <Compile Include="SDK\Collectors\PrefabCollector.cs" />
@@ -449,7 +466,7 @@
     <Compile Include="UI\Patches\EditDifficultyBeatmapPatches.cs" />
     <Compile Include="UI\Patches\MapFilteringPatches.cs" />
     <Compile Include="UI\Patches\MoreCoverFileTypes.cs" />
-    <Compile Include="UI\Patches\SaveLevelAuthorNamePatch.cs" />
+    <Compile Include="UI\Patches\SaveCustomDataPatch.cs" />
     <Compile Include="UI\Patches\SDK\AddBeatmapListContextMenu.cs" />
     <Compile Include="UI\Patches\SDK\AddSettingsPatches.cs" />
     <Compile Include="UI\Patches\SDK\AddSourceListContextMenu.cs" />
@@ -459,6 +476,8 @@
     <Compile Include="Util\ColorUtil.cs" />
     <Compile Include="Util\CustomBeatmapDataExtensions.cs" />
     <Compile Include="Util\CustomDataExtensions.cs" />
+    <Compile Include="Util\DirectorySearchUtil.cs" />
+    <Compile Include="Util\EventInvokeUtil.cs" />
     <Compile Include="Util\FileUtil.cs" />
     <Compile Include="Util\InputUtils.cs" />
     <Compile Include="Util\ReversibleDictionary.cs" />

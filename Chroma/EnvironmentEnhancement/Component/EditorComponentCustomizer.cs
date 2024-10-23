@@ -1,6 +1,5 @@
 ﻿using Chroma.EnvironmentEnhancement.Component;
 using CustomJSONData.CustomBeatmap;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using UnityEngine;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
@@ -11,7 +10,6 @@ namespace EditorEx.Chroma.EnvironmentEnhancement.Component
     {
         private readonly EditorILightWithIdCustomizer _lightWithIdCustomizer;
 
-        [UsedImplicitly]
         private EditorComponentCustomizer(
             EditorILightWithIdCustomizer _lightWithIdCustomizer)
         {

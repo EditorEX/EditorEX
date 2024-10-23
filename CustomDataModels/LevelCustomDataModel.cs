@@ -23,8 +23,9 @@ namespace EditorEX.CustomDataModels
         public CustomData LevelCustomData { get; set; }
         public Dictionary<string, CustomData> BeatmapCustomDatasByFilename { get; set; }
         public List<ContributorData> Contributors { get; set; }
+        public CustomPlatformsListModel.CustomPlatformInfo CustomPlatformInfo { get; set; }
 
-        public void UpdateWith(string levelAuthorName = null, string allDirectionsEnvironmentName = null, string environmentName = null, float? shuffle = null, float? shufflePeriod = null, CustomData levelCustomData = null, Dictionary<string, CustomData> beatmapCustomDatasByFilename = null, List<ContributorData> contributors = null)
+        public void UpdateWith(string levelAuthorName = null, string allDirectionsEnvironmentName = null, string environmentName = null, float? shuffle = null, float? shufflePeriod = null, CustomData levelCustomData = null, Dictionary<string, CustomData> beatmapCustomDatasByFilename = null, List<ContributorData> contributors = null, CustomPlatformsListModel.CustomPlatformInfo customPlatformInfo = null)
         {
             LevelAuthorName = levelAuthorName ?? LevelAuthorName;
             AllDirectionsEnvironmentName = allDirectionsEnvironmentName ?? AllDirectionsEnvironmentName;
@@ -42,12 +43,28 @@ namespace EditorEX.CustomDataModels
                 }
                 else
                 {
-                    ContributorData.SerializeV2(LevelCustomData, contributors);
+                    ContributorData.SerializeV4(LevelCustomData, contributors);
                 }
             }
             else
             {
                 Contributors = LevelContext.Version.Major == 2 ? ContributorData.DeserializeV2(LevelCustomData ?? levelCustomData) : ContributorData.DeserializeV4(LevelCustomData ?? levelCustomData);
+            }
+            if (customPlatformInfo != null)
+            {
+                CustomPlatformInfo = customPlatformInfo;
+                if (LevelContext.Version.Major == 2)
+                {
+                    CustomPlatformsListModel.CustomPlatformInfo.SerializeV2(LevelCustomData, customPlatformInfo);
+                }
+                else
+                {
+                    CustomPlatformsListModel.CustomPlatformInfo.SerializeV4(LevelCustomData, customPlatformInfo);
+                }
+            }
+            else
+            {
+                CustomPlatformInfo = LevelContext.Version.Major == 2 ? CustomPlatformsListModel.CustomPlatformInfo.DeserializeV2(LevelCustomData ?? levelCustomData) : CustomPlatformsListModel.CustomPlatformInfo.DeserializeV4(LevelCustomData ?? levelCustomData);
             }
         }
     }

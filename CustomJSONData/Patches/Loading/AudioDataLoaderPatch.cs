@@ -190,7 +190,7 @@ namespace EditorEX.CustomJSONData.Patches.Loading
                                 return;
                             }
                         }
-                        _siraLog.Info($"hi!!! {result.length}");
+
                         __instance._audioDataModel.UpdateWith(bpmData, result);
                         __instance._beatmapBasicEventsDataModel.SetBpmData(bpmData);
                         __instance._waveformDataModel.PrepareWaveformData(result);

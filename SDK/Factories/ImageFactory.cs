@@ -50,7 +50,7 @@ namespace EditorEX.SDK.Factories
         {
             var image = Create<T>(parent, layoutData);
 
-            image.SetImageAsync(location);
+            image.SetImageAsync(location, false);
 
             return image;
         }

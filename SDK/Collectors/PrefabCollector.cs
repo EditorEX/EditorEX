@@ -18,9 +18,12 @@ namespace EditorEX.SDK.Collectors
         private Toggle _togglePrefab;
         private TextSegmentedControl _segmentedControlPrefab;
         private TMP_InputField _inputFieldPrefab;
+        private ScrollView _scrollViewPrefab;
+        private DropdownEditorView _textDropdownPrefab;
 
         [Inject]
-        private void Construct(DiContainer container)
+        private void Construct(
+            DiContainer container)
         {
             _container = container;
         }
@@ -34,6 +37,7 @@ namespace EditorEX.SDK.Collectors
 
             var beatmapEditorSettingsViewController = _container.Resolve<BeatmapEditorSettingsViewController>();
             _togglePrefab = beatmapEditorSettingsViewController._fullscreenToggle;
+            _textDropdownPrefab = beatmapEditorSettingsViewController._screenResolutionDropdown;
 
 
             var editBeatmapViewController = _container.Resolve<EditBeatmapViewController>();
@@ -42,6 +46,10 @@ namespace EditorEX.SDK.Collectors
 
             var editBeatmapLevelViewController = _container.Resolve<EditBeatmapLevelViewController>();
             _inputFieldPrefab = editBeatmapLevelViewController._songNameInputValidator.GetComponent<TMP_InputField>();
+
+
+            var beatmapsListViewController = _container.Resolve<BeatmapsListViewController>();
+            _scrollViewPrefab = beatmapsListViewController._beatmapsListTableView._tableView.GetComponent<ScrollView>();
         }
 
         public Button GetButtonPrefab()
@@ -67,6 +75,16 @@ namespace EditorEX.SDK.Collectors
         public TMP_InputField GetInputFieldPrefab()
         {
             return _inputFieldPrefab;
+        }
+
+        public ScrollView GetScrollViewPrefab()
+        {
+            return _scrollViewPrefab;
+        }
+
+        public DropdownEditorView GetTextDropdownPrefab()
+        {
+            return _textDropdownPrefab;
         }
     }
 }

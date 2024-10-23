@@ -6,7 +6,6 @@ using Zenject;
 
 namespace EditorEX.Chroma.Colorizer
 {
-    [UsedImplicitly]
     public sealed class EditorParticleColorizerManager
     {
         private readonly EditorParticleColorizer.Factory _factory;
@@ -31,7 +30,6 @@ namespace EditorEX.Chroma.Colorizer
         }
     }
 
-    [UsedImplicitly]
     public sealed class EditorParticleColorizer : IDisposable
     {
         private readonly ParticleSystemEventEffect _particleSystemEventEffect;
@@ -157,7 +155,6 @@ namespace EditorEX.Chroma.Colorizer
             _previousValue = beatmapEventData.value;
         }
 
-        [UsedImplicitly]
         internal class Factory : PlaceholderFactory<ParticleSystemEventEffect, EditorParticleColorizer>
         {
         }

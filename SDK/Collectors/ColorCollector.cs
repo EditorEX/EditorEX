@@ -24,7 +24,7 @@ namespace EditorEX.SDK.Collectors
                 }
             }
 
-            StringBuilder stringBuilder = new StringBuilder();
+            /*StringBuilder stringBuilder = new StringBuilder();
             foreach (var color in _colors)
             {
                 var unityColor = color.Value.color;
@@ -36,7 +36,30 @@ namespace EditorEX.SDK.Collectors
                 stringBuilder.AppendLine($"<span style=\"font-weight: bold; color:rgba({r}, {g}, {b}, {a}); background-color:rgba({invR}, {invG}, {invB});\">{color.Key}</span>");
             }
 
-            File.WriteAllText("test.txt", stringBuilder.ToString());
+            File.WriteAllText("test.txt", stringBuilder.ToString());*/
+
+            InjectColors();
+        }
+
+        private void InjectColors()
+        {
+            AddSimpleColor("ClickableImage/Default", Color.white);
+            AddSimpleColor("ClickableImage/Disabled", Color.white.ColorWithAlpha(0.6f));
+            AddSimpleColor("ClickableImage/Hover", new Color(0.8f, 0.85f, 0.8f));
+        }
+
+        private void AddSimpleColor(string colorName, Color color)
+        {
+            var colorSO = NewSimpleColor(color);
+            colorSO.name = colorName;
+            _colors[colorName] = colorSO;
+        }
+
+        private SimpleColorSO NewSimpleColor(Color color)
+        {
+            var colorSO = ScriptableObject.CreateInstance<SimpleColorSO>();
+            colorSO.SetColor(color);
+            return colorSO;
         }
 
         public SimpleColorSO GetColor(string name)

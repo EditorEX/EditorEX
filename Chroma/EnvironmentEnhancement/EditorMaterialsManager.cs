@@ -38,7 +38,6 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
 
         private Material? _baseWaterMaterial;
 
-        [UsedImplicitly]
         private EditorMaterialsManager(
             EnvironmentMaterialsManager environmentMaterialsManager,
             IReadonlyBeatmapData readonlyBeatmap,

@@ -28,7 +28,6 @@ namespace EditorEX.Chroma.Events
         private readonly EditorDeserializedData _editorDeserializedData;
         private readonly Dictionary<string, Dictionary<Track, Coroutine>> _allCoroutines = new();
 
-        [UsedImplicitly]
         private EditorAnimateComponent(
             IBpmController bpmController,
             IAudioTimeSource audioTimeSource,

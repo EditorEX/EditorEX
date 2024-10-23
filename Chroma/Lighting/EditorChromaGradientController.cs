@@ -9,7 +9,6 @@ using Zenject;
 
 namespace EditorEx.Chroma.Lighting
 {
-    [UsedImplicitly]
     internal class EditorChromaGradientController : ITickable
     {
         private readonly IAudioTimeSource _timeSource;
@@ -60,8 +59,7 @@ namespace EditorEx.Chroma.Lighting
             Gradients[id] = gradientEvent;
             return gradientEvent.Interpolate();
         }
-
-        [UsedImplicitly]
+        
         internal class ChromaGradientEvent
         {
             private readonly IAudioTimeSource _timeSource;

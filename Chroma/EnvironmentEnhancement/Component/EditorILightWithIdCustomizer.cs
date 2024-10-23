@@ -16,7 +16,6 @@ namespace EditorEx.Chroma.EnvironmentEnhancement.Component
         private readonly EditorLightWithIdRegisterer _lightWithIdRegisterer;
         private readonly LightWithIdManager _lightWithIdManager;
 
-        [UsedImplicitly]
         private EditorILightWithIdCustomizer(
             SiraLog log,
             EditorLightColorizerManager lightColorizerManager,

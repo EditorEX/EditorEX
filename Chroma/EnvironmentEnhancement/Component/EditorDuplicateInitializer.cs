@@ -32,7 +32,6 @@ namespace EditorEx.Chroma.EnvironmentEnhancement.Component
 
         private readonly HashSet<TrackLaneRingsManager> _trackLaneRingsManagers;
 
-        [UsedImplicitly]
         private EditorDuplicateInitializer(
             SiraLog log,
             TrackLaneRingOffset trackLaneRingOffset,

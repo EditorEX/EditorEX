@@ -22,7 +22,6 @@ namespace EditorEX.Chroma.Events
         private readonly BloomFogEnvironmentParams _transitionFogParams;
         private Track? _track;
 
-        [UsedImplicitly]
         private EditorFogAnimatorV2(
             BloomFogSO bloomFog,
             [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData)
