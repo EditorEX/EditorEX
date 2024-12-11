@@ -2,6 +2,7 @@
 using EditorEX.SDK.Settings;
 using EditorEX.SDK.ViewContent;
 using EditorEX.SDKImplementation;
+using EditorEX.UI.Cursor;
 using EditorEX.UI.Patches;
 using EditorEX.UI.Patches.SDK;
 using Zenject;
@@ -25,6 +26,8 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<AddSettingsPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapsCollectionDataModelPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<SaveCustomDataPatch>().AsSingle();
+            Container.BindInterfacesAndSelfTo<CursorUpdater>().AsSingle();
+            //Container.BindInterfacesAndSelfTo<AdjustCursorTypePatch>().AsSingle();
 
             Container.Bind<IContextMenuProvider>().To<DefaultEditorBeatmapListContextMenuProvider>().AsSingle();
             Container.Bind<IContextMenuProvider>().To<DefaultEditorSourceListContextMenuProvider>().AsSingle();
