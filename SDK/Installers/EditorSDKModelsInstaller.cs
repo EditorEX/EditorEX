@@ -22,6 +22,8 @@ namespace EditorEX.SDK.Installers
 
             Container.BindInterfacesAndSelfTo<AddressableCollector>().AsSingle();
             Container.BindInterfacesAndSelfTo<AddressableSignalBus>().AsSingle();
+
+            Container
         }
     }
 }
