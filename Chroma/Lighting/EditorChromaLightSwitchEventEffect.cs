@@ -17,6 +17,7 @@ using Tweening;
 using UnityEngine;
 using Zenject;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Lighting
 {
     public sealed class EditorChromaLightSwitchEventEffect : IDisposable

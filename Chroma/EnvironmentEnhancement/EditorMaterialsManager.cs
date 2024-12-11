@@ -16,6 +16,7 @@ using static Chroma.ChromaController;
 using static Chroma.EnvironmentEnhancement.MaterialsManager;
 using Object = UnityEngine.Object;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.EnvironmentEnhancement
 {
     internal class EditorMaterialsManager : IDisposable

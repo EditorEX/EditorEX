@@ -52,8 +52,8 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="BeatmapEditor3D" Publicize="true">
-      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatmapEditor3D.dll</HintPath>
+    <Reference Include="BeatSaber.BeatmapEditor" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatSaber.BeatmapEditor.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -189,6 +189,11 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.InputSystem.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="Unity.ResourceManager">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.ResourceManager.dll</HintPath>
       <Private>False</Private>
@@ -216,6 +221,11 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="UnityEngine.ParticleSystemModule">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
       <Private>False</Private>
@@ -231,7 +241,7 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="UnityEngine.UI">
+    <Reference Include="UnityEngine.UI" Publicize="true">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -412,6 +422,7 @@
     <Compile Include="SDKImplementation\DefaultEditorBeatmapListContextMenuProvider.cs" />
     <Compile Include="SDKImplementation\EditorExSettingsViewContent.cs" />
     <Compile Include="SDKImplementation\Patches\AllowSignalInterfacesPatches.cs" />
+    <Compile Include="SDKImplementation\Patches\CustomInputActionPatches.cs" />
     <Compile Include="SDK\AddressableHelpers\AddressableSignalBus.cs" />
     <Compile Include="SDK\AddressableHelpers\DefaultAddressableCollectorItem.cs" />
     <Compile Include="SDK\AddressableHelpers\IAddressableCollectorItem.cs" />
@@ -441,6 +452,9 @@
     <Compile Include="SDK\Factories\ImageFactory.cs" />
     <Compile Include="SDK\Factories\ModalFactory.cs" />
     <Compile Include="SDK\Factories\TextSegmentedControlFactory.cs" />
+    <Compile Include="SDK\Input\CustomInputAction.cs" />
+    <Compile Include="SDK\Input\CustomInputActionRegistry.cs" />
+    <Compile Include="SDK\Input\ICustomInputAction.cs" />
     <Compile Include="SDK\Installers\EditorSDKModelsInstaller.cs" />
     <Compile Include="SDK\Installers\EditorSDKViewControllersInstaller.cs" />
     <Compile Include="SDK\NavBar\NavBarViewData.cs" />
@@ -459,7 +473,9 @@
     <Compile Include="UI\Components\SourceListContextMenu.cs" />
     <Compile Include="UI\Components\BeatmapListContextMenu.cs" />
     <Compile Include="UI\ContextMenu\ContextMenuComponent.cs" />
+    <Compile Include="UI\Cursor\CursorUpdater.cs" />
     <Compile Include="UI\Installers\EditorUIViewControllersInstaller.cs" />
+    <Compile Include="UI\Patches\AdjustCursorTypePatch.cs" />
     <Compile Include="UI\Patches\BeatmapsCollectionDataModelPatches.cs" />
     <Compile Include="UI\Patches\BeatmapsListViewControllerPatches.cs" />
     <Compile Include="UI\Patches\EditBeatmapLevelPatches.cs" />
@@ -487,6 +503,7 @@
     <EmbeddedResource Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".editorconfig" />
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
   </ItemGroup>
   <ItemGroup>

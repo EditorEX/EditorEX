@@ -1,4 +1,6 @@
-﻿namespace EditorEX.Chroma
+﻿
+// Based from https://github.com/Aeroluna/Heck
+namespace EditorEX.Chroma
 {
     internal static class Constants
     {

@@ -14,7 +14,9 @@ using Zenject;
 using EditorEX.Heck.Deserialize;
 using EditorEX.CustomJSONData;
 using BeatmapEditor3D.Controller;
+using NoodleExtensions.Managers;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.Events
 {
     [CustomEvent(NoodleController.ASSIGN_PLAYER_TO_TRACK)]
@@ -23,7 +25,7 @@ namespace EditorEX.NoodleExtensions.Events
         private readonly IInstantiator _container;
         private readonly PlayerTransforms _playerTransforms;
         private readonly EditorDeserializedData _editorDeserializedData;
-        private readonly Dictionary<PlayerTrackObject, PlayerTrack> _playerTracks = new();
+        private readonly Dictionary<PlayerObject, PlayerTrack> _playerTracks = new();
         private readonly BeatmapEditor360CameraController _beatmapEditor360CameraController;
 
         private EditorAssignPlayerToTrack(
@@ -44,7 +46,7 @@ namespace EditorEX.NoodleExtensions.Events
                 return;
             }
 
-            PlayerTrackObject resultPlayerTrackObject = noodlePlayerData.PlayerTrackObject;
+            PlayerObject resultPlayerTrackObject = noodlePlayerData.PlayerObject;
             if (!_playerTracks.TryGetValue(resultPlayerTrackObject, out PlayerTrack? playerTrack))
             {
                 _playerTracks[resultPlayerTrackObject] = playerTrack = Create(resultPlayerTrackObject);
@@ -53,21 +55,21 @@ namespace EditorEX.NoodleExtensions.Events
             playerTrack.AssignTrack(noodlePlayerData.Track);
         }
 
-        private PlayerTrack Create(PlayerTrackObject playerTrackObject)
+        private PlayerTrack Create(PlayerObject playerTrackObject)
         {
             GameObject noodleObject = new($"NoodlePlayerTrack{playerTrackObject}");
             Transform origin = noodleObject.transform;
 
             Transform target = playerTrackObject switch
             {
-                PlayerTrackObject.Root => _playerTransforms._originTransform.parent,
-                PlayerTrackObject.Head => _playerTransforms._headTransform,
-                PlayerTrackObject.LeftHand => _playerTransforms._leftHandTransform,
-                PlayerTrackObject.RightHand => _playerTransforms._rightHandTransform,
+                PlayerObject.Root => _playerTransforms._originTransform.parent,
+                PlayerObject.Head => _playerTransforms._headTransform,
+                PlayerObject.LeftHand => _playerTransforms._leftHandTransform,
+                PlayerObject.RightHand => _playerTransforms._rightHandTransform,
                 _ => throw new ArgumentOutOfRangeException(nameof(playerTrackObject), playerTrackObject, null)
             };
 
-            if (playerTrackObject == PlayerTrackObject.Root)
+            if (playerTrackObject == PlayerObject.Root)
             {
                 _beatmapEditor360CameraController.transform.SetParent(origin, true);
             }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.Events
 {
     [CustomEvent(new string[] { "AssignTrackParent" })]

@@ -10,6 +10,7 @@ using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Colorizer
 {
     public class EditorLightColorizerManager

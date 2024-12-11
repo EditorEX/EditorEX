@@ -11,6 +11,7 @@ using UnityEngine;
 using Zenject;
 using static Chroma.ChromaController;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Events
 {
     [CustomEvent(ASSIGN_FOG_TRACK)]

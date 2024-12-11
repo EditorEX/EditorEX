@@ -85,7 +85,7 @@ namespace EditorEX.CustomDataModels
         public static List<ContributorData> DeserializeV2(CustomData customData)
         {
             var contributors = new List<ContributorData>();
-            var jsonContributors = customData.Get<List<object>>("_contributors").Select(x => x as CustomData).ToList();
+            var jsonContributors = customData?.Get<List<object>>("_contributors")?.Select(x => x as CustomData)?.ToList();
             if (jsonContributors == null)
             {
                 return contributors;
@@ -101,7 +101,7 @@ namespace EditorEX.CustomDataModels
         public static List<ContributorData> DeserializeV4(CustomData customData)
         {
             var contributors = new List<ContributorData>();
-            var jsonContributors = customData.Get<List<object>>("contributors").Select(x => x as CustomData).ToList();
+            var jsonContributors = customData?.Get<List<object>>("contributors")?.Select(x => x as CustomData)?.ToList();
             if (jsonContributors == null)
             {
                 return contributors;

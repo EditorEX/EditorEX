@@ -14,6 +14,7 @@ using static Chroma.ChromaEventData;
 using static EditorEX.Chroma.Constants;
 using static EditorEX.Heck.Constants;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Events
 {
     internal class EditorChromaEventData : IEventCustomData

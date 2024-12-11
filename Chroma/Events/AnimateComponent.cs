@@ -17,6 +17,7 @@ using Zenject;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
 using static EditorEX.Chroma.Constants;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Events
 {
     [CustomEvent(ANIMATE_COMPONENT)]

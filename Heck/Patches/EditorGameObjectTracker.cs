@@ -140,7 +140,7 @@ namespace EditorEX.Heck.Patches
             return result;
         }
 
-        [AffinityPatch(typeof(ObstacleBeatmapObjectView), nameof(ArcBeatmapObjectsView.DeleteObject))]
+        [AffinityPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.DeleteObject))]
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerRemoveArc(IEnumerable<CodeInstruction> instructions)
         {

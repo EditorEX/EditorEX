@@ -1,6 +1,7 @@
 ﻿using EditorEX.Chroma.Colorizer;
 using SiraUtil.Affinity;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Patches.Colorizer.Initialize
 {
     internal class EditorParticleColorizerInitialize : IAffinity

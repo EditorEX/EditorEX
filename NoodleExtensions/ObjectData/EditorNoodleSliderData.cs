@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.ObjectData
 {
     internal class EditorNoodleSliderData : EditorNoodleBaseNoteData, ICopyable<IObjectCustomData>

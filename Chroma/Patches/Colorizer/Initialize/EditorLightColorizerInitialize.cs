@@ -1,6 +1,7 @@
 ﻿using EditorEX.Chroma.Lighting;
 using SiraUtil.Affinity;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize
 {
     internal class EditorLightColorizerInitialize : IAffinity

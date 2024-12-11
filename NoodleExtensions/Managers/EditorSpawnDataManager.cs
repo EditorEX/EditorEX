@@ -9,6 +9,7 @@ using SiraUtil.Logging;
 using UnityEngine;
 using Zenject;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.Managers
 {
     internal class EditorSpawnDataManager

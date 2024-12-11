@@ -6,6 +6,7 @@ using IPA.Utilities;
 using System;
 using System.Collections.Generic;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.ObjectData
 {
     internal class EditorNoodleNoteData : EditorNoodleBaseNoteData

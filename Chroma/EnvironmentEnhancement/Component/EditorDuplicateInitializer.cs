@@ -14,6 +14,7 @@ using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEx.Chroma.EnvironmentEnhancement.Component
 {
     internal class EditorDuplicateInitializer

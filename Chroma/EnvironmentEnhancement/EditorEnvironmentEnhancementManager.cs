@@ -21,6 +21,7 @@ using static Chroma.ChromaController;
 using static Heck.HeckController;
 using Object = UnityEngine.Object;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEx.Chroma.EnvironmentEnhancement
 {
     internal class EditorEnvironmentEnhancementManager : MonoBehaviour

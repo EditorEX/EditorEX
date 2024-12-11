@@ -22,7 +22,7 @@ namespace EditorEX.Essentials.Patches.Movement
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerNoteInsert(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null).Advance(153).RemoveInstructions(20).InstructionEnumeration();
+            var result = new CodeMatcher(instructions, null).Advance(155).RemoveInstructions(20).InstructionEnumeration();
             return result;
         }
 

@@ -21,7 +21,6 @@ namespace EditorEX.CustomJSONData.Patches.Saving
             LevelCustomDataModel levelCustomDataModel)
         {
             _siraLog = siraLog;
-            _siraLog.Info("fddfdf");
             _savers = saveDataSavers;
             _levelCustomDataModel = levelCustomDataModel;
         }
@@ -30,7 +29,6 @@ namespace EditorEX.CustomJSONData.Patches.Saving
         [AffinityPatch(typeof(BeatmapProjectManager), nameof(BeatmapProjectManager.SaveBeatmapProject))]
         private bool UniversalSavingPatch(BeatmapProjectManager __instance, bool clearDirty)
         {
-            _siraLog.Info("oudishhosi");
             var version = LevelContext.Version;
 
             var saver = _savers.FirstOrDefault(x => x.IsVersion(version));

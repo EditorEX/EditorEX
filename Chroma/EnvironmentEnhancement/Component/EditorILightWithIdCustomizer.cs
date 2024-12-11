@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEx.Chroma.EnvironmentEnhancement.Component
 {
     internal class EditorILightWithIdCustomizer

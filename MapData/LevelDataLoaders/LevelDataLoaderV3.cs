@@ -1,4 +1,5 @@
 ﻿using BeatmapEditor3D.DataModels;
+using BeatmapEditor3D.Scripts.SerializedData;
 using BeatmapEditor3D.SerializedData;
 using BeatmapSaveDataCommon;
 using BeatmapSaveDataVersion3;
@@ -34,41 +35,60 @@ namespace EditorEX.MapData.LevelDataLoaders
 
             Version3CustomBeatmapSaveData beatmapSaveData = Version3CustomBeatmapSaveData.Deserialize(File.ReadAllText(fullPath));
 
+            BeatmapEditorRotationProcessor_v3 rotationProcessor = new BeatmapEditorRotationProcessor_v3(beatmapSaveData.rotationEvents);
+
             notes = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.colorNotes
                 .Cast<Version3CustomBeatmapSaveData.ColorNoteSaveData>(),
-                BeatmapDataModelsLoader.CreateColorNoteEditorData_v3)
+                BeatmapDataModelsLoader.CreateColorNoteEditorData_v3, rotationProcessor)
                 .ToList();
+
+            rotationProcessor.ResetRotation();
 
             notes.AddRange(LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.bombNotes
                 .Cast<Version3CustomBeatmapSaveData.BombNoteSaveData>(),
-                BeatmapDataModelsLoader.CreateBombNoteEditorData_v3)
+                BeatmapDataModelsLoader.CreateBombNoteEditorData_v3, rotationProcessor)
                 .ToList());
+
+            rotationProcessor.ResetRotation();
+
 
             waypoints = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.waypoints
                 .Cast<Version3CustomBeatmapSaveData.WaypointSaveData>(),
-                BeatmapDataModelsLoader.CreateWaypointEditorData_v3)
+                BeatmapDataModelsLoader.CreateWaypointEditorData_v3, rotationProcessor)
                 .ToList();
+
+            rotationProcessor.ResetRotation();
+
 
             obstacles = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.obstacles
                 .Cast<Version3CustomBeatmapSaveData.ObstacleSaveData>(),
-                BeatmapDataModelsLoader.CreateObstacleEditorData_v3)
+                BeatmapDataModelsLoader.CreateObstacleEditorData_v3, rotationProcessor)
                 .ToList();
+
+            rotationProcessor.ResetRotation();
+
 
             arcs = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.sliders
                 .Cast<Version3CustomBeatmapSaveData.SliderSaveData>(),
-                BeatmapDataModelsLoader.CreateArcEditorData_v3)
+                BeatmapDataModelsLoader.CreateArcEditorData_v3, rotationProcessor)
                 .ToList();
+
+            rotationProcessor.ResetRotation();
+
 
             chains = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.burstSliders
                 .Cast<Version3CustomBeatmapSaveData.BurstSliderSaveData>(),
-                BeatmapDataModelsLoader.CreateChainEditorData_v3)
+                BeatmapDataModelsLoader.CreateChainEditorData_v3, rotationProcessor)
                 .ToList();
+
+            rotationProcessor.ResetRotation();
+
 
             basicEvents = LevelDataLoaderUtil.GetEditorData(
                 beatmapSaveData.basicBeatmapEvents

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Lighting
 {
     internal class EditorLegacyLightHelper

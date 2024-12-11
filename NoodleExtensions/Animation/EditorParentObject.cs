@@ -14,6 +14,7 @@ using Zenject;
 using static Heck.HeckController;
 using static NoodleExtensions.NoodleController;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.Animation
 {
     internal class EditorParentObject : MonoBehaviour

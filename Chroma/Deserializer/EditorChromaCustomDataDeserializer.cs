@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static EditorEX.Chroma.Constants;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Deserializer
 {
     internal class EditorChromaCustomDataDeserializer : IEditorEarlyDeserializer, IEditorObjectsDeserializer, IEditorCustomEventsDeserializer, IEditorEventsDeserializer

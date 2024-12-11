@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Zenject;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Patches.Events
 {
     internal class EditorRingStepChromafier : IAffinity, IDisposable

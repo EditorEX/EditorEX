@@ -12,6 +12,7 @@ using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 
+// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.Deserialize
 {
     internal class EditorNoodleCustomDataDeserializer : IEditorCustomEventsDeserializer, IEditorEarlyDeserializer, IEditorObjectsDeserializer
