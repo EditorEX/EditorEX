@@ -12,48 +12,68 @@ namespace EditorEX.Essentials.Movement.Note
 {
     public class EditorNoteFloorMovement : MonoBehaviour
     {
+        //Events 
+
         public event Action floorMovementDidFinishEvent;
 
+        // Properties
+
         public float distanceToPlayer => Mathf.Abs(_localPosition.z - (_inverseWorldRotation * _playerTransforms.headPseudoLocalPos).z);
-
-        public Vector3 startPos => _startPos;
-
-        public Vector3 endPos => _endPos;
-
-        public float startTime => _startTime;
-
-        public float moveDuration => _moveDuration;
-
+        public float noteTime => _beatTime;
+        public Vector3 endPos => _variableMovementDataProvider.moveEndPosition + _moveEndOffset;
         public Quaternion worldRotation => _worldRotation;
-
         public Quaternion inverseWorldRotation => _inverseWorldRotation;
-
         public Vector3 localPosition => _localPosition;
 
-        [InjectOptional(Id = "NoodleExtensions")] private EditorDeserializedData _editorDeserializedData;
+        // Movement related fields
 
-        [Inject] private AnimationHelper _animationHelper;
+        private Vector3 _localPosition;
+        private float _beatTime;
+        internal Vector3 _moveStartOffset;
+        internal Vector3 _moveEndOffset;
+        internal Quaternion _worldRotation;
+        internal Quaternion _inverseWorldRotation;
+        
 
-        public void Init(NoteEditorData editorData, float worldRotation, Vector3 startPos, Vector3 endPos, float moveDuration, float startTime, Func<IObjectVisuals> getVisualRoot)
+        // Injected Fields
+
+        private EditorDeserializedData _editorDeserializedData;
+        private AnimationHelper _animationHelper;
+        private PlayerTransforms _playerTransforms;
+        private IVariableMovementDataProvider _variableMovementDataProvider;
+        private IAudioTimeSource _audioTimeSyncController;
+
+        [Inject]
+        private void Construct(
+            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+            AnimationHelper animationHelper,
+            IVariableMovementDataProvider variableMovementDataProvider,
+            IAudioTimeSource audioTimeSyncController)
+        {
+            _editorDeserializedData = editorDeserializedData;
+            _animationHelper = animationHelper;
+            _variableMovementDataProvider = variableMovementDataProvider;
+            _audioTimeSyncController = audioTimeSyncController;
+        }
+
+        public void Init(NoteEditorData? editorData, float worldRotation, float beatTime, Vector3 moveStartOffset, Vector3 moveEndOffset, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData;
-            if (!(_editorDeserializedData?.Resolve(editorData, out NoodleData) ?? false))
+            if (!(_editorDeserializedData?.Resolve(editorData, out _noodleData) ?? false))
             {
-                NoodleData = null;
+                _noodleData = null;
             }
 
-            _rotatedObject = getVisualRoot;
+            _beatTime = beatTime;
+            _moveStartOffset = moveStartOffset;
+            _moveEndOffset = moveEndOffset;
             _worldRotation = Quaternion.Euler(0f, worldRotation, 0f);
             _inverseWorldRotation = Quaternion.Euler(0f, -worldRotation, 0f);
-            _startPos = startPos;
-            _endPos = endPos;
-            _moveDuration = moveDuration;
-            _startTime = startTime;
         }
 
         private Vector3 DefiniteNoteFloorMovement(Vector3 original)
         {
-            EditorNoodleBaseNoteData? noodleData = NoodleData;
+            EditorNoodleBaseNoteData? noodleData = _noodleData;
             if (noodleData == null)
             {
                 return original;
@@ -70,7 +90,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         public Vector3 SetToStart()
         {
-            _localPosition = _startPos;
+            _localPosition = _variableMovementDataProvider.moveStartPosition + _moveStartOffset;
             Vector3 vector = _worldRotation * _localPosition;
             transform.localPosition = vector;
             transform.localRotation = _worldRotation;
@@ -80,11 +100,11 @@ namespace EditorEX.Essentials.Movement.Note
 
         public Vector3 ManualUpdate()
         {
-            float num = _audioTimeSyncController.songTime - _startTime;
-            _localPosition = Vector3.Lerp(_startPos, _endPos, num / _moveDuration);
+            float num = _audioTimeSyncController.songTime - (_beatTime - _variableMovementDataProvider.moveDuration - _variableMovementDataProvider.halfJumpDuration); ;
+            _localPosition = Vector3.LerpUnclamped(_variableMovementDataProvider.moveStartPosition + _moveStartOffset, _variableMovementDataProvider.moveEndPosition + _moveEndOffset, num / _variableMovementDataProvider.moveDuration);
             Vector3 vector = _worldRotation * _localPosition;
             transform.localPosition = DefiniteNoteFloorMovement(vector);
-            if (num >= _moveDuration)
+            if (num >= _variableMovementDataProvider.moveDuration)
             {
                 floorMovementDidFinishEvent?.Invoke();
             }
@@ -94,30 +114,10 @@ namespace EditorEX.Essentials.Movement.Note
             return vector;
         }
 
-        private EditorNoodleBaseNoteData NoodleData;
+        private EditorNoodleBaseNoteData? _noodleData;
 
-        private NoteEditorData _editorData;
+        private NoteEditorData? _editorData;
 
         private Func<IObjectVisuals> _rotatedObject;
-
-        [Inject]
-        private readonly PlayerTransforms _playerTransforms;
-
-        [Inject]
-        private readonly IAudioTimeSource _audioTimeSyncController;
-
-        internal Vector3 _startPos;
-
-        internal Vector3 _endPos;
-
-        internal float _moveDuration;
-
-        internal float _startTime;
-
-        internal Quaternion _worldRotation;
-
-        internal Quaternion _inverseWorldRotation;
-
-        internal Vector3 _localPosition;
     }
 }

@@ -25,7 +25,7 @@ namespace EditorEX.NoodleExtensions.ObjectData
             return new EditorNoodleBaseNoteData(this);
         }
 
-        internal EditorNoodleSliderData(ArcEditorData sliderData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
+        internal EditorNoodleSliderData(ArcEditorData? sliderData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
             : base(sliderData, customData, pointDefinitions, beatmapTracks, v2, leftHanded)
         {
             try

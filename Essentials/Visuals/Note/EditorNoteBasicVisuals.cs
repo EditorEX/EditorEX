@@ -17,7 +17,7 @@ namespace EditorEX.Essentials.Visuals.Note
             Disable();
         }
 
-        public void Init(BaseEditorData editorData)
+        public void Init(BaseEditorData? editorData)
         {
             if (active)
             {

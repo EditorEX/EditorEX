@@ -72,15 +72,16 @@ namespace EditorEX.MapData.SaveDataLoaders
             string coverFileName = correctedPathAndFilename2.Item2;
 
             List<BeatmapLevelColorSchemeEditorData> colorSchemes = customBeatmapLevelSaveData.colorSchemes
-                .Select((SerializedCustomBeatmapLevelSaveData.ColorScheme colorScheme) => 
-                BeatmapLevelColorSchemeEditorData.Create(
-                    colorScheme.colorSchemeName, 
+                .Select((SerializedCustomBeatmapLevelSaveData.ColorScheme colorScheme) =>
+                BeatmapLevelColorSchemeEditorData.Create(colorScheme.colorSchemeName, 
+                    colorScheme.overrideNotes, 
                     GetColorFromHtmlString(colorScheme.saberAColor), 
                     GetColorFromHtmlString(colorScheme.saberBColor), 
                     GetColorFromHtmlString(colorScheme.obstaclesColor), 
+                    colorScheme.overrideLights, 
                     GetColorFromHtmlString(colorScheme.environmentColor0), 
                     GetColorFromHtmlString(colorScheme.environmentColor1), 
-                    GetColorFromHtmlString(colorScheme.environmentColor0Boost),
+                    GetColorFromHtmlString(colorScheme.environmentColor0Boost), 
                     GetColorFromHtmlString(colorScheme.environmentColor1Boost))).ToList();
             
             string defaultEnvironment = _environmentsListModel.GetLastEnvironmentInfoWithType(EnvironmentType.Normal).serializedName;
@@ -90,7 +91,7 @@ namespace EditorEX.MapData.SaveDataLoaders
             
             foreach (SerializedCustomBeatmapLevelSaveData.DifficultyBeatmap difficultyBeatmap in customBeatmapLevelSaveData.difficultyBeatmaps)
             {
-                BeatmapCharacteristicSO beatmapCharacteristicBySerializedName = this._beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(difficultyBeatmap.characteristic);
+                BeatmapCharacteristicSO beatmapCharacteristicBySerializedName = _beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(difficultyBeatmap.characteristic);
                 
                 BeatmapDifficulty beatmapDifficulty2;
                 BeatmapDifficulty beatmapDifficulty = (difficultyBeatmap.difficulty.BeatmapDifficultyFromSerializedName(out beatmapDifficulty2) ? beatmapDifficulty2 : BeatmapDifficulty.Easy);
@@ -112,7 +113,7 @@ namespace EditorEX.MapData.SaveDataLoaders
                 beatmapDatas[new ValueTuple<BeatmapCharacteristicSO, BeatmapDifficulty>(beatmapCharacteristicBySerializedName, beatmapDifficulty)] = difficultyBeatmapData;
             }
 
-            BeatmapLevelDataModel beatmapLevelDataModel = this._beatmapLevelDataModel;
+            BeatmapLevelDataModel beatmapLevelDataModel = _beatmapLevelDataModel;
             string title = customBeatmapLevelSaveData.song.title;
             string subTitle = customBeatmapLevelSaveData.song.subTitle;
             string author = customBeatmapLevelSaveData.song.author;

@@ -9,11 +9,11 @@ namespace EditorEX.Essentials.Movement.Data
 
         float noteJumpMovementSpeed { get; }
 
-        BeatmapObjectSpawnMovementData.ObstacleSpawnData GetObstacleSpawnData(ObstacleEditorData obstacleData);
+        ObstacleSpawnData GetObstacleSpawnData(ObstacleEditorData? obstacleData);
 
-        BeatmapObjectSpawnMovementData.NoteSpawnData GetJumpingNoteSpawnData(NoteEditorData noteData);
+        NoteSpawnData GetJumpingNoteSpawnData(NoteEditorData? noteData);
 
-        BeatmapObjectSpawnMovementData.SliderSpawnData GetSliderSpawnData(BaseSliderEditorData sliderData);
+        SliderSpawnData GetSliderSpawnData(BaseSliderEditorData? sliderData);
 
         Vector3 GetNoteOffset(int noteLineIndex, NoteLineLayer noteLineLayer);
 

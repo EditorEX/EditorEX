@@ -21,7 +21,7 @@ namespace EditorEX.Essentials.Movement.Obstacle
         private ActiveViewMode _activeViewMode;
         private EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
-        private ObstacleEditorData _data;
+        private ObstacleEditorData? _data;
 
         [Inject]
         private void Construct(
@@ -73,7 +73,7 @@ namespace EditorEX.Essentials.Movement.Obstacle
             }
         }
 
-        public void Init(ObstacleEditorData obstacleData)
+        public void Init(ObstacleEditorData? obstacleData)
         {
             if (obstacleData == null) return;
             _data = obstacleData;

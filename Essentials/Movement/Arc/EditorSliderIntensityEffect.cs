@@ -43,7 +43,7 @@ namespace EditorEX.Essentials.Movement.Arc
                 new SliderIntensityEffect.FadeElement(EaseType.Linear, 0f, 0f, null),
                 new SliderIntensityEffect.FadeElement(EaseType.Linear, 0f, 1f, delegate
                 {
-                    Action action = this.fadeInDidStartEvent;
+                    Action action = fadeInDidStartEvent;
                     if (action == null)
                     {
                         return;
@@ -62,7 +62,7 @@ namespace EditorEX.Essentials.Movement.Arc
             {
                 new SliderIntensityEffect.FadeElement(EaseType.Linear, 0f, 1f, delegate
                 {
-                    Action action2 = this.fadeInDidStartEvent;
+                    Action action2 = fadeInDidStartEvent;
                     if (action2 == null)
                     {
                         return;

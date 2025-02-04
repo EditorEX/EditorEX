@@ -67,23 +67,23 @@ namespace EditorEX.NoodleExtensions.Deserialize
             }
         }
 
-        public Dictionary<BaseEditorData, IObjectCustomData> DeserializeObjects()
+        public Dictionary<BaseEditorData?, IObjectCustomData> DeserializeObjects()
         {
-            Dictionary<BaseEditorData, IObjectCustomData> dictionary = new Dictionary<BaseEditorData, IObjectCustomData>();
-            foreach (BaseEditorData baseEditorData in _beatmapObjectsDataModel.allBeatmapObjects)
+            Dictionary<BaseEditorData?, IObjectCustomData> dictionary = new Dictionary<BaseEditorData?, IObjectCustomData>();
+            foreach (BaseEditorData? baseEditorData in _beatmapObjectsDataModel.allBeatmapObjects)
             {
                 if (dictionary.ContainsKey(baseEditorData)) continue;
                 CustomData customData = baseEditorData.GetCustomData();
-                ObstacleEditorData customObstacleData = baseEditorData as ObstacleEditorData;
+                ObstacleEditorData? customObstacleData = baseEditorData as ObstacleEditorData;
                 if (customObstacleData == null)
                 {
-                    NoteEditorData customNoteData = baseEditorData as NoteEditorData;
+                    NoteEditorData? customNoteData = baseEditorData as NoteEditorData;
                     if (customNoteData == null)
                     {
-                        ArcEditorData customSliderData = baseEditorData as ArcEditorData;
+                        ArcEditorData? customSliderData = baseEditorData as ArcEditorData;
                         if (customSliderData == null)
                         {
-                            ChainEditorData customChainData = baseEditorData as ChainEditorData;
+                            ChainEditorData? customChainData = baseEditorData as ChainEditorData;
                             if (customChainData == null)
                             {
                                 dictionary.Add(baseEditorData, new EditorNoodleObjectData(baseEditorData, customData, _pointDefinitions, _tracks, _v2, false));

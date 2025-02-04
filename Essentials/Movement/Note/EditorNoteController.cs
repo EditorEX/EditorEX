@@ -21,7 +21,7 @@ namespace EditorEX.Essentials.Movement.Note
         private ActiveViewMode _activeViewMode;
         private EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
-        private NoteEditorData _data;
+        private NoteEditorData? _data;
 
         [Inject]
         private void Construct(
@@ -73,7 +73,7 @@ namespace EditorEX.Essentials.Movement.Note
             }
         }
 
-        public void Init(NoteEditorData noteData)
+        public void Init(NoteEditorData? noteData)
         {
             if (noteData == null) return;
             _data = noteData;

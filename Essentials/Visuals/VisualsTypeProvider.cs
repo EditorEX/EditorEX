@@ -23,9 +23,9 @@ namespace EditorEX.Essentials.Visuals
             _providers = providers;
         }
 
-        public Type GetProvidedType(Type[] availableTypes, bool REDACTED)
+        public Type GetProvidedType(Type[] availableTypes)
         {
-            var viewingMode = _activeViewMode.Mode.ID + (REDACTED ? "-REDACTED" : "");
+            var viewingMode = _activeViewMode.Mode.ID;
 
             // Provider name to use, fallback if none exist.
             var provider = _providers.Any(x => x.Item1.Contains(viewingMode)) ? viewingMode : "normal";

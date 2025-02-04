@@ -16,7 +16,7 @@ namespace EditorEX.Essentials.Movement.Arc
         private MovementTypeProvider _movementTypeProvider;
         private ActiveViewMode _activeViewMode;
 
-        private ArcEditorData _data;
+        private ArcEditorData? _data;
 
         private EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
@@ -58,7 +58,7 @@ namespace EditorEX.Essentials.Movement.Arc
             }
         }
 
-        public void Init(ArcEditorData editorData)
+        public void Init(ArcEditorData? editorData)
         {
             if (editorData == null) return;
             _data = editorData;

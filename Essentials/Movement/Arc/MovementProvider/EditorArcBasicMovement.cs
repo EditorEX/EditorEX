@@ -25,7 +25,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }
 
-        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData as BaseSliderEditorData;
             Vector3 localPosition = transform.localPosition;
@@ -52,7 +52,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 
         }
 
-        public void Setup(BaseEditorData editorData)
+        public void Setup(BaseEditorData? editorData)
         {
         }
 

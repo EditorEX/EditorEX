@@ -6,7 +6,7 @@ namespace EditorEX.Util
 {
     public static class CustomDataExtensions
     {
-        public static CustomData GetCustomData(this BaseEditorData data)
+        public static CustomData GetCustomData(this BaseEditorData? data)
         {
             return CustomDataRepository.GetCustomData(data);
         }

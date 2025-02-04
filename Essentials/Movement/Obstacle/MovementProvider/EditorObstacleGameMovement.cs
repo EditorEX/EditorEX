@@ -24,9 +24,10 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
         private ColorManager _colorManager;
         private IAudioTimeSource _audioTimeSyncController;
         private AudioDataModel _audioDataModel;
+        private IVariableMovementDataProvider _variableMovementDataProvider;
 
         // Obstacle related fields
-        private ObstacleEditorData _editorData;
+        private ObstacleEditorData? _editorData;
         private float _width;
         private float _height;
         private float _length;
@@ -57,7 +58,8 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             IReadonlyBeatmapState state,
             ColorManager colorManager,
             IAudioTimeSource audioTimeSyncController,
-            AudioDataModel audioDataModel)
+            AudioDataModel audioDataModel,
+            IVariableMovementDataProvider variableMovementDataProvider)
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
@@ -65,9 +67,10 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             _colorManager = colorManager;
             _audioTimeSyncController = audioTimeSyncController;
             _audioDataModel = audioDataModel;
+            _variableMovementDataProvider = variableMovementDataProvider;
         }
 
-        private Quaternion GetWorldRotation(ObstacleEditorData obstacleData, float @default)
+        private Quaternion GetWorldRotation(ObstacleEditorData? obstacleData, float @default)
         {
             Quaternion worldRotation = Quaternion.Euler(0, @default, 0);
 
@@ -87,21 +90,21 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             return worldRotation;
         }
 
-        private float GetCustomWidth(float @default, ObstacleEditorData obstacleData)
+        private float GetCustomWidth(float @default, ObstacleEditorData? obstacleData)
         {
             EditorNoodleObstacleData? noodleData = null;
             _editorDeserializedData?.Resolve(obstacleData, out noodleData);
             return noodleData?.Width ?? @default;
         }
 
-        private float GetCustomLength(float @default, ObstacleEditorData obstacleData)
+        private float GetCustomLength(float @default, ObstacleEditorData? obstacleData)
         {
             EditorNoodleObstacleData? noodleData = null;
             _editorDeserializedData?.Resolve(obstacleData, out noodleData);
             return noodleData?.Length * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance ?? @default;
         }
 
-        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _stretchableObstacle = transform.Find("GameWallRoot").GetComponent<StretchableObstacle>();
             _selection = GetComponent<ObstacleViewSelection>();
@@ -117,17 +120,12 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             _obstacleDuration = _editorData.duration;
             _height = obstacleSpawnData.obstacleHeight;
             _color = _colorManager.obstaclesColor;
-            _width = GetCustomWidth((float)_editorData.width * obstacleSpawnData.noteLinesDistance, _editorData);
-            Vector3 vector = new Vector3((_width - obstacleSpawnData.noteLinesDistance) * 0.5f, 0f, 0f);
-            _startPos = obstacleSpawnData.moveStartPos + vector;
-            _midPos = obstacleSpawnData.moveEndPos + vector;
-            _endPos = obstacleSpawnData.jumpEndPos + vector;
-            _move1Duration = obstacleSpawnData.moveDuration;
-            _move2Duration = obstacleSpawnData.jumpDuration;
-            _startTimeOffset = _audioDataModel.bpmData.BeatToSeconds(_editorData.beat) - _move1Duration - _move2Duration * 0.5f;
-            float num = (_endPos - _midPos).magnitude / _move2Duration;
+            _width = GetCustomWidth(obstacleSpawnData.obstacleWidth, _editorData);
+            Vector3 vector = _variableMovementDataProvider.moveStartPosition + obstacleSpawnData.moveOffset;
+            Vector3 vector2 = _variableMovementDataProvider.moveEndPosition + obstacleSpawnData.moveOffset;
+            float num = (_variableMovementDataProvider.jumpEndPosition + obstacleSpawnData.moveOffset - vector2).magnitude / _variableMovementDataProvider.jumpDuration;
             _length = GetCustomLength(num * _editorData.duration, _editorData);
-            _stretchableObstacle.SetSizeAndColor(_width * 0.98f, _height, _length, _color);
+            _stretchableObstacle.SetAllProperties(_width * 0.98f, _height, _length, _color, _state.beat);
             _selection.SetObstacleData(_width, _height, _length);
             _selection.UpdateState();
             _bounds = _stretchableObstacle.bounds;
@@ -135,7 +133,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             _passedAvoidedMarkReported = false;
             _passedAvoidedMarkTime = _move1Duration + _move2Duration * 0.5f + _obstacleDuration + 0.15f;
             _finishMovementTime = _move1Duration + _move2Duration + _obstacleDuration;
-            transform.localPosition = obstacleSpawnData.moveStartPos;
+            transform.localPosition = vector;
             transform.localRotation = _worldRotation;
 
             EditorNoodleObstacleData? noodleData = null;
@@ -185,7 +183,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
         }
 
-        public void Setup(BaseEditorData editorData)
+        public void Setup(BaseEditorData? editorData)
         {
         }
 
@@ -252,7 +250,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
         public void NoodleUpdate()
         {
             EditorNoodleObstacleData? noodleData = null;
-            if (!(_editorDeserializedData?.Resolve(_editorData, out noodleData) ?? false))
+            if (!(_editorDeserializedData?.Resolve(_editorData, out noodleData) ?? false) || noodleData == null)
             {
                 return;
             }
@@ -262,7 +260,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 //Hide(false);
             }
 
-            List<Track>? tracks = noodleData.Track;
+            IReadOnlyList<Track>? tracks = noodleData.Track;
             NoodleObjectData.AnimationObjectData? animationObject = noodleData.AnimationObject;
             if (tracks == null && animationObject == null)
             {

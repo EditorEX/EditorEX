@@ -27,6 +27,6 @@ namespace EditorEX.Heck.Deserialize
 
     public interface IEditorObjectsDeserializer
     {
-        public Dictionary<BaseEditorData, IObjectCustomData> DeserializeObjects();
+        public Dictionary<BaseEditorData?, IObjectCustomData> DeserializeObjects();
     }
 }

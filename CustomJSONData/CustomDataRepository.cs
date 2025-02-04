@@ -11,13 +11,13 @@ namespace EditorEX.CustomJSONData
 {
     public class RepoData
     {
-        public Dictionary<BaseEditorData, CustomData> CustomData = new();
+        public Dictionary<BaseEditorData?, CustomData> CustomData = new();
 
         public List<CustomEventEditorData> CustomEvents = new();
 
         public ReversibleDictionary<CustomEventEditorData, CustomEventData> CustomEventConversions = new();
 
-        public ReversibleDictionary<BasicEventEditorData, BeatmapEventData> ChromaBasicEventConversions = new();
+        public ReversibleDictionary<BasicEventEditorData?, BeatmapEventData> ChromaBasicEventConversions = new();
 
         public Version3CustomBeatmapSaveData customBeatmapSaveData;
 
@@ -43,12 +43,12 @@ namespace EditorEX.CustomJSONData
             _repoData = new RepoData(_repoData);
         }
 
-        public static void AddCustomData(BaseEditorData data, CustomData customData)
+        public static void AddCustomData(BaseEditorData? data, CustomData customData)
         {
             _repoData.CustomData[data] = customData;
         }
 
-        public static CustomData GetCustomData(BaseEditorData data)
+        public static CustomData GetCustomData(BaseEditorData? data)
         {
             _repoData.CustomData.TryGetValue(data, out var result);
             return result;
@@ -83,12 +83,12 @@ namespace EditorEX.CustomJSONData
             return result;
         }
 
-        public static void AddBasicEventConversion(BasicEventEditorData editorData, BeatmapEventData customData)
+        public static void AddBasicEventConversion(BasicEventEditorData? editorData, BeatmapEventData customData)
         {
             _repoData.ChromaBasicEventConversions.Add(editorData, customData);
         }
 
-        public static void RemoveBasicEventConversion(BasicEventEditorData editorData)
+        public static void RemoveBasicEventConversion(BasicEventEditorData? editorData)
         {
             _repoData.ChromaBasicEventConversions.Remove(editorData);
         }
@@ -98,7 +98,7 @@ namespace EditorEX.CustomJSONData
             _repoData.ChromaBasicEventConversions.Remove(data);
         }
 
-        public static BeatmapEventData GetBasicEventConversion(BasicEventEditorData editorData)
+        public static BeatmapEventData GetBasicEventConversion(BasicEventEditorData? editorData)
         {
             BeatmapEventData result = null;
             _repoData.ChromaBasicEventConversions.TryGetValue(editorData, out result);

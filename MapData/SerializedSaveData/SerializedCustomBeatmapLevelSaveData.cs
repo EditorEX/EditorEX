@@ -58,11 +58,15 @@ namespace EditorEX.MapData.SerializedSaveData
         {
             public string colorSchemeName;
 
+            public bool overrideNotes;
+
             public string saberAColor;
 
             public string saberBColor;
 
             public string obstaclesColor;
+
+            public bool overrideLights;
 
             public string environmentColor0;
 

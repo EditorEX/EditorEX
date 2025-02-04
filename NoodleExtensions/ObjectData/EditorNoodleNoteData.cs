@@ -13,7 +13,7 @@ namespace EditorEX.NoodleExtensions.ObjectData
     {
         internal string Link { get; }
 
-        internal EditorNoodleNoteData(NoteEditorData noteData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
+        internal EditorNoodleNoteData(NoteEditorData? noteData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
             : base(noteData, customData, pointDefinitions, beatmapTracks, v2, leftHanded)
         {
             try

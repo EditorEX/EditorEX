@@ -16,7 +16,7 @@ namespace EditorEX.Chroma.Patches
         private static readonly MethodInfo _oldConvert = AccessTools.Method(typeof(BeatmapBasicEventConverter), "ConvertBasicEvent", null, null);
         private static readonly MethodInfo _newConvert = AccessTools.Method(typeof(InjectCustomDataIntoLivePreview), "ConvertBasicEvent", null, null);
 
-        BeatmapEventData ConvertBasicEvent(BasicEventEditorData e)
+        BeatmapEventData ConvertBasicEvent(BasicEventEditorData? e)
         {
             BeatmapEventData result;
             if (e.type == BasicBeatmapEventType.Event5)
@@ -33,7 +33,7 @@ namespace EditorEX.Chroma.Patches
 
         [AffinityPatch(typeof(BeatmapBasicEventConverter), nameof(BeatmapBasicEventConverter.ConvertBasicEvent))]
         [AffinityPrefix]
-        public bool Prefix(BasicEventEditorData e, ref BeatmapEventData __result)
+        public bool Prefix(BasicEventEditorData? e, ref BeatmapEventData __result)
         {
             __result = ConvertBasicEvent(e);
             return false;

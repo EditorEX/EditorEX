@@ -216,7 +216,7 @@ namespace EditorEx.Chroma.EnvironmentEnhancement
                             {
                                 List<IComponentData> componentDatas = new();
                                 EditorDuplicateInitializer.PrefillComponentsData(gameObject.transform, componentDatas);
-                                GameObject newGameObject = Object.Instantiate(gameObject);
+                                GameObject newGameObject = Instantiate(gameObject);
                                 _duplicateInitializer.PostfillComponentsData(
                                     newGameObject.transform,
                                     gameObject.transform,

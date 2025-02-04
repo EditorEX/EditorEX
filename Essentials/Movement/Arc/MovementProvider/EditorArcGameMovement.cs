@@ -25,10 +25,11 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         private ColorManager _colorManager;
         private IAudioTimeSource _audioTimeSyncController;
         private AudioDataModel _audioDataModel;
+        private VariableMovementDataProvider _variableMovementDataProvider;
 
         // Arc related fields
         private LengthType _lengthType;
-        private ArcEditorData _sliderEditorData;
+        private ArcEditorData? _sliderEditorData;
         private SliderData _sliderData;
         private Saber _saber;
         private float _headJumpOffsetY;
@@ -40,15 +41,9 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         private float _jumpDistance;
 
         // Arc movement fields
-        private Vector3 _headNoteJumpStartPos;
-        private Vector3 _headNoteJumpEndPos;
-        private float _headNoteTime;
-        private float _tailNoteTime;
         private Vector3 _localPosition;
         private Quaternion _worldRotation;
-        private float _jumpDuration;
-        private float _headNoteGravity;
-        private float _tailNoteGravity;
+        private SliderSpawnData _sliderSpawnData;
         private bool _movementEndReported;
         private bool _headDidMovePastCutMarkReported;
         private bool _tailDidMovePastCutMarkReported;
@@ -66,7 +61,8 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             IReadonlyBeatmapState state,
             ColorManager colorManager,
             IAudioTimeSource audioTimeSyncController,
-            AudioDataModel audioDataModel)
+            AudioDataModel audioDataModel,
+            VariableMovementDataProvider variableMovementDataProvider)
         {
             _randomValue = UnityEngine.Random.value; // Set this here insted of Init to avoid random value changing during reinits
 
@@ -76,12 +72,13 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             _colorManager = colorManager;
             _audioTimeSyncController = audioTimeSyncController;
             _audioDataModel = audioDataModel;
+            _variableMovementDataProvider = variableMovementDataProvider;
         }
 
-        public LengthType GetLengthFromSliderData(BaseSliderEditorData sliderNoteData, BeatmapObjectSpawnMovementData.SliderSpawnData sliderSpawnData)
+        public LengthType GetLengthFromSliderData(BaseSliderEditorData? sliderNoteData, SliderSpawnData sliderSpawnData)
         {
-            float jumpDuration = sliderSpawnData.jumpDuration;
-            float num = (sliderSpawnData.headJumpEndPos.z - sliderSpawnData.headJumpStartPos.z) / jumpDuration;
+            float jumpDuration = _variableMovementDataProvider.jumpDuration;
+            float num = ((_variableMovementDataProvider.jumpEndPosition + sliderSpawnData.headNoteOffset).z - (_variableMovementDataProvider.moveEndPosition + sliderSpawnData.headNoteOffset).z) / jumpDuration;
             float num2 = _audioDataModel.bpmData.BeatToSeconds(sliderNoteData.beat) - _audioDataModel.bpmData.BeatToSeconds(sliderNoteData.tailBeat);
             float num3 = num * num2;
             if (num3 >= 15f)
@@ -132,10 +129,10 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 
         public void SetInitialProperties(MaterialPropertyBlockController materialPropertyBlock, float noteJumpMovementSpeed)
         {
-            SliderShaderHelper.SetInitialProperties(materialPropertyBlock.materialPropertyBlock, _initColor * _sliderIntensityEffect.colorIntensity, _headNoteGravity, _tailNoteGravity, noteJumpMovementSpeed, _jumpDistance, _zDistanceBetweenNotes, _sliderMeshController.pathLength, EditorSpawnDataRepository.GetSpawnData(_sliderEditorData).hasHeadNote, EditorSpawnDataRepository.GetSpawnData(_sliderEditorData).hasTailNote, _randomValue);
+            SliderShaderHelper.SetInitialProperties(materialPropertyBlock.materialPropertyBlock, _initColor * _sliderIntensityEffect.colorIntensity, _zDistanceBetweenNotes, _sliderMeshController.pathLength, EditorSpawnDataRepository.GetSpawnData(_sliderEditorData).hasHeadNote, EditorSpawnDataRepository.GetSpawnData(_sliderEditorData).hasTailNote, _randomValue);
         }
 
-        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             var arcvView = GetComponent<ArcView>();
             _sliderMeshController = arcvView._arcMeshController;
@@ -158,19 +155,20 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             float worldRotation = 0f;
 
             _lengthType = GetLengthFromSliderData(_sliderEditorData, sliderSpawnData);
-            MovementInit(headTime, tailTime, worldRotation, sliderSpawnData.headJumpStartPos, sliderSpawnData.headJumpEndPos, sliderSpawnData.jumpDuration, sliderSpawnData.headJumpGravity, sliderSpawnData.tailJumpGravity);
+            MovementInit(sliderSpawnData);
             _sliderDuration = tailTime - headTime;
             _initColor = _colorManager.ColorForType(_sliderEditorData.colorType);
-            float num = sliderSpawnData.jumpDuration * 0.5f;
-            _sliderIntensityEffect.Init(_sliderDuration, num, EditorSpawnDataRepository.GetSpawnData(editorData).hasHeadNote);
+            float halfJumpDuration = _variableMovementDataProvider.halfJumpDuration;
+            _sliderIntensityEffect.Init(_sliderDuration, halfJumpDuration, EditorSpawnDataRepository.GetSpawnData(editorData).hasHeadNote);
             float noteJumpMovementSpeed = _editorBeatmapObjectSpawnMovementData.noteJumpMovementSpeed;
             _zDistanceBetweenNotes = (tailTime - headTime) * noteJumpMovementSpeed;
-            _jumpDistance = noteJumpMovementSpeed * sliderSpawnData.jumpDuration;
-            Vector3 vector = new Vector3(sliderSpawnData.headJumpEndPos.x, sliderSpawnData.headJumpStartPos.y + _headNoteGravity * num * num * 0.5f, 0f);
-            Vector3 vector2 = new Vector3(sliderSpawnData.tailJumpEndPos.x, sliderSpawnData.tailJumpStartPos.y + _tailNoteGravity * num * num * 0.5f, _zDistanceBetweenNotes);
+            float num = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(sliderSpawnData.headGravityBase);
+            float num2 = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(sliderSpawnData.tailGravityBase);
+            Vector3 vector = new Vector3(sliderSpawnData.headNoteOffset.x, sliderSpawnData.headNoteOffset.y + num * halfJumpDuration * halfJumpDuration * 0.5f, 0f);
+            Vector3 vector2 = new Vector3(sliderSpawnData.tailNoteOffset.x, sliderSpawnData.tailNoteOffset.y + num2 * halfJumpDuration * halfJumpDuration * 0.5f, _zDistanceBetweenNotes);
             _sliderMeshController.CreateBezierPathAndMesh(_sliderData, vector, vector2, noteJumpMovementSpeed, 1f);
             SetInitialProperties(_materialPropertyBlockController, noteJumpMovementSpeed);
-            UpdateMaterialPropertyBlock(-num, _materialPropertyBlockController);
+            UpdateMaterialPropertyBlock(-halfJumpDuration, _materialPropertyBlockController);
 
             transform.localRotation = _worldRotation;
 
@@ -187,7 +185,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 
         }
 
-        public void Setup(BaseEditorData editorData)
+        public void Setup(BaseEditorData? editorData)
         {
         }
 
@@ -201,11 +199,13 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         private void MovementUpdate()
         {
             float songTime = _audioTimeSyncController.songTime;
-            _timeSinceHeadNoteJump = songTime - (_headNoteTime - _jumpDuration * 0.5f);
-            float num = songTime - (_tailNoteTime - _jumpDuration * 0.5f);
-            float num2 = _timeSinceHeadNoteJump / _jumpDuration;
-            float num3 = num / _jumpDuration;
-            _localPosition.z = Mathf.LerpUnclamped(_headNoteJumpStartPos.z, _headNoteJumpEndPos.z, num2) + 0.225f;
+            _timeSinceHeadNoteJump = songTime - (_sliderData.time - _variableMovementDataProvider.halfJumpDuration);
+            float num = songTime - (_sliderData.tailTime - _variableMovementDataProvider.halfJumpDuration);
+            float num2 = _timeSinceHeadNoteJump / _variableMovementDataProvider.jumpDuration;
+            float num3 = num / _variableMovementDataProvider.jumpDuration;
+            float num4 = _variableMovementDataProvider.moveEndPosition.z + _sliderSpawnData.headNoteOffset.z;
+            float num5 = _variableMovementDataProvider.jumpEndPosition.z + _sliderSpawnData.headNoteOffset.z;
+            _localPosition.z = Mathf.LerpUnclamped(num4, num5, num2);// + 0.225f;
             Vector3 vector = _worldRotation * _localPosition;
             transform.localPosition = vector;
             if (!_headDidMovePastCutMarkReported && num2 > 0.5f)
@@ -222,20 +222,14 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             }
         }
 
-        private void MovementInit(float headNoteTime, float tailNoteTime, float worldRotation, Vector3 headNoteJumpStartPos, Vector3 headNoteJumpEndPos, float jumpDuration, float headNoteGravity, float tailNoteGravity)
+        private void MovementInit(SliderSpawnData sliderSpawnData)
         {
             _movementEndReported = false;
             _headDidMovePastCutMarkReported = false;
             _tailDidMovePastCutMarkReported = false;
-            _worldRotation = Quaternion.Euler(0f, worldRotation, 0f);
-            _headNoteJumpStartPos = headNoteJumpStartPos;
-            _headNoteJumpEndPos = headNoteJumpEndPos;
-            _jumpDuration = jumpDuration;
-            _headNoteGravity = headNoteGravity;
-            _tailNoteGravity = tailNoteGravity;
-            _headNoteTime = headNoteTime;
-            _tailNoteTime = tailNoteTime;
-            _timeSinceHeadNoteJump = -jumpDuration * 0.5f;
+            _sliderSpawnData = sliderSpawnData;
+            _worldRotation = Quaternion.Euler(0f, _sliderData.rotation, 0f);
+            _timeSinceHeadNoteJump = -_variableMovementDataProvider.halfJumpDuration;
         }
     }
 }

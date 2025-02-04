@@ -5,7 +5,7 @@ namespace EditorEX.Essentials.SpawnProcessing
 {
     public class SpawnDataRepoData
     {
-        public Dictionary<BaseEditorData, EditorObjectSpawnData> SpawnDataAssociation = new Dictionary<BaseEditorData, EditorObjectSpawnData>();
+        public Dictionary<BaseEditorData?, EditorObjectSpawnData> SpawnDataAssociation = new Dictionary<BaseEditorData?, EditorObjectSpawnData>();
     }
 
     public static class EditorSpawnDataRepository
@@ -17,7 +17,7 @@ namespace EditorEX.Essentials.SpawnProcessing
             _repoData = new SpawnDataRepoData();
         }
 
-        public static void RemoveSpawnData(BaseEditorData data)
+        public static void RemoveSpawnData(BaseEditorData? data)
         {
             if (_repoData.SpawnDataAssociation.ContainsKey(data))
             {
@@ -25,7 +25,7 @@ namespace EditorEX.Essentials.SpawnProcessing
             }
         }
 
-        public static EditorObjectSpawnData GetSpawnData(BaseEditorData data)
+        public static EditorObjectSpawnData GetSpawnData(BaseEditorData? data)
         {
             if (!_repoData.SpawnDataAssociation.ContainsKey(data))
             {

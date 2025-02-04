@@ -34,7 +34,7 @@ namespace EditorEX.NoodleExtensions.ObjectData
             DisableLook = original.DisableLook;
         }
 
-        internal EditorNoodleBaseNoteData(BaseEditorData noteData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
+        internal EditorNoodleBaseNoteData(BaseEditorData? noteData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
             : base(noteData, customData, pointDefinitions, beatmapTracks, v2, leftHanded)
         {
             try

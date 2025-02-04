@@ -18,12 +18,12 @@ namespace EditorEX.Essentials
                 newComponent = existing;
                 return false;
             }
-            var type = typeProvider.GetProvidedType(types, false);
+            var type = typeProvider.GetProvidedType(types);
 
-            T newToUse = (T)(object)gameObject.GetComponent(type);
+            T? newToUse = (T?)(object?)gameObject?.GetComponent(type);
 
             // We can't use != with generic values, can't use a type constraint for IEquatible as then the interface would need to inherit such also.
-            if (!EqualityComparer<T>.Default.Equals(existing, newToUse))
+            if (newToUse != null && !EqualityComparer<T>.Default.Equals(existing, newToUse))
             {
                 existing?.Disable();
                 newComponent = newToUse;

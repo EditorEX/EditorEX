@@ -4,10 +4,6 @@ using BeatmapEditor3D.Visuals;
 using EditorEX.Essentials.ViewMode;
 using SiraUtil.Affinity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace EditorEX.Essentials.Patches.Preview

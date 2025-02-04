@@ -1,6 +1,6 @@
 ﻿using BeatmapSaveDataCommon;
 using BeatmapSaveDataVersion3;
-using global::CustomJSONData.CustomBeatmap;
+using CustomJSONData.CustomBeatmap;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -133,7 +133,7 @@ namespace EditorEX.MapData.Converters
                     .Select(n => new Version3CustomBeatmapSaveData.RotationEventSaveData(
                         n.time,
                         n.type == BeatmapEventType.Event14 ? ExecutionTime.Early : ExecutionTime.Late,
-                        BeatmapDataLoaderVersion2_6_0AndEarlier.BeatmapDataLoader.BasicEventConverter.SpawnRotationForEventValue(n.value),
+                        RotationTimeProcessor.SpawnRotationForEventValue(n.value),
                         n.customData))
                     .Cast<RotationEventData>()
                     .ToList();

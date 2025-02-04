@@ -152,9 +152,9 @@ namespace EditorEX.Chroma.Deserializer
         }
 
         //TODO: Arcs
-        public Dictionary<BaseEditorData, IObjectCustomData> DeserializeObjects()
+        public Dictionary<BaseEditorData?, IObjectCustomData> DeserializeObjects()
         {
-            var dictionary = new Dictionary<BaseEditorData, IObjectCustomData>();
+            var dictionary = new Dictionary<BaseEditorData?, IObjectCustomData>();
 
             foreach (BaseBeatmapObjectEditorData beatmapObjectData in _beatmapObjectsDataModel.allBeatmapObjects)
             {

@@ -32,7 +32,7 @@ namespace EditorEX.Essentials.Patches
 
         [AffinityPostfix]
         [AffinityPatch(typeof(BeatFrameSortedCollection<BeatmapObjectsFrameDataContainer>), nameof(BeatFrameSortedCollection<BeatmapObjectsFrameDataContainer>.Add))]
-        private void RemoveData(BaseEditorData data)
+        private void RemoveData(BaseEditorData? data)
         {
             EditorSpawnDataRepository.RemoveSpawnData(data);
             _processor.Reset();

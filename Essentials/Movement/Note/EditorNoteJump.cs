@@ -13,19 +13,53 @@ namespace EditorEX.Essentials.Movement.Note
 {
     public class EditorNoteJump : MonoBehaviour
     {
+        // Properties
         public float distanceToPlayer => Mathf.Abs(_localPosition.z - (_inverseWorldRotation * _playerTransforms.headPseudoLocalPos).z);
         public Vector3 beatPos => (_endPos + _startPos) * 0.5f;
         public float jumpDuration => _jumpDuration;
-        public Vector3 moveVec => _moveVec;
         public Vector3 localPosition => _localPosition;
 
         public event Action noteJumpDidFinishEvent;
 
+        // Jump fields
+
+        private bool _definitePosition;
+        private EditorNoodleBaseNoteData NoodleData;
+        private NoteEditorData? _editorData;
+        private Func<IObjectVisuals> _rotatedObject;
+        private float _yAvoidanceUp = 0.45f;
+        private float _yAvoidanceDown = 0.15f;
+        private float _endDistanceOffset = 500f;
+        private Vector3 _localPosition;
+        private float _noteTime;
+        private float _yAvoidance;
+        private Quaternion _startRotation;
+        private Quaternion _middleRotation;
+        private Quaternion _endRotation;
+        internal Vector3 _startOffset;
+        internal Vector3 _endOffset;
+        private float _gravityBase;
+        private float _halfJumpDuration;
+        private float _jumpDuration;
+        private float _gravity;
+        internal Vector3 _startPos;
+        internal Vector3 _endPos;
+        private float _missedTime;
+        private bool _jumpStartedReported;
+        private bool _missedMarkReported;
+        private bool _threeQuartersMarkReported;
+        private bool _halfJumpMarkReported;
+        internal Quaternion _worldRotation;
+        internal Quaternion _inverseWorldRotation;
+        private bool _rotateTowardsPlayer;
+
+        // Injected fields
         private PlayerTransforms _playerTransforms;
         private IAudioTimeSource _audioTimeSyncController;
         private AnimationHelper _animationHelper;
         private EditorDeserializedData _editorDeserializedData;
         private AudioDataModel _audioDataModel;
+        private IVariableMovementDataProvider _variableMovementDataProvider;
 
         [Inject]
         public void Construct(
@@ -33,16 +67,18 @@ namespace EditorEX.Essentials.Movement.Note
             IAudioTimeSource audioTimeSyncController,
             AnimationHelper animationHelper,
             [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData,
-            AudioDataModel audioDataModel)
+            AudioDataModel audioDataModel,
+            IVariableMovementDataProvider variableMovementDataProvider)
         {
             _playerTransforms = playerTransforms;
             _audioTimeSyncController = audioTimeSyncController;
             _animationHelper = animationHelper;
             _editorDeserializedData = editorDeserializedData;
             _audioDataModel = audioDataModel;
+            _variableMovementDataProvider = variableMovementDataProvider;
         }
 
-        public void Init(NoteEditorData editorData, float beatTime, float worldRotation, Vector3 startPos, Vector3 endPos, float jumpDuration, float gravity, float flipYSide, float endRotation, Func<IObjectVisuals> getVisualRoot)
+        public void Init(NoteEditorData? editorData, float noteTime, float worldRotation, Vector3 moveEndOffset, Vector3 jumpEndOffset, float gravityBase, float flipYSide, float endRotation, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData;
             if (!(_editorDeserializedData?.Resolve(editorData, out NoodleData) ?? false))
@@ -53,12 +89,10 @@ namespace EditorEX.Essentials.Movement.Note
             _rotatedObject = getVisualRoot;
             _worldRotation = Quaternion.Euler(0f, worldRotation, 0f);
             _inverseWorldRotation = Quaternion.Euler(0f, -worldRotation, 0f);
-            _startPos = startPos;
-            _endPos = endPos;
-            _jumpDuration = jumpDuration;
-            _moveVec = (_endPos - _startPos) / _jumpDuration;
-            _beatTime = beatTime;
-            _gravity = gravity;
+            _startOffset = moveEndOffset;
+            _endOffset = jumpEndOffset;
+            _gravityBase = gravityBase;
+            _noteTime = noteTime;
             if (flipYSide > 0f)
             {
                 _yAvoidance = flipYSide * _yAvoidanceUp;
@@ -67,14 +101,13 @@ namespace EditorEX.Essentials.Movement.Note
             {
                 _yAvoidance = flipYSide * _yAvoidanceDown;
             }
+            _jumpStartedReported = false;
             _missedMarkReported = false;
             _threeQuartersMarkReported = false;
-            _startVerticalVelocity = _gravity * _jumpDuration * 0.5f;
+            _halfJumpMarkReported = false;
             _endRotation = Quaternion.Euler(0f, 0f, endRotation);
-            _missedTime = beatTime + kMissedTimeOffset;
             Vector3 vector = _endRotation.eulerAngles;
-            _middleRotation = default;
-            _middleRotation.eulerAngles = vector;
+            _middleRotation = Quaternion.Euler(vector);
             _startRotation = Quaternion.identity;
         }
 
@@ -97,7 +130,7 @@ namespace EditorEX.Essentials.Movement.Note
                 _animationHelper.GetDefinitePositionOffset(noodleData.AnimationObject, noodleData.Track, time, out Vector3? position);
                 if (position.HasValue)
                 {
-                    _definitePosition = true;
+                    _definitePosition = true;   
                     return position.Value + noodleData.InternalNoteOffset;
                 }
             }
@@ -110,16 +143,26 @@ namespace EditorEX.Essentials.Movement.Note
         {
             bool hasNoodle = NoodleData != null;
 
+            if (!_missedMarkReported)
+            {
+                _halfJumpDuration = _variableMovementDataProvider.halfJumpDuration;
+                _jumpDuration = _variableMovementDataProvider.jumpDuration;
+                _gravity = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(_gravityBase);
+                _startPos = _variableMovementDataProvider.moveEndPosition + _startOffset;
+                _endPos = _variableMovementDataProvider.jumpEndPosition + _endOffset;
+                _missedTime = _noteTime + 0.15f;
+            }
+
             float songTime = _audioTimeSyncController.songTime;
             float num = hasNoodle ?
-                            NoteJumpTimeAdjust(songTime - (_beatTime - _jumpDuration * 0.5f), _jumpDuration) :
-                            songTime - (_beatTime - _jumpDuration * 0.5f);
+                            NoteJumpTimeAdjust(songTime - (_noteTime - _halfJumpDuration), _jumpDuration) :
+                            songTime - (_noteTime - _halfJumpDuration);
             float num2 = num / _jumpDuration;
             if (_startPos.x == _endPos.x)
             {
                 _localPosition.x = _startPos.x;
             }
-            else if (num2 < 0.25f)
+            else if (num2 < 0.25f)  
             {
                 _localPosition.x = _startPos.x + (_endPos.x - _startPos.x) * Easing.InOutQuad(num2 * 4f);
             }
@@ -127,8 +170,9 @@ namespace EditorEX.Essentials.Movement.Note
             {
                 _localPosition.x = _endPos.x;
             }
-            _localPosition.z = _playerTransforms.MoveTowardsHead(_startPos.z, _endPos.z, _inverseWorldRotation, num2);
-            _localPosition.y = _startPos.y + _startVerticalVelocity * num - _gravity * num * num * 0.5f;
+            _localPosition.z = Mathf.LerpUnclamped(_startPos.z, _endPos.z, num2);
+            float endGrav = _gravity * _halfJumpDuration;
+            _localPosition.y = _startPos.y + endGrav * num - _gravity * num * num * 0.5f;
             if (_yAvoidance != 0f && num2 < 0.25f)
             {
                 float num3 = 0.5f - Mathf.Cos(num2 * 8f * 3.1415927f) * 0.5f;
@@ -177,57 +221,5 @@ namespace EditorEX.Essentials.Movement.Note
             transform.localPosition = vector3;
             return vector3;
         }
-
-        private bool _definitePosition;
-
-        private EditorNoodleBaseNoteData NoodleData;
-
-        private NoteEditorData _editorData;
-
-        private Func<IObjectVisuals> _rotatedObject;
-
-        private float _yAvoidanceUp = 0.45f;
-
-        private float _yAvoidanceDown = 0.15f;
-
-        private float _endDistanceOffset = 500f;
-
-        internal Vector3 _startPos;
-
-        internal Vector3 _endPos;
-
-        private float _jumpDuration;
-
-        private Vector3 _moveVec;
-
-        private float _beatTime;
-
-        private float _startVerticalVelocity;
-
-        private Quaternion _startRotation;
-
-        private Quaternion _middleRotation;
-
-        private Quaternion _endRotation;
-
-        private float _gravity;
-
-        private float _yAvoidance;
-
-        private float _missedTime;
-
-        private bool _missedMarkReported;
-
-        private bool _threeQuartersMarkReported;
-
-        private bool _halfJumpMarkReported;
-
-        private Vector3 _localPosition;
-
-        public const float kMissedTimeOffset = 0.15f;
-
-        internal Quaternion _worldRotation;
-
-        internal Quaternion _inverseWorldRotation;
     }
 }

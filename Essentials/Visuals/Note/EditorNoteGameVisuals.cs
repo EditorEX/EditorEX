@@ -23,7 +23,7 @@ namespace EditorEX.Essentials.Visuals.Note
         private AnimationHelper _animationHelper;
 
         // Visuals fields
-        private NoteEditorData _editorData;
+        private NoteEditorData? _editorData;
         private GameObject _gameRoot;
 
         private MaterialPropertyBlockController[] _colorPropertyBlockControllers;
@@ -85,7 +85,7 @@ namespace EditorEX.Essentials.Visuals.Note
             Disable();
         }
 
-        public void Init(BaseEditorData editorData)
+        public void Init(BaseEditorData? editorData)
         {
             _editorData = editorData as NoteEditorData;
 
@@ -130,12 +130,12 @@ namespace EditorEX.Essentials.Visuals.Note
         public void ManualUpdate()
         {
             EditorNoodleBaseNoteData? noodleData = null;
-            if (!(_editorDeserializedData?.Resolve(_editorData, out noodleData) ?? false))
+            if (!(_editorDeserializedData?.Resolve(_editorData, out noodleData) ?? false) || noodleData == null)
             {
                 return;
             }
 
-            List<Track>? tracks = noodleData.Track;
+            IReadOnlyList<Track>? tracks = noodleData.Track;
             NoodleObjectData.AnimationObjectData? animationObject = noodleData.AnimationObject;
             if (tracks == null && animationObject == null)
             {

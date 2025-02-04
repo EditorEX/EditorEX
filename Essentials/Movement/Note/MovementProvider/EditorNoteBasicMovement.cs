@@ -21,7 +21,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }
 
-        public void Init(BaseEditorData editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData as NoteEditorData;
             float z = _beatmapObjectPlacementHelper.BeatToPosition(editorData.beat);
@@ -38,7 +38,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 
         }
 
-        public void Setup(BaseEditorData editorData)
+        public void Setup(BaseEditorData? editorData)
         {
 
         }

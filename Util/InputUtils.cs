@@ -4,11 +4,11 @@ using UnityEngine.EventSystems;
 
 namespace EditorEX.Util
 {
-    internal class InputUtils
+    internal static class InputUtils
     {
         public static bool IsInputFieldActive()
         {
-            GameObject selectedObj = EventSystem.current.currentSelectedGameObject;
+            GameObject? selectedObj = EventSystem.current?.currentSelectedGameObject;
 
             if (selectedObj != null)
             {

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public enum Parity
 {
     None,
@@ -15,7 +15,7 @@ public enum Parity
     Backhand
 }
 
-[System.Serializable]
+[Serializable]
 public enum ResetType
 {
     None,
@@ -24,7 +24,7 @@ public enum ResetType
     Roll
 }
 
-[System.Serializable]
+[Serializable]
 public struct PositioningData
 {
     public float angle;
@@ -32,7 +32,7 @@ public struct PositioningData
     public int y;
 }
 
-[System.Serializable]
+[Serializable]
 public struct BeatCutData
 {
     public Parity sliceParity;

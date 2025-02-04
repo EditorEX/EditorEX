@@ -6,7 +6,7 @@ namespace EditorEX.SDK.ContextMenu.Objects
     {
         public BeatmapListContextMenuObject(BeatmapInfoData beatmapInfoData)
         {
-            this.BeatmapInfoData = beatmapInfoData;
+            BeatmapInfoData = beatmapInfoData;
         }
 
         public BeatmapInfoData BeatmapInfoData { get; private set; }

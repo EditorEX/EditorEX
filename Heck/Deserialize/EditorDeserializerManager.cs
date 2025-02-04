@@ -76,12 +76,12 @@ namespace EditorEX.Heck.Deserialize
                 _log.Trace("BeatmapData is v2, converting...");
             }
 
-            var baseObjectDatas = _objectDataModel.allBeatmapObjects.Cast<BaseEditorData>();
-            var basicEventDatas = _eventsDataModel.GetAllEventsAsList().Cast<BaseEditorData>();
+            IEnumerable<BaseEditorData?> baseObjectDatas = _objectDataModel.allBeatmapObjects.Cast<BaseEditorData>();
+            IEnumerable<BaseEditorData?> basicEventDatas = _eventsDataModel.GetAllEventsAsList().Cast<BaseEditorData>();
 
             // tracks are built based off the untransformed beatmapdata so modifiers like "no walls" do not prevent track creation
             TrackBuilder trackManager = new();
-            foreach (BaseEditorData baseEditorData in baseObjectDatas.Concat(basicEventDatas).Concat(CustomDataRepository.GetCustomEvents()))
+            foreach (BaseEditorData? baseEditorData in baseObjectDatas.Concat(basicEventDatas).Concat(CustomDataRepository.GetCustomEvents()))
             {
                 CustomData customData = CustomDataRepository.GetCustomData(baseEditorData);
 

@@ -34,7 +34,7 @@ namespace EditorEX.Essentials.Visuals.Obstacle
             Disable();
         }
 
-        public void Init(BaseEditorData baseEditorData)
+        public void Init(BaseEditorData? baseEditorData)
         {
             _editorData = baseEditorData as ObstacleEditorData;
             if (_active)

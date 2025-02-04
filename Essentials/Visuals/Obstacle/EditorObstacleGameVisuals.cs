@@ -23,7 +23,7 @@ namespace EditorEX.Essentials.Visuals.Obstacle
         private AnimationHelper _animationHelper;
 
         // Visuals fields
-        private ObstacleEditorData _editorData;
+        private ObstacleEditorData? _editorData;
         private GameObject _gameRoot;
 
         private StretchableObstacle _stretchableObstacle;
@@ -97,7 +97,7 @@ namespace EditorEX.Essentials.Visuals.Obstacle
             Disable();
         }
 
-        public void Init(BaseEditorData editorData)
+        public void Init(BaseEditorData? editorData)
         {
             _editorData = editorData as ObstacleEditorData;
 
@@ -112,7 +112,7 @@ namespace EditorEX.Essentials.Visuals.Obstacle
 
             var obstacleColor = _colorManager.obstaclesColor;
 
-            _stretchableObstacle.SetSizeAndColor(_stretchableObstacle._obstacleFrame.width, _stretchableObstacle._obstacleFrame.height, _stretchableObstacle._obstacleFrame.length, obstacleColor);
+            _stretchableObstacle.SetAllProperties(_stretchableObstacle._obstacleFrame.width, _stretchableObstacle._obstacleFrame.height, _stretchableObstacle._obstacleFrame.length, obstacleColor, _state.beat);
 
             _wallCutout.SetCutout(0f);
             _frameCutout.SetCutout(0f);
@@ -134,28 +134,19 @@ namespace EditorEX.Essentials.Visuals.Obstacle
 
         public void ManualUpdate()
         {
-            if (!(_editorDeserializedData?.Resolve(_editorData, out EditorNoodleObstacleData? noodleData) ?? false))
+            if (!(_editorDeserializedData?.Resolve(_editorData, out EditorNoodleObstacleData? noodleData) ?? false) || noodleData == null)
             {
                 return;
             }
 
-            List<Track>? tracks = noodleData.Track;
+            IReadOnlyList<Track>? tracks = noodleData.Track;
             NoodleObjectData.AnimationObjectData? animationObject = noodleData.AnimationObject;
             if (tracks == null && animationObject == null)
             {
                 return;
             }
 
-            float? time2 = noodleData.GetTimeProperty();
-            float normalTime;
-            if (time2.HasValue)
-            {
-                normalTime = time2.Value;
-            }
-            else
-            {
-                normalTime = 0f;
-            }
+            var normalTime = noodleData.GetTimeProperty() ?? 0f;
 
             _animationHelper.GetObjectOffset(
                 animationObject,

@@ -40,7 +40,7 @@ namespace EditorEX.Heck.Deserialize
             return Resolve(_eventCustomDatas, beatmapEventData, out result);
         }
 
-        public bool Resolve<T>(BaseEditorData beatmapObjectData, out T result) where T : IObjectCustomData
+        public bool Resolve<T>(BaseEditorData? beatmapObjectData, out T? result) where T : IObjectCustomData?
         {
             if (beatmapObjectData == null)
             {

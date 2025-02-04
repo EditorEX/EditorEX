@@ -13,11 +13,16 @@ namespace EditorEX.CustomDataModels
     {
         public IReadOnlyList<CustomPlatformInfo> CustomPlatforms => _customPlatforms;
 
-        private List<CustomPlatformInfo> _customPlatforms = new List<CustomPlatformInfo>();
+        private List<CustomPlatformInfo> _customPlatforms = new();
 
         public void Initialize()
         {
-            var files = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "CustomPlatforms"));
+            string customPlatformsPath = Path.Combine(Environment.CurrentDirectory, "CustomPlatforms");
+            if (!Directory.Exists(customPlatformsPath))
+            {
+                return;
+            }
+            var files = Directory.GetFiles(customPlatformsPath);
             foreach (var file in files)
             {
                 var fileInfo = new FileInfo(file);

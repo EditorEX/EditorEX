@@ -317,9 +317,11 @@
     <Compile Include="CustomJSONData\Patches\BetterClearEvents.cs" />
     <Compile Include="CustomJSONData\Patches\Saving\BeatmapLevelDataModelSaverPatch.cs" />
     <Compile Include="Essentials\Installers\EditorEssentialsAppInstaller.cs" />
+    <Compile Include="Essentials\Movement\VariableMovementProvider\VariableMovementProvider.cs" />
     <Compile Include="Essentials\Patches\HideUI.cs" />
     <Compile Include="Essentials\Patches\CameraLock.cs" />
     <Compile Include="Essentials\Patches\FixAudioTimeSource.cs" />
+    <Compile Include="Essentials\Patches\Movement\SwapMovementProvider.cs" />
     <Compile Include="Essentials\Patches\PopulateBeatmap.cs" />
     <Compile Include="Essentials\Patches\Preview\PreviewSelectionPatches.cs" />
     <Compile Include="Essentials\Visuals\Obstacle\EditorObstacleBasicVisuals.cs" />
@@ -514,7 +516,9 @@
     </PackageReference>
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Vivify\" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\Resources\lockcamera.png" />
   </ItemGroup>

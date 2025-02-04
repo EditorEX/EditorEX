@@ -26,7 +26,7 @@ namespace EditorEX.Essentials.Movement
             _providers = providers;
         }
 
-        public Type GetProvidedType(Type[] availableTypes, bool REDACTED)
+        public Type GetProvidedType(Type[] availableTypes)
         {
             var viewingMode = _activeViewMode.Mode.ID;
 

@@ -22,7 +22,7 @@ namespace EditorEX.NoodleExtensions.ObjectData
 
         internal bool InternalDoUnhide { get; set; }
 
-        internal EditorNoodleObstacleData(ObstacleEditorData obstacleData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
+        internal EditorNoodleObstacleData(ObstacleEditorData? obstacleData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
             : base(obstacleData, customData, pointDefinitions, beatmapTracks, v2, leftHanded)
         {
             try

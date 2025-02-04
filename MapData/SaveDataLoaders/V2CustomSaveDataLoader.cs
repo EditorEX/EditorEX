@@ -54,7 +54,17 @@ namespace EditorEX.MapData.SaveDataLoaders
             {
                 foreach (BeatmapLevelColorSchemeSaveData beatmapLevelColorSchemeSaveData in standardLevelInfoSaveData.colorSchemes)
                 {
-                    beatmapLevelColorSchemes.Add(BeatmapLevelColorSchemeEditorData.Create(beatmapLevelColorSchemeSaveData.colorScheme.colorSchemeId, beatmapLevelColorSchemeSaveData.colorScheme.saberAColor, beatmapLevelColorSchemeSaveData.colorScheme.saberBColor, beatmapLevelColorSchemeSaveData.colorScheme.obstaclesColor, beatmapLevelColorSchemeSaveData.colorScheme.environmentColor0, beatmapLevelColorSchemeSaveData.colorScheme.environmentColor1, beatmapLevelColorSchemeSaveData.colorScheme.environmentColor0Boost, beatmapLevelColorSchemeSaveData.colorScheme.environmentColor1Boost));
+                    beatmapLevelColorSchemes.Add(BeatmapLevelColorSchemeEditorData.Create(
+                        beatmapLevelColorSchemeSaveData.colorScheme.colorSchemeId, 
+                        true, 
+                        beatmapLevelColorSchemeSaveData.colorScheme.saberAColor, 
+                        beatmapLevelColorSchemeSaveData.colorScheme.saberBColor, 
+                        beatmapLevelColorSchemeSaveData.colorScheme.obstaclesColor, 
+                        true,
+                        beatmapLevelColorSchemeSaveData.colorScheme.environmentColor0, 
+                        beatmapLevelColorSchemeSaveData.colorScheme.environmentColor1, 
+                        beatmapLevelColorSchemeSaveData.colorScheme.environmentColor0Boost, 
+                        beatmapLevelColorSchemeSaveData.colorScheme.environmentColor1Boost));
                 }
             }
 
@@ -87,7 +97,7 @@ namespace EditorEX.MapData.SaveDataLoaders
             Dictionary<ValueTuple<BeatmapCharacteristicSO, BeatmapDifficulty>, DifficultyBeatmapData> dictionary = new Dictionary<ValueTuple<BeatmapCharacteristicSO, BeatmapDifficulty>, DifficultyBeatmapData>();
             foreach (StandardLevelInfoSaveData.DifficultyBeatmapSet difficultyBeatmapSet in standardLevelInfoSaveData.difficultyBeatmapSets)
             {
-                BeatmapCharacteristicSO beatmapCharacteristicBySerializedName = this._beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(difficultyBeatmapSet.beatmapCharacteristicName);
+                BeatmapCharacteristicSO beatmapCharacteristicBySerializedName = _beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(difficultyBeatmapSet.beatmapCharacteristicName);
                 if (!(beatmapCharacteristicBySerializedName == null))
                 {
                     foreach (StandardLevelInfoSaveData.DifficultyBeatmap difficultyBeatmap in difficultyBeatmapSet.difficultyBeatmaps)

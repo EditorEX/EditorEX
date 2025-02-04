@@ -14,6 +14,7 @@ using EditorEX.Chroma.Lighting;
 using EditorEX.Chroma.Patches.Events;
 using EditorEX.MapData.Contexts;
 using Heck;
+using Heck.BaseProviders;
 using Zenject;
 
 namespace EditorEX.Chroma.Installers
