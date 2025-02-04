@@ -116,7 +116,7 @@ namespace EditorEX.UI.Patches
             {
                 string text = NativeFileDialogs.OpenFileDialog("", new ExtensionFilter[]
                 {
-                    new("", new string[] { "png", "jpg", "jpeg" })
+                    new("", "png", "jpg", "jpeg")
                 }, null);
 
                 if (string.IsNullOrEmpty(text) || text == contributorData.IconPath)
@@ -299,7 +299,7 @@ namespace EditorEX.UI.Patches
 
                 _levelAuthorInputValidator.onInputValidated += x =>
                 {
-                    __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, x, null, null, null, null, null, null, null, null, null));
+                    __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, x));
                 };
 
                 _levelAuthorInputValidator.transform.parent.Find("Label").GetComponent<TextMeshProUGUI>().text = "Level Author Name";
@@ -342,13 +342,13 @@ namespace EditorEX.UI.Patches
                 _environmentDropdown = _dropdownFactory.Create(_environmentRoot.transform, "Environment", true, 850f, _environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal).Select(x => x.environmentName), (dd, idx) =>
                 {
                     var environment = _environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal)[idx].serializedName;
-                    __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, null, null, null, null, null, null, null, environment, null, null));
+                    __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, null, null, null, null, null, null, null, environment));
                 });
 
                 _allDirectionsEnvironmentDropdown = _dropdownFactory.Create(_environmentRoot.transform, "360 Environment", true, 850f, _environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle).Select(x => x.environmentName), (dd, idx) =>
                 {
                     var environment = _environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle)[idx].serializedName;
-                    __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, null, null, null, null, null, null, null, null, environment, null));
+                    __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, null, null, null, null, null, null, null, null, environment));
                 });
 
                 _customPlatformDropdown = _dropdownFactory.Create(_environmentRoot.transform, "Custom Platform", true, 850f, _customPlatformsListModel.CustomPlatforms.Select(x => x.FilePath).ToList(), (dd, idx) =>

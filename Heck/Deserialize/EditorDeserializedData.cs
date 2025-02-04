@@ -75,14 +75,7 @@ namespace EditorEX.Heck.Deserialize
                 result = t;
                 return true;
             }
-            throw new InvalidOperationException(string.Concat(new string[]
-            {
-                "Custom data was not of correct type. Expected: [",
-                typeof(TResultType).Name,
-                "], was: [",
-                customData.GetType().Name,
-                "]."
-            }));
+            throw new InvalidOperationException(string.Concat("Custom data was not of correct type. Expected: [", typeof(TResultType).Name, "], was: [", customData.GetType().Name, "]."));
         }
 
         private Dictionary<CustomEventEditorData, ICustomEventCustomData> _customEventCustomDatas;

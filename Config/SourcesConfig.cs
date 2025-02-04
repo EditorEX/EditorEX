@@ -13,6 +13,6 @@ namespace EditorEX.Config
         public virtual string SelectedSource { get; set; } = "Custom Levels";
 
         [UseConverter(typeof(DictionaryConverter<List<string>, ListConverter<string>>))]
-        public virtual Dictionary<string, List<string>> Sources { get; set; } = new Dictionary<string, List<string>>();
+        public virtual Dictionary<string, List<string>> Sources { get; set; } = new();
     }
 }

@@ -24,7 +24,7 @@ namespace EditorEX.CustomJSONData.Patches.Loading
             _v2BeatmapBpmDataVersionedLoader = v2BeatmapBpmDataVersionedLoader;
         }
 
-        [AffinityPatch(typeof(BeatmapProjectFileHelper), nameof(BeatmapProjectFileHelper.CopyBeatmapFile), AffinityMethodType.Normal, null, new Type[] { typeof(string), typeof(string), typeof(string), typeof(string) })]
+        [AffinityPatch(typeof(BeatmapProjectFileHelper), nameof(BeatmapProjectFileHelper.CopyBeatmapFile), AffinityMethodType.Normal, null, typeof(string), typeof(string), typeof(string), typeof(string))]
         [AffinityPrefix]
         private bool FixCopyFile(string sourceProjectPath, string destinationProjectPath, string sourceBeatmapFileFilename, string destinationBeatmapFileName)
         {
@@ -39,7 +39,7 @@ namespace EditorEX.CustomJSONData.Patches.Loading
             return true;
         }
 
-        [AffinityPatch(typeof(BeatmapProjectFileHelper), nameof(BeatmapProjectFileHelper.CopyBeatmapFile), AffinityMethodType.Normal, null, new Type[] { typeof(string), typeof(string), typeof(string) })]
+        [AffinityPatch(typeof(BeatmapProjectFileHelper), nameof(BeatmapProjectFileHelper.CopyBeatmapFile), AffinityMethodType.Normal, null, typeof(string), typeof(string), typeof(string))]
         [AffinityPrefix]
         private bool FixCopyFile2(string sourceProjectPath, string destinationProjectPath, string beatmapFileFilename)
         {
@@ -54,7 +54,7 @@ namespace EditorEX.CustomJSONData.Patches.Loading
             return true;
         }
 
-        [AffinityPatch(typeof(BeatmapProjectFileHelper), nameof(BeatmapProjectFileHelper.CopyBeatmapLevel), AffinityMethodType.Normal, null, new Type[] { typeof(string), typeof(string), typeof(string), typeof(string) })]
+        [AffinityPatch(typeof(BeatmapProjectFileHelper), nameof(BeatmapProjectFileHelper.CopyBeatmapLevel), AffinityMethodType.Normal, null, typeof(string), typeof(string), typeof(string), typeof(string))]
         [AffinityPrefix]
         private bool FixCopyFile3(string fromProjectPath, string fromBeatmapLevelFilename, string toProjectPath, string toBeatmapLevelFilename)
         {

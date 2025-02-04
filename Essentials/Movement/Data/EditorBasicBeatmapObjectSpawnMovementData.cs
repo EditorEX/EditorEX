@@ -186,7 +186,7 @@ namespace EditorEX.Essentials.Movement.Data
 
         private EditorSpawnDataManager _editorSpawnDataManager;
 
-        private Vector3 _centerPos = new Vector3(0f, 0f, 0.65f);
+        private Vector3 _centerPos = new(0f, 0f, 0.65f);
         internal float _maxHalfJumpDistance = kDefaultMaxHalfJumpDistance;
         internal float _startHalfJumpDurationInBeats = kDefaultStartHalfJumpDurationInBeats;
         private float _baseLinesHighestJumpPosY = 0.85f;

@@ -8,7 +8,7 @@ namespace EditorEX.SDK.AddressableHelpers
 {
     public static class SignalBusAddressableExtensions
     {
-        private static Dictionary<Tuple<string, object>, Action<IAddressableCollectorItemLoadedSignal>> _callbacks = new Dictionary<Tuple<string, object>, Action<IAddressableCollectorItemLoadedSignal>>();
+        private static Dictionary<Tuple<string, object>, Action<IAddressableCollectorItemLoadedSignal>> _callbacks = new();
 
         public static void SubscribeToAddressable(this SignalBus signalBus, string label, object uniqueID, Action<IAddressableCollectorItemLoadedSignal> action)
         {

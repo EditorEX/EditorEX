@@ -35,7 +35,7 @@ namespace EditorEX.UI.Patches
         private TextSegmentedControl _segmentedControl;
         private TabbingSegmentedControlController _tabbingSegmentedControlController;
 
-        private List<GameObject> gameObjects = new List<GameObject>();
+        private List<GameObject> gameObjects = new();
 
         // New Source
         private TMP_InputField _tempNewSourceName;

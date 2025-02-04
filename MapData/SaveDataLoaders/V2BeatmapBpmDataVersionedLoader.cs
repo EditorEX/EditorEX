@@ -11,7 +11,7 @@ namespace EditorEX.MapData.SaveDataLoaders
         [Inject]
         private readonly BeatmapLevelDataModel _beatmapLevelDataModel;
 
-        private readonly Version _version100 = new Version(1, 0, 0);
+        private readonly Version _version100 = new(1, 0, 0);
 
         public BpmData Load(string projectPath)
         {

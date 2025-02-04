@@ -38,7 +38,7 @@ namespace EditorEX.Essentials.Patches.Preview
             isDeleting &= _activeViewMode.Mode.ShowGridAndSelection;
         }
 
-        [AffinityPatch(typeof(BeatmapObjectViewSelection), nameof(BeatmapObjectViewSelection.UpdateState), AffinityMethodType.Normal, null, new[] { typeof(bool), typeof(bool), typeof(bool) })]
+        [AffinityPatch(typeof(BeatmapObjectViewSelection), nameof(BeatmapObjectViewSelection.UpdateState), AffinityMethodType.Normal, null, typeof(bool), typeof(bool), typeof(bool))]
         [AffinityPrefix]
         private bool UpdateState()
         {

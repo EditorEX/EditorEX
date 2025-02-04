@@ -10,7 +10,7 @@ namespace EditorEX.SDK.Collectors
 {
     public class AddressableCollector : IInitializable
     {
-        private List<IAddressableCollectorItemLoadedSignal> _signals = new List<IAddressableCollectorItemLoadedSignal>();
+        private List<IAddressableCollectorItemLoadedSignal> _signals = new();
         private List<IAddressableCollectorItem> _collectingItems;
         private SignalBus _signalBus;
 
@@ -82,7 +82,7 @@ namespace EditorEX.SDK.Collectors
                     }
                     item.InternalValue = op.Result;
 
-                    var signal = Activator.CreateInstance(typeof(AddressableCollectorItemLoadedSignal<>).MakeGenericType(new Type[] { item.InternalValue.GetType() }), item.Label, item.InternalValue);
+                    var signal = Activator.CreateInstance(typeof(AddressableCollectorItemLoadedSignal<>).MakeGenericType(item.InternalValue.GetType()), item.Label, item.InternalValue);
                     _signals.Add(signal as IAddressableCollectorItemLoadedSignal);
                     _signalBus.Fire(signal);
                 };

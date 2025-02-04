@@ -5,12 +5,12 @@ namespace EditorEX.Essentials.SpawnProcessing
 {
     public class SpawnDataRepoData
     {
-        public Dictionary<BaseEditorData?, EditorObjectSpawnData> SpawnDataAssociation = new Dictionary<BaseEditorData?, EditorObjectSpawnData>();
+        public Dictionary<BaseEditorData?, EditorObjectSpawnData> SpawnDataAssociation = new();
     }
 
     public static class EditorSpawnDataRepository
     {
-        private static SpawnDataRepoData _repoData = new SpawnDataRepoData();
+        private static SpawnDataRepoData _repoData = new();
 
         public static void ClearAll()
         {

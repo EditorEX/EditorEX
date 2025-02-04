@@ -16,9 +16,9 @@ namespace EditorEX.Essentials.Patches.Movement
     [AffinityPatch]
     public class InitMovement : IAffinity
     {
-        private static readonly MethodInfo _init = AccessTools.Method(typeof(InitMovement), "Init", null, null);
-        private static readonly MethodInfo _initObstacle = AccessTools.Method(typeof(InitMovement), "InitObstacle", null, null);
-        private static readonly MethodInfo _initArc = AccessTools.Method(typeof(InitMovement), "InitArc", null, null);
+        private static readonly MethodInfo _init = AccessTools.Method(typeof(InitMovement), "Init");
+        private static readonly MethodInfo _initObstacle = AccessTools.Method(typeof(InitMovement), "InitObstacle");
+        private static readonly MethodInfo _initArc = AccessTools.Method(typeof(InitMovement), "InitArc");
 
         public static void Init(GameObject gameObject, BaseEditorData editorData)
         {
@@ -42,14 +42,9 @@ namespace EditorEX.Essentials.Patches.Movement
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End().Advance(-1) // before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldloc_S, 5),
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Call, _init)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldloc_S, 5), new(OpCodes.Ldarg_1), new(OpCodes.Call, _init)).InstructionEnumeration();
             return result;
         }
 
@@ -57,14 +52,9 @@ namespace EditorEX.Essentials.Patches.Movement
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerObstacle(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End().Advance(-1) // before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldloc_2),
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Call, _initObstacle)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldloc_2), new(OpCodes.Ldarg_1), new(OpCodes.Call, _initObstacle)).InstructionEnumeration();
             return result;
         }
 
@@ -72,14 +62,9 @@ namespace EditorEX.Essentials.Patches.Movement
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerArc(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End().Advance(-1) // before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldloc_0),
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Call, _initArc)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldloc_0), new(OpCodes.Ldarg_1), new(OpCodes.Call, _initArc)).InstructionEnumeration();
             return result;
         }
     }

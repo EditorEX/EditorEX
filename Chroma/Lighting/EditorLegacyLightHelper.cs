@@ -32,7 +32,7 @@ namespace EditorEX.Chroma.Lighting
             }
         }
 
-        internal Dictionary<BasicBeatmapEventType, List<Tuple<float, Color>>> LegacyColorEvents { get; } = new Dictionary<BasicBeatmapEventType, List<Tuple<float, Color>>>();
+        internal Dictionary<BasicBeatmapEventType, List<Tuple<float, Color>>> LegacyColorEvents { get; } = new();
 
         internal Color? GetLegacyColor(BasicEventEditorData beatmapEventData)
         {

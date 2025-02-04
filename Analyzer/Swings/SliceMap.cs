@@ -62,26 +62,26 @@ public class SliceMap
 
     // RIGHT HAND PARITY DICTIONARIES
     // Cut Direction -> Angle from Neutral (up down 0 degrees) given a Forehand Swing
-    public static readonly Dictionary<int, float> rightForehandDict = new Dictionary<int, float>()
+    public static readonly Dictionary<int, float> rightForehandDict = new()
     { { 0, -180 }, { 1, 0 }, { 2, -90 }, { 3, 90 }, { 4, -135 }, { 5, 135 }, { 6, -45 }, { 7, 45 }, { 8, 0 } };
     // Cut Direction -> Angle from Neutral (up down 0 degrees) given a Backhand Swing
-    public static readonly Dictionary<int, float> rightBackhandDict = new Dictionary<int, float>()
+    public static readonly Dictionary<int, float> rightBackhandDict = new()
     { { 0, 0 }, { 1, -180 }, { 2, 90 }, { 3, -90 }, { 4, 45 }, { 5, -45 }, { 6, 135 }, { 7, -135 }, { 8, 0 } };
 
     // LEFT HAND PARITY DICTIONARIES
     // Cut Direction -> Angle from Neutral (up down 0 degrees) given a Forehand Swing
-    private static readonly Dictionary<int, float> leftForehandDict = new Dictionary<int, float>()
+    private static readonly Dictionary<int, float> leftForehandDict = new()
     { { 0, -180 }, { 1, 0 }, { 2, 90 }, { 3, -90 }, { 4, 135 }, { 5, -135 }, { 6, 45 }, { 7, -45 }, { 8, 0 } };
     // Cut Direction -> Angle from Neutral (up down 0 degrees) given a Backhand Swing
-    private static readonly Dictionary<int, float> leftBackhandDict = new Dictionary<int, float>()
+    private static readonly Dictionary<int, float> leftBackhandDict = new()
     { { 0, 0 }, { 1, -180 }, { 2, -90 }, { 3, 90 }, { 4, -45 }, { 5, 45 }, { 6, -135 }, { 7, 135 }, { 8, 0 } };
 
-    public static readonly Dictionary<int, int> opposingCutDict = new Dictionary<int, int>()
+    public static readonly Dictionary<int, int> opposingCutDict = new()
     { { 0, 1 }, { 1, 0 }, { 2, 3 }, { 3, 2 }, { 4, 7 }, { 7, 4 }, { 5, 6 }, { 6, 5 } };
 
-    private static readonly List<int> forehandResetDict = new List<int>()
+    private static readonly List<int> forehandResetDict = new()
     { 1, 2, 3, 6, 7 };
-    private static readonly List<int> backhandResetDict = new List<int>()
+    private static readonly List<int> backhandResetDict = new()
     { 0, 4, 5 };
 
     public static Dictionary<int, float> ForehandDict { get { return (_rightHand) ? rightForehandDict : leftForehandDict; } }
@@ -90,17 +90,17 @@ public class SliceMap
     // Contains a list of directional vecotrs
     public static readonly Vector2[] directionalVectors =
 {
-        new Vector2(0, 1),   // up
-        new Vector2(0, -1),  // down
-        new Vector2(-1, 0),  // left
-        new Vector2(1, 0),   // right
+        new(0, 1),   // up
+        new(0, -1),  // down
+        new(-1, 0),  // left
+        new(1, 0),   // right
         new Vector2(1, 1).normalized,   // up right
         new Vector2(-1, 1).normalized,  // up left
         new Vector2(-1, -1).normalized, // down left
         new Vector2(1, -1).normalized   // down right
     };
 
-    private static readonly Dictionary<Vector2, int> directionalVectorToCutDirection = new Dictionary<Vector2, int>()
+    private static readonly Dictionary<Vector2, int> directionalVectorToCutDirection = new()
     {
             { new Vector2(0, 1), 0 },
             { new Vector2(0, -1), 1 },

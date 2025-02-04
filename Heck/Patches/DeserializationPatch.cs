@@ -44,15 +44,12 @@ namespace EditorEX.Heck.Patches
 
             _customBeatmapDataV2?.SetValue(beatmapData, beatmapVersion);
             _customBeatmapDataCustomData?.SetValue(beatmapData, customBeatmapSaveData.customData);
-            var beatmapCustomData = (standardLevelInfoSaveData.difficultyBeatmapSets.SelectMany(x => x.difficultyBeatmaps).FirstOrDefault(x => x.beatmapFilename == beatmapFilename) as CustomLevelInfoSaveData.DifficultyBeatmap).customData;
+            var beatmapCustomData = (standardLevelInfoSaveData.difficultyBeatmapSets.SelectMany(x => x.difficultyBeatmaps).FirstOrDefault(x => x.beatmapFilename == beatmapFilename) as CustomLevelInfoSaveData.DifficultyBeatmap)?.customData;
             _customBeatmapDataBeatmapCustomData?.SetValue(beatmapData, beatmapCustomData);
 
-            bool v2 = beatmapVersion < __instance._version300;
+            var v2 = beatmapVersion < __instance._version300;
 
-            Dictionary<string, Track> beatmapTracks;
-            HashSet<ValueTuple<object, EditorDeserializedData>> deserializedDatas;
-
-            _editorDeserializerManager.DeserializeBeatmapData(v2, false, out beatmapTracks, out deserializedDatas);
+            _editorDeserializerManager.DeserializeBeatmapData(v2, false, out var beatmapTracks, out HashSet<ValueTuple<object, EditorDeserializedData>> deserializedDatas);
 
             EditorDeserializedDataContainer.DeserializeDatas = deserializedDatas.ToDictionary(x => x.Item1, x => x.Item2);
             EditorDeserializedDataContainer.Tracks = beatmapTracks;

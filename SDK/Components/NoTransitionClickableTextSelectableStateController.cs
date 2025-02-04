@@ -15,7 +15,7 @@
 
         private void HandleNoTransitionButtonSelectionStateDidChange(EditorClickableText.SelectionState state)
         {
-            ResolveSelectionState(state, true);
+            ResolveSelectionState(state);
         }
 
         private void ResolveSelectionState(EditorClickableText.SelectionState state, bool animated = true)

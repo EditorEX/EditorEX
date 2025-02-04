@@ -75,7 +75,7 @@ namespace EditorEX.MapData.SaveDataSavers
 
             editorEx["version"] = _metadata.HVersion.ToString();
 
-            _levelCustomDataModel.UpdateWith(null, null, null, null, null, levelCustomData, null);
+            _levelCustomDataModel.UpdateWith(null, null, null, null, null, levelCustomData);
 
             var saveData = new SerializedCustomBeatmapLevelSaveData
             {

@@ -18,7 +18,7 @@ namespace EditorEX.UI.Patches.SDK
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(ExecuteEvents), nameof(ExecuteEvents.Execute), AffinityMethodType.Normal, null, new Type[] { typeof(IPointerClickHandler), typeof(BaseEventData) })]
+        [AffinityPatch(typeof(ExecuteEvents), nameof(ExecuteEvents.Execute), AffinityMethodType.Normal, null, typeof(IPointerClickHandler), typeof(BaseEventData))]
         private void PatchExecute(IPointerClickHandler handler, BaseEventData eventData)
         {
             if (_contextMenuComponent.modal.isShown &&

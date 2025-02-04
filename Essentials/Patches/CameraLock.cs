@@ -145,7 +145,7 @@ namespace EditorEX.Essentials.Patches
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .MatchForward(true, new CodeMatch(OpCodes.Callvirt, _oldPosition))
                 .Set(OpCodes.Callvirt, _newLocalPosition)
                 .MatchForward(true, new CodeMatch(OpCodes.Callvirt, _oldSetPosition))

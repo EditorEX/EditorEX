@@ -14,7 +14,7 @@ namespace EditorEX.Essentials.Patches.Movement
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null).Advance(17).RemoveInstructions(20).Advance(40).RemoveInstructions(20).InstructionEnumeration();
+            var result = new CodeMatcher(instructions).Advance(17).RemoveInstructions(20).Advance(40).RemoveInstructions(20).InstructionEnumeration();
             return result;
         }
 
@@ -22,7 +22,7 @@ namespace EditorEX.Essentials.Patches.Movement
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerNoteInsert(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null).Advance(155).RemoveInstructions(20).InstructionEnumeration();
+            var result = new CodeMatcher(instructions).Advance(155).RemoveInstructions(20).InstructionEnumeration();
             return result;
         }
 
@@ -30,7 +30,7 @@ namespace EditorEX.Essentials.Patches.Movement
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerArc(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null).Advance(12).RemoveInstructions(16).InstructionEnumeration();
+            var result = new CodeMatcher(instructions).Advance(12).RemoveInstructions(16).InstructionEnumeration();
             return result;
         }
 
@@ -38,7 +38,7 @@ namespace EditorEX.Essentials.Patches.Movement
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerObstacle(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null).Advance(9).RemoveInstructions(19).InstructionEnumeration();
+            var result = new CodeMatcher(instructions).Advance(9).RemoveInstructions(19).InstructionEnumeration();
             return result;
         }
     }

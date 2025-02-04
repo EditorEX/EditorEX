@@ -15,30 +15,26 @@ namespace EditorEX.CustomJSONData.Patches
     public class PreviewCustomBeatmap : IAffinity
     {
         private readonly ConstructorInfo _beatmapDataCtor = AccessTools.FirstConstructor(typeof(BeatmapData), (ConstructorInfo _) => true);
-        private readonly MethodInfo _createCustomBeatmapData = AccessTools.Method(typeof(PreviewCustomBeatmap), "CreateBeatmapData", null, null);
+        private readonly MethodInfo _createCustomBeatmapData = AccessTools.Method(typeof(PreviewCustomBeatmap), "CreateBeatmapData");
 
         private readonly MethodInfo _bindLivePreviewDataModel = AccessTools.Method(typeof(DiContainer), "BindInterfacesAndSelfTo", new Type[] { }, new Type[] { typeof(BeatmapLivePreviewDataModel) });
-        private readonly MethodInfo _bindCustomLivePreviewModel = AccessTools.Method(typeof(PreviewCustomBeatmap), "BindCustomLivePreviewModel", null, null);
+        private readonly MethodInfo _bindCustomLivePreviewModel = AccessTools.Method(typeof(PreviewCustomBeatmap), "BindCustomLivePreviewModel");
 
         [AffinityPatch(typeof(BeatmapEditorDataModelsInstaller), nameof(BeatmapEditorDataModelsInstaller.Install))]
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null).MatchForward(false, new CodeMatch[]
+            var result = new CodeMatcher(instructions).MatchForward(false, new CodeMatch[]
             {
-                new CodeMatch(new OpCode?(OpCodes.Newobj), _beatmapDataCtor, null)
+                new(new OpCode?(OpCodes.Newobj), _beatmapDataCtor)
             })
             .Set(OpCodes.Call, _createCustomBeatmapData)
             .MatchForward(false, new CodeMatch[]
             {
-                new CodeMatch(new OpCode?(OpCodes.Callvirt), _bindLivePreviewDataModel, null)
+                new(new OpCode?(OpCodes.Callvirt), _bindLivePreviewDataModel)
             })
             .Advance(-1).RemoveInstructions(4)
-            .Insert(new CodeInstruction[]
-            {
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Call, _bindCustomLivePreviewModel)
-            }).InstructionEnumeration();
+            .Insert(new(OpCodes.Ldarg_0), new(OpCodes.Call, _bindCustomLivePreviewModel)).InstructionEnumeration();
             return result;
         }
 

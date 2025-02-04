@@ -39,9 +39,9 @@ namespace EditorEX.Essentials.Movement.Arc
         {
             _dipEffectFadeElements = new SliderIntensityEffect.FadeElement[]
             {
-                new SliderIntensityEffect.FadeElement(EaseType.OutQuad, 1f, 0f, null),
-                new SliderIntensityEffect.FadeElement(EaseType.Linear, 0f, 0f, null),
-                new SliderIntensityEffect.FadeElement(EaseType.Linear, 0f, 1f, delegate
+                new(EaseType.OutQuad, 1f, 0f),
+                new(EaseType.Linear, 0f, 0f),
+                new(EaseType.Linear, 0f, 1f, delegate
                 {
                     Action action = fadeInDidStartEvent;
                     if (action == null)
@@ -54,13 +54,13 @@ namespace EditorEX.Essentials.Movement.Arc
 
             _flashEffectFadeElements = new SliderIntensityEffect.FadeElement[]
             {
-                new SliderIntensityEffect.FadeElement(EaseType.OutQuad, 1f, _flashBoost, null),
-                new SliderIntensityEffect.FadeElement(EaseType.OutQuart, _flashBoost, 1f, null)
+                new(EaseType.OutQuad, 1f, _flashBoost),
+                new(EaseType.OutQuart, _flashBoost, 1f)
             };
 
             _fadeInEffectFadeElements = new SliderIntensityEffect.FadeElement[]
             {
-                new SliderIntensityEffect.FadeElement(EaseType.Linear, 0f, 1f, delegate
+                new(EaseType.Linear, 0f, 1f, delegate
                 {
                     Action action2 = fadeInDidStartEvent;
                     if (action2 == null)

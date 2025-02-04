@@ -20,7 +20,7 @@ namespace EditorEX.UI.Patches
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End()
                 .Advance(-3)
                 .RemoveInstructions(3)

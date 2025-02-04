@@ -547,13 +547,13 @@ namespace EditorEX.Essentials.SpawnProcessing
             return slider.beatmapObjectType == BeatmapObjectType.Arc && sliderTail.beatmapObjectType == BeatmapObjectType.Chain && slider.column == sliderTail.tailColumn && slider.row == sliderTail.tailRow;
         }
 
-        private EditorTimeSliceContainer<NoteEditorData> _currentTimeSliceColorNotes = new EditorTimeSliceContainer<NoteEditorData>(8);
+        private EditorTimeSliceContainer<NoteEditorData> _currentTimeSliceColorNotes = new(8);
 
-        private EditorTimeSliceContainer<BaseEditorData?> _currentTimeSliceAllNotesAndSliders = new EditorTimeSliceContainer<BaseEditorData?>(8);
+        private EditorTimeSliceContainer<BaseEditorData?> _currentTimeSliceAllNotesAndSliders = new(8);
 
-        private Dictionary<ColorType, EditorTimeSliceContainer<NoteEditorData>> _currentTimeSliceNotesByColorType = new Dictionary<ColorType, EditorTimeSliceContainer<NoteEditorData>>();
+        private Dictionary<ColorType, EditorTimeSliceContainer<NoteEditorData>> _currentTimeSliceNotesByColorType = new();
 
-        private List<BaseSliderEditorData?> _unprocessedSliderTails = new List<BaseSliderEditorData?>(4);
+        private List<BaseSliderEditorData?> _unprocessedSliderTails = new(4);
 
         private List<NoteEditorData?>[] _notesInColumnsReusableProcessingListOfLists;
 

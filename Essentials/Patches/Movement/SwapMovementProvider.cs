@@ -18,11 +18,11 @@ namespace EditorEX.Essentials.Patches.Movement
     public class SwapMovementProvider : IAffinity
     {
         private static readonly MethodInfo _installOld = AccessTools
-            .Method(typeof(Zenject.DiContainer), "BindInterfacesAndSelfTo", null, null)
+            .Method(typeof(Zenject.DiContainer), "BindInterfacesAndSelfTo")
             .MakeGenericMethod(typeof(BeatmapEditorVariableMovementDataProvider));
 
         private static readonly MethodInfo _installNew = AccessTools
-            .Method(typeof(Zenject.DiContainer), "BindInterfacesAndSelfTo", null, null)
+            .Method(typeof(Zenject.DiContainer), "BindInterfacesAndSelfTo")
             .MakeGenericMethod(typeof(VariableMovementDataProvider));
 
         [AffinityPatch(typeof(BeatmapLevelEditorSceneSetup), nameof(BeatmapLevelEditorSceneSetup.InstallBindings))]
@@ -30,7 +30,7 @@ namespace EditorEX.Essentials.Patches.Movement
         private IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
         {
             Debug.Log("Swapping Movement Provider");
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .MatchForward(false, new CodeMatch(OpCodes.Callvirt, _installOld))
                 .ThrowIfNotMatch("die")
                 .SetInstruction(new CodeInstruction(OpCodes.Callvirt, _installNew))

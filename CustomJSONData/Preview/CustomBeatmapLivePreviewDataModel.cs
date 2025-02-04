@@ -9,7 +9,7 @@ namespace EditorEX.CustomJSONData.Preview
 {
     public class CustomBeatmapLivePreviewDataModel : BeatmapLivePreviewDataModel
     {
-        public readonly Dictionary<BeatmapEditorObjectId, CustomEventData> _livePreviewCustomEvents = new Dictionary<BeatmapEditorObjectId, CustomEventData>();
+        public readonly Dictionary<BeatmapEditorObjectId, CustomEventData> _livePreviewCustomEvents = new();
 
         public void AddLivePreviewCustomEvent(CustomEventEditorData evt)
         {

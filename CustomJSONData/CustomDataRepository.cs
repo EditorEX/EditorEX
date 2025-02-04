@@ -36,7 +36,7 @@ namespace EditorEX.CustomJSONData
     // This is a workaround to provide custom data as the EditorData clases are sealed...
     public static class CustomDataRepository
     {
-        private static RepoData _repoData = new RepoData();
+        private static RepoData _repoData = new();
 
         public static void ClearAll()
         {

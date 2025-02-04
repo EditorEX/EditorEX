@@ -11,7 +11,7 @@ namespace EditorEX.CustomJSONData.Patches
     [AffinityPatch]
     public class InjectCustomEvents : IAffinity
     {
-        private static readonly MethodInfo _InjectEvents = AccessTools.Method(typeof(InjectCustomEvents), "InjectEvents", null, null);
+        private static readonly MethodInfo _InjectEvents = AccessTools.Method(typeof(InjectCustomEvents), "InjectEvents");
 
         private static void InjectEvents(BeatmapLivePreviewDataModel self)
         {
@@ -28,15 +28,12 @@ namespace EditorEX.CustomJSONData.Patches
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null).MatchForward(false, new CodeMatch[]
+            var result = new CodeMatcher(instructions).MatchForward(false, new CodeMatch[]
             {
-                new CodeMatch(new OpCode?(OpCodes.Stloc_0), null, null),
+                new(new OpCode?(OpCodes.Stloc_0)),
             })
             .Advance(1)
-            .Insert(new CodeInstruction[] {
-                new CodeInstruction(OpCodes.Ldarg_0),
-                new CodeInstruction(OpCodes.Call, _InjectEvents)
-            }).InstructionEnumeration();
+            .Insert(new(OpCodes.Ldarg_0), new(OpCodes.Call, _InjectEvents)).InstructionEnumeration();
 
             return result;
         }

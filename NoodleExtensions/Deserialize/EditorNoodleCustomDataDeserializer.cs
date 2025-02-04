@@ -52,12 +52,12 @@ namespace EditorEX.NoodleExtensions.Deserialize
                     {
                         if (eventType == "AssignTrackParent")
                         {
-                            _trackBuilder.AddFromCustomData(customEventEditorData.GetCustomData(), v2 ? "_parentTrack" : "parentTrack", true);
+                            _trackBuilder.AddFromCustomData(customEventEditorData.GetCustomData(), v2 ? "_parentTrack" : "parentTrack");
                         }
                     }
                     else
                     {
-                        _trackBuilder.AddFromCustomData(customEventEditorData.GetCustomData(), v2, true);
+                        _trackBuilder.AddFromCustomData(customEventEditorData.GetCustomData(), v2);
                     }
                 }
                 catch (Exception e)

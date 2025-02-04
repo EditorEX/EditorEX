@@ -14,7 +14,7 @@ using Zenject;
 // Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.Events
 {
-    [CustomEvent(new string[] { "AssignTrackParent" })]
+    [CustomEvent("AssignTrackParent")]
     internal class EditorAssignTrackParent : ICustomEvent
     {
         internal EditorAssignTrackParent(IReadonlyBeatmapData beatmapData, [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData deserializedData, [Inject(Id = "leftHanded")] bool leftHanded, TransformControllerFactory transformControllerFactory)
@@ -42,7 +42,7 @@ namespace EditorEX.NoodleExtensions.Events
             }
             instance.enabled = false;
             noodleData.TransformData.Apply(instance.transform, _leftHanded);
-            _transformControllerFactory.Create(parentGameObject, noodleData.ParentTrack, false);
+            _transformControllerFactory.Create(parentGameObject, noodleData.ParentTrack);
         }
 
         private readonly Version _version;
@@ -53,6 +53,6 @@ namespace EditorEX.NoodleExtensions.Events
 
         private readonly TransformControllerFactory _transformControllerFactory;
 
-        private readonly HashSet<EditorParentObject> _parentObjects = new HashSet<EditorParentObject>();
+        private readonly HashSet<EditorParentObject> _parentObjects = new();
     }
 }

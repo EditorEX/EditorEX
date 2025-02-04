@@ -17,12 +17,14 @@ namespace EditorEX.Heck.Patches
 {
     public class EditorGameObjectTracker : IAffinity
     {
-        private static readonly MethodInfo _addObject = AccessTools.Method(typeof(EditorGameObjectTracker), "AddObject", null, null);
-        private static readonly MethodInfo _removeObject = AccessTools.Method(typeof(EditorGameObjectTracker), "RemoveObject", null, null);
-        private static readonly MethodInfo _removeNote = AccessTools.Method(typeof(EditorGameObjectTracker), "RemoveNote", null, null);
+        private static readonly MethodInfo _addObject = AccessTools.Method(typeof(EditorGameObjectTracker), "AddObject");
+        private static readonly MethodInfo _removeObject = AccessTools.Method(typeof(EditorGameObjectTracker), "RemoveObject");
+        private static readonly MethodInfo _removeNote = AccessTools.Method(typeof(EditorGameObjectTracker), "RemoveNote");
 
         private static void RemoveNote(NoteBeatmapObjectView self, NoteEditorData? noteData)
         {
+            if (noteData == null)
+                return;
             if (self._noteObjects.TryGetValue(noteData.id, out var normalNoteView))
             {
                 RemoveObject(noteData, normalNoteView);
@@ -65,7 +67,7 @@ namespace EditorEX.Heck.Patches
 
         private static bool TryGetTrack(BaseEditorData? objectData, out List<Track> track)
         {
-            if (!EditorDeserializedDataContainer.GetDeserializedData("Heck").Resolve(objectData, out EditorHeckObjectData heckData) || heckData.Track == null)
+            if (!EditorDeserializedDataContainer.GetDeserializedData("Heck").Resolve(objectData, out EditorHeckObjectData? heckData) || heckData?.Track == null)
             {
                 track = null;
                 return false;
@@ -80,14 +82,9 @@ namespace EditorEX.Heck.Patches
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End() // before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Ldloc_S, 6),
-                    new CodeInstruction(OpCodes.Call, _addObject)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldarg_1), new(OpCodes.Ldloc_S, 6), new(OpCodes.Call, _addObject)).InstructionEnumeration();
             return result;
         }
 
@@ -95,14 +92,9 @@ namespace EditorEX.Heck.Patches
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerRemoveNote(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End() // before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldarg_0),
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Call, _removeNote)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldarg_0), new(OpCodes.Ldarg_1), new(OpCodes.Call, _removeNote)).InstructionEnumeration();
             return result;
         }
 
@@ -110,46 +102,29 @@ namespace EditorEX.Heck.Patches
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerObstacle(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End() // before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Ldloc_2),
-                    new CodeInstruction(OpCodes.Call, _addObject)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldarg_1), new(OpCodes.Ldloc_2), new(OpCodes.Call, _addObject)).InstructionEnumeration();
             return result;
-            //return instructions;
         }
 
         [AffinityPatch(typeof(ObstacleBeatmapObjectView), nameof(ObstacleBeatmapObjectView.DeleteObject))]
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerRemoveObstacle(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End() // before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Ldloc_2),
-                    new CodeInstruction(OpCodes.Call, _removeObject)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldarg_1), new(OpCodes.Ldloc_2), new(OpCodes.Call, _removeObject)).InstructionEnumeration();
             return result;
-            //return instructions;
         }
 
         [AffinityPatch(typeof(ChainBeatmapObjectsView), nameof(ChainBeatmapObjectsView.InsertObject))]
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerChain(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End() // before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Ldloc_0),
-                    new CodeInstruction(OpCodes.Call, _addObject)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldarg_1), new(OpCodes.Ldloc_0), new(OpCodes.Call, _addObject)).InstructionEnumeration();
             return result;
         }
 
@@ -157,14 +132,9 @@ namespace EditorEX.Heck.Patches
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerRemoveChain(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End()// before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Ldloc_0),
-                    new CodeInstruction(OpCodes.Call, _removeObject)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldarg_1), new(OpCodes.Ldloc_0), new(OpCodes.Call, _removeObject)).InstructionEnumeration();
             return result;
         }
 
@@ -172,14 +142,9 @@ namespace EditorEX.Heck.Patches
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerArc(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End().Advance(-1) // before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Ldloc_0),
-                    new CodeInstruction(OpCodes.Call, _addObject)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldarg_1), new(OpCodes.Ldloc_0), new(OpCodes.Call, _addObject)).InstructionEnumeration();
             return result;
         }
 
@@ -187,14 +152,9 @@ namespace EditorEX.Heck.Patches
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerRemoveArc(IEnumerable<CodeInstruction> instructions)
         {
-            var result = new CodeMatcher(instructions, null)
+            var result = new CodeMatcher(instructions)
                 .End().Advance(-1) // before ret
-                .Insert(new CodeInstruction[]
-                {
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Ldloc_2),
-                    new CodeInstruction(OpCodes.Call, _removeObject)
-                }).InstructionEnumeration();
+                .Insert(new(OpCodes.Ldarg_1), new(OpCodes.Ldloc_2), new(OpCodes.Call, _removeObject)).InstructionEnumeration();
             return result;
         }
     }

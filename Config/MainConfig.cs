@@ -6,7 +6,7 @@ namespace EditorEX.Config
 {
     internal class MainConfig
     {
-        public virtual CameraConfig CameraOptions { get; set; } = new CameraConfig();
-        public virtual SourcesConfig SourcesOptions { get; set; } = new SourcesConfig();
+        public virtual CameraConfig CameraOptions { get; set; } = new();
+        public virtual SourcesConfig SourcesOptions { get; set; } = new();
     }
 }

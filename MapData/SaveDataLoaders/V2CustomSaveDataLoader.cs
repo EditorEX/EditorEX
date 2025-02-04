@@ -90,7 +90,7 @@ namespace EditorEX.MapData.SaveDataLoaders
             }
             else
             {
-                authors = (from a in standardLevelInfoSaveData.levelAuthorName.Split(new char[] { ',', '&' })
+                authors = (from a in standardLevelInfoSaveData.levelAuthorName.Split(',', '&')
                            select a.Trim()).ToArray();
             }
 

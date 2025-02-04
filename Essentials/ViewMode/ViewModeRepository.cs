@@ -8,7 +8,7 @@ namespace EditorEX.Essentials.ViewMode
 {
     public static class ViewModeRepository
     {
-        private static List<ViewMode> viewModes = new List<ViewMode>();
+        private static List<ViewMode> viewModes = new();
 
         public static bool RegisterViewMode(ViewMode viewMode)
         {

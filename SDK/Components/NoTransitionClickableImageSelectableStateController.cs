@@ -15,7 +15,7 @@
 
         private void HandleNoTransitionButtonSelectionStateDidChange(EditorClickableImage.SelectionState state)
         {
-            ResolveSelectionState(state, true);
+            ResolveSelectionState(state);
         }
 
         private void ResolveSelectionState(EditorClickableImage.SelectionState state, bool animated = true)

@@ -83,7 +83,7 @@ namespace EditorEX.UI.Patches
                 };
             }
 
-            List<string> pathsToLoad = new List<string>();
+            List<string> pathsToLoad = new();
             if (!_sourcesConfig.Sources.TryGetValue(_sourcesConfig.SelectedSource, out pathsToLoad))
             {
                 var defaultSource = _sourcesConfig.Sources.First();

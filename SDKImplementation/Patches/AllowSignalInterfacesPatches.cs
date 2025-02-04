@@ -16,7 +16,7 @@ namespace EditorEX.SDKImplementation.Patches
             return false;
         }
 
-        [AffinityPatch(typeof(SignalBus), nameof(SignalBus.GetDeclaration), AffinityMethodType.Normal, null, new Type[] { typeof(BindingId), typeof(bool) })]
+        [AffinityPatch(typeof(SignalBus), nameof(SignalBus.GetDeclaration), AffinityMethodType.Normal, null, typeof(BindingId), typeof(bool))]
         [AffinityPrefix]
         private bool GetDeclarationType(SignalBus __instance, BindingId signalId, bool requireDeclaration, ref SignalDeclaration __result)
         {
@@ -42,7 +42,7 @@ namespace EditorEX.SDKImplementation.Patches
 
             if (requireDeclaration)
             {
-                throw ModestTree.Assert.CreateException("Fired undeclared signal '{0}'!", new object[] { signalId });
+                throw ModestTree.Assert.CreateException("Fired undeclared signal '{0}'!", signalId);
             }
 
             __result = null;

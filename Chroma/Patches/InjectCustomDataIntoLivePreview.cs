@@ -13,8 +13,8 @@ namespace EditorEX.Chroma.Patches
     [AffinityPatch]
     public class InjectCustomDataIntoLivePreview : IAffinity
     {
-        private static readonly MethodInfo _oldConvert = AccessTools.Method(typeof(BeatmapBasicEventConverter), "ConvertBasicEvent", null, null);
-        private static readonly MethodInfo _newConvert = AccessTools.Method(typeof(InjectCustomDataIntoLivePreview), "ConvertBasicEvent", null, null);
+        private static readonly MethodInfo _oldConvert = AccessTools.Method(typeof(BeatmapBasicEventConverter), "ConvertBasicEvent");
+        private static readonly MethodInfo _newConvert = AccessTools.Method(typeof(InjectCustomDataIntoLivePreview), "ConvertBasicEvent");
 
         BeatmapEventData ConvertBasicEvent(BasicEventEditorData? e)
         {
@@ -39,7 +39,7 @@ namespace EditorEX.Chroma.Patches
             return false;
         }
 
-        private static readonly Dictionary<BasicBeatmapEventType, CustomBasicBeatmapEventData> _defaultsForTypeCustom = new Dictionary<BasicBeatmapEventType, CustomBasicBeatmapEventData>();
+        private static readonly Dictionary<BasicBeatmapEventType, CustomBasicBeatmapEventData> _defaultsForTypeCustom = new();
 
         [AffinityPatch(typeof(BasicBeatmapEventData), nameof(BasicBeatmapEventData.GetDefault))]
         [AffinityPrefix]
