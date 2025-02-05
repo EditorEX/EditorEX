@@ -25,7 +25,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         private ColorManager _colorManager;
         private IAudioTimeSource _audioTimeSyncController;
         private AudioDataModel _audioDataModel;
-        private VariableMovementDataProvider _variableMovementDataProvider;
+        private IVariableMovementDataProvider _variableMovementDataProvider;
 
         // Arc related fields
         private LengthType _lengthType;
@@ -61,8 +61,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             IReadonlyBeatmapState state,
             ColorManager colorManager,
             IAudioTimeSource audioTimeSyncController,
-            AudioDataModel audioDataModel,
-            VariableMovementDataProvider variableMovementDataProvider)
+            AudioDataModel audioDataModel)
         {
             _randomValue = UnityEngine.Random.value; // Set this here insted of Init to avoid random value changing during reinits
 
@@ -72,7 +71,6 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             _colorManager = colorManager;
             _audioTimeSyncController = audioTimeSyncController;
             _audioDataModel = audioDataModel;
-            _variableMovementDataProvider = variableMovementDataProvider;
         }
 
         public LengthType GetLengthFromSliderData(BaseSliderEditorData? sliderNoteData, SliderSpawnData sliderSpawnData)
@@ -132,12 +130,14 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             SliderShaderHelper.SetInitialProperties(materialPropertyBlock.materialPropertyBlock, _initColor * _sliderIntensityEffect.colorIntensity, _zDistanceBetweenNotes, _sliderMeshController.pathLength, EditorSpawnDataRepository.GetSpawnData(_sliderEditorData).hasHeadNote, EditorSpawnDataRepository.GetSpawnData(_sliderEditorData).hasTailNote, _randomValue);
         }
 
-        public void Init(BaseEditorData? editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             var arcvView = GetComponent<ArcView>();
             _sliderMeshController = arcvView._arcMeshController;
             _materialPropertyBlockController = arcvView._arcMaterialPropertyBlockController;
             _sliderIntensityEffect = GetComponent<EditorSliderIntensityEffect>();
+
+            _variableMovementDataProvider = variableMovementDataProvider;
 
             _sliderEditorData = editorData as ArcEditorData;
 

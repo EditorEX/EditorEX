@@ -46,6 +46,7 @@ namespace EditorEX.Essentials.Movement.Data
         public void Init(int noteLinesCount, float startNoteJumpMovementSpeed, float startBpm, BeatmapObjectSpawnMovementData.NoteJumpValueType noteJumpValueType, float noteJumpValue, IJumpOffsetYProvider jumpOffsetYProvider, Vector3 rightVec, Vector3 forwardVec)
         {
             _noteJumpValueType = noteJumpValueType;
+            _noteJumpValue = noteJumpValue;
             _noteLinesCount = noteLinesCount;
             _noteJumpMovementSpeed = startNoteJumpMovementSpeed;
             if (noteJumpValueType != BeatmapObjectSpawnMovementData.NoteJumpValueType.BeatOffset)
@@ -210,6 +211,7 @@ namespace EditorEX.Essentials.Movement.Data
         internal Vector3 _rightVec;
         internal Vector3 _forwardVec;
         internal BeatmapObjectSpawnMovementData.NoteJumpValueType _noteJumpValueType;
+        internal float _noteJumpValue;
 
         public const float kDefaultMaxHalfJumpDistance = 18f;
         public const float kDefaultStartHalfJumpDurationInBeats = 4f;

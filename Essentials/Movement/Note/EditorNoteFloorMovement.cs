@@ -47,23 +47,28 @@ namespace EditorEX.Essentials.Movement.Note
         private void Construct(
             [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
-            IVariableMovementDataProvider variableMovementDataProvider,
+            PlayerTransforms playerTransforms,
             IAudioTimeSource audioTimeSyncController)
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
-            _variableMovementDataProvider = variableMovementDataProvider;
+            _playerTransforms = playerTransforms;
             _audioTimeSyncController = audioTimeSyncController;
         }
 
-        public void Init(NoteEditorData? editorData, float worldRotation, float beatTime, Vector3 moveStartOffset, Vector3 moveEndOffset, Func<IObjectVisuals> getVisualRoot)
+        public void Init(NoteEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, float worldRotation, float beatTime, Vector3 moveStartOffset, Vector3 moveEndOffset, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData;
             if (!(_editorDeserializedData?.Resolve(editorData, out _noodleData) ?? false))
             {
                 _noodleData = null;
             }
+            
+            Debug.Log("EditorNoteFloorMovement Init " + beatTime);
 
+            _variableMovementDataProvider = variableMovementDataProvider;
+            
+            _rotatedObject = getVisualRoot;
             _beatTime = beatTime;
             _moveStartOffset = moveStartOffset;
             _moveEndOffset = moveEndOffset;

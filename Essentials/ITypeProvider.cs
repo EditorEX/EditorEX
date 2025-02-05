@@ -8,6 +8,6 @@ namespace EditorEX.Essentials
 {
     public interface ITypeProvider
     {
-        public Type GetProvidedType(Type[] availableTypes);
+        public Type GetProvidedType(Type[]? availableTypes);
     }
 }

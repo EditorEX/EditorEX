@@ -67,24 +67,24 @@ namespace EditorEX.Essentials.Movement.Note
             IAudioTimeSource audioTimeSyncController,
             AnimationHelper animationHelper,
             [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData,
-            AudioDataModel audioDataModel,
-            IVariableMovementDataProvider variableMovementDataProvider)
+            AudioDataModel audioDataModel)
         {
             _playerTransforms = playerTransforms;
             _audioTimeSyncController = audioTimeSyncController;
             _animationHelper = animationHelper;
             _editorDeserializedData = editorDeserializedData;
             _audioDataModel = audioDataModel;
-            _variableMovementDataProvider = variableMovementDataProvider;
         }
 
-        public void Init(NoteEditorData? editorData, float noteTime, float worldRotation, Vector3 moveEndOffset, Vector3 jumpEndOffset, float gravityBase, float flipYSide, float endRotation, Func<IObjectVisuals> getVisualRoot)
+        public void Init(NoteEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, float noteTime, float worldRotation, Vector3 moveEndOffset, Vector3 jumpEndOffset, float gravityBase, float flipYSide, float endRotation, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData;
             if (!(_editorDeserializedData?.Resolve(editorData, out NoodleData) ?? false))
             {
                 NoodleData = null;
             }
+            
+            _variableMovementDataProvider = variableMovementDataProvider;
 
             _rotatedObject = getVisualRoot;
             _worldRotation = Quaternion.Euler(0f, worldRotation, 0f);

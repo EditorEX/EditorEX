@@ -8,6 +8,7 @@ using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
 using System.Collections.Generic;
+using BeatmapEditor3D;
 using UnityEngine;
 using Zenject;
 
@@ -19,6 +20,7 @@ namespace EditorEX.Essentials.Visuals.Note
         private VisualAssetProvider _visualAssetProvider;
         private ColorManager _colorManager;
         private IReadonlyBeatmapState _state;
+        private AudioDataModel _audioDataModel;
         private EditorDeserializedData _editorDeserializedData;
         private AnimationHelper _animationHelper;
 
@@ -40,11 +42,13 @@ namespace EditorEX.Essentials.Visuals.Note
             AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
             ColorManager colorManager,
-            IReadonlyBeatmapState state)
+            IReadonlyBeatmapState state,
+            AudioDataModel audioDataModel)
         {
             _editorDeserializedData = editorDeserializedData;
-            _animationHelper = animationHelper;
             _visualAssetProvider = visualAssetProvider;
+            _animationHelper = animationHelper;
+            _audioDataModel = audioDataModel;
             _colorManager = colorManager;
             _state = state;
 
@@ -151,7 +155,7 @@ namespace EditorEX.Essentials.Visuals.Note
             else
             {
                 float jumpDuration = GetComponent<EditorNoteJump>().jumpDuration;
-                float elapsedTime = _state.beat - (_editorData.beat - (jumpDuration * 0.5f));
+                float elapsedTime = _audioDataModel.bpmData.BeatToSeconds(_state.beat) - (_audioDataModel.bpmData.BeatToSeconds(_editorData.beat) - (jumpDuration * 0.5f));
                 normalTime = elapsedTime / jumpDuration;
             }
 

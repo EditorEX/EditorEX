@@ -3,6 +3,7 @@ using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.ViewMode;
 using System;
 using System.Linq;
+using EditorEX.Essentials.VariableMovement;
 using UnityEngine;
 using Zenject;
 
@@ -12,8 +13,10 @@ namespace EditorEX.Essentials.Movement.Arc
     {
         private IReadonlyBeatmapState _state;
 
-        private IObjectMovement _arcMovement;
+        private IObjectMovement? _arcMovement;
+        private IVariableMovementDataProvider _variableMovementDataProvider;
         private MovementTypeProvider _movementTypeProvider;
+        private VariableMovementTypeProvider _variableMovementTypeProvider;
         private ActiveViewMode _activeViewMode;
 
         private ArcEditorData? _data;
@@ -21,10 +24,16 @@ namespace EditorEX.Essentials.Movement.Arc
         private EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
         [Inject]
-        private void Construct(IReadonlyBeatmapState state, ActiveViewMode activeViewMode, MovementTypeProvider movementTypeProvider, EditorBasicBeatmapObjectSpawnMovementData movementData)
+        private void Construct(
+            IReadonlyBeatmapState state, 
+            ActiveViewMode activeViewMode,
+            MovementTypeProvider movementTypeProvider, 
+            VariableMovementTypeProvider variableMovementTypeProvider,
+            EditorBasicBeatmapObjectSpawnMovementData movementData)
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
+            _variableMovementTypeProvider = variableMovementTypeProvider;
             _movementData = movementData;
 
             _activeViewMode = activeViewMode;
@@ -51,10 +60,19 @@ namespace EditorEX.Essentials.Movement.Arc
 
         private void RefreshArcMovement()
         {
-            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _arcMovement, out IObjectMovement newNoteMovement))
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _arcMovement, out var newNoteMovement))
             {
                 _arcMovement = newNoteMovement;
-                _arcMovement.Enable();
+                _arcMovement?.Enable();
+            }
+
+            if (TypeProviderUtils.GetProvidedVariableMovementDataProvider(gameObject, _variableMovementTypeProvider, _data, _variableMovementDataProvider, out var variableMovementDataProvider))
+            {
+                _variableMovementDataProvider = variableMovementDataProvider;
+                if (_variableMovementDataProvider is EditorNoodleMovementDataProvider noodleMovementDataProvider)
+                {
+                    noodleMovementDataProvider.InitObject(_data);
+                }
             }
         }
 
@@ -65,7 +83,7 @@ namespace EditorEX.Essentials.Movement.Arc
 
             RefreshArcMovement();
 
-            _arcMovement.Init(editorData, _movementData, null);
+            _arcMovement.Init(editorData, _variableMovementDataProvider, _movementData, null);
 
             ManualUpdate();
         }
@@ -74,7 +92,7 @@ namespace EditorEX.Essentials.Movement.Arc
 
         public void Update()
         {
-            if (!_state.isPlaying && _prevBeat == _state.beat) return;
+            if (!_state.isPlaying && Mathf.Approximately(_prevBeat, _state.beat)) return;
             if (_prevBeat > _state.beat)
             {
                 Init(_data);
@@ -91,9 +109,9 @@ namespace EditorEX.Essentials.Movement.Arc
                 RefreshArcMovementAndInit();
             }
 
-            _arcMovement.Setup(_data);
+            _arcMovement?.Setup(_data);
 
-            _arcMovement.ManualUpdate();
+            _arcMovement?.ManualUpdate();
         }
     }
 }

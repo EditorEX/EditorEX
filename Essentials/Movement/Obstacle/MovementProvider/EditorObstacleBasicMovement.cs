@@ -23,7 +23,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }
 
-        public void Init(BaseEditorData? editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData as ObstacleEditorData;
             float z = _beatmapObjectPlacementHelper.BeatToPosition(editorData.beat);

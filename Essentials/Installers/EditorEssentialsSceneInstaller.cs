@@ -16,6 +16,7 @@ using EditorEX.Essentials.Visuals.Universal;
 using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using EditorEX.Essentials.VariableMovement;
 using UnityEngine;
 using Zenject;
 
@@ -56,6 +57,17 @@ namespace EditorEX.Essentials.Installers
 
             Container.Bind<MovementTypeProvider>().AsSingle();
 
+            // VARIABLE MOVEMENT
+
+            Container.Bind<ValueTuple<string, Type>>().WithId("VariableMovement").FromInstance(("Variable", typeof(VariableMovementDataProvider)));
+            Container.Bind<ValueTuple<string, Type>>().WithId("VariableMovement").FromInstance(("Noodle", typeof(EditorNoodleMovementDataProvider)));
+
+            Container.Bind<VariableMovementTypeProvider>().AsSingle();
+            
+            Container
+                .BindMemoryPool<EditorNoodleMovementDataProvider, EditorNoodleMovementDataProvider.Pool>()
+                .WithInitialSize(40);
+
             // VISUALS
 
             Container.Bind<VisualsTypeProvider>().AsSingle().NonLazy();
@@ -82,6 +94,7 @@ namespace EditorEX.Essentials.Installers
             Container.BindInterfacesAndSelfTo<ViewModeSwapper>().AsSingle().NonLazy();
 
             Container.Bind<EditorBasicBeatmapObjectSpawnMovementData>().AsSingle().NonLazy();
+            Container.Bind<VariableMovementInitializer>().AsSingle().NonLazy();
         }
     }
 }

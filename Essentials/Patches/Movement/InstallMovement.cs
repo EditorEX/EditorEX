@@ -5,6 +5,7 @@ using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Movement.Note.MovementProvider;
 using EditorEX.Essentials.Movement.Obstacle;
 using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
+using EditorEX.Essentials.VariableMovement;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Essentials.Visuals.Note;
 using EditorEX.Essentials.Visuals.Obstacle;
@@ -27,6 +28,7 @@ namespace EditorEX.Essentials.Patches.Movement
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteJump>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteFloorMovement>();
             __instance._normalNoteViewPrefab.gameObject.AddComponent<EditorNoteController>();
+            __instance._normalNoteViewPrefab.gameObject.AddComponent<VariableMovementHolder>();
 
             __instance._bombNoteViewPrefab.gameObject.AddComponent<EditorNoteBasicMovement>();
             __instance._bombNoteViewPrefab.gameObject.AddComponent<EditorNoteGameMovement>();
@@ -35,17 +37,20 @@ namespace EditorEX.Essentials.Patches.Movement
             __instance._bombNoteViewPrefab.gameObject.AddComponent<EditorNoteJump>();
             __instance._bombNoteViewPrefab.gameObject.AddComponent<EditorNoteFloorMovement>();
             __instance._bombNoteViewPrefab.gameObject.AddComponent<EditorNoteController>();
+            __instance._bombNoteViewPrefab.gameObject.AddComponent<VariableMovementHolder>();
 
             __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleBasicMovement>();
             __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleGameMovement>();
             __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleBasicVisuals>();
             __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleGameVisuals>();
             __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleController>();
+            __instance._obstacleViewPrefab.gameObject.AddComponent<VariableMovementHolder>();
 
             __instance._arcViewPrefab.gameObject.AddComponent<EditorArcBasicMovement>();
             __instance._arcViewPrefab.gameObject.AddComponent<EditorArcGameMovement>();
             __instance._arcViewPrefab.gameObject.AddComponent<EditorArcController>();
             __instance._arcViewPrefab.gameObject.AddComponent<EditorSliderIntensityEffect>();
+            __instance._arcViewPrefab.gameObject.AddComponent<VariableMovementHolder>();
         }
     }
 }

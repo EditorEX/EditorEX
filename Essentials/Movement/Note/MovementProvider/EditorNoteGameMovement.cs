@@ -59,20 +59,20 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
             IReadonlyBeatmapState state,
-            AudioDataModel audioDataModel,
-            IVariableMovementDataProvider variableMovementDataProvider)
+            AudioDataModel audioDataModel)
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
             _state = state;
             _audioDataModel = audioDataModel;
-            _variableMovementDataProvider = variableMovementDataProvider;
         }
 
-        public void Init(BaseEditorData? editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             EditorNoodleNoteData? noodleData = null;
             _editorDeserializedData?.Resolve(editorData, out noodleData);
+
+            _variableMovementDataProvider = variableMovementDataProvider;
 
             _editorBeatmapObjectSpawnMovementData = movementData;
             var noteEditorData = editorData as NoteEditorData;
@@ -90,13 +90,14 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             moveEndOffset.z += _zOffset;
             Vector3 jumpEndOffset = noteSpawnData.jumpEndOffset;
             jumpEndOffset.z += _zOffset;
-
-            _floorMovement.Init(editorData as NoteEditorData, noteTime, worldRotation, moveStartOffset, moveEndOffset, getVisualRoot);
+            
+            Debug.Log($"noteTime: {noteTime}, flipYSide: {flipYSide}, endRotation: {endRotation}");
+            _floorMovement.Init(editorData as NoteEditorData, _variableMovementDataProvider, worldRotation, noteTime, moveStartOffset, moveEndOffset, getVisualRoot);
             _position = _floorMovement.SetToStart();
             _prevPosition = _position;
             _localPosition = (_prevLocalPosition = _floorMovement.localPosition);
             _distanceToPlayer = _floorMovement.distanceToPlayer;
-            _jump.Init(editorData as NoteEditorData, noteTime, worldRotation, moveEndOffset, jumpEndOffset, noteSpawnData.gravityBase, flipYSide, endRotation, getVisualRoot);
+            _jump.Init(editorData as NoteEditorData, _variableMovementDataProvider, noteTime, worldRotation, moveEndOffset, jumpEndOffset, noteSpawnData.gravityBase, flipYSide, endRotation, getVisualRoot);
 
             movementPhase = MovementPhase.MovingOnTheFloor;
 

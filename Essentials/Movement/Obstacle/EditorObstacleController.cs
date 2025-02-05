@@ -5,6 +5,7 @@ using EditorEX.Essentials.ViewMode;
 using EditorEX.Essentials.Visuals;
 using System;
 using System.Linq;
+using EditorEX.Essentials.VariableMovement;
 using UnityEngine;
 using Zenject;
 
@@ -14,10 +15,12 @@ namespace EditorEX.Essentials.Movement.Obstacle
     {
         private IObjectMovement _obstacleMovement;
         private IObjectVisuals _obstacleVisuals;
+        private IVariableMovementDataProvider _variableMovementDataProvider;
 
         private IReadonlyBeatmapState _state;
         private MovementTypeProvider _movementTypeProvider;
         private VisualsTypeProvider _visualsTypeProvider;
+        private VariableMovementTypeProvider _variableMovementTypeProvider;
         private ActiveViewMode _activeViewMode;
         private EditorBasicBeatmapObjectSpawnMovementData _movementData;
 
@@ -29,11 +32,13 @@ namespace EditorEX.Essentials.Movement.Obstacle
             ActiveViewMode activeViewMode, 
             MovementTypeProvider movementTypeProvider,
             VisualsTypeProvider visualsTypeProvider,
+            VariableMovementTypeProvider variableMovementTypeProvider,
             EditorBasicBeatmapObjectSpawnMovementData movementData)
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
             _visualsTypeProvider = visualsTypeProvider;
+            _variableMovementTypeProvider = variableMovementTypeProvider;
             _movementData = movementData;
 
             _activeViewMode = activeViewMode;
@@ -71,6 +76,15 @@ namespace EditorEX.Essentials.Movement.Obstacle
                 _obstacleVisuals = newObstacleVisuals;
                 _obstacleVisuals.Enable();
             }
+
+            if (TypeProviderUtils.GetProvidedVariableMovementDataProvider(gameObject, _variableMovementTypeProvider, _data, _variableMovementDataProvider, out var variableMovementDataProvider))
+            {
+                _variableMovementDataProvider = variableMovementDataProvider;
+                if (_variableMovementDataProvider is EditorNoodleMovementDataProvider noodleMovementDataProvider)
+                {
+                    noodleMovementDataProvider.InitObject(_data);
+                }
+            }
         }
 
         public void Init(ObstacleEditorData? obstacleData)
@@ -80,7 +94,7 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
             RefreshObstacleMovementVisuals();
 
-            _obstacleMovement.Init(obstacleData, _movementData, null);
+            _obstacleMovement.Init(obstacleData, _variableMovementDataProvider, _movementData, null);
             _obstacleVisuals.Init(obstacleData);
 
             ManualUpdate();

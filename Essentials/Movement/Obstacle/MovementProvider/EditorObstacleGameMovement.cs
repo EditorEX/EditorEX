@@ -58,8 +58,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             IReadonlyBeatmapState state,
             ColorManager colorManager,
             IAudioTimeSource audioTimeSyncController,
-            AudioDataModel audioDataModel,
-            IVariableMovementDataProvider variableMovementDataProvider)
+            AudioDataModel audioDataModel)
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
@@ -67,7 +66,6 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             _colorManager = colorManager;
             _audioTimeSyncController = audioTimeSyncController;
             _audioDataModel = audioDataModel;
-            _variableMovementDataProvider = variableMovementDataProvider;
         }
 
         private Quaternion GetWorldRotation(ObstacleEditorData? obstacleData, float @default)
@@ -104,10 +102,12 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             return noodleData?.Length * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance ?? @default;
         }
 
-        public void Init(BaseEditorData? editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _stretchableObstacle = transform.Find("GameWallRoot").GetComponent<StretchableObstacle>();
             _selection = GetComponent<ObstacleViewSelection>();
+
+            _variableMovementDataProvider = variableMovementDataProvider;
 
             _editorBeatmapObjectSpawnMovementData = movementData;
             _editorData = editorData as ObstacleEditorData;

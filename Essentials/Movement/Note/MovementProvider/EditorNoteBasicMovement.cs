@@ -11,7 +11,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 {
     public class EditorNoteBasicMovement : MonoBehaviour, IObjectMovement
     {
-        private NoteEditorData _editorData;
+        private NoteEditorData? _editorData;
 
         private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper;
 
@@ -21,9 +21,10 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }
 
-        public void Init(BaseEditorData? editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
         {
             _editorData = editorData as NoteEditorData;
+            if (editorData == null) return;
             float z = _beatmapObjectPlacementHelper.BeatToPosition(editorData.beat);
             transform.localPosition = new Vector3((_editorData.column - 1.5f) * 0.8f, 0.5f + _editorData.row * 0.8f, z);
         }

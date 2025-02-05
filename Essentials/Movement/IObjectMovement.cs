@@ -8,7 +8,7 @@ namespace EditorEX.Essentials.Movement
 {
     public interface IObjectMovement : IObjectComponent
     {
-        void Init(BaseEditorData? editorData, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot);
+        void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot);
 
         void Setup(BaseEditorData? editorData);
 
