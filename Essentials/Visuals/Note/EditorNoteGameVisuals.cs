@@ -9,6 +9,7 @@ using NoodleExtensions;
 using NoodleExtensions.Animation;
 using System.Collections.Generic;
 using BeatmapEditor3D;
+using Chroma;
 using UnityEngine;
 using Zenject;
 
@@ -21,7 +22,8 @@ namespace EditorEX.Essentials.Visuals.Note
         private ColorManager _colorManager;
         private IReadonlyBeatmapState _state;
         private AudioDataModel _audioDataModel;
-        private EditorDeserializedData _editorDeserializedData;
+        private EditorDeserializedData _noodleEditorDeserializedData;
+        private EditorDeserializedData _chromeEditorDeserializedData;
         private AnimationHelper _animationHelper;
 
         // Visuals fields
@@ -38,14 +40,16 @@ namespace EditorEX.Essentials.Visuals.Note
 
         [Inject]
         private void Construct(
-            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData noodleEditorDeserializedData,
+            [InjectOptional(Id = "Chroma")] EditorDeserializedData chromeEditorDeserializedData,
             AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
             ColorManager colorManager,
             IReadonlyBeatmapState state,
             AudioDataModel audioDataModel)
         {
-            _editorDeserializedData = editorDeserializedData;
+            _noodleEditorDeserializedData = noodleEditorDeserializedData;
+            _chromeEditorDeserializedData = chromeEditorDeserializedData;
             _visualAssetProvider = visualAssetProvider;
             _animationHelper = animationHelper;
             _audioDataModel = audioDataModel;
@@ -134,7 +138,7 @@ namespace EditorEX.Essentials.Visuals.Note
         public void ManualUpdate()
         {
             EditorNoodleBaseNoteData? noodleData = null;
-            if (!(_editorDeserializedData?.Resolve(_editorData, out noodleData) ?? false) || noodleData == null)
+            if (!(_noodleEditorDeserializedData?.Resolve(_editorData, out noodleData) ?? false) || noodleData == null)
             {
                 return;
             }
@@ -163,19 +167,44 @@ namespace EditorEX.Essentials.Visuals.Note
                 animationObject,
                 tracks,
                 normalTime,
-                out Vector3? positionOffset,
-                out Quaternion? rotationOffset,
-                out Vector3? scaleOffset,
-                out Quaternion? localRotationOffset,
+                out _,
+                out _,
+                out _,
+                out _,
                 out float? dissolveNote,
                 out float? dissolveArrow,
-                out float? cuttable);
+                out _);
 
             _noteCutout.SetCutout(1f - dissolveNote.GetValueOrDefault(1f));
 
             _arrowCutout.SetCutout(1f - dissolveArrow.GetValueOrDefault(1f));
 
-            _arrowObjects[1].SetActive(_editorData.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f);
+            _arrowObjects[1].SetActive(_editorData?.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f);
+            
+            if (!(_chromeEditorDeserializedData?.Resolve(_editorData, out ChromaObjectData? chromaData) ?? false) || chromaData == null)
+            {
+                return;
+            }
+
+            IReadOnlyList<Track>? chromaTracks = chromaData.Track;
+            PointDefinition<Vector4>? pathPointDefinition = chromaData.LocalPathColor;
+            if (chromaTracks == null && pathPointDefinition == null)
+            {
+                return;
+            }
+            
+            global::Chroma.Animation.AnimationHelper.GetColorOffset(pathPointDefinition, chromaTracks, normalTime, out Color? colorOffset);
+
+            if (colorOffset == null)
+            {
+                return;
+            }
+            
+            _colorPropertyBlockControllers.Do(x =>
+            {
+                x.materialPropertyBlock.SetColor(ColorNoteVisuals._colorId, colorOffset.Value.ColorWithAlpha(1f));
+                x.ApplyChanges();
+            });
         }
 
         public GameObject GetVisualRoot()
