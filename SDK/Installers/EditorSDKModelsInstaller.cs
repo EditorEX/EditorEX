@@ -19,6 +19,7 @@ namespace EditorEX.SDK.Installers
                 .FromInstance(new ("rounded-corners", "Visuals/Materials/UI/UINoGlowRoundEdge.mat"));
 
             Container.BindInterfacesAndSelfTo<AllowSignalInterfacesPatches>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<FixUnityExplorerInputError>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<AddressableCollector>().AsSingle();
             Container.BindInterfacesAndSelfTo<AddressableSignalBus>().AsSingle();

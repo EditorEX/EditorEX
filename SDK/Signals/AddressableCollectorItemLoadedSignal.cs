@@ -14,11 +14,11 @@
 
         public U GetValue<U>() where U : UnityEngine.Object
         {
-            if (typeof(T) != typeof(U))
+            if (Object is not U o)
             {
                 throw new System.ArgumentException("Value is not of type " + typeof(T).Name);
             }
-            return Object as U;
+            return o;
         }
 
         public T GetValue()

@@ -432,6 +432,7 @@
     <Compile Include="SDKImplementation\EditorExSettingsViewContent.cs" />
     <Compile Include="SDKImplementation\Patches\AllowSignalInterfacesPatches.cs" />
     <Compile Include="SDKImplementation\Patches\CustomInputActionPatches.cs" />
+    <Compile Include="SDKImplementation\Patches\FixUnityExplorerInputError.cs" />
     <Compile Include="SDK\AddressableHelpers\AddressableSignalBus.cs" />
     <Compile Include="SDK\AddressableHelpers\DefaultAddressableCollectorItem.cs" />
     <Compile Include="SDK\AddressableHelpers\IAddressableCollectorItem.cs" />

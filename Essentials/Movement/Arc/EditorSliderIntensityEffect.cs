@@ -16,6 +16,7 @@ namespace EditorEX.Essentials.Movement.Arc
         private float _flashInDuration = 0.3f;
         private float _flashOutDuration = 0.7f;
         private readonly IAudioTimeSource _audioTimeSyncController;
+        private IVariableMovementDataProvider _variableMovementTypeProvider;
         private float _coreIntensity;
         private float _effectIntensity;
         private float _halfJumpDuration;
@@ -72,11 +73,11 @@ namespace EditorEX.Essentials.Movement.Arc
             };
         }
 
-        public void Init(float sliderDuration, float halfJumpDuration, bool startVisible)
+        public void Init(float sliderDuration, IVariableMovementDataProvider variableMovementTypeProvider, bool startVisible)
         {
-            _halfJumpDuration = halfJumpDuration;
+            _variableMovementTypeProvider = variableMovementTypeProvider;
             _sliderDuration = sliderDuration;
-            headIntensity = ((sliderDuration < halfJumpDuration) ? _shortSliderHeadIntensity : _longSliderHeadIntensity);
+            headIntensity = ((sliderDuration < _variableMovementTypeProvider.halfJumpDuration) ? _shortSliderHeadIntensity : _longSliderHeadIntensity);
             _coreIntensity = headIntensity;
             _effectIntensity = (startVisible ? 1f : 0f);
             float num = Mathf.Max(sliderDuration - _fadeOutDuration - _stayOffDuration, 0.1f);

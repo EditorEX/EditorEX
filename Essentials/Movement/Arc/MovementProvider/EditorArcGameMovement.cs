@@ -38,7 +38,6 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         private bool _attractingSaber;
         private float _randomValue;
         private float _zDistanceBetweenNotes;
-        private float _jumpDistance;
 
         // Arc movement fields
         private Vector3 _localPosition;
@@ -159,15 +158,14 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             _sliderDuration = tailTime - headTime;
             _initColor = _colorManager.ColorForType(_sliderEditorData.colorType);
             float halfJumpDuration = _variableMovementDataProvider.halfJumpDuration;
-            _sliderIntensityEffect.Init(_sliderDuration, halfJumpDuration, EditorSpawnDataRepository.GetSpawnData(editorData).hasHeadNote);
-            float noteJumpMovementSpeed = _editorBeatmapObjectSpawnMovementData.noteJumpMovementSpeed;
-            _zDistanceBetweenNotes = (tailTime - headTime) * noteJumpMovementSpeed;
+            _sliderIntensityEffect.Init(_sliderDuration, _variableMovementDataProvider, EditorSpawnDataRepository.GetSpawnData(editorData).hasHeadNote);
+            _zDistanceBetweenNotes = (tailTime - headTime) * _variableMovementDataProvider.noteJumpSpeed;
             float num = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(sliderSpawnData.headGravityBase);
             float num2 = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(sliderSpawnData.tailGravityBase);
             Vector3 vector = new Vector3(sliderSpawnData.headNoteOffset.x, sliderSpawnData.headNoteOffset.y + num * halfJumpDuration * halfJumpDuration * 0.5f, 0f);
             Vector3 vector2 = new Vector3(sliderSpawnData.tailNoteOffset.x, sliderSpawnData.tailNoteOffset.y + num2 * halfJumpDuration * halfJumpDuration * 0.5f, _zDistanceBetweenNotes);
-            _sliderMeshController.CreateBezierPathAndMesh(_sliderData, vector, vector2, noteJumpMovementSpeed, 1f);
-            SetInitialProperties(_materialPropertyBlockController, noteJumpMovementSpeed);
+            _sliderMeshController.CreateBezierPathAndMesh(_sliderData, vector, vector2, _variableMovementDataProvider.noteJumpSpeed, 1f);
+            SetInitialProperties(_materialPropertyBlockController, _variableMovementDataProvider.noteJumpSpeed);
             UpdateMaterialPropertyBlock(-halfJumpDuration, _materialPropertyBlockController);
 
             transform.localRotation = _worldRotation;

@@ -23,7 +23,7 @@ namespace EditorEX.SDK.AddressableHelpers
 
         public void Subscribe<T>(string label, object uniqueID, Action<AddressableCollectorItemLoadedSignal<T>> action) where T : UnityEngine.Object
         {
-            Subscribe(label, uniqueID, (IAddressableCollectorItemLoadedSignal x) =>
+            Subscribe(label, uniqueID, x =>
             {
                 if (x is AddressableCollectorItemLoadedSignal<T> signalT)
                 {
@@ -35,7 +35,7 @@ namespace EditorEX.SDK.AddressableHelpers
                 }
             });
         }
-
+        
         public void Subscribe(string label, object uniqueID, Action<IAddressableCollectorItemLoadedSignal> action)
         {
             if (_addressableCollector.CheckAvailability(label))
