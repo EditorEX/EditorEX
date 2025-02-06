@@ -91,7 +91,6 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             Vector3 jumpEndOffset = noteSpawnData.jumpEndOffset;
             jumpEndOffset.z += _zOffset;
             
-            Debug.Log($"noteTime: {noteTime}, flipYSide: {flipYSide}, endRotation: {endRotation}");
             _floorMovement.Init(editorData as NoteEditorData, _variableMovementDataProvider, worldRotation, noteTime, moveStartOffset, moveEndOffset, getVisualRoot);
             _position = _floorMovement.SetToStart();
             _prevPosition = _position;

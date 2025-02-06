@@ -15,19 +15,19 @@ namespace EditorEX.Heck.Deserialize
             Dictionary<BasicEventEditorData, IEventCustomData> eventCustomDatas,
             Dictionary<BaseEditorData, IObjectCustomData> objectCustomDatas)
         {
-            _customEventCustomDatas = customEventCustomDatas;
+            CustomEventCustomDatas = customEventCustomDatas;
             _eventCustomDatas = eventCustomDatas;
             _objectCustomDatas = objectCustomDatas;
         }
 
-        public bool Resolve<T>(CustomEventEditorData customEventData, out T result) where T : ICustomEventCustomData
+        public bool Resolve<T>(CustomEventEditorData customEventData, out T result) where T : ICustomEventCustomData?
         {
             if (customEventData == null)
             {
                 result = default;
                 return false;
             }
-            return Resolve(_customEventCustomDatas, customEventData, out result);
+            return Resolve(CustomEventCustomDatas, customEventData, out result);
         }
 
         public bool Resolve<T>(BasicEventEditorData beatmapEventData, out T result) where T : IEventCustomData
@@ -78,7 +78,7 @@ namespace EditorEX.Heck.Deserialize
             throw new InvalidOperationException(string.Concat("Custom data was not of correct type. Expected: [", typeof(TResultType).Name, "], was: [", customData.GetType().Name, "]."));
         }
 
-        private Dictionary<CustomEventEditorData, ICustomEventCustomData> _customEventCustomDatas;
+        internal Dictionary<CustomEventEditorData, ICustomEventCustomData> CustomEventCustomDatas;
 
         private Dictionary<BasicEventEditorData, IEventCustomData> _eventCustomDatas;
 

@@ -13,6 +13,7 @@ using EditorEX.NoodleExtensions.Deserialize;
 using EditorEX.NoodleExtensions.Installers;
 using EditorEX.SDK.Installers;
 using EditorEX.UI.Installers;
+using EditorEX.Vivify.Deserializer;
 using IPA;
 using IPA.Config.Stores;
 using SiraUtil.Zenject;
@@ -42,6 +43,7 @@ namespace EditorEX
             zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorEssentialsSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorChromaSceneInstaller, BeatmapLevelEditorSceneSetup>();
+            zenjector.Install<EditorVivifySceneInstaller, BeatmapLevelEditorSceneSetup>();
             //zenjector.Install<EditorAnalyzerSceneInstaller, BeatmapLevelEditorInstaller>();
 
             zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
@@ -53,6 +55,7 @@ namespace EditorEX
             EditorDeserializerManager.Register<EditorNoodleCustomDataDeserializer>("NoodleExtensions").Enabled = true;
             EditorDeserializerManager.Register<EditorHeckCustomDataDeserializer>("Heck").Enabled = true;
             EditorDeserializerManager.Register<EditorChromaCustomDataDeserializer>("Chroma").Enabled = true;
+            EditorDeserializerManager.Register<EditorVivifyCustomDataDeserializer>("Vivify").Enabled = true;
 
             ViewModeRepository.RegisterViewMode(new ViewMode("Normal", "normal", false, true, false));
             ViewModeRepository.RegisterViewMode(new ViewMode("Preview", "preview", true, false, false));

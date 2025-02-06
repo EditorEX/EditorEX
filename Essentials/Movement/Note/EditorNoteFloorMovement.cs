@@ -63,8 +63,6 @@ namespace EditorEX.Essentials.Movement.Note
             {
                 _noodleData = null;
             }
-            
-            Debug.Log("EditorNoteFloorMovement Init " + beatTime);
 
             _variableMovementDataProvider = variableMovementDataProvider;
             
