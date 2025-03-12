@@ -7,6 +7,10 @@ using Heck.Animation;
 using Heck.Animation.Transform;
 using Heck.Event;
 using System.Collections.Generic;
+using Heck.BaseProvider;
+using Heck.BaseProviders;
+using Heck.HarmonyPatches;
+using Heck.ObjectInitialize;
 using Zenject;
 
 namespace EditorEX.Heck.Installers
@@ -29,8 +33,18 @@ namespace EditorEX.Heck.Installers
             Container.BindInterfacesTo<EditorCoroutineEvent>().AsSingle();
             Container.BindInterfacesAndSelfTo<TransformControllerFactory>().AsSingle();
             Container.BindInterfacesTo<TrackUpdateManager>().AsSingle();
+            
+            Container.Bind<ObjectInitializerManager>().AsSingle();
+            
+            Container.BindInterfacesAndSelfTo<SiraUtilHeadFinder>().AsSingle();
 
             Container.BindInterfacesTo<EditorGameObjectTracker>().AsSingle().NonLazy();
+            
+            Container.BindInterfacesTo<GameBaseProviderDisposer>().AsSingle();
+            
+            Container.BindInterfacesTo<PlayerTransformGetter>().AsSingle();
+            Container.BindInterfacesTo<ColorSchemeGetter>().AsSingle();
+            //container.BindInterfacesTo<ScoreGetter>().AsSingle();
         }
     }
 }

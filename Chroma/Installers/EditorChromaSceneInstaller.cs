@@ -55,8 +55,6 @@ namespace EditorEX.Chroma.Installers
 
                 Container.BindInterfacesAndSelfTo<ParametricBoxControllerTransformOverride>().AsSingle();
                 Container.BindInterfacesAndSelfTo<TrackLaneRingOffset>().AsSingle();
-
-                Container.BindInterfacesTo<ColorSchemeGetter>().AsSingle();
             }
         }
     }

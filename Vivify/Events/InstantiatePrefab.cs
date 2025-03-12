@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
+using EditorEX.Essentials.Patches;
 using EditorEX.Heck.Deserialize;
 using EditorEX.Vivify.Managers;
 using HarmonyLib;
@@ -34,6 +37,7 @@ namespace EditorEX.Vivify.Events
         private readonly SiraLog _log;
         private readonly PrefabManager _prefabManager;
         private readonly IAudioTimeSource _audioTimeSource;
+        private readonly AudioDataModel _audioDataModel;
         private readonly TransformControllerFactory _transformControllerFactory;
         private readonly bool _leftHanded;
 
@@ -48,6 +52,7 @@ namespace EditorEX.Vivify.Events
             PrefabManager prefabManager,
             [Inject(Id = ID)] EditorDeserializedData deserializedData,
             IAudioTimeSource audioTimeSource,
+            PopulateBeatmap populateBeatmap,
             TransformControllerFactory transformControllerFactory,
             [InjectOptional] ReLoader? reLoader)
         {
@@ -57,6 +62,7 @@ namespace EditorEX.Vivify.Events
             _prefabManager = prefabManager;
             _deserializedData = deserializedData;
             _audioTimeSource = audioTimeSource;
+            _audioDataModel = populateBeatmap._audioDataModel;
             _transformControllerFactory = transformControllerFactory;
             _reLoader = reLoader;
             if (reLoader != null)
@@ -162,6 +168,42 @@ namespace EditorEX.Vivify.Events
             _loadedPrefabs.Clear();
         }
 
+        private void CreatePreviousPrefabs()
+        {
+            float currentBeat = _audioDataModel.bpmData.SecondsToBeat(_audioTimeSource.songTime);
+            foreach (CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents())
+            {
+                if (customEventEditorData.eventType != INSTANTIATE_PREFAB ||
+                    !_deserializedData.Resolve(customEventEditorData, out InstantiatePrefabData? data))
+                {
+                    continue;
+                }
+                bool isDestroyed = false;
+                foreach (CustomEventEditorData customEventEditorData2 in CustomDataRepository.GetCustomEvents())
+                {
+                    if (customEventEditorData2.beat < customEventEditorData.beat || customEventEditorData2.beat > currentBeat) continue;
+                    
+                    if (customEventEditorData2.eventType == DESTROY_PREFAB && _deserializedData.Resolve<DestroyObjectData>(customEventEditorData2, out DestroyObjectData? data2))
+                    {
+                        if (data2.Id.Contains(data.Id))
+                        {
+                            isDestroyed = true;
+                            break;
+                        }
+                    }
+                }
+                if (isDestroyed)
+                {
+                    continue;
+                }
+
+                if (currentBeat > customEventEditorData.beat && !_prefabManager._prefabs.ContainsKey(data.Id))
+                {
+                    Callback(CustomDataRepository.GetCustomEventConversion(customEventEditorData));
+                }
+            }
+        }
+
         private float _lastBeat = 0f;
         public void Tick()
         {
@@ -170,6 +212,7 @@ namespace EditorEX.Vivify.Events
                 _prefabManager.DestroyAllPrefabs();
                 DestroyAllPrefabs();
                 Initialize();
+                CreatePreviousPrefabs();
             }
             
             _lastBeat = _audioTimeSource.songTime;
