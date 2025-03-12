@@ -1,38 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4973C4CF-A6BD-4331-9BA6-909F4C3A001A}</ProjectGuid>
-    <OutputType>Library</OutputType>
     <LangVersion>12</LangVersion>
     <Nullable>enable</Nullable>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EditorEX</RootNamespace>
-    <AssemblyName>EditorEX</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net48</TargetFramework>
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>portable</DebugType>
     <LocalRefsDir Condition="Exists('..\Refs')">..\Refs</LocalRefsDir>
-    <BeatSaberDir>$(LocalRefsDir)</BeatSaberDir>
+    <GameDirectory>$(LocalRefsDir)</GameDirectory>
     <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
     <!--<PathMap>$(AppOutputBase)=X:\$(AssemblyName)\</PathMap>-->
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <AssemblyTitle>EditorEX</AssemblyTitle>
+    <Product>EditorEX</Product>
+    <Copyright>Copyright ©  2024</Copyright>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="$(DefineConstants.Contains('CIBuild')) OR '$(NCrunch)' == '1'">
     <DisableCopyToPlugins>True</DisableCopyToPlugins>
@@ -42,498 +28,242 @@
     <DisableZipRelease>True</DisableZipRelease>
   </PropertyGroup>
   <ItemGroup>
-      <Reference Include="0Harmony">
-        <HintPath>$(BeatSaberDir)\Libs\0Harmony.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="BeatmapCore" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatmapCore.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="BeatSaber.BeatmapEditor" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatSaber.BeatmapEditor.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="BeatSaber.ViewSystem" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatSaber.ViewSystem.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="BGLib.AppFlow">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BGLib.AppFlow.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="BGLib.DotnetExtension">
-          <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BGLib.DotnetExtension.dll</HintPath>
-          <Private>false</Private>
-      </Reference>
-      <Reference Include="BGLib.UnityExtension">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BGLib.UnityExtension.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="BSML" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Plugins\BSML.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Chroma" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Plugins\Chroma.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Colors" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Colors.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Core">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Core.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="CustomJSONData" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Plugins\CustomJSONData.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="DataModels" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\DataModels.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="GameplayCore">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\GameplayCore.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Heck" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Plugins\Heck.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Hive.Versioning">
-        <HintPath>$(BeatSaberDir)\Libs\Hive.Versioning.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="HMLib">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMLib.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="HMRendering" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMRendering.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="HMUI" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMUI.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="Interactable" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Interactable.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="IPA.Loader">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="Main" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Main.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-        <Private>False</Private>
-        <HintPath>$(BeatSaberDir)\Libs\Newtonsoft.Json.dll</HintPath>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="NoodleExtensions" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Plugins\NoodleExtensions.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Rendering" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Rendering.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="SegmentedControl" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\SegmentedControl.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="SiraUtil" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Plugins\SiraUtil.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="System" />
-      <Reference Include="System.Core" />
-      <Reference Include="System.Data" />
-      <Reference Include="System.Data.DataSetExtensions" />
-      <Reference Include="System.Xml" />
-      <Reference Include="System.Xml.Linq" />
-      <Reference Include="Transitions" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Transitions.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Tweening" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Tweening.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Unity.Addressables">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.Addressables.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Unity.InputSystem">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.InputSystem.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Unity.ResourceManager">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.ResourceManager.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Unity.TextMeshPro">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="UnityEngine">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="UnityEngine.AnimationModule">
-          <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
-          <Private>false</Private>
-      </Reference>
-      <Reference Include="UnityEngine.AssetBundleModule">
-          <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
-          <Private>false</Private>
-      </Reference>
-      <Reference Include="UnityEngine.AudioModule">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="UnityEngine.CoreModule" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="UnityEngine.InputLegacyModule">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="UnityEngine.InputModule">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.InputModule.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="UnityEngine.ParticleSystemModule">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="UnityEngine.PhysicsModule">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="UnityEngine.TextRenderingModule">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="UnityEngine.UI" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UI.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="UnityEngine.UIElementsModule">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="UnityEngine.UIModule">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UIModule.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="UnityEngine.VRModule">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.VRModule.dll</HintPath>
-        <Private>False</Private>
-      </Reference>
-      <Reference Include="Vivify" Publicize="true">
-          <HintPath>$(BeatSaberDir)\Plugins\Vivify.dll</HintPath>
-          <Private>false</Private>
-      </Reference>
-      <Reference Include="Zenject" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-      <Reference Include="Zenject-usage" Publicize="true">
-        <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Zenject-usage.dll</HintPath>
-        <Private>False</Private>
-        <SpecificVersion>False</SpecificVersion>
-      </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Analyzer\Installers\EditorAnalyzerSceneInstaller.cs" />
-    <Compile Include="Analyzer\Swings\AnalyzerSaberManager.cs" />
-    <Compile Include="Analyzer\Swings\SwingBaker\BakedSwingTrack.cs" />
-    <Compile Include="Analyzer\Swings\LevelUtils.cs" />
-    <Compile Include="Analyzer\Swings\Parity Behaviours\DefaultParityCheck.cs" />
-    <Compile Include="Analyzer\Swings\SliceMap.cs" />
-    <Compile Include="Analyzer\Swings\SwingBaker\Frame.cs" />
-    <Compile Include="Analyzer\Swings\SwingBaker\SwingTrackGenerator.cs" />
-    <Compile Include="Chroma\Colorizer\EditorLightColorizer.cs" />
-    <Compile Include="Chroma\Colorizer\EditorParticleColorizer.cs" />
-    <Compile Include="Chroma\Constants.cs" />
-    <Compile Include="Chroma\Deserializer\EditorChromaCustomDataDeserializer.cs" />
-    <Compile Include="Chroma\EnvironmentEnhancement\Component\EditorDuplicateInitializer.cs" />
-    <Compile Include="Chroma\EnvironmentEnhancement\Component\EditorComponentCustomizer.cs" />
-    <Compile Include="Chroma\EnvironmentEnhancement\Component\EditorILightWithIdCustomizer.cs" />
-    <Compile Include="Chroma\EnvironmentEnhancement\EditorGeometryFactory.cs" />
-    <Compile Include="Chroma\EnvironmentEnhancement\EditorMaterialsManager.cs" />
-    <Compile Include="Chroma\EnvironmentEnhancement\EditorEnvironmentEnhancementManager.cs" />
-    <Compile Include="Chroma\Events\AnimateComponent.cs" />
-    <Compile Include="Chroma\Events\EditorCustomDataTypes.cs" />
-    <Compile Include="Chroma\Events\FogAnimatorV2.cs" />
-    <Compile Include="Chroma\Installers\EditorChromaMainInstaller.cs" />
-    <Compile Include="Chroma\Installers\EditorChromaSceneInstaller.cs" />
-    <Compile Include="Chroma\Lighting\EditorChromaGradientController.cs" />
-    <Compile Include="Chroma\Lighting\EditorChromaLightSwitchEventEffect.cs" />
-    <Compile Include="Chroma\Lighting\EditorLegacyLightHelper.cs" />
-    <Compile Include="Chroma\Patches\Colorizer\Initialize\EditorLightColorizerInitialize.cs" />
-    <Compile Include="Chroma\Patches\Colorizer\Initialize\EditorLightWithIdRegisterer.cs" />
-    <Compile Include="Chroma\Patches\Colorizer\Initialize\EditorParticleColorizerInitialize.cs" />
-    <Compile Include="Chroma\Patches\Events\EditorLightPairRotationChromafier.cs" />
-    <Compile Include="Chroma\Patches\Events\EditorLightRotationChromafier.cs" />
-    <Compile Include="Chroma\Patches\Events\EditorRingRotationChromafier.cs" />
-    <Compile Include="Chroma\Patches\Events\EditorRingStepChromafier.cs" />
-    <Compile Include="Chroma\Patches\InjectCustomDataIntoLivePreview.cs" />
-    <Compile Include="Config\SourcesConfig.cs" />
-    <Compile Include="Config\CameraConfig.cs" />
-    <Compile Include="Config\Installers\EditorConfigAppInstaller.cs" />
-    <Compile Include="Config\MainConfig.cs" />
-    <Compile Include="CustomDataModels\CustomPlatformsListModel.cs" />
-    <Compile Include="CustomDataModels\LevelCustomDataModel.cs" />
-    <Compile Include="CustomJSONData\CustomDataRepository.cs" />
-    <Compile Include="CustomJSONData\CustomEvents\CustomEventEditorData.cs" />
-    <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataAppInstaller.cs" />
-    <Compile Include="CustomJSONData\Installers\EditorCustomJSONDataModelsInstaller.cs" />
-    <Compile Include="CustomJSONData\Patches\BeatmapFileUtilsPatch.cs" />
-    <Compile Include="CustomJSONData\Patches\BetterClearEvents.cs" />
-    <Compile Include="CustomJSONData\Patches\Saving\BeatmapLevelDataModelSaverPatch.cs" />
-    <Compile Include="Essentials\Installers\EditorEssentialsAppInstaller.cs" />
-    <Compile Include="Essentials\Patches\HideUI.cs" />
-    <Compile Include="Essentials\Patches\CameraLock.cs" />
-    <Compile Include="Essentials\Patches\FixAudioTimeSource.cs" />
-    <Compile Include="Essentials\Patches\Movement\SwapMovementProvider.cs" />
-    <Compile Include="Essentials\Patches\PopulateBeatmap.cs" />
-    <Compile Include="Essentials\Patches\Preview\PreviewSelectionPatches.cs" />
-    <Compile Include="Essentials\VariableMovement\EditorNoodleMovementDataProvider.cs" />
-    <Compile Include="Essentials\VariableMovement\VariableMovementHolder.cs" />
-    <Compile Include="Essentials\VariableMovement\VariableMovementInitializer.cs" />
-    <Compile Include="Essentials\VariableMovement\VariableMovementTypeProvider.cs" />
-    <Compile Include="Essentials\Visuals\Obstacle\EditorObstacleBasicVisuals.cs" />
-    <Compile Include="Essentials\Visuals\Obstacle\EditorObstacleGameVisuals.cs" />
-    <Compile Include="MapData\Contexts\LevelContext.cs" />
-    <Compile Include="MapData\Contexts\MapContext.cs" />
-    <Compile Include="CustomJSONData\Patches\DisableConversion.cs" />
-    <Compile Include="CustomJSONData\Patches\Loading\BeatmapDataModelsLoaderPatch.cs" />
-    <Compile Include="CustomJSONData\Patches\Loading\BeatmapLevelDataModelLoaderPatch.cs" />
-    <Compile Include="CustomJSONData\Patches\Loading\AudioDataLoaderPatch.cs" />
-    <Compile Include="Essentials\Installers\EditorEssentialsModelsInstaller.cs" />
-    <Compile Include="Essentials\Installers\EditorEssentialsSceneInstaller.cs" />
-    <Compile Include="Essentials\IObjectComponent.cs" />
-    <Compile Include="Essentials\ITypeProvider.cs" />
-    <Compile Include="Essentials\Movement\Arc\EditorSliderIntensityEffect.cs" />
-    <Compile Include="Essentials\Movement\Note\MovementProvider\EditorNoteBasicMovement.cs" />
-    <Compile Include="Essentials\Movement\IObjectMovement.cs" />
-    <Compile Include="Essentials\Movement\MovementTypeProvider.cs" />
-    <Compile Include="Essentials\Movement\Arc\EditorArcController.cs" />
-    <Compile Include="Essentials\Movement\Arc\MovementProvider\EditorArcBasicMovement.cs" />
-    <Compile Include="Essentials\Movement\Arc\MovementProvider\EditorArcGameMovement.cs" />
-    <Compile Include="Essentials\Movement\Obstacle\EditorObstacleController.cs" />
-    <Compile Include="Essentials\Movement\Obstacle\MovementProvider\EditorObstacleBasicMovement.cs" />
-    <Compile Include="Essentials\Movement\Obstacle\MovementProvider\EditorObstacleGameMovement.cs" />
-    <Compile Include="Essentials\Movement\Types\IObjectMovementType.cs" />
-    <Compile Include="Essentials\Movement\Types\NoteBasicMovementType.cs" />
-    <Compile Include="Essentials\Movement\Types\NoteGameMovementType.cs" />
-    <Compile Include="Essentials\Patches\Preview\ArcPreview.cs" />
-    <Compile Include="Essentials\Patches\Preview\PreviewToggler.cs" />
-    <Compile Include="Essentials\Patches\ProcessNewEditorData.cs" />
-    <Compile Include="Essentials\TypeProviderUtils.cs" />
-    <Compile Include="Essentials\ViewMode\ActiveViewMode.cs" />
-    <Compile Include="Essentials\ViewMode\ViewMode.cs" />
-    <Compile Include="Essentials\ViewMode\ViewModeRepository.cs" />
-    <Compile Include="Essentials\ViewMode\ViewModeSwapper.cs" />
-    <Compile Include="Essentials\ViewMode\ViewModeSwappingUI.cs" />
-    <Compile Include="Essentials\Visuals\Note\EditorBombGameVisuals.cs" />
-    <Compile Include="Essentials\Visuals\Note\EditorNoteGameVisuals.cs" />
-    <Compile Include="Essentials\Visuals\Note\EditorNoteBasicVisuals.cs" />
-    <Compile Include="Essentials\Visuals\IObjectVisuals.cs" />
-    <Compile Include="Essentials\Visuals\Universal\VisualAssetProvider.cs" />
-    <Compile Include="Essentials\Visuals\VisualsTypeProvider.cs" />
-    <Compile Include="Heck\Constants.cs" />
-    <Compile Include="Heck\Deserialize\EditorDeserializerInterfaces.cs" />
-    <Compile Include="Heck\Installers\EditorHeckModelsInstaller.cs" />
-    <Compile Include="Heck\Installers\EditorHeckSceneInstaller.cs" />
-    <Compile Include="Essentials\Patches\Movement\DisableMovement.cs" />
-    <Compile Include="Essentials\Patches\Movement\InitMovement.cs" />
-    <Compile Include="Essentials\Patches\Movement\InstallMovement.cs" />
-    <Compile Include="Essentials\SpawnProcessing\EditorBeatmapObjectsInTimeRowProcessor.cs" />
-    <Compile Include="Essentials\SpawnProcessing\EditorObjectSpawnData.cs" />
-    <Compile Include="Essentials\SpawnProcessing\EditorSpawnDataRepository.cs" />
-    <Compile Include="Heck\EventData\EditorCoroutineEventData.cs" />
-    <Compile Include="Heck\EventData\EditorInvokeEventData.cs" />
-    <Compile Include="Heck\Events\EditorCoroutineEvent.cs" />
-    <Compile Include="Heck\ObjectData\EditorHeckObjectData.cs" />
-    <Compile Include="Heck\Patches\DeserializationPatch.cs" />
-    <Compile Include="Heck\Patches\EditorGameObjectTracker.cs" />
-    <Compile Include="CustomJSONData\Patches\InjectCustomEvents.cs" />
-    <Compile Include="CustomJSONData\Patches\PreviewCustomBeatmap.cs" />
-    <Compile Include="CustomJSONData\Preview\CustomBeatmapLivePreviewDataModel.cs" />
-    <Compile Include="Heck\Deserialize\EditorHeckCustomDataDeserializer.cs" />
-    <Compile Include="Heck\Deserialize\EditorDataDeserializer.cs" />
-    <Compile Include="Heck\Deserialize\EditorDeserializedData.cs" />
-    <Compile Include="Heck\Deserialize\EditorDeserializedDataContainer.cs" />
-    <Compile Include="Heck\Deserialize\EditorDeserializerManager.cs" />
-    <Compile Include="Essentials\Movement\Data\IEditorBeatmapObjectSpawnMovementData.cs" />
-    <Compile Include="Essentials\Movement\Data\EditorBasicBeatmapObjectSpawnMovementData.cs" />
-    <Compile Include="Essentials\Movement\Note\EditorNoteController.cs" />
-    <Compile Include="Essentials\Movement\Note\EditorNoteFloorMovement.cs" />
-    <Compile Include="Essentials\Movement\Note\EditorNoteJump.cs" />
-    <Compile Include="Essentials\Movement\Note\MovementProvider\EditorNoteGameMovement.cs" />
-    <Compile Include="MapData\Converters\V3SaveDataConverter.cs" />
-    <Compile Include="MapData\LevelDataLoaders\LevelDataLoaderUtil.cs" />
-    <Compile Include="MapData\LevelDataLoaders\LevelDataLoaderV2.cs" />
-    <Compile Include="MapData\LevelDataLoaders\LevelDataLoaderV3.cs" />
-    <Compile Include="MapData\SaveDataLoaders\ICustomSaveDataLoader.cs" />
-    <Compile Include="MapData\SaveDataLoaders\V2BeatmapBpmDataVersionedLoader.cs" />
-    <Compile Include="MapData\SaveDataLoaders\V4CustomSaveDataLoader.cs" />
-    <Compile Include="MapData\SaveDataLoaders\V2CustomSaveDataLoader.cs" />
-    <Compile Include="MapData\SaveDataSavers\ICustomSaveDataSaver.cs" />
-    <Compile Include="MapData\SaveDataSavers\V2CustomSaveDataSaver.cs" />
-    <Compile Include="MapData\SaveDataSavers\V4CustomSaveDataSaver.cs" />
-    <Compile Include="MapData\SerializedSaveData\SerializedCustomBeatmapLevelSaveData.cs" />
-    <Compile Include="MapData\SerializedSaveData\SerializedCustomLevelInfoSaveData.cs" />
-    <Compile Include="NoodleExtensions\Animation\EditorParentObject.cs" />
-    <Compile Include="NoodleExtensions\Deserialize\EditorNoodleCustomDataDeserializer.cs" />
-    <Compile Include="NoodleExtensions\Events\EditorAssignPlayerToTrack.cs" />
-    <Compile Include="NoodleExtensions\Events\EditorAssignTrackParent.cs" />
-    <Compile Include="NoodleExtensions\Installers\EditorNoodleSceneInstaller.cs" />
-    <Compile Include="NoodleExtensions\Managers\EditorSpawnDataManager.cs" />
-    <Compile Include="NoodleExtensions\ObjectData\EditorNoodleBaseNoteData.cs" />
-    <Compile Include="NoodleExtensions\ObjectData\EditorNoodleNoteData.cs" />
-    <Compile Include="NoodleExtensions\ObjectData\EditorNoodleObjectData.cs" />
-    <Compile Include="NoodleExtensions\ObjectData\EditorNoodleObstacleData.cs" />
-    <Compile Include="NoodleExtensions\ObjectData\EditorNoodleSliderData.cs" />
-    <Compile Include="Plugin.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SDKImplementation\DefaultEditorSourceListContextMenuProvider.cs" />
-    <Compile Include="SDKImplementation\DefaultEditorBeatmapListContextMenuProvider.cs" />
-    <Compile Include="SDKImplementation\EditorExSettingsViewContent.cs" />
-    <Compile Include="SDKImplementation\Patches\AllowSignalInterfacesPatches.cs" />
-    <Compile Include="SDKImplementation\Patches\CustomInputActionPatches.cs" />
-    <Compile Include="SDKImplementation\Patches\FixUnityExplorerInputError.cs" />
-    <Compile Include="SDK\AddressableHelpers\AddressableSignalBus.cs" />
-    <Compile Include="SDK\AddressableHelpers\DefaultAddressableCollectorItem.cs" />
-    <Compile Include="SDK\AddressableHelpers\IAddressableCollectorItem.cs" />
-    <Compile Include="SDK\AddressableHelpers\SignalBusAddressableExtensions.cs" />
-    <Compile Include="SDK\Base\LayoutData.cs" />
-    <Compile Include="SDK\Collectors\AddressableCollector.cs" />
-    <Compile Include="SDK\Collectors\TransitionCollector.cs" />
-    <Compile Include="SDK\Components\EditorClickableImage.cs" />
-    <Compile Include="SDK\Components\EditorClickableText.cs" />
-    <Compile Include="SDK\Components\EditorModalView.cs" />
-    <Compile Include="SDK\Components\EditorScrollViewContent.cs" />
-    <Compile Include="SDK\Components\NoTransitionClickableImageSelectableStateController.cs" />
-    <Compile Include="SDK\Components\NoTransitionClickableTextSelectableStateController.cs" />
-    <Compile Include="SDK\Components\StringInputDialogModal.cs" />
-    <Compile Include="SDK\Components\TabbingSegmentedControlController.cs" />
-    <Compile Include="SDK\ContextMenu\Objects\SourceListContextMenuObject.cs" />
-    <Compile Include="SDK\ContextMenu\Objects\BeatmapListContextMenuObject.cs" />
-    <Compile Include="SDK\ContextMenu\ContextOption.cs" />
-    <Compile Include="SDK\ContextMenu\IContextMenuObject.cs" />
-    <Compile Include="SDK\ContextMenu\ContextMenuProvider.cs" />
-    <Compile Include="SDK\ContextMenu\IContextOption.cs" />
-    <Compile Include="SDK\ContextMenu\IContextMenuProvider.cs" />
-    <Compile Include="SDK\Factories\DropdownFactory.cs" />
-    <Compile Include="SDK\Factories\ScrollViewFactory.cs" />
-    <Compile Include="SDK\Factories\ClickableImageFactory.cs" />
-    <Compile Include="SDK\Factories\ClickableTextFactory.cs" />
-    <Compile Include="SDK\Factories\ImageFactory.cs" />
-    <Compile Include="SDK\Factories\ModalFactory.cs" />
-    <Compile Include="SDK\Factories\TextSegmentedControlFactory.cs" />
-    <Compile Include="SDK\Input\CustomInputAction.cs" />
-    <Compile Include="SDK\Input\CustomInputActionRegistry.cs" />
-    <Compile Include="SDK\Input\ICustomInputAction.cs" />
-    <Compile Include="SDK\Installers\EditorSDKModelsInstaller.cs" />
-    <Compile Include="SDK\Installers\EditorSDKViewControllersInstaller.cs" />
-    <Compile Include="SDK\NavBar\NavBarViewData.cs" />
-    <Compile Include="SDK\Settings\SettingsViewData.cs" />
-    <Compile Include="SDK\Signals\AddressableCollectorItemLoadedSignal.cs" />
-    <Compile Include="SDK\Signals\IAddressableCollectorItemLoadedSignal.cs" />
-    <Compile Include="SDK\ViewContent\IViewContent.cs" />
-    <Compile Include="SDK\Collectors\ColorCollector.cs" />
-    <Compile Include="SDK\Collectors\PrefabCollector.cs" />
-    <Compile Include="SDK\Collectors\FontCollector.cs" />
-    <Compile Include="SDK\Factories\StringInputFactory.cs" />
-    <Compile Include="SDK\Factories\ToggleFactory.cs" />
-    <Compile Include="SDK\Factories\IconButtonFactory.cs" />
-    <Compile Include="SDK\Factories\ButtonFactory.cs" />
-    <Compile Include="SDK\Factories\TextFactory.cs" />
-    <Compile Include="UI\Components\SourceListContextMenu.cs" />
-    <Compile Include="UI\Components\BeatmapListContextMenu.cs" />
-    <Compile Include="UI\ContextMenu\ContextMenuComponent.cs" />
-    <Compile Include="UI\Cursor\CursorUpdater.cs" />
-    <Compile Include="UI\Installers\EditorUIViewControllersInstaller.cs" />
-    <Compile Include="UI\Patches\AdjustCursorTypePatch.cs" />
-    <Compile Include="UI\Patches\BeatmapsCollectionDataModelPatches.cs" />
-    <Compile Include="UI\Patches\BeatmapsListViewControllerPatches.cs" />
-    <Compile Include="UI\Patches\EditBeatmapLevelPatches.cs" />
-    <Compile Include="UI\Patches\EditDifficultyBeatmapPatches.cs" />
-    <Compile Include="UI\Patches\MapFilteringPatches.cs" />
-    <Compile Include="UI\Patches\MoreCoverFileTypes.cs" />
-    <Compile Include="UI\Patches\SaveCustomDataPatch.cs" />
-    <Compile Include="UI\Patches\SDK\AddBeatmapListContextMenu.cs" />
-    <Compile Include="UI\Patches\SDK\AddSettingsPatches.cs" />
-    <Compile Include="UI\Patches\SDK\AddSourceListContextMenu.cs" />
-    <Compile Include="UI\Patches\SDK\DisableContextMenuPatches.cs" />
-    <Compile Include="Util\BackingFieldUtil.cs" />
-    <Compile Include="Util\BeatmapFilterUtil.cs" />
-    <Compile Include="Util\ColorUtil.cs" />
-    <Compile Include="Util\CustomBeatmapDataExtensions.cs" />
-    <Compile Include="Util\CustomDataExtensions.cs" />
-    <Compile Include="Util\DirectorySearchUtil.cs" />
-    <Compile Include="Util\EventInvokeUtil.cs" />
-    <Compile Include="Util\FileUtil.cs" />
-    <Compile Include="Util\InputUtils.cs" />
-    <Compile Include="Util\ReversibleDictionary.cs" />
-    <Compile Include="Util\SpawnDataAssociationExtensions.cs" />
-    <Compile Include="Vivify\Deserializer\EditorVivifyCustomDataDeserializer.cs" />
-    <Compile Include="Vivify\Events\ApplyPostProcessing.cs" />
-    <Compile Include="Vivify\Events\AssignObjectPrefab.cs" />
-    <Compile Include="Vivify\Events\DeclareCullingTexture.cs" />
-    <Compile Include="Vivify\Events\DeclareRenderTexture.cs" />
-    <Compile Include="Vivify\Events\DestroyPrefab.cs" />
-    <Compile Include="Vivify\Events\InstantiatePrefab.cs" />
-    <Compile Include="Vivify\Events\SetAnimatorProperty.cs" />
-    <Compile Include="Vivify\Events\SetCameraProperty.cs" />
-    <Compile Include="Vivify\Events\SetGlobalProperty.cs" />
-    <Compile Include="Vivify\Events\SetMaterialProperty.cs" />
-    <Compile Include="Vivify\Events\SetRenderingSettings.cs" />
-    <Compile Include="Vivify\Installers\EditorVivifySceneInstaller.cs" />
-    <Compile Include="Vivify\Managers\EditorAssetBundleManager.cs" />
+    <Reference Include="0Harmony">
+      <HintPath>$(GameDirectory)\Libs\0Harmony.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="BeatmapCore" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\BeatmapCore.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="BeatSaber.BeatmapEditor" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\BeatSaber.BeatmapEditor.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="BeatSaber.ViewSystem" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\BeatSaber.ViewSystem.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="BGLib.AppFlow">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\BGLib.AppFlow.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="BGLib.DotnetExtension">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\BGLib.DotnetExtension.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="BGLib.UnityExtension">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\BGLib.UnityExtension.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="BSML">
+      <HintPath>$(GameDirectory)\Plugins\BSML.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Chroma" Publicize="true">
+      <HintPath>$(GameDirectory)\Plugins\Chroma.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Colors" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Colors.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Core">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Core.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="CustomJSONData" Publicize="true">
+      <HintPath>$(GameDirectory)\Plugins\CustomJSONData.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="DataModels" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\DataModels.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="GameplayCore">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\GameplayCore.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Heck" Publicize="true">
+      <HintPath>$(GameDirectory)\Plugins\Heck.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Hive.Versioning">
+      <HintPath>$(GameDirectory)\Libs\Hive.Versioning.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="HMLib">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\HMLib.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="HMRendering" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\HMRendering.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="HMUI" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\HMUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Interactable">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Interactable.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="IPA.Loader">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\IPA.Loader.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Main" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Main.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>$(GameDirectory)\Libs\Newtonsoft.Json.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="NoodleExtensions" Publicize="true">
+      <HintPath>$(GameDirectory)\Plugins\NoodleExtensions.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Rendering" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Rendering.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="SegmentedControl" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\SegmentedControl.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="SiraUtil">
+      <HintPath>$(GameDirectory)\Plugins\SiraUtil.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Transitions" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Transitions.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Tweening">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Tweening.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Unity.Addressables">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Unity.Addressables.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Unity.InputSystem.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Unity.ResourceManager">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Unity.ResourceManager.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="UnityEngine.UI" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.VRModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.VRModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Vivify" Publicize="true">
+      <HintPath>$(GameDirectory)\Plugins\Vivify.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Zenject" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Zenject.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Zenject-usage" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\Zenject-usage.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />
@@ -543,12 +273,10 @@
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BeatSaberModdingTools.Tasks">
-      <Version>2.0.0-beta1</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    <PackageReference Include="BeatSaberModdingTools.Tasks" Version="2.0.0-beta1">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="UI\Resources\lockcamera.png" />
@@ -558,5 +286,11 @@
     <EmbeddedResource Include="UI\Resources\heart.png" />
     <EmbeddedResource Include="UI\Resources\lily.jpg" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Remove="Util\BeatmapLevelDataModelSaverV2.cs" />
+    <Compile Remove="Util\BeatmapLevelDataModelSaverV3.cs" />
+    <Compile Remove="CustomJSONData\Patches\BeatmapLevelDataModelVersionedLoaderV2.cs" />
+    <Compile Remove="CustomJSONData\Patches\BeatmapLevelDataModelVersionedLoaderV3.cs" />
+    <Compile Remove="CustomJSONData\Patches\BeatmapProjectManagerV2Support.cs" />
+  </ItemGroup>
 </Project>

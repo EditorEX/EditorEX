@@ -22,7 +22,7 @@ namespace EditorEX.SDK.AddressableHelpers
             
             if (uniqueID == null)
             {
-                uniqueID = UnityEngine.Random.RandomRangeInt(0, 1000);
+                uniqueID = UnityEngine.Random.Range(0, 1000);
             }
 
             _callbacks.Add(new Tuple<string, object>(label, uniqueID), callback);

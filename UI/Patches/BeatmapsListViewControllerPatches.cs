@@ -17,7 +17,6 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.UI;
 using Zenject;
-using static UnityEngine.SpookyHash;
 
 namespace EditorEX.UI.Patches
 {
