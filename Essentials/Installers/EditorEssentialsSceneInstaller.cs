@@ -63,7 +63,7 @@ namespace EditorEX.Essentials.Installers
             Container.Bind<ValueTuple<string, Type>>().WithId("VariableMovement").FromInstance(("Noodle", typeof(EditorNoodleMovementDataProvider)));
 
             Container.Bind<VariableMovementTypeProvider>().AsSingle();
-            
+
             Container
                 .BindMemoryPool<EditorNoodleMovementDataProvider, EditorNoodleMovementDataProvider.Pool>()
                 .WithInitialSize(40);

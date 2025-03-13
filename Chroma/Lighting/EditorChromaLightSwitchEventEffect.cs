@@ -81,7 +81,7 @@ namespace EditorEX.Chroma.Lighting
             Initialize(lightSwitchEventEffect._highlightColor1, ref _highlightColor1Mult);
             Initialize(lightSwitchEventEffect._lightColor0Boost, ref _lightColor0BoostMult);
             Initialize(lightSwitchEventEffect._lightColor1Boost, ref _lightColor1BoostMult);
-            Initialize(lightSwitchEventEffect._highlightColor0Boost, ref _highlightColor0BoostMult); 
+            Initialize(lightSwitchEventEffect._highlightColor0Boost, ref _highlightColor0BoostMult);
             Initialize(lightSwitchEventEffect._highlightColor1Boost, ref _highlightColor1BoostMult);
 
             Colorizer = lightColorizerManager.Create(this);

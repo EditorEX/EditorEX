@@ -20,7 +20,7 @@ namespace EditorEX.SDK.ContextMenu
 
         public void Invoke(object obj)
         {
-            if (obj.GetType().IsAssignableFrom(typeof(T))) 
+            if (obj.GetType().IsAssignableFrom(typeof(T)))
             {
                 OnClick((T)obj);
             }

@@ -45,11 +45,11 @@ namespace EditorEX.UI.Cursor
         public void Tick()
         {
             bool any = false;
-            foreach(var selectable in Selectable.allSelectablesArray)
+            foreach (var selectable in Selectable.allSelectablesArray)
             {
                 any |= selectable.IsHighlighted();
             }
-            ChangeCursor(any ? WindowsCursor.Hand : WindowsCursor.StandardArrow); 
+            ChangeCursor(any ? WindowsCursor.Hand : WindowsCursor.StandardArrow);
         }
     }
 }

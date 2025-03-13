@@ -76,7 +76,7 @@ namespace EditorEX.Heck.Patches
             track = heckData.Track;
             return true;
         }
-        
+
 
         [AffinityPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.InsertObject))]
         [AffinityTranspiler]

@@ -15,10 +15,10 @@ namespace EditorEX.Chroma.Installers
             {
                 Container.BindInterfacesAndSelfTo<EditorAssetBundleManager>().AsSingle();
                 Container.BindInterfacesAndSelfTo<PrefabManager>().AsSingle();
-                
+
                 Container.BindInterfacesAndSelfTo<CameraPropertyManager>().AsSingle();
                 Container.BindInterfacesAndSelfTo<CameraEffectApplier>().AsSingle();
-                
+
                 Container.BindInterfacesTo<EditorApplyPostProcessing>().AsSingle();
                 Container.BindInterfacesTo<EditorDeclareCullingTexture>().AsSingle();
                 Container.BindInterfacesTo<EditorDeclareRenderTexture>().AsSingle();

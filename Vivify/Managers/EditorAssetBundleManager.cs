@@ -24,11 +24,11 @@ public class EditorAssetBundleManager : IDisposable
         PopulateBeatmap populateBeatmap)
     {
         _log = log;
-        
+
         string path = Path.Combine(
             Path.GetDirectoryName(populateBeatmap._beatmapLevelDataModel.songFilePath)!,
             BUNDLE_FILE);
-        
+
         if (!File.Exists(path))
         {
             _log.Error($"[{BUNDLE_FILE}] not found");

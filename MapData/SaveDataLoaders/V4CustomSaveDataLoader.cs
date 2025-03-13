@@ -73,29 +73,29 @@ namespace EditorEX.MapData.SaveDataLoaders
 
             List<BeatmapLevelColorSchemeEditorData> colorSchemes = customBeatmapLevelSaveData.colorSchemes
                 .Select((SerializedCustomBeatmapLevelSaveData.ColorScheme colorScheme) =>
-                BeatmapLevelColorSchemeEditorData.Create(colorScheme.colorSchemeName, 
-                    colorScheme.overrideNotes, 
-                    GetColorFromHtmlString(colorScheme.saberAColor), 
-                    GetColorFromHtmlString(colorScheme.saberBColor), 
-                    GetColorFromHtmlString(colorScheme.obstaclesColor), 
-                    colorScheme.overrideLights, 
-                    GetColorFromHtmlString(colorScheme.environmentColor0), 
-                    GetColorFromHtmlString(colorScheme.environmentColor1), 
-                    GetColorFromHtmlString(colorScheme.environmentColor0Boost), 
+                BeatmapLevelColorSchemeEditorData.Create(colorScheme.colorSchemeName,
+                    colorScheme.overrideNotes,
+                    GetColorFromHtmlString(colorScheme.saberAColor),
+                    GetColorFromHtmlString(colorScheme.saberBColor),
+                    GetColorFromHtmlString(colorScheme.obstaclesColor),
+                    colorScheme.overrideLights,
+                    GetColorFromHtmlString(colorScheme.environmentColor0),
+                    GetColorFromHtmlString(colorScheme.environmentColor1),
+                    GetColorFromHtmlString(colorScheme.environmentColor0Boost),
                     GetColorFromHtmlString(colorScheme.environmentColor1Boost))).ToList();
-            
+
             string defaultEnvironment = _environmentsListModel.GetLastEnvironmentInfoWithType(EnvironmentType.Normal).serializedName;
             List<EnvironmentName> environmentNames = customBeatmapLevelSaveData.environmentNames.Select((string environmentName) => new EnvironmentName(environmentName)).ToList<EnvironmentName>();
-            
+
             Dictionary<ValueTuple<BeatmapCharacteristicSO, BeatmapDifficulty>, DifficultyBeatmapData> beatmapDatas = new Dictionary<ValueTuple<BeatmapCharacteristicSO, BeatmapDifficulty>, DifficultyBeatmapData>();
-            
+
             foreach (SerializedCustomBeatmapLevelSaveData.DifficultyBeatmap difficultyBeatmap in customBeatmapLevelSaveData.difficultyBeatmaps)
             {
                 BeatmapCharacteristicSO beatmapCharacteristicBySerializedName = _beatmapCharacteristicCollection.GetBeatmapCharacteristicBySerializedName(difficultyBeatmap.characteristic);
-                
+
                 BeatmapDifficulty beatmapDifficulty2;
                 BeatmapDifficulty beatmapDifficulty = (difficultyBeatmap.difficulty.BeatmapDifficultyFromSerializedName(out beatmapDifficulty2) ? beatmapDifficulty2 : BeatmapDifficulty.Easy);
-                
+
                 DifficultyBeatmapData difficultyBeatmapData =
                     new DifficultyBeatmapData(
                         beatmapCharacteristicBySerializedName,

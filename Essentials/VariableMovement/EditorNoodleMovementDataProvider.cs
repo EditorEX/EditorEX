@@ -131,19 +131,19 @@ namespace EditorEX.Essentials.VariableMovement
                     break;
 
                 case BeatmapObjectSpawnMovementData.NoteJumpValueType.BeatOffset:
-                {
-                    float halfJumpDurationInBeats = CoreMathUtils.CalculateHalfJumpDurationInBeats(
-                        _movementData._startHalfJumpDurationInBeats,
-                        _movementData._maxHalfJumpDistance,
-                        njs,
-                        _oneBeatDuration,
-                        spawnOffset);
+                    {
+                        float halfJumpDurationInBeats = CoreMathUtils.CalculateHalfJumpDurationInBeats(
+                            _movementData._startHalfJumpDurationInBeats,
+                            _movementData._maxHalfJumpDistance,
+                            njs,
+                            _oneBeatDuration,
+                            spawnOffset);
 
-                    float halfJump = _oneBeatDuration * halfJumpDurationInBeats;
-                    _halfJumpDurationOverride = halfJump;
-                    _jumpDurationOverride = halfJump * 2;
-                    break;
-                }
+                        float halfJump = _oneBeatDuration * halfJumpDurationInBeats;
+                        _halfJumpDurationOverride = halfJump;
+                        _jumpDurationOverride = halfJump * 2;
+                        break;
+                    }
             }
 
             _spawnAheadTimeOverride = VariableMovementDataProvider.kMoveDuration + halfJumpDuration;

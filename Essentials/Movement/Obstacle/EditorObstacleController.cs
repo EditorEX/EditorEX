@@ -28,8 +28,8 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
         [Inject]
         private void Construct(
-            IReadonlyBeatmapState state, 
-            ActiveViewMode activeViewMode, 
+            IReadonlyBeatmapState state,
+            ActiveViewMode activeViewMode,
             MovementTypeProvider movementTypeProvider,
             VisualsTypeProvider visualsTypeProvider,
             VariableMovementTypeProvider variableMovementTypeProvider,

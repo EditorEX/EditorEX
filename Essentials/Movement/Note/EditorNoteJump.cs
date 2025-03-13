@@ -83,7 +83,7 @@ namespace EditorEX.Essentials.Movement.Note
             {
                 NoodleData = null;
             }
-            
+
             _variableMovementDataProvider = variableMovementDataProvider;
 
             _rotatedObject = getVisualRoot;
@@ -130,7 +130,7 @@ namespace EditorEX.Essentials.Movement.Note
                 _animationHelper.GetDefinitePositionOffset(noodleData.AnimationObject, noodleData.Track, time, out Vector3? position);
                 if (position.HasValue)
                 {
-                    _definitePosition = true;   
+                    _definitePosition = true;
                     return position.Value + noodleData.InternalNoteOffset;
                 }
             }
@@ -162,7 +162,7 @@ namespace EditorEX.Essentials.Movement.Note
             {
                 _localPosition.x = _startPos.x;
             }
-            else if (num2 < 0.25f)  
+            else if (num2 < 0.25f)
             {
                 _localPosition.x = _startPos.x + (_endPos.x - _startPos.x) * Easing.InOutQuad(num2 * 4f);
             }

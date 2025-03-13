@@ -25,7 +25,7 @@ namespace EditorEX.Heck.Deserialize
 
         private EditorDeserializerManager(
             SiraLog log,
-            BeatmapObjectsDataModel objectDataModel, 
+            BeatmapObjectsDataModel objectDataModel,
             BeatmapBasicEventsDataModel eventsDataModel,
             PopulateBeatmap populateBeatmap)
         {

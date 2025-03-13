@@ -35,7 +35,7 @@ namespace EditorEX.SDK.AddressableHelpers
                 }
             });
         }
-        
+
         public void Subscribe(string label, object uniqueID, Action<IAddressableCollectorItemLoadedSignal> action)
         {
             if (_addressableCollector.CheckAvailability(label))

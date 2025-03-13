@@ -38,7 +38,7 @@ namespace EditorEX.SDK.Factories
 
             var bg = _imageFactory.Create(modalView.transform, "#Background8px", new Base.LayoutData());
             bg._colorSo = _colorCollector.GetColor("VerticalList/Background/Pressed");
-            
+
             var highlight = _imageFactory.Create(modalView.transform, "#Background8px", new Base.LayoutData());
             highlight._colorSo = _colorCollector.GetColor("Button/Text/Highlighted");
 

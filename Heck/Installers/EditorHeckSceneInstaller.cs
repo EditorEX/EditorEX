@@ -33,15 +33,15 @@ namespace EditorEX.Heck.Installers
             Container.BindInterfacesTo<EditorCoroutineEvent>().AsSingle();
             Container.BindInterfacesAndSelfTo<TransformControllerFactory>().AsSingle();
             Container.BindInterfacesTo<TrackUpdateManager>().AsSingle();
-            
+
             Container.Bind<ObjectInitializerManager>().AsSingle();
-            
+
             Container.BindInterfacesAndSelfTo<SiraUtilHeadFinder>().AsSingle();
 
             Container.BindInterfacesTo<EditorGameObjectTracker>().AsSingle().NonLazy();
-            
+
             Container.BindInterfacesTo<GameBaseProviderDisposer>().AsSingle();
-            
+
             Container.BindInterfacesTo<PlayerTransformGetter>().AsSingle();
             Container.BindInterfacesTo<ColorSchemeGetter>().AsSingle();
             //container.BindInterfacesTo<ScoreGetter>().AsSingle();

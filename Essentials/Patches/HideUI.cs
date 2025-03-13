@@ -34,6 +34,6 @@ namespace EditorEX.Essentials.Patches
                 _screenSystem = Resources.FindObjectsOfTypeAll<BeatmapEditorScreenSystem>().FirstOrDefault();
             }
             _screenSystem?.gameObject.SetActive((!_screenSystem?.gameObject?.activeSelf) ?? true);
-        }  
+        }
     }
 }

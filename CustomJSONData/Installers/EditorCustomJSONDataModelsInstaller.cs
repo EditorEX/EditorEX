@@ -19,7 +19,7 @@ namespace EditorEX.CustomJSONData.Installers
 
             Container.Bind<ICustomSaveDataSaver>().To<V4CustomSaveDataSaver>().AsSingle().NonLazy();
             Container.Bind<ICustomSaveDataSaver>().To<V2CustomSaveDataSaver>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<BeatmapLevelDataModelSaverPatch>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<BeatmapProjectManagerSaverPatch>().AsSingle().NonLazy();
 
             Container.Bind<V2BeatmapBpmDataVersionedLoader>().AsSingle();
             Container.BindInterfacesAndSelfTo<AudioDataLoaderPatch>().AsSingle().NonLazy();

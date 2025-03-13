@@ -42,7 +42,7 @@ namespace EditorEX.Essentials.Patches
         }
 
         private void ModeChanged()
-        {   
+        {
             if (_activeViewMode.Mode.LockCamera == _activeViewMode.LastMode.LockCamera) return;
             if (_activeViewMode.Mode.LockCamera)
             {

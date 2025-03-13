@@ -129,7 +129,7 @@ namespace EditorEX.UI.Patches
                     _beatmapProjectManager.Value._workingBeatmapProject,
                     text);
 
-                contributorData.IconPath = Path.GetFileName(text);      
+                contributorData.IconPath = Path.GetFileName(text);
 
                 _levelCustomDataModel.UpdateWith(null, null, null, null, null, null, null, _levelCustomDataModel.Contributors);
 
@@ -179,7 +179,8 @@ namespace EditorEX.UI.Patches
             newContributor.transform.SetParent(_scrollView.contentTransform, false);
             var horizontal = newContributor.AddComponent<HorizontalLayoutGroup>();
 
-            var button = _buttonFactory.Create(horizontal.transform, "New Contributor", () => {
+            var button = _buttonFactory.Create(horizontal.transform, "New Contributor", () =>
+            {
                 _levelCustomDataModel.Contributors.Add(new ContributorData("New Contributor", "", "Contributor Role"));
                 _levelCustomDataModel.UpdateWith(null, null, null, null, null, null, null, _levelCustomDataModel.Contributors);
 
@@ -204,9 +205,9 @@ namespace EditorEX.UI.Patches
             _songInfoRoot.SetActive(true); // Fix layout
 
             _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
-            _environmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal).Select(x=>x.serializedName).ToList().IndexOf(_levelCustomDataModel.EnvironmentName), clearModifiedState);
+            _environmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.EnvironmentName), clearModifiedState);
             _allDirectionsEnvironmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.AllDirectionsEnvironmentName), clearModifiedState);
-            
+
             var customPlatIndex = _customPlatformsListModel.CustomPlatforms.Select(x => x.FilePath).ToList().IndexOf(_levelCustomDataModel.CustomPlatformInfo.FilePath);
             customPlatIndex = customPlatIndex == -1 ? _customPlatformsListModel.CustomPlatforms.Select(x => x.Hash).ToList().IndexOf(_levelCustomDataModel.CustomPlatformInfo.Hash) : customPlatIndex;
 

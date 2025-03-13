@@ -21,7 +21,7 @@ namespace EditorEX.UI.ContextMenu
 
         private VerticalLayoutGroup _verticalLayoutGroup;
         private object? _linkedObject;
-        
+
         public EditorModalView modal { get; private set; }
 
         [Inject]
@@ -70,7 +70,7 @@ namespace EditorEX.UI.ContextMenu
             }
         }
 
-        public void ShowContextMenu<T>(T data, Vector2 position, object? linkedObject) where T: IContextMenuObject
+        public void ShowContextMenu<T>(T data, Vector2 position, object? linkedObject) where T : IContextMenuObject
         {
             var providers = _contextMenuProviders.OfType<ContextMenuProvider<T>>();
             if (providers == null || providers.Count() == 0)
@@ -78,7 +78,7 @@ namespace EditorEX.UI.ContextMenu
                 return;
             }
 
-            var contextOptions = providers.SelectMany(x=>x.GetIContextOptions());
+            var contextOptions = providers.SelectMany(x => x.GetIContextOptions());
 
             CreateButtons(contextOptions, data);
 

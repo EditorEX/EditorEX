@@ -4,6 +4,7 @@ using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.SerializedSaveData;
 using IPA.Loader;
+using JetBrains.Annotations;
 using ModestTree;
 using Newtonsoft.Json;
 using SiraUtil.Zenject;
@@ -23,7 +24,7 @@ namespace EditorEX.MapData.SaveDataSavers
 
         [Inject]
         private void Construct(
-            BeatmapLevelDataModel beatmapLevelDataModel,
+            [NotNull] BeatmapLevelDataModel beatmapLevelDataModel,
             UBinder<Plugin, PluginMetadata> metadata,
             LevelCustomDataModel levelCustomDataModel)
         {

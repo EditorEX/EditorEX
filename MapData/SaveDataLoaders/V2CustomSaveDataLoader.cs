@@ -55,15 +55,15 @@ namespace EditorEX.MapData.SaveDataLoaders
                 foreach (BeatmapLevelColorSchemeSaveData beatmapLevelColorSchemeSaveData in standardLevelInfoSaveData.colorSchemes)
                 {
                     beatmapLevelColorSchemes.Add(BeatmapLevelColorSchemeEditorData.Create(
-                        beatmapLevelColorSchemeSaveData.colorScheme.colorSchemeId, 
-                        true, 
-                        beatmapLevelColorSchemeSaveData.colorScheme.saberAColor, 
-                        beatmapLevelColorSchemeSaveData.colorScheme.saberBColor, 
-                        beatmapLevelColorSchemeSaveData.colorScheme.obstaclesColor, 
+                        beatmapLevelColorSchemeSaveData.colorScheme.colorSchemeId,
                         true,
-                        beatmapLevelColorSchemeSaveData.colorScheme.environmentColor0, 
-                        beatmapLevelColorSchemeSaveData.colorScheme.environmentColor1, 
-                        beatmapLevelColorSchemeSaveData.colorScheme.environmentColor0Boost, 
+                        beatmapLevelColorSchemeSaveData.colorScheme.saberAColor,
+                        beatmapLevelColorSchemeSaveData.colorScheme.saberBColor,
+                        beatmapLevelColorSchemeSaveData.colorScheme.obstaclesColor,
+                        true,
+                        beatmapLevelColorSchemeSaveData.colorScheme.environmentColor0,
+                        beatmapLevelColorSchemeSaveData.colorScheme.environmentColor1,
+                        beatmapLevelColorSchemeSaveData.colorScheme.environmentColor0Boost,
                         beatmapLevelColorSchemeSaveData.colorScheme.environmentColor1Boost));
                 }
             }
@@ -126,9 +126,9 @@ namespace EditorEX.MapData.SaveDataLoaders
                 }
             }
 
-            Dictionary<string, CustomData> beatmapCustomDatasByFilename = 
+            Dictionary<string, CustomData> beatmapCustomDatasByFilename =
                 standardLevelInfoSaveData.difficultyBeatmapSets
-                .SelectMany(x => 
+                .SelectMany(x =>
                     x.difficultyBeatmaps.Select(x => (x.beatmapFilename, (x as CustomLevelInfoSaveData.DifficultyBeatmap).customData)))
                 .ToDictionary(x => x.beatmapFilename, x => x.customData);
 

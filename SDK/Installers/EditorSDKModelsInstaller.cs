@@ -16,7 +16,7 @@ namespace EditorEX.SDK.Installers
 
             Container.Bind<IAddressableCollectorItem>()
                 .To<DefaultAddressableCollectorItem<Material>>()
-                .FromInstance(new ("rounded-corners", "Visuals/Materials/UI/UINoGlowRoundEdge.mat"));
+                .FromInstance(new("rounded-corners", "Visuals/Materials/UI/UINoGlowRoundEdge.mat"));
 
             Container.BindInterfacesAndSelfTo<AllowSignalInterfacesPatches>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<FixUnityExplorerInputError>().AsSingle().NonLazy();

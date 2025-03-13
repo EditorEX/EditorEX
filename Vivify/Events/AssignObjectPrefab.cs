@@ -96,147 +96,147 @@ namespace EditorEX.Vivify.Events
                 switch (value)
                 {
                     case AssignObjectPrefabData.ObjectPrefabInfo objectPrefabInfo:
-                    {
-                        IPrefabCollection? prefabCollection = key switch
                         {
-                            NOTE_PREFAB => _notePrefabManager.ColorNotePrefabs,
-                            BOMB_PREFAB => _notePrefabManager.BombNotePrefabs,
-                            CHAIN_PREFAB => _notePrefabManager.BurstSliderPrefabs,
-                            CHAIN_ELEMENT_PREFAB => _notePrefabManager.BurstSliderElementPrefabs,
-                            _ => null
-                        };
-
-                        if (prefabCollection == null)
-                        {
-                            _log.Error($"[{key}] not recognized");
-                            continue;
-                        }
-
-                        if (objectPrefabInfo.Track == null)
-                        {
-                            _log.Error("No track defined");
-                            continue;
-                        }
-
-                        string? asset = objectPrefabInfo.Asset;
-                        if (asset != string.Empty)
-                        {
-                            _log.Debug(
-                                $"Assigned track prefab: [{asset ?? "null"}] for [{key}] with load mode [{data.LoadMode}]");
-                            _beatmapObjectPrefabManager.AssignTrackPrefab(
-                                (PrefabDictionary)prefabCollection,
-                                objectPrefabInfo.Track,
-                                asset,
-                                data.LoadMode);
-                        }
-
-                        string? debrisAsset = objectPrefabInfo.DebrisAsset;
-                        if (debrisAsset != string.Empty)
-                        {
-                            PrefabDictionary? debrisPrefabs = key switch
+                            IPrefabCollection? prefabCollection = key switch
                             {
-                                NOTE_PREFAB => _debrisPrefabManager.ColorNoteDebrisPrefabs,
-                                CHAIN_PREFAB => _debrisPrefabManager.BurstSliderDebrisPrefabs,
-                                CHAIN_ELEMENT_PREFAB => _debrisPrefabManager.BurstSliderElementDebrisPrefabs,
+                                NOTE_PREFAB => _notePrefabManager.ColorNotePrefabs,
+                                BOMB_PREFAB => _notePrefabManager.BombNotePrefabs,
+                                CHAIN_PREFAB => _notePrefabManager.BurstSliderPrefabs,
+                                CHAIN_ELEMENT_PREFAB => _notePrefabManager.BurstSliderElementPrefabs,
                                 _ => null
                             };
 
-                            if (debrisPrefabs == null)
+                            if (prefabCollection == null)
                             {
-                                _log.Error($"[{key}] debris not recognized");
+                                _log.Error($"[{key}] not recognized");
                                 continue;
                             }
 
-                            _log.Debug(
-                                $"Assigned debris track prefab [{debrisAsset ?? "null"}] for [{key}] with load mode [{data.LoadMode}]");
-                            _beatmapObjectPrefabManager.AssignTrackPrefab(
-                                debrisPrefabs,
-                                objectPrefabInfo.Track,
-                                debrisAsset,
-                                data.LoadMode);
-                        }
+                            if (objectPrefabInfo.Track == null)
+                            {
+                                _log.Error("No track defined");
+                                continue;
+                            }
 
-                        string? anyDirectionAsset = objectPrefabInfo.AnyDirectionAsset;
-                        if (anyDirectionAsset != string.Empty &&
-                            key == NOTE_PREFAB)
-                        {
-                            _log.Debug(
-                                $"Assigned any direction track prefab [{debrisAsset ?? "null"}] for [{key}] with load mode [{data.LoadMode}]");
-                            _beatmapObjectPrefabManager.AssignTrackPrefab(
-                                _notePrefabManager.AnyDirectionNotePrefabs,
-                                objectPrefabInfo.Track,
-                                anyDirectionAsset,
-                                data.LoadMode);
-                        }
+                            string? asset = objectPrefabInfo.Asset;
+                            if (asset != string.Empty)
+                            {
+                                _log.Debug(
+                                    $"Assigned track prefab: [{asset ?? "null"}] for [{key}] with load mode [{data.LoadMode}]");
+                                _beatmapObjectPrefabManager.AssignTrackPrefab(
+                                    (PrefabDictionary)prefabCollection,
+                                    objectPrefabInfo.Track,
+                                    asset,
+                                    data.LoadMode);
+                            }
 
-                        break;
-                    }
+                            string? debrisAsset = objectPrefabInfo.DebrisAsset;
+                            if (debrisAsset != string.Empty)
+                            {
+                                PrefabDictionary? debrisPrefabs = key switch
+                                {
+                                    NOTE_PREFAB => _debrisPrefabManager.ColorNoteDebrisPrefabs,
+                                    CHAIN_PREFAB => _debrisPrefabManager.BurstSliderDebrisPrefabs,
+                                    CHAIN_ELEMENT_PREFAB => _debrisPrefabManager.BurstSliderElementDebrisPrefabs,
+                                    _ => null
+                                };
+
+                                if (debrisPrefabs == null)
+                                {
+                                    _log.Error($"[{key}] debris not recognized");
+                                    continue;
+                                }
+
+                                _log.Debug(
+                                    $"Assigned debris track prefab [{debrisAsset ?? "null"}] for [{key}] with load mode [{data.LoadMode}]");
+                                _beatmapObjectPrefabManager.AssignTrackPrefab(
+                                    debrisPrefabs,
+                                    objectPrefabInfo.Track,
+                                    debrisAsset,
+                                    data.LoadMode);
+                            }
+
+                            string? anyDirectionAsset = objectPrefabInfo.AnyDirectionAsset;
+                            if (anyDirectionAsset != string.Empty &&
+                                key == NOTE_PREFAB)
+                            {
+                                _log.Debug(
+                                    $"Assigned any direction track prefab [{debrisAsset ?? "null"}] for [{key}] with load mode [{data.LoadMode}]");
+                                _beatmapObjectPrefabManager.AssignTrackPrefab(
+                                    _notePrefabManager.AnyDirectionNotePrefabs,
+                                    objectPrefabInfo.Track,
+                                    anyDirectionAsset,
+                                    data.LoadMode);
+                            }
+
+                            break;
+                        }
 
                     case AssignObjectPrefabData.SaberPrefabInfo saberPrefabInfo:
-                    {
-                        string? asset = saberPrefabInfo.Asset;
-                        if (asset != string.Empty)
                         {
-                            if ((saberPrefabInfo.Type & AssignObjectPrefabData.SaberPrefabInfo.SaberType.Left) != 0)
+                            string? asset = saberPrefabInfo.Asset;
+                            if (asset != string.Empty)
                             {
-                                _log.Debug(
-                                    $"Assigned prefab [{asset ?? "null"}] for left saber with load mode [{data.LoadMode}]");
-                                _beatmapObjectPrefabManager.AssignGameObjectPrefab(
-                                    _saberPrefabManager.SaberAPrefabs,
-                                    asset,
-                                    data.LoadMode,
-                                    customEventData.time);
+                                if ((saberPrefabInfo.Type & AssignObjectPrefabData.SaberPrefabInfo.SaberType.Left) != 0)
+                                {
+                                    _log.Debug(
+                                        $"Assigned prefab [{asset ?? "null"}] for left saber with load mode [{data.LoadMode}]");
+                                    _beatmapObjectPrefabManager.AssignGameObjectPrefab(
+                                        _saberPrefabManager.SaberAPrefabs,
+                                        asset,
+                                        data.LoadMode,
+                                        customEventData.time);
+                                }
+
+                                if ((saberPrefabInfo.Type & AssignObjectPrefabData.SaberPrefabInfo.SaberType.Right) != 0)
+                                {
+                                    _log.Debug(
+                                        $"Assigned prefab [{asset ?? "null"}] for right saber with load mode [{data.LoadMode}]");
+                                    _beatmapObjectPrefabManager.AssignGameObjectPrefab(
+                                        _saberPrefabManager.SaberBPrefabs,
+                                        asset,
+                                        data.LoadMode,
+                                        customEventData.time);
+                                }
                             }
 
-                            if ((saberPrefabInfo.Type & AssignObjectPrefabData.SaberPrefabInfo.SaberType.Right) != 0)
+                            string? trail = saberPrefabInfo.TrailAsset;
+                            if (trail != string.Empty)
                             {
-                                _log.Debug(
-                                    $"Assigned prefab [{asset ?? "null"}] for right saber with load mode [{data.LoadMode}]");
-                                _beatmapObjectPrefabManager.AssignGameObjectPrefab(
-                                    _saberPrefabManager.SaberBPrefabs,
-                                    asset,
-                                    data.LoadMode,
-                                    customEventData.time);
+                                TrailProperties trailProperties = new(
+                                    saberPrefabInfo.TopPos,
+                                    saberPrefabInfo.BottomPos,
+                                    saberPrefabInfo.Duration,
+                                    saberPrefabInfo.SamplingFrequency,
+                                    saberPrefabInfo.Granularity);
+
+                                if ((saberPrefabInfo.Type & AssignObjectPrefabData.SaberPrefabInfo.SaberType.Left) != 0)
+                                {
+                                    _log.Debug(
+                                        $"Assigned trail material [{trail ?? "null"}] for left saber with load mode [{data.LoadMode}]");
+                                    _beatmapObjectPrefabManager.AssignTrail(
+                                        _saberPrefabManager.SaberATrailMaterials,
+                                        trail,
+                                        trailProperties,
+                                        data.LoadMode,
+                                        customEventData.time);
+                                }
+
+                                if ((saberPrefabInfo.Type & AssignObjectPrefabData.SaberPrefabInfo.SaberType.Right) != 0)
+                                {
+                                    _log.Debug(
+                                        $"Assigned trail material [{trail ?? "null"}] for right saber with load mode [{data.LoadMode}]");
+                                    _beatmapObjectPrefabManager.AssignTrail(
+                                        _saberPrefabManager.SaberBTrailMaterials,
+                                        trail,
+                                        trailProperties,
+                                        data.LoadMode,
+                                        customEventData.time);
+                                }
                             }
+
+                            break;
                         }
-
-                        string? trail = saberPrefabInfo.TrailAsset;
-                        if (trail != string.Empty)
-                        {
-                            TrailProperties trailProperties = new(
-                                saberPrefabInfo.TopPos,
-                                saberPrefabInfo.BottomPos,
-                                saberPrefabInfo.Duration,
-                                saberPrefabInfo.SamplingFrequency,
-                                saberPrefabInfo.Granularity);
-
-                            if ((saberPrefabInfo.Type & AssignObjectPrefabData.SaberPrefabInfo.SaberType.Left) != 0)
-                            {
-                                _log.Debug(
-                                    $"Assigned trail material [{trail ?? "null"}] for left saber with load mode [{data.LoadMode}]");
-                                _beatmapObjectPrefabManager.AssignTrail(
-                                    _saberPrefabManager.SaberATrailMaterials,
-                                    trail,
-                                    trailProperties,
-                                    data.LoadMode,
-                                    customEventData.time);
-                            }
-
-                            if ((saberPrefabInfo.Type & AssignObjectPrefabData.SaberPrefabInfo.SaberType.Right) != 0)
-                            {
-                                _log.Debug(
-                                    $"Assigned trail material [{trail ?? "null"}] for right saber with load mode [{data.LoadMode}]");
-                                _beatmapObjectPrefabManager.AssignTrail(
-                                    _saberPrefabManager.SaberBTrailMaterials,
-                                    trail,
-                                    trailProperties,
-                                    data.LoadMode,
-                                    customEventData.time);
-                            }
-                        }
-
-                        break;
-                    }
                 }
             }
         }

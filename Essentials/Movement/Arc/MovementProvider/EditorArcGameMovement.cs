@@ -106,21 +106,21 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         private SliderData CreateSliderData(float headTime, float tailTime, float controlPointLength, NoteCutDirection cutDirection, float tailControlPointLength, NoteCutDirection tailCutDirection, SliderMidAnchorMode midAnchorMode)
         {
             return SliderData.CreateSliderData(
-                ColorType.None, 
-                headTime, 
+                ColorType.None,
+                headTime,
                 _audioDataModel.bpmData.SecondsToBeat(headTime),
                 _sliderEditorData.rotation,
-                _sliderEditorData.column, 
-                (NoteLineLayer)_sliderEditorData.row, 
-                (NoteLineLayer)_sliderEditorData.row, 
-                controlPointLength, cutDirection, 
-                tailTime, 
+                _sliderEditorData.column,
+                (NoteLineLayer)_sliderEditorData.row,
+                (NoteLineLayer)_sliderEditorData.row,
+                controlPointLength, cutDirection,
+                tailTime,
                 _sliderEditorData.tailRotation,
-                _sliderEditorData.tailColumn, 
-                (NoteLineLayer)_sliderEditorData.tailRow, 
-                (NoteLineLayer)_sliderEditorData.tailRow, 
-                tailControlPointLength, 
-                tailCutDirection, 
+                _sliderEditorData.tailColumn,
+                (NoteLineLayer)_sliderEditorData.tailRow,
+                (NoteLineLayer)_sliderEditorData.tailRow,
+                tailControlPointLength,
+                tailCutDirection,
                 midAnchorMode);
         }
 

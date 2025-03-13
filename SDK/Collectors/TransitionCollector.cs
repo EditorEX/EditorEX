@@ -44,7 +44,7 @@ namespace EditorEX.SDK.Collectors
 
         private void AddColorTransition(string transitionName, string normalColor, string highlightedColor, string pressedColor, string disabledColor, string selectedColor, string selectedAndHighlightedColor)
         {
-            var transition =  NewColorTransition(_colorCollector.GetColor(normalColor), _colorCollector.GetColor(highlightedColor), _colorCollector.GetColor(pressedColor), _colorCollector.GetColor(disabledColor), _colorCollector.GetColor(selectedColor), _colorCollector.GetColor(selectedAndHighlightedColor));
+            var transition = NewColorTransition(_colorCollector.GetColor(normalColor), _colorCollector.GetColor(highlightedColor), _colorCollector.GetColor(pressedColor), _colorCollector.GetColor(disabledColor), _colorCollector.GetColor(selectedColor), _colorCollector.GetColor(selectedAndHighlightedColor));
             transition.name = transitionName;
             _transitions[transitionName] = transition;
         }
@@ -62,7 +62,7 @@ namespace EditorEX.SDK.Collectors
             return transition;
         }
 
-        public T GetTransition<T>(string name) where T: BaseTransitionSO
+        public T GetTransition<T>(string name) where T : BaseTransitionSO
         {
             if (!_transitions.ContainsKey(name))
             {

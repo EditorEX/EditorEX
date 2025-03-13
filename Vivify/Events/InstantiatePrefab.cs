@@ -182,7 +182,7 @@ namespace EditorEX.Vivify.Events
                 foreach (CustomEventEditorData customEventEditorData2 in CustomDataRepository.GetCustomEvents())
                 {
                     if (customEventEditorData2.beat < customEventEditorData.beat || customEventEditorData2.beat > currentBeat) continue;
-                    
+
                     if (customEventEditorData2.eventType == DESTROY_PREFAB && _deserializedData.Resolve<DestroyObjectData>(customEventEditorData2, out DestroyObjectData? data2))
                     {
                         if (data2.Id.Contains(data.Id))
@@ -214,7 +214,7 @@ namespace EditorEX.Vivify.Events
                 Initialize();
                 CreatePreviousPrefabs();
             }
-            
+
             _lastBeat = _audioTimeSource.songTime;
         }
     }

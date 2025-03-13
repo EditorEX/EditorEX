@@ -25,9 +25,9 @@ namespace EditorEX.Essentials.Movement.Arc
 
         [Inject]
         private void Construct(
-            IReadonlyBeatmapState state, 
+            IReadonlyBeatmapState state,
             ActiveViewMode activeViewMode,
-            MovementTypeProvider movementTypeProvider, 
+            MovementTypeProvider movementTypeProvider,
             VariableMovementTypeProvider variableMovementTypeProvider,
             EditorBasicBeatmapObjectSpawnMovementData movementData)
         {

@@ -35,7 +35,7 @@ namespace EditorEX.Essentials
             newComponent = existing;
             return false;
         }
-        
+
         public static bool GetProvidedVariableMovementDataProvider(this GameObject? gameObject, ITypeProvider typeProvider, BaseEditorData? data, IVariableMovementDataProvider existing, out IVariableMovementDataProvider newComponent)
         {
             var holder = gameObject?.GetComponent<VariableMovementHolder>();
@@ -47,7 +47,7 @@ namespace EditorEX.Essentials
             var type = typeProvider.GetProvidedType(null);
 
             IVariableMovementDataProvider? newToUse = null;
-            
+
             switch (type)
             {
                 case not null when type == typeof(VariableMovementDataProvider):

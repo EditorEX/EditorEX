@@ -148,7 +148,7 @@ namespace EditorEX.Vivify.Events
             {
                 _cameraEffectApplier.Reset();
             }
-            
+
             _lastBeat = time;
         }
     }

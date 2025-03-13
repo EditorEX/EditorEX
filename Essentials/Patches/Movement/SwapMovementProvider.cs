@@ -35,7 +35,7 @@ namespace EditorEX.Essentials.Patches.Movement
                 .ThrowIfNotMatch("die")
                 .SetInstruction(new CodeInstruction(OpCodes.Callvirt, _installNew))
                 .InstructionEnumeration();
-            
+
             return result;
         }
     }

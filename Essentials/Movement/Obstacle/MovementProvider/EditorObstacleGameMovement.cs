@@ -275,7 +275,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             }
             else
             {
-                float elapsedTime =  _audioTimeSyncController.songTime - _startTimeOffset;
+                float elapsedTime = _audioTimeSyncController.songTime - _startTimeOffset;
                 normalTime = (elapsedTime - _move1Duration) / (_move2Duration + _obstacleDuration);
             }
 

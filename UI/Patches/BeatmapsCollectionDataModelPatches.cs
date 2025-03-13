@@ -65,7 +65,7 @@ namespace EditorEX.UI.Patches
             int num = sourcePath.Length + 1;
             int length = Path.GetFileNameWithoutExtension(projectDirectoryPath).Length;
             int length2 = projectDirectoryPath.Length;
-            __result =  projectDirectoryPath.Substring(num, length2 - length - num);
+            __result = projectDirectoryPath.Substring(num, length2 - length - num);
 
             return false;
         }

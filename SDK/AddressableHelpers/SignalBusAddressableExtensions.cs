@@ -19,7 +19,7 @@ namespace EditorEX.SDK.AddressableHelpers
                     action(x);
                 }
             };
-            
+
             if (uniqueID == null)
             {
                 uniqueID = UnityEngine.Random.Range(0, 1000);

@@ -24,7 +24,7 @@ namespace EditorEX.Essentials.Movement.Data
 
         [Inject]
         private void Construct(
-            EditorSpawnDataManager editorSpawnDataManager, 
+            EditorSpawnDataManager editorSpawnDataManager,
             PlayerDataModel playerDataModel,
             PopulateBeatmap populateBeatmap)
         {

@@ -33,7 +33,7 @@ namespace EditorEX.Essentials.Movement.Note
         internal Vector3 _moveEndOffset;
         internal Quaternion _worldRotation;
         internal Quaternion _inverseWorldRotation;
-        
+
 
         // Injected Fields
 
@@ -65,7 +65,7 @@ namespace EditorEX.Essentials.Movement.Note
             }
 
             _variableMovementDataProvider = variableMovementDataProvider;
-            
+
             _rotatedObject = getVisualRoot;
             _beatTime = beatTime;
             _moveStartOffset = moveStartOffset;

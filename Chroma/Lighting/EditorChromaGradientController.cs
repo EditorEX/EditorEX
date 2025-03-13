@@ -60,7 +60,7 @@ namespace EditorEx.Chroma.Lighting
             Gradients[id] = gradientEvent;
             return gradientEvent.Interpolate();
         }
-        
+
         internal class ChromaGradientEvent
         {
             private readonly IAudioTimeSource _timeSource;

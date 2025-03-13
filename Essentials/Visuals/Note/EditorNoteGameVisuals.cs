@@ -180,7 +180,7 @@ namespace EditorEX.Essentials.Visuals.Note
             _arrowCutout.SetCutout(1f - dissolveArrow.GetValueOrDefault(1f));
 
             _arrowObjects[1].SetActive(_editorData?.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f);
-            
+
             if (!(_chromeEditorDeserializedData?.Resolve(_editorData, out ChromaObjectData? chromaData) ?? false) || chromaData == null)
             {
                 return;
@@ -192,14 +192,14 @@ namespace EditorEX.Essentials.Visuals.Note
             {
                 return;
             }
-            
+
             global::Chroma.Animation.AnimationHelper.GetColorOffset(pathPointDefinition, chromaTracks, normalTime, out Color? colorOffset);
 
             if (colorOffset == null)
             {
                 return;
             }
-            
+
             _colorPropertyBlockControllers.Do(x =>
             {
                 x.materialPropertyBlock.SetColor(ColorNoteVisuals._colorId, colorOffset.Value.ColorWithAlpha(1f));

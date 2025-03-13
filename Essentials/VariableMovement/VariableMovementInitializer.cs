@@ -17,8 +17,8 @@ namespace EditorEX.Essentials.VariableMovement
         {
             var num = populateBeatmap._beatmapObjectsDataModel.noteJumpSpeedEvents.Cast<NoteJumpSpeedEditorData>().Aggregate(0f, (current, noteJumpSpeedEventData) => Mathf.Min(current, noteJumpSpeedEventData.noteJumpSpeedDelta));
             originalVariableMovementDataProvider.Init(
-                editorBasicBeatmapObjectSpawnMovementData._startHalfJumpDurationInBeats, 
-                editorBasicBeatmapObjectSpawnMovementData._maxHalfJumpDistance, 
+                editorBasicBeatmapObjectSpawnMovementData._startHalfJumpDurationInBeats,
+                editorBasicBeatmapObjectSpawnMovementData._maxHalfJumpDistance,
                 editorBasicBeatmapObjectSpawnMovementData.noteJumpMovementSpeed,
                 num,
                 populateBeatmap._beatmapLevelDataModel.beatsPerMinute,

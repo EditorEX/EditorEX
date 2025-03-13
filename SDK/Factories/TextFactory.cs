@@ -14,7 +14,7 @@ namespace EditorEX.SDK.Factories
 
         [Inject]
         private void Construct(
-            ColorCollector colorCollector, 
+            ColorCollector colorCollector,
             FontCollector fontCollector)
         {
             _colorCollector = colorCollector;
