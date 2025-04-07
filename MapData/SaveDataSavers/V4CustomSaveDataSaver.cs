@@ -24,7 +24,7 @@ namespace EditorEX.MapData.SaveDataSavers
 
         [Inject]
         private void Construct(
-            [NotNull] BeatmapLevelDataModel beatmapLevelDataModel,
+            BeatmapLevelDataModel beatmapLevelDataModel,
             UBinder<Plugin, PluginMetadata> metadata,
             LevelCustomDataModel levelCustomDataModel)
         {

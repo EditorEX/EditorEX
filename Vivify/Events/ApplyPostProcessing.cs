@@ -39,7 +39,7 @@ namespace EditorEX.Vivify.Events
         private EditorApplyPostProcessing(
             SiraLog log,
             EditorAssetBundleManager assetBundleManager,
-            [Inject(Id = ID)] EditorDeserializedData deserializedData,
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
             IAudioTimeSource audioTimeSource,
             IBpmController bpmController,
             EditorSetMaterialProperty setMaterialProperty,

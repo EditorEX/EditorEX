@@ -33,7 +33,7 @@ namespace EditorEX.Vivify.Events
         private EditorSetAnimatorProperty(
             SiraLog log,
             PrefabManager prefabManager,
-            [Inject(Id = ID)] EditorDeserializedData deserializedData,
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
             IAudioTimeSource audioTimeSource,
             IBpmController bpmController,
             CoroutineDummy coroutineDummy,

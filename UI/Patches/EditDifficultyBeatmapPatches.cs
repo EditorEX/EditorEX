@@ -1,33 +1,41 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Views;
 using EditorEX.MapData.Contexts;
 using EditorEX.SDK.Factories;
 using SiraUtil.Affinity;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace EditorEX.UI.Patches
 {
     internal class EditDifficultyBeatmapPatches : IAffinity
     {
         private IconButtonFactory _iconButtonFactory;
+        private LazyInject<BeatmapProjectManager> _beatmapProjectManager;
 
-        public EditDifficultyBeatmapPatches(IconButtonFactory iconButtonFactory)
+        public EditDifficultyBeatmapPatches(IconButtonFactory iconButtonFactory, 
+            LazyInject<BeatmapProjectManager> beatmapProjectManager)
         {
+            _beatmapProjectManager = beatmapProjectManager;
             _iconButtonFactory = iconButtonFactory;
         }
 
         [AffinityPatch(typeof(DifficultyBeatmapView), nameof(DifficultyBeatmapView.SetData))]
         [AffinityPostfix]
-        private void Modify(DifficultyBeatmapView __instance)
+        private void Modify(DifficultyBeatmapView __instance, DifficultyBeatmapData beatmapData)
         {
+            if (beatmapData == null) return;
             var v4 = LevelContext.Version >= BeatmapProjectFileHelper.version400;
+            var beatmapVersion = BeatmapProjectFileHelper.GetVersionedJSONVersion(_beatmapProjectManager.Value._workingBeatmapProject, beatmapData.beatmapFilename);
+            var v4Map = beatmapVersion >= BeatmapProjectFileHelper.version400;
 
             __instance._colorSchemeDropdown.transform.parent.gameObject.SetActive(v4);
             __instance._environmentDropdown.transform.parent.gameObject.SetActive(v4);
-            __instance._lightshowDropdown.transform.parent.gameObject.SetActive(v4);
-            __instance._lightersInputValidator.transform.parent.gameObject.SetActive(v4);
-            __instance._mappersInputValidator.transform.parent.gameObject.SetActive(v4);
+            __instance._lightshowDropdown.transform.parent.gameObject.SetActive(v4 && v4Map);
+            __instance._lightersInputValidator.transform.parent.gameObject.SetActive(v4 && v4Map);
+            __instance._mappersInputValidator.transform.parent.gameObject.SetActive(v4 && v4Map);
 
             var difficultyLabel = __instance.transform.Find("DifficultyLabel");
             var button = __instance.transform?.Find("LabelWrapper")?.Find("ExIconButton")?.GetComponent<Button>();

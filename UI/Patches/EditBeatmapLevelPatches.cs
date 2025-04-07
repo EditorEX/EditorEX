@@ -114,10 +114,10 @@ namespace EditorEX.UI.Patches
             EditorClickableImage image = null;
             image = _clickableImageFactory.Create(root.transform, input, new LayoutData(null, null), _ =>
             {
-                string text = NativeFileDialogs.OpenFileDialog("", new ExtensionFilter[]
-                {
+                string text = NativeFileDialogs.OpenFileDialog("",
+                [
                     new("", "png", "jpg", "jpeg")
-                }, null);
+                ], null);
 
                 if (string.IsNullOrEmpty(text) || text == contributorData.IconPath)
                 {
@@ -203,10 +203,13 @@ namespace EditorEX.UI.Patches
 
             _songInfoRoot.SetActive(false);
             _songInfoRoot.SetActive(true); // Fix layout
-
-            _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
-            _environmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.EnvironmentName), clearModifiedState);
-            _allDirectionsEnvironmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.AllDirectionsEnvironmentName), clearModifiedState);
+            
+            if (LevelContext.Version.Major < 4)
+            {
+                _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
+                _environmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.EnvironmentName), clearModifiedState);
+                _allDirectionsEnvironmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.AllDirectionsEnvironmentName), clearModifiedState);
+            }
 
             var customPlatIndex = _customPlatformsListModel.CustomPlatforms.Select(x => x.FilePath).ToList().IndexOf(_levelCustomDataModel.CustomPlatformInfo.FilePath);
             customPlatIndex = customPlatIndex == -1 ? _customPlatformsListModel.CustomPlatforms.Select(x => x.Hash).ToList().IndexOf(_levelCustomDataModel.CustomPlatformInfo.Hash) : customPlatIndex;

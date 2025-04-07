@@ -50,7 +50,7 @@ namespace EditorEX.Vivify.Events
             IInstantiator instantiator,
             EditorAssetBundleManager assetBundleManager,
             PrefabManager prefabManager,
-            [Inject(Id = ID)] EditorDeserializedData deserializedData,
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
             IAudioTimeSource audioTimeSource,
             PopulateBeatmap populateBeatmap,
             TransformControllerFactory transformControllerFactory,

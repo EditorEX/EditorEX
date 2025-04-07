@@ -49,7 +49,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             bool collision = customData.Get<bool?>(v2 ? V2_COLLISION : COLLISION) ?? false;
 
             object materialData = customData.GetRequired<object>(v2 ? V2_MATERIAL : MATERIAL);
-            MaterialsManager.MaterialInfo materialInfo = materialData switch
+            MaterialInfo materialInfo = materialData switch
             {
                 string name => _materialsManager.GetMaterialInfo(name),
                 CustomData data => _materialsManager.CreateMaterialInfo(data),

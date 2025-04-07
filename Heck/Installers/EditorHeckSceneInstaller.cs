@@ -12,15 +12,21 @@ using Heck.BaseProviders;
 using Heck.HarmonyPatches;
 using Heck.ObjectInitialize;
 using Zenject;
+using SiraUtil.Logging;
+using JetBrains.Annotations;
 
 namespace EditorEX.Heck.Installers
 {
     public class EditorHeckSceneInstaller : Installer
     {
+        [Inject]
+        private SiraLog? _siraLog;
+
         public override void InstallBindings()
         {
             var beatmapTracks = EditorDeserializedDataContainer.Tracks ?? new Dictionary<string, Track>();
             var deserializedDatas = EditorDeserializedDataContainer.DeserializeDatas;
+            _siraLog.Info($"Deserialized {deserializedDatas.Count} custom data objects.");
 
             Container.Bind<Dictionary<string, Track>>().FromInstance(beatmapTracks).AsSingle();
             deserializedDatas.Do(x => Container.BindInstance(x.Value).WithId(x.Key));

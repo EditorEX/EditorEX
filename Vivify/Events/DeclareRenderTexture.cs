@@ -21,7 +21,7 @@ namespace EditorEX.Vivify.Events
 
         private EditorDeclareRenderTexture(
             SiraLog log,
-            [Inject(Id = ID)] EditorDeserializedData deserializedData,
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
             CameraEffectApplier cameraEffectApplier)
         {
             _log = log;

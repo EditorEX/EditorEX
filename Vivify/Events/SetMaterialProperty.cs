@@ -32,7 +32,7 @@ namespace EditorEX.Vivify.Events
 
         private EditorSetMaterialProperty(
             EditorAssetBundleManager assetBundleManager,
-            [Inject(Id = ID)] EditorDeserializedData deserializedData,
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
             IAudioTimeSource audioTimeSource,
             IBpmController bpmController,
             CoroutineDummy coroutineDummy,

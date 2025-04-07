@@ -205,7 +205,7 @@ namespace EditorEX.Vivify.Events
 
         private EditorSetRenderingSettings(
             SiraLog log,
-            [Inject(Id = ID)] EditorDeserializedData deserializedData,
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
             IAudioTimeSource audioTimeSource,
             IBpmController bpmController,
             CoroutineDummy coroutineDummy,

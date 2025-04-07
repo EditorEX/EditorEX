@@ -3,6 +3,7 @@ using EditorEX.CustomJSONData.Patches;
 using EditorEX.CustomJSONData.Patches.Loading;
 using EditorEX.CustomJSONData.Patches.Saving;
 using EditorEX.MapData.LevelDataLoaders;
+using EditorEX.MapData.LevelDataSavers;
 using EditorEX.MapData.SaveDataLoaders;
 using EditorEX.MapData.SaveDataSavers;
 using Zenject;
@@ -19,6 +20,11 @@ namespace EditorEX.CustomJSONData.Installers
 
             Container.Bind<ICustomSaveDataSaver>().To<V4CustomSaveDataSaver>().AsSingle().NonLazy();
             Container.Bind<ICustomSaveDataSaver>().To<V2CustomSaveDataSaver>().AsSingle().NonLazy();
+
+            Container.Bind<ICustomLevelDataSaver>().To<V4CustomLevelDataSaver>().AsSingle();
+            Container.Bind<ICustomLevelDataSaver>().To<V3CustomLevelDataSaver>().AsSingle();
+            Container.Bind<ICustomLevelDataSaver>().To<V2CustomLevelDataSaver>().AsSingle();
+
             Container.BindInterfacesAndSelfTo<BeatmapProjectManagerSaverPatch>().AsSingle().NonLazy();
 
             Container.Bind<V2BeatmapBpmDataVersionedLoader>().AsSingle();

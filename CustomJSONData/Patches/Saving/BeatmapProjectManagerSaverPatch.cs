@@ -46,10 +46,13 @@ namespace EditorEX.CustomJSONData.Patches.Saving
             return false;
         }
 
+        [AffinityPrefix]
         [AffinityPatch(typeof(BeatmapProjectManager), nameof(BeatmapProjectManager.SaveBeatmapLevel))]
         private bool UniversalLevelDataSavingPatch(BeatmapProjectManager __instance, bool clearDirty)
         {
             var version = MapContext.Version;
+
+            _siraLog.Info($"Saving level data with version {version}");
 
             var saver = _levelDataSavers.FirstOrDefault(x => x.IsVersion(version));
             if (saver == null)
@@ -57,7 +60,7 @@ namespace EditorEX.CustomJSONData.Patches.Saving
                 _siraLog.Error("Could not find a viable level data saver!");
             }
 
-            saver.Save(__instance, clearDirty);
+            saver.Save(__instance, __instance._beatmapDataModel.difficultyBeatmapData, clearDirty);
 
             return false;
         }

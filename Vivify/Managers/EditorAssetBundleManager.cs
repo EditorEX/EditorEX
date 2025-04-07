@@ -59,7 +59,7 @@ public class EditorAssetBundleManager : IDisposable
         }
     }
 
-    internal bool TryGetAsset<T>(string assetName, [NotNullWhen(true)] out T? asset)
+    internal bool TryGetAsset<T>(string assetName, out T? asset)
     {
         if (_assets.TryGetValue(assetName, out Object gameObject))
         {

@@ -42,7 +42,8 @@ namespace EditorEX.Heck.EventData
                         break;
                     default:
                         throw new InvalidOperationException("Custom event was not of correct type.");
-                };
+                }
+                ;
 
                 foreach (string propertyKey in propertyKeys)
                 {

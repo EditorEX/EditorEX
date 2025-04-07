@@ -6,6 +6,6 @@ namespace EditorEX.MapData.SaveDataLoaders
     public interface ICustomLevelDataSaver
     {
         public bool IsVersion(Version version);
-        public void Save(BeatmapProjectManager projectManager, bool clearDirty);
+        public void Save(BeatmapProjectManager projectManager, DifficultyBeatmapData difficultyBeatmapData, bool clearDirty);
     }
 }

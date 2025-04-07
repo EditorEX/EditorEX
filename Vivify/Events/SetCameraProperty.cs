@@ -20,7 +20,7 @@ namespace EditorEX.Vivify.Events
 
         private EditorSetCameraProperty(
             CameraPropertyManager cameraPropertyManager,
-            [Inject(Id = ID)] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData)
         {
             _cameraPropertyManager = cameraPropertyManager;
             _deserializedData = deserializedData;

@@ -48,6 +48,11 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="BeatSaber.TrackDefinitions" Publicize="true">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\BeatSaber.TrackDefinitions.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="BGLib.AppFlow">
       <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\BGLib.AppFlow.dll</HintPath>
       <Private>False</Private>

@@ -156,15 +156,15 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
         {
             Material material = new(shader)
             {
-                globalIlluminationFlags = GeometryFactory.IsLightType(shaderType)
+                globalIlluminationFlags = shaderType.IsLightType()
                     ? MaterialGlobalIlluminationFlags.EmissiveIsBlack
                     : MaterialGlobalIlluminationFlags.RealtimeEmissive,
                 enableInstancing = true,
                 shaderKeywords = shaderType switch
                 {
                     // Keywords found in RUE PC in BS 1.24
-                    ShaderType.Standard => new[]
-                    {
+                    ShaderType.Standard =>
+                    [
                         "DIFFUSE", "ENABLE_DIFFUSE", "ENABLE_FOG", "ENABLE_HEIGHT_FOG", "ENABLE_SPECULAR", "FOG",
                         "HEIGHT_FOG", "REFLECTION_PROBE_BOX_PROJECTION", "SPECULAR", "_EMISSION",
                         "_ENABLE_FOG_TINT", "_RIMLIGHT_NONE",
@@ -173,23 +173,23 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                         "EMISSIONTEXTURE_NONE", "_ROTATE_UV_NONE", "_VERTEXMODE_NONE", "WHITEBOOSTTYPE_NONE", "ZWRITE_ON",
                         // added at some point idk
                         "MULTIPLY_REFLECTIONS"
-                    },
-                    ShaderType.OpaqueLight => new[]
-                    {
+                    ],
+                    ShaderType.OpaqueLight =>
+                    [
                         "DIFFUSE", "ENABLE_BLUE_NOISE", "ENABLE_DIFFUSE", "ENABLE_HEIGHT_FOG", "ENABLE_LIGHTNING", "USE_COLOR_FOG"
-                    },
-                    ShaderType.TransparentLight => new[]
-                    {
+                    ],
+                    ShaderType.TransparentLight =>
+                    [
                         "ENABLE_HEIGHT_FOG", "MULTIPLY_COLOR_WITH_ALPHA", "_ENABLE_MAIN_EFFECT_WHITE_BOOST"
-                    },
-                    ShaderType.BaseWater => new[]
-                    {
+                    ],
+                    ShaderType.BaseWater =>
+                    [
                         "FOG", "HEIGHT_FOG", "INVERT_RIMLIGHT", "MASK_RED_IS_ALPHA", "NOISE_DITHERING",
                         "NORMAL_MAP", "REFLECTION_PROBE", "REFLECTION_PROBE_BOX_PROJECTION", "_DECALBLEND_ALPHABLEND",
                         "_DISSOLVEAXIS_LOCALX", "_EMISSIONCOLORTYPE_FLAT", "_EMISSIONTEXTURE_NONE",
                         "_RIMLIGHT_NONE", "_ROTATE_UV_NONE", "_VERTEXMODE_NONE", "_WHITEBOOSTTYPE_NONE",
                         "_ZWRITE_ON"
-                    },
+                    ],
                     _ => Array.Empty<string>()
                 },
                 color = new Color(0, 0, 0, 0)

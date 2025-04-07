@@ -25,7 +25,7 @@ namespace EditorEX.Vivify.Events
             SiraLog log,
             EditorSetCameraProperty setCameraProperty,
             CameraEffectApplier cameraEffectApplier,
-            [Inject(Id = ID)] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData)
         {
             _log = log;
             _setCameraProperty = setCameraProperty;
