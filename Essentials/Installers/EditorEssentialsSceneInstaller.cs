@@ -19,6 +19,7 @@ using System.Runtime.InteropServices;
 using EditorEX.Essentials.VariableMovement;
 using UnityEngine;
 using Zenject;
+using EditorEX.Essentials.Features.HideUI;
 
 namespace EditorEX.Essentials.Installers
 {
@@ -46,14 +47,14 @@ namespace EditorEX.Essentials.Installers
 
             // MOVEMENT
 
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "normal" }, typeof(EditorNoteBasicMovement)));
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorNoteGameMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["normal"], typeof(EditorNoteBasicMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["preview", "preview-lock-cam"], typeof(EditorNoteGameMovement)));
 
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "normal" }, typeof(EditorObstacleBasicMovement)));
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorObstacleGameMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["normal"], typeof(EditorObstacleBasicMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["preview", "preview-lock-cam"], typeof(EditorObstacleGameMovement)));
 
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "normal" }, typeof(EditorArcBasicMovement)));
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorArcGameMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["normal"], typeof(EditorArcBasicMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["preview", "preview-lock-cam"], typeof(EditorArcGameMovement)));
 
             Container.Bind<MovementTypeProvider>().AsSingle();
 
@@ -73,12 +74,12 @@ namespace EditorEX.Essentials.Installers
             Container.Bind<VisualsTypeProvider>().AsSingle().NonLazy();
             Container.Bind<VisualAssetProvider>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
 
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "normal" }, typeof(EditorNoteBasicVisuals)));
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorNoteGameVisuals)));
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorBombGameVisuals)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((["normal"], typeof(EditorNoteBasicVisuals)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((["preview", "preview-lock-cam"], typeof(EditorNoteGameVisuals)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((["preview", "preview-lock-cam"], typeof(EditorBombGameVisuals)));
 
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "normal" }, typeof(EditorObstacleBasicVisuals)));
-            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((new string[] { "preview", "preview-lock-cam" }, typeof(EditorObstacleGameVisuals)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((["normal"], typeof(EditorObstacleBasicVisuals)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Visuals").FromInstance((["preview", "preview-lock-cam"], typeof(EditorObstacleGameVisuals)));
 
 
 
@@ -88,7 +89,6 @@ namespace EditorEX.Essentials.Installers
             Container.BindInterfacesAndSelfTo<ProcessNewEditorData>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PreviewToggler>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<CameraLock>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<HideUI>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<ViewModeSwappingUI>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<ViewModeSwapper>().AsSingle().NonLazy();

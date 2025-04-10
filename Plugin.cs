@@ -46,8 +46,14 @@ namespace EditorEX
             zenjector.Install<EditorVivifySceneInstaller, BeatmapLevelEditorSceneSetup>();
             //zenjector.Install<EditorAnalyzerSceneInstaller, BeatmapLevelEditorInstaller>();
 
+            zenjector.Install<EditorEssentialsFeatureInstaller, BeatmapLevelEditorInstaller>();
+
+            zenjector.Install<EditorEssentialsMainInstaller, BeatmapEditorMainInstaller>();
             zenjector.Install<EditorChromaMainInstaller, BeatmapEditorMainInstaller>();
 
+            zenjector.Install<EditorEssentialsCommandInstaller, CommandInstaller>();
+
+            zenjector.Install<EditorSDKAppInstaller>(Location.App);
             zenjector.Install<EditorCustomJSONDataAppInstaller>(Location.App);
             zenjector.Install<EditorEssentialsAppInstaller>(Location.App);
             zenjector.Install<EditorConfigAppInstaller>(Location.App, config);

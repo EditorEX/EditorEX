@@ -1,15 +1,9 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using SiraUtil.Affinity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EditorEX.Essentials.Patches
 {
-    // FUCK FUCK FUCK FUCK FUCK FUCK FUCK
     internal class FixAudioTimeSource : IAffinity
     {
         [AffinityPatch(typeof(BeatmapEditorAudioTimeSyncController), nameof(BeatmapEditorAudioTimeSyncController.songTime), AffinityMethodType.Getter)]
