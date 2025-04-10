@@ -15,7 +15,7 @@ namespace EditorEX.UI.Patches
         private IconButtonFactory _iconButtonFactory;
         private LazyInject<BeatmapProjectManager> _beatmapProjectManager;
 
-        public EditDifficultyBeatmapPatches(IconButtonFactory iconButtonFactory, 
+        public EditDifficultyBeatmapPatches(IconButtonFactory iconButtonFactory,
             LazyInject<BeatmapProjectManager> beatmapProjectManager)
         {
             _beatmapProjectManager = beatmapProjectManager;

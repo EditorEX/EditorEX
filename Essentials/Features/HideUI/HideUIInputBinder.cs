@@ -15,7 +15,7 @@ namespace BetterEditor.Essentials.Features.HideUI
         {
             var streamForBindingGroup = inputActionsStreamContainer.GetStreamForBindingGroup(
                 InputRef.EssentialsGroup.GetKeyBindingGroupType());
-                
+
             var compositeDisposable = new CompositeDisposable();
             _singleDisposable.disposable = compositeDisposable;
 

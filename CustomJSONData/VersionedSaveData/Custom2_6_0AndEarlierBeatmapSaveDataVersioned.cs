@@ -41,7 +41,7 @@ namespace EditorEX.CustomJSONData.VersionedSaveData
             {
                 _time = customEventData.beat;
                 _type = customEventData.eventType;
-                _data = new(customEventData.customData.Where(x=>!x.Key.StartsWith("NE_")));
+                _data = new(customEventData.customData.Where(x => !x.Key.StartsWith("NE_")));
             }
 
             public float _time { get; }

@@ -33,7 +33,7 @@ namespace BetterEditor.SDKImplementation.Patches
         {
             _siraLog.Info("Injecting custom keybindings...");
             var bindingsList = originalBindingGroups.ToList();
-            bindingsList.AddRange(_customInputActionRegistry.GetGroups().Select(x=>
+            bindingsList.AddRange(_customInputActionRegistry.GetGroups().Select(x =>
                 new BindingGroup(x.GetKeyBindingGroupType(), [.. x.GetKeybindings().Select(a => new InputActionBinding {
                     inputAction = a.GetInputAction(),
                     keysCombination = a.Keys.ToList(),
@@ -77,7 +77,7 @@ namespace BetterEditor.SDKImplementation.Patches
         {
             if ((int)inputAction > 999)
             {
-                __result = _customInputActionRegistry.GetGroups().SelectMany(x=>x.GetKeybindings()).FirstOrDefault(x => x.GetInputAction().Equals(inputAction))?.Name ?? "Unknown";
+                __result = _customInputActionRegistry.GetGroups().SelectMany(x => x.GetKeybindings()).FirstOrDefault(x => x.GetInputAction().Equals(inputAction))?.Name ?? "Unknown";
                 return false;
             }
             return true;

@@ -24,7 +24,7 @@ namespace BetterEditor.SDK.Input
                 throw new ArgumentException("Group name cannot be null or empty.", nameof(groupName));
         }
 
-        public class GroupBuilding 
+        public class GroupBuilding
         {
             public string ModName { get; }
             public string GroupName { get; }
@@ -54,7 +54,7 @@ namespace BetterEditor.SDK.Input
                 actions.Add(keybindingReference);
                 return this;
             }
-            
+
             public CustomInputGroup Build()
             {
                 if (actions.Count == 0)
@@ -63,7 +63,7 @@ namespace BetterEditor.SDK.Input
                 var group = new CustomInputGroup(GroupID, GroupName, actions.ToArray());
                 return group;
             }
-            
+
             public CustomInputGroup Build(ref CustomInputGroup referenceGroup, DiContainer? toBind = null)
             {
                 referenceGroup = Build();

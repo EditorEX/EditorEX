@@ -97,8 +97,8 @@ namespace EditorEX.MapData.LevelDataSavers
             burstSliders.Sort(LegacySavingUtil.SortByBeat);
             var vfxCollection = new FxEventsCollection();
             var tuple = (from e in eventBoxGroupsDataModel.GetAllEventBoxGroups()
-                orderby e.beat
-                select e).Select(x => V3Converters.CreateEventBoxGroupSaveDataWithFxCollection(x, vfxCollection, eventBoxGroupsDataModel)).Aggregate((new List<LightColorEventBoxGroup>(), new List<LightRotationEventBoxGroup>(), new List<LightTranslationEventBoxGroup>(), new List<FxEventBoxGroup>()), V3Converters.SplitEventBoxGroupsSaveData);
+                         orderby e.beat
+                         select e).Select(x => V3Converters.CreateEventBoxGroupSaveDataWithFxCollection(x, vfxCollection, eventBoxGroupsDataModel)).Aggregate((new List<LightColorEventBoxGroup>(), new List<LightRotationEventBoxGroup>(), new List<LightTranslationEventBoxGroup>(), new List<FxEventBoxGroup>()), V3Converters.SplitEventBoxGroupsSaveData);
             List<LightColorEventBoxGroup> lightColorEventBoxGroups = tuple.Item1;
             List<LightRotationEventBoxGroup> lightRotationEventBoxGroups = tuple.Item2;
             List<LightTranslationEventBoxGroup> lightTranslationEventBoxGroups = tuple.Item3;
@@ -114,7 +114,7 @@ namespace EditorEX.MapData.LevelDataSavers
             _siraLog.Info($"Saving 3: {CustomDataRepository.GetCustomEvents().Select(x => new CustomEventDataSerialized(x)) == null}");
 
             customData["customEvents"] = CustomDataRepository.GetCustomEvents().Select(x => new CustomEventDataSerialized(x));
-            
+
             return new CustomBeatmapSaveDataVersioned(MapContext.Version.ToString(), bpmChanges, rotationEvents, colorNotes, bombNotes, obstacles, sliders, burstSliders, waypoints, basicEvents, colorBoostEvents, lightColorEventBoxGroups, lightRotationEventBoxGroups, lightTranslationEventBoxGroups, fxEventBoxGroups, vfxCollection, basicEventTypesWithKeywords, basicEventsModel.GetUseNormalEventsAsCompatibleEvents(), customData);
         }
 

@@ -203,7 +203,7 @@ namespace EditorEX.UI.Patches
 
             _songInfoRoot.SetActive(false);
             _songInfoRoot.SetActive(true); // Fix layout
-            
+
             if (LevelContext.Version.Major < 4)
             {
                 _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
