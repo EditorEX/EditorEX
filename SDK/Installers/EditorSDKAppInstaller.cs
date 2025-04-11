@@ -1,10 +1,4 @@
-﻿using BetterEditor.SDKImplementation.Patches;
-using EditorEX.SDK.AddressableHelpers;
-using EditorEX.SDK.Collectors;
-using EditorEX.SDK.Signals;
-using EditorEX.SDKImplementation.Patches;
-using System;
-using UnityEngine;
+﻿using EditorEX.SDKImplementation.Patches;
 using Zenject;
 
 namespace EditorEX.SDK.Installers

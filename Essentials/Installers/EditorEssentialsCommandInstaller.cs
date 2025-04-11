@@ -1,4 +1,4 @@
-﻿using BetterEditor.Essentials.Features.HideUI;
+﻿using EditorEX.Essentials.Features.HideUI;
 using Zenject;
 
 namespace EditorEX.Essentials.Installers

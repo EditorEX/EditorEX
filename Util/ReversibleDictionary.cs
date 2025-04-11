@@ -1,25 +1,18 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EditorEX.Util
 {
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class ReversibleDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
     {
-        private Dictionary<TKey, TValue> keyToValue;
-        private Dictionary<TValue, TKey> valueToKey;
+        private readonly Dictionary<TKey, TValue> keyToValue;
+        private readonly Dictionary<TValue, TKey> valueToKey;
 
         public ReversibleDictionary()
         {
-            keyToValue = new Dictionary<TKey, TValue>();
-            valueToKey = new Dictionary<TValue, TKey>();
+            keyToValue = [];
+            valueToKey = [];
         }
 
         public void Add(TKey key, TValue value)

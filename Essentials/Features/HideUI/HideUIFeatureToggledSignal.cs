@@ -1,4 +1,4 @@
-namespace BetterEditor.Essentials.Features.HideUI
+namespace EditorEX.Essentials.Features.HideUI
 {
     public class HideUIFeatureToggledSignal
     {

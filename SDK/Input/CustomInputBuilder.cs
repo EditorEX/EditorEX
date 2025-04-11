@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using BeatmapEditor3D.InputSystem;
-using EditorEX.SDK.Input;
 using Zenject;
 
-namespace BetterEditor.SDK.Input
+namespace EditorEX.SDK.Input
 {
     public static class CustomInputBuilder
     {
@@ -46,7 +45,7 @@ namespace BetterEditor.SDK.Input
                 return this;
             }
 
-            public GroupBuilding AddKeybinding(string keybindingName, InputKey[] defaultKeys, ref CustomInputAction keybindingReference)
+            public GroupBuilding AddKeybinding(string keybindingName, InputKey[] defaultKeys, ref CustomInputAction? keybindingReference)
             {
                 CheckKeybindingInputs(keybindingName, defaultKeys);
 
@@ -64,7 +63,7 @@ namespace BetterEditor.SDK.Input
                 return group;
             }
 
-            public CustomInputGroup Build(ref CustomInputGroup referenceGroup, DiContainer? toBind = null)
+            public CustomInputGroup Build(ref CustomInputGroup? referenceGroup, DiContainer? toBind = null)
             {
                 referenceGroup = Build();
                 if (toBind != null)

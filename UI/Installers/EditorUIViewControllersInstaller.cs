@@ -27,7 +27,7 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<BeatmapsCollectionDataModelPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<SaveCustomDataPatch>().AsSingle();
             Container.BindInterfacesAndSelfTo<CursorUpdater>().AsSingle();
-            //Container.BindInterfacesAndSelfTo<AdjustCursorTypePatch>().AsSingle();
+            Container.BindInterfacesAndSelfTo<BetterKeybindViewingPatches>().AsSingle();
 
             Container.Bind<IContextMenuProvider>().To<DefaultEditorBeatmapListContextMenuProvider>().AsSingle();
             Container.Bind<IContextMenuProvider>().To<DefaultEditorSourceListContextMenuProvider>().AsSingle();

@@ -72,7 +72,6 @@ namespace EditorEX.Vivify.Events
             Functions easing,
             float startTime)
         {
-            Debug.Log("static " + material.name);
             foreach (MaterialProperty property in properties)
             {
                 global::Vivify.MaterialPropertyType type = property.Type;
@@ -238,7 +237,6 @@ namespace EditorEX.Vivify.Events
             Functions easing)
             where T : struct
         {
-            Debug.Log("animate " + material.name);
             while (true)
             {
                 float elapsedTime = _audioTimeSource.songTime - startTime;

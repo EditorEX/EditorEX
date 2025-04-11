@@ -9,7 +9,7 @@ namespace EditorEX.UI.Patches
 {
     internal class MoreCoverFileTypes : IAffinity
     {
-        private readonly static string[] fileTypes = new string[] { "png", "jpg", "jpeg" };
+        private readonly static string[] fileTypes = ["png", "jpg", "jpeg"];
 
         private static readonly FieldInfo _fileTypesGetter = AccessTools.Field(typeof(MoreCoverFileTypes), "fileTypes");
 

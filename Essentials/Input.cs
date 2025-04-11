@@ -1,13 +1,12 @@
+using System.Collections.Generic;
 using EditorEX.SDK.Input;
 
-namespace BetterEditor.Essentials
+namespace EditorEX.Essentials
 {
     public static class InputRef
     {
-        public static CustomInputGroup EssentialsGroup;
-        public static CustomInputAction ToggleEditorGUI;
-        public static CustomInputAction ToggleBasicViewingMode;
-        public static CustomInputAction TogglePreviewViewingMode;
-        public static CustomInputAction TogglePreviewViewingModeWithCameraLock;
+        public static CustomInputGroup? EssentialsGroup;
+        public static CustomInputAction? ToggleEditorGUI;
+        public static List<CustomInputAction> ViewModeBindings = new List<CustomInputAction>();
     }
 }
