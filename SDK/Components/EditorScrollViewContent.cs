@@ -31,7 +31,7 @@ namespace EditorEX.SDK.Components
             UpdateScrollView();
         }
 
-        protected void OnRectTransformDimensionsChange()
+        public void OnRectTransformDimensionsChange()
         {
             dirty = true;
         }
@@ -55,6 +55,10 @@ namespace EditorEX.SDK.Components
 
         private void UpdateScrollView()
         {
+            if (scrollView == null)
+            {
+                return;
+            }
             scrollView.SetContentSize(scrollView.contentTransform.rect.height);
             scrollView.RefreshButtons();
         }

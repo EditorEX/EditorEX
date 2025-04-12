@@ -1,7 +1,7 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.Views;
 using BeatmapEditor3D.Visuals;
-using EditorEX.Essentials.ViewMode;
+using EditorEX.Essentials.Features.ViewMode;
 using SiraUtil.Affinity;
 using System;
 using UnityEngine;

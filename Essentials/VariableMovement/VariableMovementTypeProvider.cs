@@ -1,7 +1,4 @@
-﻿using EditorEX.Essentials.Movement.Data;
-using EditorEX.Essentials.Movement.Types;
-using EditorEX.Essentials.ViewMode;
-using SiraUtil.Logging;
+﻿using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;

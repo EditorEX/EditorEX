@@ -1,5 +1,6 @@
 ﻿using Zenject;
 using EditorEX.Essentials.Features.HideUI;
+using EditorEX.Essentials.Features.ViewMode;
 
 namespace EditorEX.Essentials.Installers
 {
@@ -8,6 +9,7 @@ namespace EditorEX.Essentials.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<HideUIImplementation>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<ViewModeImplementation>().AsSingle().NonLazy();
         }
     }
 }

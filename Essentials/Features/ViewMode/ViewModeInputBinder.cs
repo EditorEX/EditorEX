@@ -1,7 +1,6 @@
 using System;
 using BeatmapEditor3D.InputSystem;
 using BeatmapEditor3D.Utils;
-using EditorEX.Essentials.Features.HideUI;
 using Zenject;
 
 namespace EditorEX.Essentials.Features.ViewMode
@@ -20,8 +19,11 @@ namespace EditorEX.Essentials.Features.ViewMode
 
             for (int i = 0; i < InputRef.ViewModeBindings.Count; i++)
             {
+                int index = i;
                 streamForBindingGroup.Subscribe(
-                    InputRef.ViewModeBindings[i].GetInputAction(), InputEventType.KeyDown, new Action(signalBus.Fire<HideUIFeatureToggledSignal>))
+                    InputRef.ViewModeBindings[i].GetInputAction(), 
+                    InputEventType.KeyDown, 
+                    new Action(() => signalBus.Fire(new ViewModeSwitchedSignal(ViewModeRepository.GetViewModes()[index]))))
                     .AddTo(compositeDisposable);
             }
         }

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace EditorEX.Essentials.ViewMode
+namespace EditorEX.Essentials.Features.ViewMode
 {
     public static class ViewModeRepository
     {

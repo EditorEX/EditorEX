@@ -1,4 +1,4 @@
-﻿using EditorEX.Essentials.ViewMode;
+﻿using EditorEX.Essentials.Features.ViewMode;
 using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;

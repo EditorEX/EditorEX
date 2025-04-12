@@ -1,16 +1,10 @@
 ﻿using BeatmapEditor3D.Controller;
-using BeatmapEditor3D.DataModels.Events.Conversion;
-using EditorEX.Chroma.Patches;
-using EditorEX.Essentials.ViewMode;
+using EditorEX.Essentials.Features.ViewMode;
 using HarmonyLib;
 using SiraUtil.Affinity;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace EditorEX.Essentials.Patches

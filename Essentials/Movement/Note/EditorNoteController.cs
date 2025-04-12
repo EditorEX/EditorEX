@@ -1,11 +1,11 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
-using EditorEX.Essentials.ViewMode;
 using EditorEX.Essentials.Visuals;
 using System;
 using EditorEX.Essentials.VariableMovement;
 using UnityEngine;
 using Zenject;
+using EditorEX.Essentials.Features.ViewMode;
 
 namespace EditorEX.Essentials.Movement.Note
 {

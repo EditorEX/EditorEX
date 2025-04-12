@@ -32,7 +32,7 @@ namespace EditorEX.SDK.Factories
         {
             var image = Create<ImageView>(parent, layoutData);
 
-            image.SetImageAsync(location);
+            image.SetImageAsync(location, false);
 
             return image;
         }

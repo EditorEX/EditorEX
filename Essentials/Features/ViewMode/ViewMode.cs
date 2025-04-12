@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EditorEX.Essentials.ViewMode
+﻿namespace EditorEX.Essentials.Features.ViewMode
 {
     public class ViewMode
     {

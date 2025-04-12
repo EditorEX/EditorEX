@@ -50,6 +50,7 @@ namespace EditorEX.SDK.Factories
 
             var scrollViewContent = scrollView.contentTransform.gameObject.AddComponent<EditorScrollViewContent>();
             scrollViewContent.ScrollView = scrollView;
+            scrollViewContent.OnRectTransformDimensionsChange();
 
             return scrollView;
         }

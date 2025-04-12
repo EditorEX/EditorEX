@@ -8,18 +8,16 @@ using EditorEX.Essentials.Patches;
 using EditorEX.Essentials.Patches.Movement;
 using EditorEX.Essentials.Patches.Preview;
 using EditorEX.Essentials.SpawnProcessing;
-using EditorEX.Essentials.ViewMode;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Essentials.Visuals.Note;
 using EditorEX.Essentials.Visuals.Obstacle;
 using EditorEX.Essentials.Visuals.Universal;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using EditorEX.Essentials.VariableMovement;
 using UnityEngine;
 using Zenject;
-using EditorEX.Essentials.Features.HideUI;
+using EditorEX.Essentials.Features.ViewMode;
 
 namespace EditorEX.Essentials.Installers
 {
@@ -89,9 +87,6 @@ namespace EditorEX.Essentials.Installers
             Container.BindInterfacesAndSelfTo<ProcessNewEditorData>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PreviewToggler>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<CameraLock>().AsSingle().NonLazy();
-
-            Container.BindInterfacesAndSelfTo<ViewModeSwappingUI>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<ViewModeSwapper>().AsSingle().NonLazy();
 
             Container.Bind<EditorBasicBeatmapObjectSpawnMovementData>().AsSingle().NonLazy();
             Container.Bind<VariableMovementInitializer>().AsSingle().NonLazy();

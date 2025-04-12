@@ -1,9 +1,6 @@
-﻿using BeatmapEditor3D.Views;
-using BeatmapEditor3D.Visuals;
-using EditorEX.Essentials.ViewMode;
-using HarmonyLib;
+﻿using BeatmapEditor3D.Visuals;
+using EditorEX.Essentials.Features.ViewMode;
 using SiraUtil.Affinity;
-using System.Collections.Generic;
 using Zenject;
 
 namespace EditorEX.Essentials.Patches.Preview

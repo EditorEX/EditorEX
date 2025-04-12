@@ -284,12 +284,11 @@
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="UI\Resources\lockcamera.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="EditorEX.csproj.user" />
     <EmbeddedResource Include="UI\Resources\heart.png" />
     <EmbeddedResource Include="UI\Resources\lily.jpg" />
+    <EmbeddedResource Include="UI\Resources\circle.png" />
+    <EmbeddedResource Include="UI\Resources\lockcamera.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Util\BeatmapLevelDataModelSaverV2.cs" />

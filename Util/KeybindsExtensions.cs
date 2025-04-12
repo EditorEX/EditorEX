@@ -1,6 +1,6 @@
 using BeatmapEditor3D.InputSystem;
 using EditorEX.Essentials;
-using EditorEX.Essentials.ViewMode;
+using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.SDK.Input;
 
 namespace EditorEX.Util
@@ -13,7 +13,7 @@ namespace EditorEX.Util
             {
                 var viewMode = ViewModeRepository.GetViewModes()[i];
                 var keybindingName = $"Switch to {viewMode.DisplayName} Viewing Mode";
-                InputKey[] defaultKeys = [InputKey.key1 + i];
+                InputKey[] defaultKeys = [InputKey.ctrl, InputKey.key1 + i];
                 CustomInputAction? reference = null;
                 group.AddKeybinding(keybindingName, defaultKeys, ref reference);
                 if (reference != null)
