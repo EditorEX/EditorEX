@@ -1,6 +1,7 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Visuals;
+using BetterEditor.Util;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.Visuals;
@@ -91,7 +92,15 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 
         private void UpdateMaterialPropertyBlock(float timeSinceHeadNoteJump, MaterialPropertyBlockController materialPropertyBlockController)
         {
+            var sliderSpawnData = _editorBeatmapObjectSpawnMovementData.GetSliderSpawnData(_sliderEditorData);
+            float num = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(sliderSpawnData.headGravityBase);
+		    float num2 = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(sliderSpawnData.tailGravityBase);
+		    float halfJumpDuration = _variableMovementDataProvider.halfJumpDuration;
             var materialPropertyBlock = materialPropertyBlockController.materialPropertyBlock;
+		    materialPropertyBlock.SetFloat(SliderShaderHelper.sliderZLengthPropertyId, _zDistanceBetweenNotes);
+		    SliderShaderHelper.SetHeadNoteJump(materialPropertyBlock, halfJumpDuration, num);
+		    SliderShaderHelper.SetTailNoteJump(materialPropertyBlock, halfJumpDuration, num2);
+            SliderShaderHelper.SetJumpSpeedAndDistance(materialPropertyBlock, _variableMovementDataProvider.noteJumpSpeed, _variableMovementDataProvider.jumpDistance);
             SliderShaderHelper.SetTimeSinceHeadNoteJump(materialPropertyBlock, timeSinceHeadNoteJump);
             //SliderShaderHelper.SetSaberAttractionPoint(materialPropertyBlock, closeSmoothedSaberInteractionPos.GetValue(TimeHelper.interpolationFactor));
             SliderShaderHelper.EnableSaberAttraction(materialPropertyBlock, false);
@@ -141,7 +150,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             _sliderEditorData = editorData as ArcEditorData;
 
             var material = _sliderMeshController.GetComponent<MeshRenderer>().sharedMaterial;
-            material.enabledKeywords = material.enabledKeywords.Where(x => x.name != "BEATMAP_EDITOR_ONLY").ToArray();
+            material.enabledKeywords.EnableGameArc(material);
 
             float headTime = _audioDataModel.bpmData.BeatToSeconds(_sliderEditorData.beat);
             float tailTime = _audioDataModel.bpmData.BeatToSeconds(_sliderEditorData.tailBeat);

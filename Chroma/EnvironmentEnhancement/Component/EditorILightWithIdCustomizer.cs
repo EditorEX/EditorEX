@@ -1,5 +1,5 @@
 ﻿using CustomJSONData.CustomBeatmap;
-using EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize;
+using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
 using EditorEX.Chroma.Colorizer;
 using JetBrains.Annotations;
 using SiraUtil.Logging;
@@ -8,7 +8,7 @@ using System.Linq;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
 
 // Based from https://github.com/Aeroluna/Heck
-namespace EditorEx.Chroma.EnvironmentEnhancement.Component
+namespace EditorEX.Chroma.EnvironmentEnhancement.Component
 {
     internal class EditorILightWithIdCustomizer
     {

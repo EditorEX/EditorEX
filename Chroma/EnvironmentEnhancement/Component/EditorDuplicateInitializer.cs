@@ -2,9 +2,10 @@
 using Chroma.EnvironmentEnhancement.Component;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using Chroma.Settings;
-using EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize;
+using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
 using HarmonyLib;
 using Heck.Animation.Transform;
+using IPA.Logging.Printers;
 using IPA.Utilities;
 using JetBrains.Annotations;
 using SiraUtil.Logging;
@@ -15,7 +16,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 
 // Based from https://github.com/Aeroluna/Heck
-namespace EditorEx.Chroma.EnvironmentEnhancement.Component
+namespace EditorEX.Chroma.EnvironmentEnhancement.Component
 {
     internal class EditorDuplicateInitializer
     {
@@ -29,7 +30,7 @@ namespace EditorEx.Chroma.EnvironmentEnhancement.Component
         private readonly SiraLog _log;
         private readonly TrackLaneRingOffset _trackLaneRingOffset;
         private readonly EditorLightWithIdRegisterer _lightWithIdRegisterer;
-        private readonly Config _config;
+        private readonly global::Chroma.Settings.Config _config;
 
         private readonly HashSet<TrackLaneRingsManager> _trackLaneRingsManagers;
 
@@ -37,7 +38,7 @@ namespace EditorEx.Chroma.EnvironmentEnhancement.Component
             SiraLog log,
             TrackLaneRingOffset trackLaneRingOffset,
             EditorLightWithIdRegisterer lightWithIdRegisterer,
-            Config config)
+            global::Chroma.Settings.Config config)
         {
             _log = log;
             _trackLaneRingOffset = trackLaneRingOffset;

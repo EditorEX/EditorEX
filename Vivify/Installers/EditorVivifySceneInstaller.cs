@@ -1,6 +1,8 @@
-﻿using EditorEX.MapData.Contexts;
+﻿using EditorEX.Essentials.Visuals.Note;
+using EditorEX.MapData.Contexts;
 using EditorEX.Vivify.Events;
 using EditorEX.Vivify.Managers;
+using EditorEX.Vivify.ObjectPrefab.Managers;
 using Vivify.HarmonyPatches;
 using Vivify.Managers;
 using Zenject;
@@ -15,11 +17,14 @@ namespace EditorEX.Chroma.Installers
             {
                 Container.BindInterfacesAndSelfTo<EditorAssetBundleManager>().AsSingle();
                 Container.BindInterfacesAndSelfTo<PrefabManager>().AsSingle();
+                Container.BindInterfacesAndSelfTo<EditorBeatmapObjectPrefabManager>().AsSingle();
+                Container.BindInterfacesAndSelfTo<EditorVivifyNotePrefabManager>().AsSingle();
 
                 Container.BindInterfacesAndSelfTo<CameraPropertyManager>().AsSingle();
                 Container.BindInterfacesAndSelfTo<CameraEffectApplier>().AsSingle();
 
                 Container.BindInterfacesTo<EditorApplyPostProcessing>().AsSingle();
+                Container.BindInterfacesTo<EditorAssignObjectPrefab>().AsSingle();
                 Container.BindInterfacesTo<EditorDeclareCullingTexture>().AsSingle();
                 Container.BindInterfacesTo<EditorDeclareRenderTexture>().AsSingle();
                 Container.BindInterfacesTo<EditorDestroyPrefab>().AsSingle();

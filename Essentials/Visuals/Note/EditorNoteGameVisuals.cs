@@ -12,6 +12,9 @@ using BeatmapEditor3D;
 using Chroma;
 using UnityEngine;
 using Zenject;
+using Vivify.Managers;
+using EditorEX.Vivify.ObjectPrefab.Managers;
+using Vivify;
 
 namespace EditorEX.Essentials.Visuals.Note
 {
@@ -22,9 +25,12 @@ namespace EditorEX.Essentials.Visuals.Note
         private ColorManager _colorManager;
         private IReadonlyBeatmapState _state;
         private AudioDataModel _audioDataModel;
+        private EditorDeserializedData _vivifyEditorDeserializedData;
         private EditorDeserializedData _noodleEditorDeserializedData;
         private EditorDeserializedData _chromeEditorDeserializedData;
         private AnimationHelper _animationHelper;
+        private EditorBeatmapObjectPrefabManager _prefabManager;
+        private EditorVivifyNotePrefabManager _vivifyNotePrefabManager;
 
         // Visuals fields
         private NoteEditorData? _editorData;
@@ -40,14 +46,18 @@ namespace EditorEX.Essentials.Visuals.Note
 
         [Inject]
         private void Construct(
+            [InjectOptional(Id = "Vivify")] EditorDeserializedData vivifyEditorDeserializedData,
             [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData noodleEditorDeserializedData,
             [InjectOptional(Id = "Chroma")] EditorDeserializedData chromeEditorDeserializedData,
             AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
             ColorManager colorManager,
             IReadonlyBeatmapState state,
-            AudioDataModel audioDataModel)
+            AudioDataModel audioDataModel,
+            EditorBeatmapObjectPrefabManager prefabManager,
+            EditorVivifyNotePrefabManager vivifyNotePrefabManager)
         {
+            _vivifyEditorDeserializedData = vivifyEditorDeserializedData;
             _noodleEditorDeserializedData = noodleEditorDeserializedData;
             _chromeEditorDeserializedData = chromeEditorDeserializedData;
             _visualAssetProvider = visualAssetProvider;
@@ -55,6 +65,8 @@ namespace EditorEX.Essentials.Visuals.Note
             _audioDataModel = audioDataModel;
             _colorManager = colorManager;
             _state = state;
+            _prefabManager = prefabManager;
+            _vivifyNotePrefabManager = vivifyNotePrefabManager;
 
             if (_visualAssetProvider.gameNotePrefab == null)
             {
@@ -77,15 +89,15 @@ namespace EditorEX.Essentials.Visuals.Note
             _gameRoot = Instantiate(_visualAssetProvider.gameNotePrefab.transform.Find("NoteCube"), transform, false).gameObject;
             _gameRoot.name = "GamerNoterCuber";
 
-            _arrowObjects = new[] { _gameRoot.transform.Find("NoteArrow").gameObject, _gameRoot.transform.Find("NoteArrowGlow").gameObject };
+            _arrowObjects = [_gameRoot.transform.Find("NoteArrow").gameObject, _gameRoot.transform.Find("NoteArrowGlow").gameObject];
             _circleObject = _gameRoot.transform.Find("NoteCircleGlow").gameObject;
 
-            _colorPropertyBlockControllers = new[]
-            {
+            _colorPropertyBlockControllers =
+            [
                 _gameRoot.GetComponent<MaterialPropertyBlockController>(),
                 _circleObject.GetComponent<MaterialPropertyBlockController>(),
                 _arrowObjects[1].GetComponent<MaterialPropertyBlockController>()
-            };
+            ];
 
             _noteCutout = _gameRoot.GetComponent<CutoutEffect>();
             _arrowCutout = _arrowObjects[0].GetComponent<CutoutEffect>();
@@ -127,12 +139,28 @@ namespace EditorEX.Essentials.Visuals.Note
         {
             _gameRoot?.SetActive(true);
             _active = true;
+
+            _prefabManager.Despawn(_gameRoot.transform);
+
+            if (!_vivifyEditorDeserializedData.Resolve(_editorData, out VivifyObjectData? data) ||
+            data?.Track == null)
+            {
+                return;
+            }
+
+            var prefabDictionary = _editorData.cutDirection == NoteCutDirection.Any ? 
+                _vivifyNotePrefabManager.AnyDirectionNotePrefabs : 
+                _vivifyNotePrefabManager.ColorNotePrefabs;
+
+            _prefabManager.Spawn(data.Track, prefabDictionary, _gameRoot.transform, _editorData.beat);
         }
 
         public void Disable()
         {
             _gameRoot?.SetActive(false);
             _active = false;
+
+            _prefabManager.Despawn(_gameRoot.transform);
         }
 
         public void ManualUpdate()

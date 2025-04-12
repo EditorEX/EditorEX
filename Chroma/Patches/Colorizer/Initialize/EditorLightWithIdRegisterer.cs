@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Based from https://github.com/Aeroluna/Heck
-namespace EditorEx.Chroma.HarmonyPatches.Colorizer.Initialize
+namespace EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize
 {
     internal class EditorLightWithIdRegisterer : IAffinity
     {

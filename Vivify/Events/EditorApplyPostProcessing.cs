@@ -21,6 +21,7 @@ using Vivify.PostProcessing;
 using Zenject;
 using static Vivify.VivifyController;
 
+// Based from https://github.com/Aeroluna/Vivify
 namespace EditorEX.Vivify.Events
 {
     [CustomEvent(APPLY_POST_PROCESSING)]

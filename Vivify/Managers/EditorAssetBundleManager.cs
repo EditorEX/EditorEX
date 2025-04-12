@@ -11,6 +11,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using static Vivify.VivifyController;
 
+// Based from https://github.com/Aeroluna/Vivify
 namespace EditorEX.Vivify.Managers;
 
 public class EditorAssetBundleManager : IDisposable

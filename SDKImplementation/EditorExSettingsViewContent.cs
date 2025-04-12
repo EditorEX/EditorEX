@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace EditorEX.SDKImplementation
 {
-    internal class EditorExSettingsViewContent : IViewContent<SettingsViewData>
+    internal class EditorEXSettingsViewContent : IViewContent<SettingsViewData>
     {
         public void Create(GameObject host)
         {

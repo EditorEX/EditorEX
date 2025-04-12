@@ -5,7 +5,7 @@ using UnityEngine;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
 
 // Based from https://github.com/Aeroluna/Heck
-namespace EditorEx.Chroma.EnvironmentEnhancement.Component
+namespace EditorEX.Chroma.EnvironmentEnhancement.Component
 {
     internal class EditorComponentCustomizer
     {

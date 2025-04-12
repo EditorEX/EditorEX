@@ -255,6 +255,10 @@
       <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.VRModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.VRModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\SaberTrail.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Vivify" Publicize="true">
       <HintPath>$(GameDirectory)\Plugins\Vivify.dll</HintPath>
       <Private>false</Private>

@@ -1,6 +1,7 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Visuals;
+using BetterEditor.Util;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Visuals;
 using IPA.Config.Data;
@@ -34,12 +35,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 
             var material = GetComponent<ArcView>()._arcMeshController.GetComponent<MeshRenderer>().sharedMaterial;
 
-            if (!material.enabledKeywords.Any(x => x.name == "BEATMAP_EDITOR_ONLY"))
-            {
-                var list = material.enabledKeywords.ToList();
-                list.Add(new LocalKeyword(material.shader, "BEATMAP_EDITOR_ONLY"));
-                material.enabledKeywords = list.ToArray();
-            }
+            material.enabledKeywords.DisableGameArc(material);
         }
 
         public void Enable()

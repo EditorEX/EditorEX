@@ -13,7 +13,7 @@ namespace EditorEX.UI.Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<IViewContent<SettingsViewData>>().FromInstance(new EditorExSettingsViewContent());
+            Container.Bind<IViewContent<SettingsViewData>>().FromInstance(new EditorEXSettingsViewContent());
 
             Container.BindInterfacesAndSelfTo<DisableContextMenuPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<AddSourceListContextMenu>().AsSingle();

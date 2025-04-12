@@ -17,7 +17,7 @@ namespace EditorEX.MapData.Contexts
         }
     }
 
-    public class EditorExtraSongData
+    public class EditorEXtraSongData
     {
     }
 }

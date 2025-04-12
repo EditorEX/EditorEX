@@ -10,6 +10,7 @@ using Vivify.TrackGameObject;
 using Zenject;
 using static Vivify.VivifyController;
 
+// Based from https://github.com/Aeroluna/Vivify
 namespace EditorEX.Vivify.Events
 {
     [CustomEvent(SET_CAMERA_PROPERTY)]

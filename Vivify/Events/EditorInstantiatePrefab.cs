@@ -25,6 +25,7 @@ using Zenject;
 using static Vivify.VivifyController;
 using Object = UnityEngine.Object;
 
+// Based from https://github.com/Aeroluna/Vivify
 namespace EditorEX.Vivify.Events
 {
     [CustomEvent(INSTANTIATE_PREFAB)]

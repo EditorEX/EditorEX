@@ -2,7 +2,7 @@
 using Chroma;
 using Chroma.Extras;
 using Chroma.Lighting;
-using EditorEx.Chroma.Lighting;
+using EditorEX.Chroma.Lighting;
 using EditorEX.Chroma.Colorizer;
 using EditorEX.Chroma.Events;
 using EditorEX.CustomJSONData;

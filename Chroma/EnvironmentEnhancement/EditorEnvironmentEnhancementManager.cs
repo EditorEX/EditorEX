@@ -3,7 +3,7 @@ using Chroma.EnvironmentEnhancement.Component;
 using Chroma.EnvironmentEnhancement.Saved;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using CustomJSONData.CustomBeatmap;
-using EditorEx.Chroma.EnvironmentEnhancement.Component;
+using EditorEX.Chroma.EnvironmentEnhancement.Component;
 using EditorEX.Chroma.EnvironmentEnhancement;
 using EditorEX.CustomJSONData;
 using EditorEX.MapData.Contexts;
@@ -22,7 +22,7 @@ using static Heck.HeckController;
 using Object = UnityEngine.Object;
 
 // Based from https://github.com/Aeroluna/Heck
-namespace EditorEx.Chroma.EnvironmentEnhancement
+namespace EditorEX.Chroma.EnvironmentEnhancement
 {
     internal class EditorEnvironmentEnhancementManager : MonoBehaviour
     {
