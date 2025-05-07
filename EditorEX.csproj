@@ -273,6 +273,21 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Reactive.BeatSaber.Components">
+      <HintPath>$(GameDirectory)\Plugins\Reactive.BeatSaber.Components.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Reactive.Components">
+      <HintPath>$(GameDirectory)\Libs\Reactive.Components.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Reactive">
+      <HintPath>$(GameDirectory)\Libs\Reactive.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />
