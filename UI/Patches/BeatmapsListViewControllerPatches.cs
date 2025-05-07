@@ -189,7 +189,7 @@ namespace EditorEX.UI.Patches
         {
             if (_tempNewSourceName.text != "")
             {
-                _sourcesConfig.Sources.Add(_tempNewSourceName.text, new List<string>());
+                _sourcesConfig.Sources.Add(_tempNewSourceName.text, "");
                 _tempNewSourceName.text = "";
 
                 _segmentedControl.SetTexts(SetupSources().ToArray());

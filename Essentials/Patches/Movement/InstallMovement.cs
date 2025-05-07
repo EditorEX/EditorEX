@@ -1,6 +1,8 @@
 ﻿using BeatmapEditor3D;
 using EditorEX.Essentials.Movement.Arc;
 using EditorEX.Essentials.Movement.Arc.MovementProvider;
+using EditorEX.Essentials.Movement.ChainHead;
+using EditorEX.Essentials.Movement.ChainHead.MovementProvider;
 using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Movement.Note.MovementProvider;
 using EditorEX.Essentials.Movement.Obstacle;
@@ -38,6 +40,15 @@ namespace EditorEX.Essentials.Patches.Movement
             __instance._bombNoteViewPrefab.gameObject.AddComponent<EditorNoteFloorMovement>();
             __instance._bombNoteViewPrefab.gameObject.AddComponent<EditorNoteController>();
             __instance._bombNoteViewPrefab.gameObject.AddComponent<VariableMovementHolder>();
+
+            __instance._chainNoteViewPrefab.gameObject.AddComponent<EditorChainHeadBasicMovement>();
+            __instance._chainNoteViewPrefab.gameObject.AddComponent<EditorChainHeadGameMovement>();
+            //__instance._chainNoteViewPrefab.gameObject.AddComponent<EditorNoteGameVisuals>();
+            //__instance._chainNoteViewPrefab.gameObject.AddComponent<EditorNoteBasicVisuals>();
+            //__instance._chainNoteViewPrefab.gameObject.AddComponent<EditorNoteJump>();
+            //__instance._chainNoteViewPrefab.gameObject.AddComponent<EditorNoteFloorMovement>();
+            __instance._chainNoteViewPrefab.gameObject.AddComponent<EditorChainHeadController>();
+            __instance._chainNoteViewPrefab.gameObject.AddComponent<VariableMovementHolder>();
 
             __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleBasicMovement>();
             __instance._obstacleViewPrefab.gameObject.AddComponent<EditorObstacleGameMovement>();

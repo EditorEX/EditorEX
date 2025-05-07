@@ -18,6 +18,7 @@ using EditorEX.Essentials.VariableMovement;
 using UnityEngine;
 using Zenject;
 using EditorEX.Essentials.Features.ViewMode;
+using EditorEX.Essentials.Movement.ChainHead.MovementProvider;
 
 namespace EditorEX.Essentials.Installers
 {
@@ -47,6 +48,9 @@ namespace EditorEX.Essentials.Installers
 
             Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["normal"], typeof(EditorNoteBasicMovement)));
             Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["preview", "preview-lock-cam"], typeof(EditorNoteGameMovement)));
+
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["normal"], typeof(EditorChainHeadBasicMovement)));
+            Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["preview", "preview-lock-cam"], typeof(EditorChainHeadGameMovement)));
 
             Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["normal"], typeof(EditorObstacleBasicMovement)));
             Container.Bind<ValueTuple<string[], Type>>().WithId("Movement").FromInstance((["preview", "preview-lock-cam"], typeof(EditorObstacleGameMovement)));

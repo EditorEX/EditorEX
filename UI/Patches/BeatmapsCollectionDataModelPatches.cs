@@ -46,7 +46,7 @@ namespace EditorEX.UI.Patches
         {
             var projectDirectory = new DirectoryInfo(projectDirectoryPath);
 
-            var allPaths = _sourcesConfig.Sources.SelectMany(x => x.Value);
+            var allPaths = _sourcesConfig.Sources.Values;
             string sourcePath = "";
             foreach (var path in allPaths)
             {
@@ -76,34 +76,31 @@ namespace EditorEX.UI.Patches
         {
             if (_sourcesConfig.Sources == null || _sourcesConfig.Sources.Count == 0)
             {
-                _sourcesConfig.Sources = new Dictionary<string, List<string>>
+                _sourcesConfig.Sources = new Dictionary<string, string>
                 {
-                    { "Custom Levels", GenerateDefaultSources(__instance, "CustomLevels") },
-                    { "Custom WIP Levels", GenerateDefaultSources(__instance, "CustomWIPLevels") }
+                    { "Custom Levels", GenerateDefaultSources("CustomLevels") },
+                    { "Custom WIP Levels", GenerateDefaultSources("CustomWIPLevels") }
                 };
             }
 
-            List<string> pathsToLoad = new();
-            if (!_sourcesConfig.Sources.TryGetValue(_sourcesConfig.SelectedSource, out pathsToLoad))
+            string pathToLoad = string.Empty;
+            if (!_sourcesConfig.Sources.TryGetValue(_sourcesConfig.SelectedSource, out pathToLoad))
             {
                 var defaultSource = _sourcesConfig.Sources.First();
                 _siraLog.Error($"Failed to get paths from source: {_sourcesConfig.SelectedSource}, defaulting to {defaultSource.Key}");
-                pathsToLoad = defaultSource.Value;
+                pathToLoad = defaultSource.Value;
             }
 
             __instance._beatmapInfos = new();
 
-            foreach (var path in pathsToLoad)
+            if (Directory.Exists(pathToLoad))
             {
-                if (Directory.Exists(path))
-                {
-                    var projectDirectories = DirectorySearchUtil.GetDirectoriesWithInfoDat(path);
-                    __instance._beatmapInfos.AddRange(projectDirectories.Select(new Func<string, BeatmapsCollectionDataModel.BeatmapInfoData>(__instance.CreateBeatmapLevelInfoData)).ToList());
-                }
-                else
-                {
-                    _siraLog.Error($"Path {path} does not exist, skipping");
-                }
+                var projectDirectories = DirectorySearchUtil.GetDirectoriesWithInfoDat(pathToLoad);
+                __instance._beatmapInfos.AddRange(projectDirectories.Select(new Func<string, BeatmapsCollectionDataModel.BeatmapInfoData>(__instance.CreateBeatmapLevelInfoData)).ToList());
+            }
+            else
+            {
+                _siraLog.Error($"Path {pathToLoad} does not exist, skipping");
             }
 
             __instance.SortBeatmaps();
@@ -112,23 +109,11 @@ namespace EditorEX.UI.Patches
             return false;
         }
 
-        private List<string> GenerateDefaultSources(BeatmapsCollectionDataModel __instance, string source)
+        private string GenerateDefaultSources(string source)
         {
             var currentGamePath = Path.Combine(Environment.CurrentDirectory, "Beat Saber_Data");
-            var configGamePath = Directory.GetParent(__instance._beatmapEditorSettingsDataModel.customLevelsFolder);
-
-            _siraLog.Info($"current: {currentGamePath}, configured: {configGamePath}");
-
-            bool samePath = new DirectoryInfo(currentGamePath).FullName == configGamePath.FullName;
-
-            if (samePath)
-            {
-                return new List<string> { Path.Combine(currentGamePath, source).Replace("\\", "/") };
-            }
-            else
-            {
-                return new List<string> { Path.Combine(currentGamePath, source).Replace("\\", "/"), Path.Combine(configGamePath.FullName, source).Replace("\\", "/") };
-            }
+            
+            return Path.Combine(currentGamePath, source).Replace("\\", "/");
         }
     }
 }

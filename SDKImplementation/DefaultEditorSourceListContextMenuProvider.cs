@@ -63,12 +63,12 @@ namespace EditorEX.SDKImplementation
 
         private void AddPath(SourceListContextMenuObject contextObject)
         {
-            var newSource = NativeFileDialogs.OpenDirectoryDialog($"New {contextObject.SourceName} Directory", Environment.CurrentDirectory);
+            // var newSource = NativeFileDialogs.OpenDirectoryDialog($"New {contextObject.SourceName} Directory", Environment.CurrentDirectory);
 
-            if (newSource != null && Directory.Exists(newSource))
-                _sourcesConfig.Sources[contextObject.SourceName].Add(newSource.Replace("\\", "/"));
+            // if (newSource != null && Directory.Exists(newSource))
+            //     _sourcesConfig.Sources[contextObject.SourceName].Add(newSource.Replace("\\", "/"));
 
-            _beatmapsListViewControllerPatches.ReloadCells();
+            // _beatmapsListViewControllerPatches.ReloadCells();
         }
     }
 }
