@@ -40,8 +40,8 @@ namespace EditorEX.UI.Patches
         private int _selectedGroupIndex = 0;
 
         private BetterKeybindViewingPatches(
-            SiraLog siraLog, 
-            ButtonFactory buttonFactory, 
+            SiraLog siraLog,
+            ButtonFactory buttonFactory,
             ScrollViewFactory scrollViewFactory,
             StringInputFactory stringInputFactory,
             ImageFactory imageFactory)
@@ -56,19 +56,23 @@ namespace EditorEX.UI.Patches
 
         Transform NewGroupTab(KeybindsView keybindsView, BindingGroup bindingGroup)
         {
-            if (_buttonParent == null || _container == null) {
+            if (_buttonParent == null || _container == null)
+            {
                 _siraLog.Error("BetterKeybindViewingPatches: ButtonParent or Container is null.");
                 return keybindsView._contentTransform;
             }
             _scrollView = _scrollViewFactory.Create(_container, new LayoutData());
             _groupTabs.Add(_scrollView.transform);
-            if (_groupTabs.Count != 1) {
+            if (_groupTabs.Count != 1)
+            {
                 _scrollView.gameObject.SetActive(false);
             }
             int index = _groupTabs.Count - 1;
-            var button = _buttonFactory.Create(_buttonParent, bindingGroup.type.DisplayName(), () => {
+            var button = _buttonFactory.Create(_buttonParent, bindingGroup.type.DisplayName(), () =>
+            {
                 _selectedGroupIndex = index;
-                for (int i = 0; i < _groupTabs.Count; i++) {
+                for (int i = 0; i < _groupTabs.Count; i++)
+                {
                     _groupTabs[i].gameObject.SetActive(i == index);
                 }
             });
@@ -98,13 +102,13 @@ namespace EditorEX.UI.Patches
         [AffinityPrefix]
         private void UIPatch(KeybindsView __instance)
         {
-			if (__instance._initialized)
-			{
-				return;
-			}
+            if (__instance._initialized)
+            {
+                return;
+            }
             _container = __instance.transform.GetChild(0);
             Object.Destroy(_container.GetChild(0).gameObject);
-            
+
             _buttonParent = _scrollViewFactory.Create(_container, new LayoutData(new Vector2(-900f, 0f), new Vector2(1000f, 0f))).contentTransform;
 
             var verticalLayoutGroup = _buttonParent.GetComponent<VerticalLayoutGroup>();
@@ -136,8 +140,8 @@ namespace EditorEX.UI.Patches
                 .MatchForward(false, new CodeMatch(OpCodes.Ldarg_0), new CodeMatch(OpCodes.Ldfld))
                 .RemoveInstructions(2)
                 .Insert(
-                    new CodeInstruction(OpCodes.Ldarg_0), 
-                    new CodeInstruction(OpCodes.Ldarg_1), 
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(OpCodes.Ldarg_1),
                     new CodeInstruction(OpCodes.Call, _redirect))
                 .InstructionEnumeration();
 
@@ -151,8 +155,8 @@ namespace EditorEX.UI.Patches
             var result = new CodeMatcher(instructions)
                 .End()
                 .Insert(
-                    new CodeInstruction(OpCodes.Ldsfld, _keyBindingViewField), 
-                    new CodeInstruction(OpCodes.Ldarg_1), 
+                    new CodeInstruction(OpCodes.Ldsfld, _keyBindingViewField),
+                    new CodeInstruction(OpCodes.Ldarg_1),
                     new CodeInstruction(OpCodes.Ldloc_0),
                     new CodeInstruction(OpCodes.Callvirt, _addDictionary))
                 .InstructionEnumeration();
@@ -178,34 +182,44 @@ namespace EditorEX.UI.Patches
 
         private void UpdateUIForSearchResults(SearchResult? result)
         {
-            if (result == null) {
-                foreach (var group in _groupButtons) {
+            if (result == null)
+            {
+                foreach (var group in _groupButtons)
+                {
                     group.Value.SetActive(true);
                 }
-                foreach (var keybindingView in _keyBindingViews) {
+                foreach (var keybindingView in _keyBindingViews)
+                {
                     keybindingView.Value.gameObject.SetActive(true);
                 }
                 return;
             }
 
-            foreach (var group in _groupButtons) {
-                group.Value.SetActive(result.Value.groupResults.Any(x=>x.bindingGroup == group.Key));
+            foreach (var group in _groupButtons)
+            {
+                group.Value.SetActive(result.Value.groupResults.Any(x => x.bindingGroup == group.Key));
             }
 
-            for (int i = 0; i < _groupButtons.Count; i++) {
+            for (int i = 0; i < _groupButtons.Count; i++)
+            {
                 var kvp = _groupButtons.ElementAt(i);
-                if (_selectedGroupIndex == i && !result.Value.groupResults.Any(x=>x.bindingGroup == kvp.Key)) {
-                    _groupButtons.FirstOrDefault(x=>result.Value.groupResults.Any(y=>y.bindingGroup == x.Key)).Value?.GetComponent<Button>().onClick.Invoke();
+                if (_selectedGroupIndex == i && !result.Value.groupResults.Any(x => x.bindingGroup == kvp.Key))
+                {
+                    _groupButtons.FirstOrDefault(x => result.Value.groupResults.Any(y => y.bindingGroup == x.Key)).Value?.GetComponent<Button>().onClick.Invoke();
                     break;
                 }
             }
 
-            foreach (var keybindingView in _keyBindingViews) {
+            foreach (var keybindingView in _keyBindingViews)
+            {
                 var binding = keybindingView.Key;
                 var groupResult = result.Value.groupResults.FirstOrDefault(x => x.bindingSorted.Contains(binding));
-                if (groupResult.bindingGroup == null) {
+                if (groupResult.bindingGroup == null)
+                {
                     keybindingView.Value.gameObject.SetActive(false);
-                } else {
+                }
+                else
+                {
                     keybindingView.Value.gameObject.SetActive(true);
                 }
             }
@@ -213,24 +227,30 @@ namespace EditorEX.UI.Patches
 
         private SearchResult? SearchKeybindings(string searchText)
         {
-            if (string.IsNullOrEmpty(searchText)) {
+            if (string.IsNullOrEmpty(searchText))
+            {
                 return null;
             }
-            
+
             var keybindings = KeyBindings.GetDefault();
             var searchResult = new SearchResult();
-            foreach (var bindingGroup in new List<BindingGroup>([keybindings.activatorsBindingGroup]).Concat(keybindings.extendedBindingGroups)) {
+            foreach (var bindingGroup in new List<BindingGroup>([keybindings.activatorsBindingGroup]).Concat(keybindings.extendedBindingGroups))
+            {
                 Dictionary<InputActionBinding, int> matchingBindings = new Dictionary<InputActionBinding, int>();
-                foreach (var binding in bindingGroup.bindings) {
+                foreach (var binding in bindingGroup.bindings)
+                {
                     var text = binding.inputAction.DisplayName();
-                    if (text != null) {
+                    if (text != null)
+                    {
                         bool matched = FuzzyMatcher.FuzzyMatch(text, searchText, out var score);
-                        if (matched) {
+                        if (matched)
+                        {
                             matchingBindings.Add(binding, score);
                         }
                     }
                 }
-                if (matchingBindings.Count == 0) {
+                if (matchingBindings.Count == 0)
+                {
                     continue;
                 }
                 var groupResult = new GroupResult
@@ -245,7 +265,7 @@ namespace EditorEX.UI.Patches
         }
 
 
-        private struct SearchResult 
+        private struct SearchResult
         {
             public SearchResult()
             {
@@ -254,7 +274,7 @@ namespace EditorEX.UI.Patches
             public List<GroupResult> groupResults = new List<GroupResult>();
         }
 
-        private struct GroupResult 
+        private struct GroupResult
         {
             public BindingGroup bindingGroup;
             public InputActionBinding[] bindingSorted;

@@ -273,7 +273,7 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Reactive.BeatSaber.Components">
+    <Reference Include="Reactive.BeatSaber.Components" Publicize="true">
       <HintPath>$(GameDirectory)\Plugins\Reactive.BeatSaber.Components.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>

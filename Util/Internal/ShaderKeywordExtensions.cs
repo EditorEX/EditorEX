@@ -10,7 +10,7 @@ namespace BetterEditor.Util
         public static void EnableGameArc(this LocalKeyword[] keywords, Material material)
         {
             List<LocalKeyword> list = keywords.ToList();
-            list.RemoveAll(x=>x.name=="BEATMAP_EDITOR_ONLY");
+            list.RemoveAll(x => x.name == "BEATMAP_EDITOR_ONLY");
             list.Add(new LocalKeyword(material.shader, "PRECISE_FOG"));
             list.Add(new LocalKeyword(material.shader, "_FOGTYPE_ALPHA"));
             material.enabledKeywords = list.ToArray();

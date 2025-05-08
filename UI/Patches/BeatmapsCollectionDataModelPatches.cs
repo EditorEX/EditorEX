@@ -112,7 +112,7 @@ namespace EditorEX.UI.Patches
         private string GenerateDefaultSources(string source)
         {
             var currentGamePath = Path.Combine(Environment.CurrentDirectory, "Beat Saber_Data");
-            
+
             return Path.Combine(currentGamePath, source).Replace("\\", "/");
         }
     }

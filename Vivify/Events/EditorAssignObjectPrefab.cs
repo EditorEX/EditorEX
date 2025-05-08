@@ -34,8 +34,8 @@ namespace EditorEX.Vivify.Events
             [Inject(Id = ID)] EditorDeserializedData editorDeserializedData,
             EditorBeatmapObjectPrefabManager beatmapObjectPrefabManager,
             EditorVivifyNotePrefabManager notePrefabManager)
-            //DebrisPrefabManager debrisPrefabManager,
-            //SaberPrefabManager saberPrefabManager)
+        //DebrisPrefabManager debrisPrefabManager,
+        //SaberPrefabManager saberPrefabManager)
         {
             _log = log;
             _editorDeserializedData = editorDeserializedData;

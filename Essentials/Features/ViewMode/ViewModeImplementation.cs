@@ -10,15 +10,15 @@ namespace EditorEX.Essentials.Features.ViewMode
         private BeatmapObjectsView _beatmapObjectsView;
 
         private ViewModeImplementation(
-            SignalBus signalBus, 
-            ActiveViewMode activeViewMode, 
+            SignalBus signalBus,
+            ActiveViewMode activeViewMode,
             BeatmapObjectsView beatmapObjectsView)
         {
             _activeViewMode = activeViewMode;
             _activeViewMode.Mode = ViewModeRepository.GetViewModes().FirstOrDefault(x => x.ID == "normal");
             _activeViewMode.LastMode = _activeViewMode.Mode;
             _beatmapObjectsView = beatmapObjectsView;
-            signalBus.Subscribe<ViewModeSwitchedSignal>(x=>SetMode(x.ViewMode));
+            signalBus.Subscribe<ViewModeSwitchedSignal>(x => SetMode(x.ViewMode));
         }
 
         private void SetMode(ViewMode mode)

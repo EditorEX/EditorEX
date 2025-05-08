@@ -94,12 +94,12 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         {
             var sliderSpawnData = _editorBeatmapObjectSpawnMovementData.GetSliderSpawnData(_sliderEditorData);
             float num = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(sliderSpawnData.headGravityBase);
-		    float num2 = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(sliderSpawnData.tailGravityBase);
-		    float halfJumpDuration = _variableMovementDataProvider.halfJumpDuration;
+            float num2 = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(sliderSpawnData.tailGravityBase);
+            float halfJumpDuration = _variableMovementDataProvider.halfJumpDuration;
             var materialPropertyBlock = materialPropertyBlockController.materialPropertyBlock;
-		    materialPropertyBlock.SetFloat(SliderShaderHelper.sliderZLengthPropertyId, _zDistanceBetweenNotes);
-		    SliderShaderHelper.SetHeadNoteJump(materialPropertyBlock, halfJumpDuration, num);
-		    SliderShaderHelper.SetTailNoteJump(materialPropertyBlock, halfJumpDuration, num2);
+            materialPropertyBlock.SetFloat(SliderShaderHelper.sliderZLengthPropertyId, _zDistanceBetweenNotes);
+            SliderShaderHelper.SetHeadNoteJump(materialPropertyBlock, halfJumpDuration, num);
+            SliderShaderHelper.SetTailNoteJump(materialPropertyBlock, halfJumpDuration, num2);
             SliderShaderHelper.SetJumpSpeedAndDistance(materialPropertyBlock, _variableMovementDataProvider.noteJumpSpeed, _variableMovementDataProvider.jumpDistance);
             SliderShaderHelper.SetTimeSinceHeadNoteJump(materialPropertyBlock, timeSinceHeadNoteJump);
             //SliderShaderHelper.SetSaberAttractionPoint(materialPropertyBlock, closeSmoothedSaberInteractionPos.GetValue(TimeHelper.interpolationFactor));

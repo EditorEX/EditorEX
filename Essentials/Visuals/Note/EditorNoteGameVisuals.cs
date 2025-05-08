@@ -148,8 +148,8 @@ namespace EditorEX.Essentials.Visuals.Note
                 return;
             }
 
-            var prefabDictionary = _editorData.cutDirection == NoteCutDirection.Any ? 
-                _vivifyNotePrefabManager.AnyDirectionNotePrefabs : 
+            var prefabDictionary = _editorData.cutDirection == NoteCutDirection.Any ?
+                _vivifyNotePrefabManager.AnyDirectionNotePrefabs :
                 _vivifyNotePrefabManager.ColorNotePrefabs;
 
             _prefabManager.Spawn(data.Track, prefabDictionary, _gameRoot.transform, _editorData.beat);

@@ -21,8 +21,8 @@ namespace EditorEX.Essentials.Features.ViewMode
             {
                 int index = i;
                 streamForBindingGroup.Subscribe(
-                    InputRef.ViewModeBindings[i].GetInputAction(), 
-                    InputEventType.KeyDown, 
+                    InputRef.ViewModeBindings[i].GetInputAction(),
+                    InputEventType.KeyDown,
                     new Action(() => signalBus.Fire(new ViewModeSwitchedSignal(ViewModeRepository.GetViewModes()[index]))))
                     .AddTo(compositeDisposable);
             }

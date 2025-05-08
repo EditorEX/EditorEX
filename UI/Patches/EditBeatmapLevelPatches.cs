@@ -1,7 +1,6 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Util;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.Contexts;
 using EditorEX.SDK.AddressableHelpers;
@@ -9,12 +8,15 @@ using EditorEX.SDK.Base;
 using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
+using EditorEX.SDK.Reactive;
+using EditorEX.SDK.Reactive.Components;
+using EditorEX.Util;
 using HMUI;
-using SFB;
+using Reactive;
+using Reactive.BeatSaber;
+using Reactive.Components;
+using Reactive.Yoga;
 using SiraUtil.Affinity;
-using SiraUtil.Zenject;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TMPro;
@@ -43,6 +45,7 @@ namespace EditorEX.UI.Patches
         private readonly ColorCollector _colorCollector;
         private readonly EnvironmentsListModel _environmentsListModel;
         private readonly CustomPlatformsListModel _customPlatformsListModel;
+        private readonly ReactiveContainer _reactiveContainer;
 
         private TextSegmentedControl _rootSegmentedControl;
         private TabbingSegmentedControlController _rootTabbingSegmentedControlController;
@@ -78,7 +81,8 @@ namespace EditorEX.UI.Patches
             LazyInject<BeatmapProjectManager> beatmapProjectManager,
             ColorCollector colorCollector,
             EnvironmentsListModel environmentsListModel,
-            CustomPlatformsListModel customPlatformsListModel)
+            CustomPlatformsListModel customPlatformsListModel,
+            ReactiveContainer reactiveContainer)
         {
             _beatmapLevelDataModel = beatmapLevelDataModel;
             _textSegmentedControlFactory = textSegmentedControlFactory;
@@ -95,6 +99,7 @@ namespace EditorEX.UI.Patches
             _colorCollector = colorCollector;
             _environmentsListModel = environmentsListModel;
             _customPlatformsListModel = customPlatformsListModel;
+            _reactiveContainer = reactiveContainer;
         }
 
         private void MakeContributorCell(ContributorData contributorData)
@@ -198,8 +203,8 @@ namespace EditorEX.UI.Patches
                 return;
             }
             _levelAuthorInputValidator.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
-            _environmentDropdown.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
-            _allDirectionsEnvironmentDropdown.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
+            //_environmentDropdown.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
+            //_allDirectionsEnvironmentDropdown.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
 
             _songInfoRoot.SetActive(false);
             _songInfoRoot.SetActive(true); // Fix layout
@@ -207,8 +212,8 @@ namespace EditorEX.UI.Patches
             if (LevelContext.Version.Major < 4)
             {
                 _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
-                _environmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.EnvironmentName), clearModifiedState);
-                _allDirectionsEnvironmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.AllDirectionsEnvironmentName), clearModifiedState);
+                //_environmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.EnvironmentName), clearModifiedState);
+                //_allDirectionsEnvironmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.AllDirectionsEnvironmentName), clearModifiedState);
             }
 
             var customPlatIndex = _customPlatformsListModel.CustomPlatforms.Select(x => x.FilePath).ToList().IndexOf(_levelCustomDataModel.CustomPlatformInfo.FilePath);
@@ -216,14 +221,14 @@ namespace EditorEX.UI.Patches
 
             if (customPlatIndex == -1)
             {
-                _customPlatformDropdown._text.text = _levelCustomDataModel.CustomPlatformInfo.FilePath;
+                //_customPlatformDropdown._text.text = _levelCustomDataModel.CustomPlatformInfo.FilePath;
             }
             else
             {
-                _customPlatformDropdown.SelectCellWithIdx(customPlatIndex);
+                //_customPlatformDropdown.SelectCellWithIdx(customPlatIndex);
             }
 
-            ReloadContributors();
+            //ReloadContributors();
         }
 
         [AffinityPostfix]
@@ -231,11 +236,11 @@ namespace EditorEX.UI.Patches
         private void HandleBeatmapProjectSaved(EditBeatmapLevelViewController __instance)
         {
             _levelAuthorInputValidator.ClearDirtyState();
-            _environmentDropdown.ClearDirtyState();
-            _allDirectionsEnvironmentDropdown.ClearDirtyState();
-            _customPlatformDropdown.ClearDirtyState();
+            //_environmentDropdown.ClearDirtyState();
+            //_allDirectionsEnvironmentDropdown.ClearDirtyState();
+            //_customPlatformDropdown.ClearDirtyState();
 
-            ReloadContributors();
+            //ReloadContributors();
         }
 
         [AffinityPostfix]
@@ -317,69 +322,91 @@ namespace EditorEX.UI.Patches
                 var previewWaveform = new GameObject("PreviewWaveform");
                 previewWaveform.transform.SetParent(beatmapInfoContainer);
 
-                var vertical = new GameObject("ExtraSongInfoRoot").AddComponent<VerticalLayoutGroup>();
-                vertical.transform.SetParent(_songInfoRoot.transform, false);
-                (vertical.transform as RectTransform).anchoredPosition = new Vector2(950f, -100f);
+                var tab = ValueUtils.Remember(0);
 
-                vertical.childAlignment = TextAnchor.MiddleCenter;
-                vertical.spacing = 10f;
+                EditorImage? image1 = null;
+                EditorImage? image2 = null;
 
-                _extraSongInfoSegmentedControl = _textSegmentedControlFactory.Create(vertical.transform, new string[] { "Environments | Q", "Contributors | W" }, ExtraSongInfoSelected);
-                _extraSongInfoTabbingSegmentedControlController = _extraSongInfoSegmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
-                _extraSongInfoTabbingSegmentedControlController.Setup(_extraSongInfoSegmentedControl, true);
-
-                var extraSongInfo = _imageFactory.Create(vertical.transform, "#Background8px", new() { anchoredPosition = new Vector2(0f, 0f), sizeDelta = new Vector2(800f, 800f) });
-                extraSongInfo.transform.SetAsLastSibling();
-                var layoutElement = extraSongInfo.gameObject.AddComponent<LayoutElement>();
-                layoutElement.minWidth = 800f;
-                layoutElement.minHeight = 800f;
-
-                _environmentRoot = new GameObject("EnvironmentRoot");
-                _environmentRoot.transform.SetParent(extraSongInfo.transform, false);
-                var environmentVertical = _environmentRoot.AddComponent<VerticalLayoutGroup>();
-                environmentVertical.spacing = 40f;
-                environmentVertical.padding = new RectOffset(0, 0, 40, 0);
-                environmentVertical.childForceExpandHeight = false;
-                environmentVertical.childControlHeight = false;
-                _environmentRoot.GetComponent<RectTransform>().sizeDelta = new Vector2(800f, 800f);
-
-                _environmentDropdown = _dropdownFactory.Create(_environmentRoot.transform, "Environment", true, 850f, _environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal).Select(x => x.environmentName), (dd, idx) =>
+                YogaVector x;
+                EditorImage? image3 = null;
+                new Layout
                 {
-                    var environment = _environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal)[idx].serializedName;
-                    __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, null, null, null, null, null, null, null, environment));
-                });
+                    Children = {
+                        new EditorImage {
+                            Source = "https://picsum.photos/200",
+                        }.AsFlexItem(aspectRatio: 1f)
+                        .Bind(ref image1)
+                        .Animate(tab, () => image1.Enabled = tab == 0),
 
-                _allDirectionsEnvironmentDropdown = _dropdownFactory.Create(_environmentRoot.transform, "360 Environment", true, 850f, _environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle).Select(x => x.environmentName), (dd, idx) =>
-                {
-                    var environment = _environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle)[idx].serializedName;
-                    __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, null, null, null, null, null, null, null, null, environment));
-                });
+                        new EditorImage {
+                            Source = "https://picsum.photos/200"
+                        }.AsFlexItem(aspectRatio: 1f)
+                        .Bind(ref image2)
+                        .Animate(tab, () => image2.Enabled = tab == 1),
 
-                _customPlatformDropdown = _dropdownFactory.Create(_environmentRoot.transform, "Custom Platform", true, 850f, _customPlatformsListModel.CustomPlatforms.Select(x => x.FilePath).ToList(), (dd, idx) =>
-                {
-                    var customPlatform = _customPlatformsListModel.CustomPlatforms[idx];
+                        new EditorImage {
+                            Source = "https://picsum.photos/200"
+                        }.AsFlexItem(aspectRatio: 1f)
+                        .Bind(ref image3)
+                        .Animate(tab, () => image3.Enabled = tab == 2),
 
-                    _levelCustomDataModel.UpdateWith(null, null, null, null, null, null, null, null, _customPlatformsListModel.CustomPlatforms[idx]);
-                });
+                        new EditorLabelButton {
+                            Text = "Pic 1 SKIBIDI TOILET!!!!!!!!!!!!!",
+                            FontSize = 20f,
+                            OnClick = () => {
+                                tab.Value = 0;
+                            }
+                        }.AsFlexItem(size: "fit-content"),
 
-                _contributorsRoot = new GameObject("ContributorsRoot");
-                _contributorsRoot.SetActive(false);
-                _contributorsRoot.transform.SetParent(extraSongInfo.transform, false);
-
-                _scrollView = _scrollViewFactory.Create(_contributorsRoot.transform, new LayoutData(new Vector2(800f, 800f), Vector2.zero));
-
-                _scrollView.contentTransform.GetComponent<VerticalLayoutGroup>().spacing = 10f;
+                        new EditorBackground {
+                            ColorSO = _colorCollector.GetColor("Navbar/Background/Normal"),
+                            UseScriptableObjectColors = true,
+                            Source = "#Background8px",
+                            ImageType = Image.Type.Sliced,
+                            Children = {
+                                new Layout {
+                                    Children = {
+                                        new EditorLabelButton {
+                                            Text = "Pic 1 SKIBIDI TOILET!!!!!!!!!!!!!",
+                                            FontSize = 20f,
+                                            OnClick = () => {
+                                                tab.Value = 0;
+                                            }
+                                        }.AsFlexItem(size: "auto"),
+                                        new EditorLabelButton {
+                                            Text = "Pic 2",
+                                            FontSize = 20f,
+                                            OnClick = () => {
+                                                tab.Value = 1;
+                                            }
+                                        }.AsFlexItem(size: "auto"),
+                                        new EditorLabelButton {
+                                            Text = "Pic 3",
+                                            FontSize = 20f,
+                                            OnClick = () => {
+                                                tab.Value = 2;
+                                            }
+                                        }.AsFlexItem(size: "auto")
+                                    }
+                                }.AsFlexGroup(gap: 5f).AsFlexItem(),
+                            }
+                        }.AsFlexItem(minSize: new () {x = 800f, y = 800f})
+                    }
+                }.AsFlexGroup(gap: 10f, direction: Reactive.Yoga.FlexDirection.Column)
+                .AsRectItem()
+                .WithReactiveContainer(_reactiveContainer)
+                .Use(_songInfoRoot);
 
                 __instance.gameObject.SetActive(true);
             }
             else
             {
                 _rootTabbingSegmentedControlController.AddBindings(false);
-                _extraSongInfoTabbingSegmentedControlController.AddBindings(true);
+                //_extraSongInfoTabbingSegmentedControlController.AddBindings(true);
             }
 
             _rootTabbingSegmentedControlController.ClickCell(0);
-            _extraSongInfoTabbingSegmentedControlController.ClickCell(0);
+            //_extraSongInfoTabbingSegmentedControlController.ClickCell(0);
         }
 
         [AffinityPostfix]
@@ -387,7 +414,7 @@ namespace EditorEX.UI.Patches
         private void DidDeactivate()
         {
             _rootTabbingSegmentedControlController.ClearBindings();
-            _extraSongInfoTabbingSegmentedControlController.ClearBindings();
+            //_extraSongInfoTabbingSegmentedControlController.ClearBindings();
         }
 
         private void RootSelected(SegmentedControl segmentedControl, int idx)
