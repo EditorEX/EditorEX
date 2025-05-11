@@ -8,8 +8,7 @@ using EditorEX.SDK.Base;
 using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
-using EditorEX.SDK.Reactive;
-using EditorEX.SDK.Reactive.Components;
+using EditorEX.SDK.ReactiveComponents;
 using EditorEX.Util;
 using HMUI;
 using Reactive;
@@ -323,40 +322,10 @@ namespace EditorEX.UI.Patches
 
                 var tab = ValueUtils.Remember(0);
 
-                EditorImage? image1 = null;
-                EditorImage? image2 = null;
-
-                YogaVector x;
-                EditorImage? image3 = null;
-                new Layout
+                var additionalInfo = new Layout
                 {
                     Children = {
-                        new EditorImage {
-                            Source = "https://picsum.photos/200",
-                        }.AsFlexItem(aspectRatio: 1f)
-                        .Bind(ref image1)
-                        .Animate(tab, () => image1.Enabled = tab == 0),
-
-                        new EditorImage {
-                            Source = "https://picsum.photos/200"
-                        }.AsFlexItem(aspectRatio: 1f)
-                        .Bind(ref image2)
-                        .Animate(tab, () => image2.Enabled = tab == 1),
-
-                        new EditorImage {
-                            Source = "https://picsum.photos/200"
-                        }.AsFlexItem(aspectRatio: 1f)
-                        .Bind(ref image3)
-                        .Animate(tab, () => image3.Enabled = tab == 2),
-
-                        new EditorLabelButton {
-                            Text = "Pic 1 SKIBIDI TOILET!!!!!!!!!!!!!",
-                            FontSize = 20f,
-                            OnClick = () => {
-                                tab.Value = 0;
-                            }
-                        }.AsFlexItem(size: "fit-content"),
-
+                        new EditorSegmentedControl(),
                         new EditorBackground {
                             ColorSO = _colorCollector.GetColor("Navbar/Background/Normal"),
                             UseScriptableObjectColors = true,
@@ -391,10 +360,12 @@ namespace EditorEX.UI.Patches
                             }
                         }.AsFlexItem(minSize: new () {x = 800f, y = 800f})
                     }
-                }.AsFlexGroup(gap: 10f, direction: Reactive.Yoga.FlexDirection.Column)
+                }.AsFlexGroup(gap: 100f, direction: FlexDirection.Column)
                 .AsRectItem()
                 .WithReactiveContainer(_reactiveContainer)
                 .Use(_songInfoRoot);
+
+                additionalInfo.anchoredPosition = new Vector2(650f, -100f);
 
                 __instance.gameObject.SetActive(true);
             }

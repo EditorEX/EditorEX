@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace EditorEX.SDK.Reactive.Components.Native
+namespace EditorEX.SDK.ReactiveComponents.Native
 {
     public class ReactiveContainerHolder : MonoBehaviour
     {

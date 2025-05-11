@@ -7,7 +7,7 @@ using Reactive.Components;
 using Reactive.Yoga;
 using UnityEngine;
 
-namespace EditorEX.SDK.Reactive.Components
+namespace EditorEX.SDK.ReactiveComponents
 {
     public class EditorImage : ReactiveComponent, IComponentHolder<EditorImage>, ISkewedComponent, IGraphic, ILeafLayoutItem
     {

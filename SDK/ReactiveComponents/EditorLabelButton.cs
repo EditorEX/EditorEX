@@ -1,12 +1,12 @@
 using System;
-using EditorEX.SDK.Reactive.Components.Native;
+using EditorEX.SDK.ReactiveComponents.Native;
 using HMUI;
 using Reactive;
 using Reactive.Components;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace EditorEX.SDK.Reactive.Components
+namespace EditorEX.SDK.ReactiveComponents
 {
     //TODO: Make this use Reactive animated states?
     public class EditorLabelButton : ReactiveComponent, IComponentHolder<EditorLabelButton>

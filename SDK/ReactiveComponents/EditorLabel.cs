@@ -1,5 +1,5 @@
 using System;
-using EditorEX.SDK.Reactive.Components.Native;
+using EditorEX.SDK.ReactiveComponents.Native;
 using HMUI;
 using Reactive;
 using Reactive.BeatSaber.Components;
@@ -8,7 +8,7 @@ using Reactive.Yoga;
 using TMPro;
 using UnityEngine;
 
-namespace EditorEX.SDK.Reactive.Components
+namespace EditorEX.SDK.ReactiveComponents
 {
     public class EditorLabel : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutItem
     {

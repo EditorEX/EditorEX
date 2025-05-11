@@ -1,7 +1,7 @@
 using EditorEX.SDK.Collectors;
 using Zenject;
 
-namespace EditorEX.SDK.Reactive
+namespace EditorEX.SDK.ReactiveComponents
 {
     public class ReactiveContainer
     {

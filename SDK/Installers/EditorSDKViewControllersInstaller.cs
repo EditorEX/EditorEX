@@ -1,7 +1,7 @@
 ﻿using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
-using EditorEX.SDK.Reactive;
+using EditorEX.SDK.ReactiveComponents;
 using EditorEX.UI.ContextMenu;
 using Zenject;
 

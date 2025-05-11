@@ -2,7 +2,7 @@ using HMUI;
 using Reactive.Components;
 using UnityEngine;
 
-namespace EditorEX.SDK.Reactive.Components
+namespace EditorEX.SDK.ReactiveComponents
 {
     public class EditorBackground : ComponentLayout<EditorImage>
     {
