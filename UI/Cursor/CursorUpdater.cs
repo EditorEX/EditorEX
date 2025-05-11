@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using EditorEX.UI.Patches;
 using UnityEngine.UI;
 using Zenject;
 
@@ -44,6 +45,10 @@ namespace EditorEX.UI.Cursor
             foreach (var selectable in Selectable.allSelectablesArray)
             {
                 any |= selectable.IsHighlighted();
+            }
+            foreach (var selectable in SelectableCellsCursorPatches.SelectableCells)
+            {
+                any |= selectable.highlighted;
             }
             ChangeCursor(any ? WindowsCursor.Hand : WindowsCursor.StandardArrow);
         }

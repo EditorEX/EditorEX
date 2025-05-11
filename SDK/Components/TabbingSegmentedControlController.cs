@@ -7,7 +7,7 @@ namespace EditorEX.SDK.Components
 {
     public class TabbingSegmentedControlController : MonoBehaviour
     {
-        private static readonly KeyCode[] _qwertyKeyBinds = new KeyCode[] { KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, KeyCode.T, KeyCode.Y, KeyCode.U, KeyCode.I, KeyCode.O, KeyCode.P };
+        internal static readonly KeyCode[] _qwertyKeyBinds = [KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R, KeyCode.T, KeyCode.Y, KeyCode.U, KeyCode.I, KeyCode.O, KeyCode.P];
         private KeyboardBinder _keyboardBinder;
         private SegmentedControl _segmentedControl;
 
@@ -15,7 +15,7 @@ namespace EditorEX.SDK.Components
         {
             _segmentedControl = segmentedControl;
 
-            AddBindings(qwerty);
+            AddBindings(qwerty); 
         }
 
         public void AddBindings(bool qwerty)

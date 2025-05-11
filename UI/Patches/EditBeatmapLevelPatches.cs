@@ -9,6 +9,7 @@ using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
 using EditorEX.SDK.ReactiveComponents;
+using EditorEX.SDK.ReactiveComponents.SegmentedControl;
 using EditorEX.Util;
 using HMUI;
 using Reactive;
@@ -325,7 +326,11 @@ namespace EditorEX.UI.Patches
                 var additionalInfo = new Layout
                 {
                     Children = {
-                        new EditorSegmentedControl(),
+                        new EditorSegmentedControl() {
+                            SelectedIndex = tab,
+                            Values = [ "Environments", "Contributors" ],
+                            TabbingType = TabbingType.Qwerty,
+                        }.AsFlexItem(size: new YogaVector("auto", 30f)),
                         new EditorBackground {
                             ColorSO = _colorCollector.GetColor("Navbar/Background/Normal"),
                             UseScriptableObjectColors = true,
@@ -334,38 +339,25 @@ namespace EditorEX.UI.Patches
                             Children = {
                                 new Layout {
                                     Children = {
-                                        new EditorLabelButton {
-                                            Text = "Pic 1 SKIBIDI TOILET!!!!!!!!!!!!!",
-                                            FontSize = 20f,
-                                            OnClick = () => {
-                                                tab.Value = 0;
-                                            }
-                                        }.AsFlexItem(size: "auto"),
-                                        new EditorLabelButton {
-                                            Text = "Pic 2",
-                                            FontSize = 20f,
-                                            OnClick = () => {
-                                                tab.Value = 1;
-                                            }
-                                        }.AsFlexItem(size: "auto"),
-                                        new EditorLabelButton {
-                                            Text = "Pic 3",
-                                            FontSize = 20f,
-                                            OnClick = () => {
-                                                tab.Value = 2;
-                                            }
-                                        }.AsFlexItem(size: "auto")
+                                        new EditorImage {
+                                            Source = "https://picsum.photos/200"
+                                        }.EnabledWithObservable(tab, 0)
+                                        .AsFlexItem(size: new () {x = 200f, y = 200f}),
+                                        new EditorImage {
+                                            Source = "https://picsum.photos/200"
+                                        }.EnabledWithObservable(tab, 1)
+                                        .AsFlexItem(size: new () {x = 200f, y = 200f}),
                                     }
                                 }.AsFlexGroup(gap: 5f).AsFlexItem(),
                             }
                         }.AsFlexItem(minSize: new () {x = 800f, y = 800f})
                     }
-                }.AsFlexGroup(gap: 100f, direction: FlexDirection.Column)
+                }.AsFlexGroup(gap: 10f, direction: FlexDirection.Column, alignItems: Align.Center)
                 .AsRectItem()
                 .WithReactiveContainer(_reactiveContainer)
                 .Use(_songInfoRoot);
 
-                additionalInfo.anchoredPosition = new Vector2(650f, -100f);
+                additionalInfo.anchoredPosition = new Vector2(950f, -100f);
 
                 __instance.gameObject.SetActive(true);
             }

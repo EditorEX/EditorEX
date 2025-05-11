@@ -181,7 +181,7 @@ namespace EditorEX.SDK.ReactiveComponents
 
         protected override void OnInitialize()
         {
-            FontSize = 4f;
+            FontSize = 12f;
             Alignment = TextAlignmentOptions.Center;
             EnableWrapping = false;
         }
@@ -189,9 +189,10 @@ namespace EditorEX.SDK.ReactiveComponents
         protected override void OnStart()
         {
             RequestLeafRecalculation();
-            var fontCollector = Content.transform.GetComponentInParent<ReactiveContainerHolder>().ReactiveContainer.FontCollector;
-            _text.fontSharedMaterial = fontCollector.GetMaterial();
-            _text.font = fontCollector.GetFontAsset();
+            var container = Content.transform.GetComponentInParent<ReactiveContainerHolder>().ReactiveContainer;
+            _text.fontSharedMaterial = container.FontCollector.GetMaterial();
+            _text.font = container.FontCollector.GetFontAsset();
+            _text.color = container.ColorCollector.GetColor("Button/Text/Normal");
         }
 
         public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
