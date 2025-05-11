@@ -4,16 +4,13 @@ using System.Linq;
 using Chroma;
 using Chroma.EnvironmentEnhancement;
 using Chroma.EnvironmentEnhancement.Saved;
-using Chroma.Settings;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.MapData.Contexts;
 using Heck.Animation;
 using IPA.Utilities;
-using JetBrains.Annotations;
 using UnityEngine;
 using Zenject;
 using static Chroma.ChromaController;
-using static Chroma.EnvironmentEnhancement.MaterialsManager;
 using Object = UnityEngine.Object;
 
 // Based from https://github.com/Aeroluna/Heck

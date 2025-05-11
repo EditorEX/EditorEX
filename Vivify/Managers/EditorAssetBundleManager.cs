@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using BeatmapEditor3D.DataModels;
-using CustomJSONData.CustomBeatmap;
 using EditorEX.Essentials.Patches;
-using Heck;
 using SiraUtil.Logging;
 using UnityEngine;
 using Object = UnityEngine.Object;

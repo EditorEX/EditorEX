@@ -1,9 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
-using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Visuals.Universal;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
-using HarmonyLib;
 using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;

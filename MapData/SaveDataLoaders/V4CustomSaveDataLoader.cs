@@ -1,6 +1,4 @@
-﻿using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
-using BeatmapLevelSaveDataVersion4;
+﻿using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomDataModels;
 using EditorEX.CustomJSONData;

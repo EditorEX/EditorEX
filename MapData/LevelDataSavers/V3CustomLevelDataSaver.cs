@@ -1,9 +1,6 @@
 using EditorEX.MapData.SaveDataLoaders;
 using System;
 using BeatmapEditor3D.DataModels;
-
-using V3CustomSaveData = CustomJSONData.CustomBeatmap.Version3CustomBeatmapSaveData;
-using V3SaveData = BeatmapSaveDataVersion3.BeatmapSaveData;
 using V3 = BeatmapSaveDataVersion3;
 using System.Collections.Generic;
 using System.Linq;

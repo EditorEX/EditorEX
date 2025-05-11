@@ -1,5 +1,4 @@
 ﻿using BeatmapEditor3D.Views;
-using BeatmapEditor3D.Visuals;
 using HarmonyLib;
 using SiraUtil.Affinity;
 using System.Collections.Generic;

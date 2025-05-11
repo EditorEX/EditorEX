@@ -2,12 +2,10 @@
 using EditorEX.CustomJSONData.CustomEvents;
 using CustomJSONData;
 using HarmonyLib;
-using Heck;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Heck.Deserialize;
-using CustomJSONData.CustomBeatmap;
 
 namespace EditorEX.Heck.Deserialize
 {

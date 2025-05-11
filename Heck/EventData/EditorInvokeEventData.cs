@@ -1,8 +1,5 @@
-﻿using EditorEX.CustomJSONData;
-using EditorEX.CustomJSONData.CustomEvents;
+﻿using EditorEX.CustomJSONData.CustomEvents;
 using CustomJSONData.CustomBeatmap;
-using Heck;
-using System.Collections.Generic;
 using Heck.Deserialize;
 
 namespace EditorEX.Heck.EventData

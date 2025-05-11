@@ -10,11 +10,9 @@ using EditorEX.Heck.Deserialize;
 using EditorEX.Vivify.Managers;
 using Heck;
 using Heck.Animation;
-using Heck.Deserialize;
 using Heck.Event;
 using UnityEngine;
 using Vivify;
-using Vivify.Managers;
 using Zenject;
 using static Vivify.VivifyController;
 

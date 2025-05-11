@@ -1,17 +1,12 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
 using BeatmapEditor3D.InputSystem;
 using EditorEX.SDK.Input;
 using HarmonyLib;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
-using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.AddressableAssets.ResourceLocators;
 
 namespace EditorEX.SDKImplementation.Patches
 {

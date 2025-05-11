@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using BeatmapEditor3D.DataModels;
 using EditorEX.MapData.SaveDataLoaders;
-using V2CustomSaveData = CustomJSONData.CustomBeatmap.Version2_6_0AndEarlierCustomBeatmapSaveData;
-using V2SaveData = BeatmapSaveDataVersion2_6_0AndEarlier.BeatmapSaveData;
 using V2 = BeatmapSaveDataVersion2_6_0AndEarlier;
 using System.Linq;
 using EditorEX.MapData.Contexts;
 using EditorEX.CustomJSONData.VersionedSaveData;
 using EditorEX.CustomJSONData;
 using static EditorEX.CustomJSONData.VersionedSaveData.Custom2_6_0AndEarlierBeatmapSaveDataVersioned;
-using BeatmapEditor3D.Types;
 using BeatmapSaveDataVersion2_6_0AndEarlier;
 namespace EditorEX.MapData.LevelDataSavers
 {

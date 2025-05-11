@@ -1,14 +1,7 @@
 ﻿using BeatmapEditor3D;
-using EditorEX.CustomDataModels;
-using EditorEX.MapData.SaveDataSavers;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EditorEX.CustomJSONData.Patches
 {

@@ -1,7 +1,5 @@
-﻿using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Config;
-using EditorEX.SDK.Factories;
 using EditorEX.Util;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
@@ -9,9 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 
 namespace EditorEX.UI.Patches
 {

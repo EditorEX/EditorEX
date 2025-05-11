@@ -3,15 +3,12 @@ using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
 using Heck.Deserialize;
-using HMUI;
 using NoodleExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 using static NoodleExtensions.NoodleObjectData;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 // Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.ObjectData

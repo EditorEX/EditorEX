@@ -11,26 +11,17 @@ using v3NoteSaveData = BeatmapSaveDataVersion3.ColorNoteData;
 
 using v3CustomBombSaveData = CustomJSONData.CustomBeatmap.Version3CustomBeatmapSaveData.BombNoteSaveData;
 using v3BombSaveData = BeatmapSaveDataVersion3.BombNoteData;
-
-using v2ObstacleSaveData = BeatmapSaveDataVersion2_6_0AndEarlier.ObstacleData;
 using v2CustomObstacleSaveData = CustomJSONData.CustomBeatmap.Version2_6_0AndEarlierCustomBeatmapSaveData.ObstacleSaveData;
 using v3CustomObstacleSaveData = CustomJSONData.CustomBeatmap.Version3CustomBeatmapSaveData.ObstacleSaveData;
 using v3ObstacleSaveData = BeatmapSaveDataVersion3.ObstacleData;
-
-using v2SliderSaveData = BeatmapSaveDataVersion2_6_0AndEarlier.SliderData;
 using v2CustomSliderSaveData = CustomJSONData.CustomBeatmap.Version2_6_0AndEarlierCustomBeatmapSaveData.SliderSaveData;
 using v3CustomSliderSaveData = CustomJSONData.CustomBeatmap.Version3CustomBeatmapSaveData.SliderSaveData;
 using v3SliderSaveData = BeatmapSaveDataVersion3.SliderData;
-
-using v2WaypointSaveData = BeatmapSaveDataVersion2_6_0AndEarlier.WaypointData;
 using v2CustomWaypointSaveData = CustomJSONData.CustomBeatmap.Version2_6_0AndEarlierCustomBeatmapSaveData.WaypointSaveData;
 using v3CustomWaypointSaveData = CustomJSONData.CustomBeatmap.Version3CustomBeatmapSaveData.WaypointSaveData;
 using v3WaypointSaveData = BeatmapSaveDataVersion3.WaypointData;
-
-using v2EventSaveData = BeatmapSaveDataVersion2_6_0AndEarlier.EventData;
 using v2CustomEventSaveData = CustomJSONData.CustomBeatmap.Version2_6_0AndEarlierCustomBeatmapSaveData.EventSaveData;
 using v3CustomEventSaveData = CustomJSONData.CustomBeatmap.Version3CustomBeatmapSaveData.BasicEventSaveData;
-using v3EventSaveData = BeatmapSaveDataVersion3.BasicEventData;
 
 namespace EditorEX.MapData.Converters
 {

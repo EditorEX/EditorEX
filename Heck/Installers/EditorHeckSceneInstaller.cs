@@ -13,7 +13,6 @@ using Heck.HarmonyPatches;
 using Heck.ObjectInitialize;
 using Zenject;
 using SiraUtil.Logging;
-using JetBrains.Annotations;
 
 namespace EditorEX.Heck.Installers
 {

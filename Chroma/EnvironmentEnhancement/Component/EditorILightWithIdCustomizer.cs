@@ -1,7 +1,6 @@
 ﻿using CustomJSONData.CustomBeatmap;
 using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
 using EditorEX.Chroma.Colorizer;
-using JetBrains.Annotations;
 using SiraUtil.Logging;
 using System.Collections.Generic;
 using System.Linq;

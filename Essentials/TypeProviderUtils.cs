@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.VariableMovement;
 using UnityEngine;

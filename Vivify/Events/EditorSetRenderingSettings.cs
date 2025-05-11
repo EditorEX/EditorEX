@@ -9,7 +9,6 @@ using EditorEX.Heck.Deserialize;
 using EditorEX.Vivify.Managers;
 using Heck;
 using Heck.Animation;
-using Heck.Deserialize;
 using Heck.Event;
 using SiraUtil.Logging;
 using UnityEngine;

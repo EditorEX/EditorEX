@@ -1,13 +1,10 @@
 ﻿using Chroma.EnvironmentEnhancement;
 using Chroma.EnvironmentEnhancement.Component;
 using Chroma.HarmonyPatches.EnvironmentComponent;
-using Chroma.Settings;
 using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
 using HarmonyLib;
 using Heck.Animation.Transform;
-using IPA.Logging.Printers;
 using IPA.Utilities;
-using JetBrains.Annotations;
 using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;

@@ -2,7 +2,6 @@
 using SiraUtil.Affinity;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
-using Zenject;
 
 namespace EditorEX.SDKImplementation.Patches
 {

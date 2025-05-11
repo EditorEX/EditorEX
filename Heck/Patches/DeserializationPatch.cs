@@ -5,7 +5,6 @@ using EditorEX.CustomJSONData;
 using EditorEX.Heck.Deserialize;
 using EditorEX.MapData.Contexts;
 using EditorEX.Util;
-using Heck.Animation;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
 using System;
@@ -13,7 +12,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Zenject;
 
 namespace EditorEX.Heck.Patches
 {

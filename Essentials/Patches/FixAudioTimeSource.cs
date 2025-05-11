@@ -1,5 +1,4 @@
 ﻿using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
 using SiraUtil.Affinity;
 
 namespace EditorEX.Essentials.Patches

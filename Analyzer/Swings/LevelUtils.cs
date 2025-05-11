@@ -1,8 +1,4 @@
-﻿using EditorEX;
-using EditorEX.Essentials.Movement.Data;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
+﻿using EditorEX.Essentials.Movement.Data;
 using UnityEngine;
 using Zenject;
 

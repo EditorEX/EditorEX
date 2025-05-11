@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Linq;
-using EditorEX.Chroma.Colorizer;
-using Chroma.Colorizer;
 using Chroma.EnvironmentEnhancement;
 using Chroma.Extras;
-using Chroma.HarmonyPatches.Colorizer.Initialize;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using CustomJSONData.CustomBeatmap;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Zenject;

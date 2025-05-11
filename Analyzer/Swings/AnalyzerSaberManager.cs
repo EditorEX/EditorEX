@@ -1,9 +1,6 @@
 ﻿using BeatmapEditor3D;
-using BeatmapEditor3D.Commands;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Analyzer.Swings.SwingBaker;
-using EditorEX.Essentials.Patches;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Zenject;

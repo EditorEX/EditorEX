@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
@@ -13,7 +12,6 @@ using HarmonyLib;
 using Heck;
 using Heck.Animation;
 using Heck.Animation.Transform;
-using Heck.Deserialize;
 using Heck.Event;
 using Heck.ReLoad;
 using SiraUtil.Logging;

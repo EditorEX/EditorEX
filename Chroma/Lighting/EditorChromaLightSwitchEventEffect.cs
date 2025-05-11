@@ -2,13 +2,11 @@
 using Chroma;
 using Chroma.Extras;
 using Chroma.Lighting;
-using EditorEX.Chroma.Lighting;
 using EditorEX.Chroma.Colorizer;
 using EditorEX.Chroma.Events;
 using EditorEX.CustomJSONData;
 using EditorEX.Heck.Deserialize;
 using Heck.Animation;
-using JetBrains.Annotations;
 using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;

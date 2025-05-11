@@ -1,5 +1,4 @@
 ﻿using BeatmapEditor3D.DataModels;
-using EditorEX.Essentials.Movement.Data;
 using UnityEngine;
 
 namespace EditorEX.Essentials.Visuals

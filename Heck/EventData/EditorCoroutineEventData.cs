@@ -1,7 +1,6 @@
 ﻿using EditorEX.CustomJSONData.CustomEvents;
 using CustomJSONData.CustomBeatmap;
 using HarmonyLib;
-using Heck;
 using Heck.Animation;
 using System;
 using System.Collections.Generic;

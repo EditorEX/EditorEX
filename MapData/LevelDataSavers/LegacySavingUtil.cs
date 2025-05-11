@@ -1,15 +1,9 @@
-using V3CustomSaveData = CustomJSONData.CustomBeatmap.Version3CustomBeatmapSaveData;
-using V3SaveData = BeatmapSaveDataVersion3.BeatmapSaveData;
 using V3 = BeatmapSaveDataVersion3;
 using V2 = BeatmapSaveDataVersion2_6_0AndEarlier;
-using V2CustomSaveData = CustomJSONData.CustomBeatmap.Version2_6_0AndEarlierCustomBeatmapSaveData;
 using BeatmapSaveDataCommon;
 using BeatmapEditor3D;
 using System.IO;
 using System;
-using BeatmapEditor3D.DataModels;
-using CustomJSONData.CustomBeatmap;
-using EditorEX.CustomJSONData;
 
 public static class LegacySavingUtil
 {

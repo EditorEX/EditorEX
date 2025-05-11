@@ -1,11 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.CustomJSONData.CustomEvents;
 using CustomJSONData.CustomBeatmap;
-using ModestTree.Util;
 using System.Collections.Generic;
-using System.Linq;
 using EditorEX.Util;
-using BeatmapSaveDataVersion3;
 
 namespace EditorEX.CustomJSONData
 {

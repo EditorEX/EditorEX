@@ -4,7 +4,6 @@ using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Visuals;
 using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Zenject;
 
 namespace EditorEX.Essentials.Movement.Note.MovementProvider

@@ -2,11 +2,9 @@
 using EditorEX.CustomJSONData;
 using EditorEX.Heck.Deserialize;
 using Heck;
-using Heck.Deserialize;
 using Heck.Event;
 using SiraUtil.Logging;
 using Vivify;
-using Vivify.Events;
 using Vivify.HarmonyPatches;
 using Zenject;
 using static Vivify.VivifyController;

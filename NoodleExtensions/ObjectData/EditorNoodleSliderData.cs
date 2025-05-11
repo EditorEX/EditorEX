@@ -3,8 +3,6 @@ using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
 using Heck.Deserialize;
-using IPA.Utilities;
-using NoodleExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

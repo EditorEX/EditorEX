@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using BeatmapEditor3D.Commands;
-using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
-using Heck.Animation.Transform;
-using Heck.Event;
 using NoodleExtensions;
 using UnityEngine;
-using Zenject;
 using static Heck.HeckController;
 using static NoodleExtensions.NoodleController;
 

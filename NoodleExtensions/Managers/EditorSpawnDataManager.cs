@@ -1,9 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
-using EditorEX.Essentials.Patches;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
-using JetBrains.Annotations;
 using NoodleExtensions;
 using SiraUtil.Logging;
 using UnityEngine;

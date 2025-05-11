@@ -1,6 +1,4 @@
-﻿using Chroma;
-using Chroma.EnvironmentEnhancement;
-using Chroma.HarmonyPatches.Colorizer.Initialize;
+﻿using Chroma.EnvironmentEnhancement;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using Chroma.Lighting;
 using EditorEX.Chroma.EnvironmentEnhancement;
@@ -8,13 +6,10 @@ using EditorEX.Chroma.EnvironmentEnhancement.Component;
 using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
 using EditorEX.Chroma.Lighting;
 using EditorEX.Chroma.Colorizer;
-using EditorEX.Chroma.EnvironmentEnhancement;
 using EditorEX.Chroma.Events;
-using EditorEX.Chroma.Lighting;
 using EditorEX.Chroma.Patches.Events;
 using EditorEX.MapData.Contexts;
 using Heck;
-using Heck.BaseProviders;
 using Zenject;
 
 namespace EditorEX.Chroma.Installers

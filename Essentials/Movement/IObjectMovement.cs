@@ -2,7 +2,6 @@
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Visuals;
 using System;
-using UnityEngine;
 
 namespace EditorEX.Essentials.Movement
 {

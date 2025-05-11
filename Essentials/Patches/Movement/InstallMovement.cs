@@ -8,10 +8,8 @@ using EditorEX.Essentials.Movement.Note.MovementProvider;
 using EditorEX.Essentials.Movement.Obstacle;
 using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
 using EditorEX.Essentials.VariableMovement;
-using EditorEX.Essentials.Visuals;
 using EditorEX.Essentials.Visuals.Note;
 using EditorEX.Essentials.Visuals.Obstacle;
-using HarmonyLib;
 using SiraUtil.Affinity;
 
 namespace EditorEX.Essentials.Patches.Movement

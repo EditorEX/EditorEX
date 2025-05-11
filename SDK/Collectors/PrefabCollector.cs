@@ -1,9 +1,6 @@
 ﻿using BeatmapEditor3D;
-using BeatmapEditor3D.Views;
 using HMUI;
-using System.Linq;
 using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 

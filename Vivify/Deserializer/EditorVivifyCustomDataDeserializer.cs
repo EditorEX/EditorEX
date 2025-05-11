@@ -1,19 +1,13 @@
 ﻿using BeatmapEditor3D.DataModels;
-using Chroma;
 using CustomJSONData.CustomBeatmap;
-using EditorEX.Chroma.Events;
-using EditorEX.Chroma.Lighting;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
 using EditorEX.Heck.Deserialize;
-using EditorEX.Util;
 using Heck.Animation;
 using Heck.Deserialize;
-using IPA.Utilities;
 using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Vivify;
 using static Vivify.VivifyController;
 

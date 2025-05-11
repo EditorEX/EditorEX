@@ -1,5 +1,4 @@
-﻿using BeatSaberMarkupLanguage.Components;
-using EditorEX.SDK.Base;
+﻿using EditorEX.SDK.Base;
 using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Components;
 using System;

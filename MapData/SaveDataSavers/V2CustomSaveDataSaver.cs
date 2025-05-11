@@ -1,12 +1,8 @@
-﻿using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
-using BeatmapLevelSaveDataVersion4;
+﻿using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.SerializedSaveData;
-using HarmonyLib;
 using IPA.Loader;
-using ModestTree;
 using Newtonsoft.Json;
 using SiraUtil.Zenject;
 using System;

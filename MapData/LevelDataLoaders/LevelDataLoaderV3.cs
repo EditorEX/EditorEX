@@ -3,7 +3,6 @@ using BeatmapEditor3D.Scripts.SerializedData;
 using BeatmapEditor3D.SerializedData;
 using BeatmapSaveDataCommon;
 using BeatmapSaveDataVersion3;
-using BeatmapSaveDataVersion4;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
@@ -11,8 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EditorEX.MapData.LevelDataLoaders
 {

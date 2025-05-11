@@ -4,8 +4,6 @@ using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.SerializedSaveData;
 using IPA.Loader;
-using JetBrains.Annotations;
-using ModestTree;
 using Newtonsoft.Json;
 using SiraUtil.Zenject;
 using System;

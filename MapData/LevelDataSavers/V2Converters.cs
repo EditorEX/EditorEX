@@ -1,5 +1,4 @@
 using V2CustomSaveData = CustomJSONData.CustomBeatmap.Version2_6_0AndEarlierCustomBeatmapSaveData;
-using V2SaveData = BeatmapSaveDataVersion2_6_0AndEarlier.BeatmapSaveData;
 using V2 = BeatmapSaveDataVersion2_6_0AndEarlier;
 using System.Collections.Generic;
 using static EditorEX.CustomJSONData.VersionedSaveData.Custom2_6_0AndEarlierBeatmapSaveDataVersioned;

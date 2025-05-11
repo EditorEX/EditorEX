@@ -1,7 +1,6 @@
 ﻿using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Signals;
 using System;
-using UnityEngine;
 using Zenject;
 
 namespace EditorEX.SDK.AddressableHelpers

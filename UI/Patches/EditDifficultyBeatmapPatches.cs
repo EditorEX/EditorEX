@@ -1,5 +1,4 @@
-﻿using System;
-using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Views;
 using EditorEX.MapData.Contexts;
 using EditorEX.SDK.Factories;

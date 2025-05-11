@@ -1,7 +1,6 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using SiraUtil.Affinity;
-using SiraUtil.Logging;
 using Zenject;
 
 namespace EditorEX.Essentials.Patches

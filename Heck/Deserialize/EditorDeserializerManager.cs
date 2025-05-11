@@ -1,5 +1,4 @@
 ﻿using BeatmapEditor3D.DataModels;
-using CustomJSONData;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
@@ -11,7 +10,6 @@ using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Zenject;
 
 namespace EditorEX.Heck.Deserialize
 {

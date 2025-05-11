@@ -1,11 +1,9 @@
 ﻿using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
-using BeatmapEditor3D.Visuals;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Visuals;
 using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 using Zenject;
 
 namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider

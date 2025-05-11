@@ -1,8 +1,6 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.CustomJSONData.CustomEvents;
-using Heck;
 using Heck.Deserialize;
-using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 

@@ -12,7 +12,6 @@ using BeatmapEditor3D;
 using Chroma;
 using UnityEngine;
 using Zenject;
-using Vivify.Managers;
 using EditorEX.Vivify.ObjectPrefab.Managers;
 using Vivify;
 

@@ -4,7 +4,6 @@ using Chroma.EnvironmentEnhancement.Saved;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.Chroma.EnvironmentEnhancement.Component;
-using EditorEX.Chroma.EnvironmentEnhancement;
 using EditorEX.CustomJSONData;
 using EditorEX.MapData.Contexts;
 using Heck.Animation;
@@ -19,7 +18,6 @@ using UnityEngine.SceneManagement;
 using Zenject;
 using static Chroma.ChromaController;
 using static Heck.HeckController;
-using Object = UnityEngine.Object;
 
 // Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.EnvironmentEnhancement

@@ -2,12 +2,6 @@
 using System.Reflection;
 using System.Reflection.Emit;
 using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
-using BeatmapEditor3D.Views;
-using BeatmapEditor3D.Visuals;
-using EditorEX.Essentials.Movement.Arc;
-using EditorEX.Essentials.Movement.Note;
-using EditorEX.Essentials.Movement.Obstacle;
 using HarmonyLib;
 using SiraUtil.Affinity;
 using UnityEngine;

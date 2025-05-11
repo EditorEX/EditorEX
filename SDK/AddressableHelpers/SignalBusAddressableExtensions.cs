@@ -1,5 +1,4 @@
-﻿using EditorEX.SDK.Collectors;
-using EditorEX.SDK.Signals;
+﻿using EditorEX.SDK.Signals;
 using System;
 using System.Collections.Generic;
 using Zenject;

@@ -1,5 +1,4 @@
 ﻿using BeatmapEditor3D.DataModels;
-using EditorEX.Analyzer.Swings;
 using EditorEX.Essentials.SpawnProcessing;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;

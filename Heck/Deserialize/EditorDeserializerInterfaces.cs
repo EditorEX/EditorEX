@@ -1,12 +1,7 @@
 ﻿using BeatmapEditor3D.DataModels;
-using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData.CustomEvents;
 using Heck.Deserialize;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EditorEX.Heck.Deserialize
 {

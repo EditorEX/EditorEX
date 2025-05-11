@@ -4,7 +4,6 @@ using EditorEX.CustomJSONData.CustomEvents;
 using EditorEX.Heck.EventData;
 using EditorEX.Heck.ObjectData;
 using CustomJSONData.CustomBeatmap;
-using Heck;
 using Heck.Animation;
 using System;
 using System.Collections.Generic;

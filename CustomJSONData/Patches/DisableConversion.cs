@@ -1,11 +1,5 @@
 ﻿using BeatmapEditor3D.DataModels;
-using HarmonyLib;
 using SiraUtil.Affinity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EditorEX.CustomJSONData.Patches
 {

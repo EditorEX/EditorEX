@@ -1,6 +1,5 @@
 ﻿using EditorEX.UI.ContextMenu;
 using SiraUtil.Affinity;
-using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

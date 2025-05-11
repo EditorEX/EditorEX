@@ -7,7 +7,6 @@ using HarmonyLib;
 using Heck;
 using Heck.Animation;
 using Heck.Event;
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;

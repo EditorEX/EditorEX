@@ -1,8 +1,6 @@
 ﻿using EditorEX.Chroma.Lighting;
 using Chroma.Lighting;
 using IPA.Utilities;
-using JetBrains.Annotations;
-using ModestTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;

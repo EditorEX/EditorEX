@@ -1,11 +1,8 @@
-﻿using BeatmapEditor3D;
-using EditorEX.Config;
+﻿using EditorEX.Config;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.ContextMenu;
 using EditorEX.SDK.ContextMenu.Objects;
 using EditorEX.UI.Patches;
-using System;
-using System.IO;
 using System.Linq;
 using Zenject;
 

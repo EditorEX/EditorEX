@@ -2,7 +2,6 @@
 using EditorEX.Chroma.Colorizer;
 using Heck.Animation;
 using IPA.Utilities;
-using JetBrains.Annotations;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;

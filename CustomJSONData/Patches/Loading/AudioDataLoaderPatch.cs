@@ -4,7 +4,6 @@ using BeatmapEditor3D.Types;
 using EditorEX.MapData.SaveDataLoaders;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;

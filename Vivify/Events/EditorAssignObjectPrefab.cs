@@ -10,7 +10,6 @@ using IPA.Utilities;
 using SiraUtil.Logging;
 using Vivify;
 using Vivify.ObjectPrefab.Collections;
-using Vivify.ObjectPrefab.Managers;
 using Vivify.ObjectPrefab.Pools;
 using Zenject;
 using static Vivify.VivifyController;

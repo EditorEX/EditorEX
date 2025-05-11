@@ -1,14 +1,7 @@
 ﻿using BeatmapSaveDataVersion3;
-using V3CustomSaveData = CustomJSONData.CustomBeatmap.Version3CustomBeatmapSaveData;
-using V3SaveData = BeatmapSaveDataVersion3.BeatmapSaveData;
 using V3 = BeatmapSaveDataVersion3;
 using CustomJSONData.CustomBeatmap;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 using BeatmapSaveDataCommon;
 
 namespace EditorEX.CustomJSONData.VersionedSaveData

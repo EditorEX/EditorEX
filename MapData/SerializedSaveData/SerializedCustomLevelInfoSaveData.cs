@@ -1,6 +1,5 @@
 ﻿using CustomJSONData.CustomBeatmap;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace EditorEX.MapData.SerializedSaveData
 {

@@ -1,5 +1,4 @@
-﻿using EditorEX.SDK.ContextMenu;
-using EditorEX.SDK.ContextMenu.Objects;
+﻿using EditorEX.SDK.ContextMenu.Objects;
 using EditorEX.UI.ContextMenu;
 using UnityEngine;
 using UnityEngine.EventSystems;

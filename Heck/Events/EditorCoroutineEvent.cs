@@ -8,7 +8,6 @@ using Heck;
 using Heck.Animation;
 using Heck.Animation.Events;
 using Heck.Event;
-using JetBrains.Annotations;
 using System;
 using System.Collections;
 using UnityEngine;
