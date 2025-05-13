@@ -15,9 +15,16 @@ namespace EditorEX.SDKImplementation
                 Children = {
                     new EditorImage() {
                         Source = "https://picsum.photos/300"
-                    } 
+                    }.AsFlexItem(aspectRatio: 1f, maxSize: 300),
+                    new EditorNamedRail() {
+                        Label = { Text = "Silly", FontSize = 18f },
+                        Component = new EditorLabelButton() {
+                            Text = "Click me!",
+                            OnClick = () => { Debug.Log("Clicked!"); },
+                        }
+                    }.AsFlexItem(),
                 }
-            }.AsFlexGroup(FlexDirection.Column);
+            }.AsFlexGroup(FlexDirection.Column).AsFlexItem(size: new YogaVector(1000f, "auto"));
         }
 
         public SettingsViewData GetViewData()

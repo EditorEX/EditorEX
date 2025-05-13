@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using Zenject;
+using EventType = Heck.Animation.Events.EventType;
 
 namespace EditorEX.Heck.Events
 {

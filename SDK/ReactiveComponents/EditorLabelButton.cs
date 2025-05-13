@@ -40,15 +40,16 @@ namespace EditorEX.SDK.ReactiveComponents
             new EditorBackground() {
                 Source = "#Background8px",
                 ImageType = Image.Type.Sliced,
+                Children = {
+                    new EditorLabel()
+                    .AsFlexItem(size: "auto")
+                    .Bind(ref _label)
+                }
             }
-                .WithRectExpand()
-                .Bind(ref _background);
+            .AsFlexGroup()
+            .AsFlexItem(size: new Reactive.Yoga.YogaVector("fit-content", "fit-content"))
+            .Bind(ref _background);
             _background.Use(rect);
-            
-            new EditorLabel()
-                .WithRectExpand()
-                .Bind(ref _label);
-            _label.Use(rect);
 
             _button = rect.gameObject.AddComponent<NoTransitionsButton>();
 

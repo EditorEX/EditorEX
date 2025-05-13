@@ -19,6 +19,7 @@ namespace EditorEX.SDK.ReactiveComponents
             {
                 _text.text = value;
                 NotifyPropertyChanged();
+                RequestLeafRecalculation();
             }
         }
 
