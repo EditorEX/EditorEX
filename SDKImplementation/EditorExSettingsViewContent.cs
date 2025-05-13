@@ -1,6 +1,7 @@
 ﻿using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.Settings;
 using EditorEX.SDK.ViewContent;
+using EditorEX.Util;
 using Reactive;
 using Reactive.Yoga;
 using UnityEngine;
@@ -16,15 +17,11 @@ namespace EditorEX.SDKImplementation
                     new EditorImage() {
                         Source = "https://picsum.photos/300"
                     }.AsFlexItem(aspectRatio: 1f, maxSize: 300),
-                    new EditorNamedRail() {
-                        Label = { Text = "Silly", FontSize = 18f },
-                        Component = new EditorLabelButton() {
-                            Text = "Click me!",
-                            OnClick = () => { Debug.Log("Clicked!"); },
-                        }
-                    }.AsFlexItem(),
+                    new EditorToggle() {
+                        OnClick = x => { Debug.Log($"Toggle: {x}"); }
+                    }.InEditorNamedRail("Toggle", 18f),
                 }
-            }.AsFlexGroup(FlexDirection.Column).AsFlexItem(size: new YogaVector(1000f, "auto"));
+            }.AsFlexGroup(FlexDirection.Column, Justify.Center).AsFlexItem(size: new YogaVector(1000f, "auto"));
         }
 
         public SettingsViewData GetViewData()

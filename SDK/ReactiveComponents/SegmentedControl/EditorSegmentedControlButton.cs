@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.ReactiveComponents.Native;
 using HMUI;
@@ -15,7 +16,7 @@ using UnityEngine.UI;
 
 namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
 {
-    public class EditorSegmentedControlButton(int position) : ReactiveComponent, ILeafLayoutItem
+    public class EditorSegmentedControlButton(int position) : ReactiveComponent
     {
         public string Text
         {
@@ -61,10 +62,10 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
         private ObservableValue<int> _selectedIndex = new ObservableValue<int>(0);
         private EditorLabel _label = null!;
         private EditorBackground _background = null!;
-        private SelectableCell _button = null!;
+        private SegmentedControlCell _button = null!;
         private SelectableCellSelectableStateController _selectableStateController = null!;
 
-        protected override void Construct(RectTransform rect)
+        protected override GameObject Construct()
         {
             string source = position switch
             {
@@ -74,33 +75,24 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
                 3 => "#Background8px",
                 _ => throw new ArgumentOutOfRangeException(nameof(position), position, null)
             };
-            new Layout() {
+            return new EditorBackground() {
+                Source = source,
+                ImageType = Image.Type.Sliced,
+                ContentTransform = { localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one },
                 Children = {
-                    new EditorBackground() {
-                            Source = source,
-                            ImageType = Image.Type.Sliced,
-                            Children = {
-                                new EditorLabel() {
-                                    FontSize = 12,
-                                }
-                                .AsFlexItem()
-                                .Bind(ref _label)
-                            }
-                        }
-                        .AsFlexGroup(justifyContent: Justify.Center)
-                        .Bind(ref _background)
+                    new EditorLabel() {
+                        FontSize = 12,
+                        ContentTransform = { localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one },
+                    }
+                    .AsFlexItem()
+                    .Bind(ref _label)
                 }
-            }.AsFlexGroup().Use(rect);
-
-            if (position == 2)
-                _background.ContentTransform.localScale = new Vector3(-1, 1, 1);
-
-            if (position == 2)
-                _label.ContentTransform.localScale = new Vector3(-1, 1, 1);
-
-            _button = rect.gameObject.AddComponent<SegmentedControlCell>();
-
-            base.Construct(rect);
+            }
+            .AsFlexItem(maxSize: "fit-content")
+            .AsFlexGroup(justifyContent: Justify.Center, padding: new YogaFrame(5, 3))
+            .Bind(ref _background)
+            .WithNativeComponent(out _button)
+            .Use();
         }
 
         private void ApplyLabel()
@@ -142,28 +134,6 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
 
             Content.SetActive(true);
             base.OnStart();
-        }
-
-        public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
-
-        public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode)
-        {
-            var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
-            var measuredHeight = heightMode == MeasureMode.Undefined ? Mathf.Infinity : height;
-
-            var textSize = _label.TextMesh.GetPreferredValues(measuredWidth, measuredHeight);
-
-            return new()
-            {
-                x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(textSize.x+40, measuredWidth),
-                y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(textSize.y, measuredHeight)
-            };
-        }
-
-        private void RequestLeafRecalculation()
-        {
-            LeafLayoutUpdatedEvent?.Invoke(this);
-            ScheduleLayoutRecalculation();
         }
     }
 }

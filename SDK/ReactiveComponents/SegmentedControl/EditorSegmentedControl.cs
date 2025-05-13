@@ -74,12 +74,13 @@ namespace EditorEX.SDK.ReactiveComponents
         private ObservableValue<int> _selectedIndex = new ObservableValue<int>(0);
         private Layout _layout = null!;
         private KeyboardBinder _keyboardBinder = new KeyboardBinder();
-        protected override void Construct(RectTransform rect)
+        protected override GameObject Construct()
         {
-            new Layout()
-                .AsFlexGroup(Reactive.Yoga.FlexDirection.Row, justifyContent: Reactive.Yoga.Justify.SpaceAround, constrainHorizontal: false)
+            return new Layout()
+                .AsFlexGroup(Reactive.Yoga.FlexDirection.Row, justifyContent: Reactive.Yoga.Justify.SpaceAround)
+                .AsFlexItem(size: "max-content")
                 .Export(out _layout)
-                .Use(rect);
+                .Use();
         }
 
         protected override void OnUpdate()

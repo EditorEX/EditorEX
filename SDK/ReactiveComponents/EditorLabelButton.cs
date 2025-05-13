@@ -35,9 +35,9 @@ namespace EditorEX.SDK.ReactiveComponents
         private NoTransitionsButton _button = null!;
         private NoTransitionButtonSelectableStateController _selectableStateController = null!;
 
-        protected override void Construct(RectTransform rect)
+        protected override GameObject Construct()
         {
-            new EditorBackground() {
+            return new EditorBackground() {
                 Source = "#Background8px",
                 ImageType = Image.Type.Sliced,
                 Children = {
@@ -46,14 +46,11 @@ namespace EditorEX.SDK.ReactiveComponents
                     .Bind(ref _label)
                 }
             }
-            .AsFlexGroup()
+            .AsFlexGroup(padding: 8f)
             .AsFlexItem(size: new Reactive.Yoga.YogaVector("fit-content", "fit-content"))
-            .Bind(ref _background);
-            _background.Use(rect);
-
-            _button = rect.gameObject.AddComponent<NoTransitionsButton>();
-
-            base.Construct(rect);
+            .Bind(ref _background)
+            .WithNativeComponent(out _button)
+            .Use();
         }
 
         protected override void OnStart()

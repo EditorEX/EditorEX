@@ -46,7 +46,7 @@ namespace EditorEX.UI.Patches.SDK
                         new EditorSegmentedControl() {
                             Values = _viewNames.ToArray(),
                             SelectedIndex = tab
-                        }.AsFlexItem(size: new YogaVector("auto", 30f))
+                        }.AsFlexItem()
                     }
                 }.AsFlexGroup(FlexDirection.Column, gap: 10f, padding: 10)
                 .Export(out var layout)
