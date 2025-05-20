@@ -12,7 +12,7 @@ namespace EditorEX.SDK.ReactiveComponents
             TransitionCollector = transitionCollector;
             Instantiator = instantiator;
         }
-        
+
         public ColorCollector ColorCollector { get; private set; }
         public FontCollector FontCollector { get; private set; }
         public TransitionCollector TransitionCollector { get; private set; }

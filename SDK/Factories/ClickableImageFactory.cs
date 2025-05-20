@@ -44,7 +44,7 @@ namespace EditorEX.SDK.Factories
 
             clickableImage.gameObject.SetActive(true);
 
-            return clickableImage; 
+            return clickableImage;
         }
 
         public EditorClickableImage Create(Transform parent, string location, LayoutData layoutData, Action onClick)

@@ -24,7 +24,8 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
         }
 
         public int Position { get; set; }
-        public ObservableValue<int> SelectedIndex {
+        public ObservableValue<int> SelectedIndex
+        {
             get => _selectedIndex;
             set
             {
@@ -48,7 +49,7 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
                 NotifyPropertyChanged();
             }
         }
-        
+
         public SelectableCell SelectableCell => _button;
 
         private string _text = string.Empty;
@@ -69,7 +70,8 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
                 3 => "#Background8px",
                 _ => throw new ArgumentOutOfRangeException(nameof(position), position, null)
             };
-            return new EditorBackground() {
+            return new EditorBackground()
+            {
                 Source = source,
                 ImageType = Image.Type.Sliced,
                 ContentTransform = { localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one },

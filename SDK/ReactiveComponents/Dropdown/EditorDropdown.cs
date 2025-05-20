@@ -11,29 +11,36 @@ using UnityEngine;
 namespace EditorEX.SDK.ReactiveComponents.Dropdown
 {
     public partial class EditorDropdown<TKey, TParam, TCell> : ReactiveComponent, ISkewedComponent, IKeyedControl<TKey, TParam>
-        where TCell : IReactiveComponent, ILayoutItem, ISkewedComponent, IPreviewableCell, IKeyedControlCell<TKey, TParam>, new() {
-        private struct DropdownOption : IEquatable<DropdownOption> {
+        where TCell : IReactiveComponent, ILayoutItem, ISkewedComponent, IPreviewableCell, IKeyedControlCell<TKey, TParam>, new()
+    {
+        private struct DropdownOption : IEquatable<DropdownOption>
+        {
             public TKey key;
             public TParam param;
 
-            public override int GetHashCode() {
+            public override int GetHashCode()
+            {
                 return key?.GetHashCode() ?? 0;
             }
 
-            public override bool Equals(object? obj) {
+            public override bool Equals(object? obj)
+            {
                 return obj is DropdownOption opt && opt.key!.Equals(key);
             }
 
-            public bool Equals(DropdownOption other) {
+            public bool Equals(DropdownOption other)
+            {
                 return key?.Equals(other.key) ?? false;
             }
         }
 
         public IDictionary<TKey, TParam> Items => _items;
 
-        public TKey SelectedKey {
+        public TKey SelectedKey
+        {
             get => _selectedKey.Value ?? throw new InvalidOperationException("Key cannot be acquired when Items is empty");
-            private set {
+            private set
+            {
                 _selectedKey = value;
 
                 SelectedKeyChangedEvent?.Invoke(value);
@@ -47,8 +54,10 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
         private readonly HashSet<DropdownOption> _options = new();
         private Optional<TKey> _selectedKey;
 
-        public void Select(TKey key) {
-            if (_modalOpened) {
+        public void Select(TKey key)
+        {
+            if (_modalOpened)
+            {
                 Table.ClearSelection();
                 Table.Select(new DropdownOption { key = key });
             }
@@ -58,26 +67,32 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             _previewCell.Init(_selectedKey!, _items[_selectedKey!]);
         }
 
-        private void RefreshSelection() {
-            if (_selectedKey.HasValue || Items.Count <= 0) {
+        private void RefreshSelection()
+        {
+            if (_selectedKey.HasValue || Items.Count <= 0)
+            {
                 return;
             }
 
             Select(Items.Keys.First());
         }
 
-        public float Skew {
+        public float Skew
+        {
             get => _skew;
-            set {
+            set
+            {
                 _skew = value;
                 _button.Skew = value;
                 _previewCell.Skew = value;
             }
         }
 
-        public bool Interactable {
+        public bool Interactable
+        {
             get => _interactable;
-            set {
+            set
+            {
                 _interactable = value;
                 _canvasGroup.alpha = value ? 1f : 0.25f;
                 _button.Interactable = value;
@@ -96,7 +111,8 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
         private TCell _previewCell = default!;
         private CanvasGroup _canvasGroup = null!;
 
-        protected override GameObject Construct() {
+        protected override GameObject Construct()
+        {
             new SharedDropdownOptionsModal()
                 .With(x => x.BuildImmediate())
                 .Bind(ref _modal)
@@ -104,16 +120,19 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 .WithCloseListener(HandleModalClosed)
                 .WithBeforeOpenListener(HandleBeforeModalOpened);
 
-            return new EditorBackgroundButton {
-                    OnClick = () => {
-                        if (Items.Count == 0) {
-                            return;
-                        }
+            return new EditorBackgroundButton
+            {
+                OnClick = () =>
+                {
+                    if (Items.Count == 0)
+                    {
+                        return;
+                    }
 
-                        _modal.PresentEditor(ContentTransform);
-                    },
+                    _modal.PresentEditor(ContentTransform);
+                },
 
-                    Children = {
+                Children = {
                         new TCell {
                                 UsedAsPreview = true
                             }
@@ -127,14 +146,15 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                             PreserveAspect = true
                         }.AsFlexItem(size: 20f, aspectRatio: 1f)
                     }
-                }
+            }
                 .WithNativeComponent(out _canvasGroup)
                 .AsFlexGroup(alignContent: Reactive.Yoga.Align.Center)
                 .Bind(ref _button)
                 .Use();
         }
 
-        protected override void OnInitialize() {
+        protected override void OnInitialize()
+        {
             this.AsFlexItem(size: new() { x = 36f, y = 40f });
 
             _items.ItemAddedEvent += HandleItemAdded;
@@ -142,19 +162,22 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             _items.AllItemsRemovedEvent += HandleAllItemsRemoved;
         }
 
-        private void HandleBeforeModalOpened(IModal modal) {
+        private void HandleBeforeModalOpened(IModal modal)
+        {
             var key = new DropdownOption { key = _selectedKey.Value! };
             Table.Items.Clear();
             Table.Items.AddRange(_options);
 
             Table.Refresh();
             Table.Select(key);
-            
+
             _modal.Modal.ApplyLayout(ContentTransform);
         }
 
-        private void HandleModalOpened(IModal modal, bool finished) {
-            if (finished) {
+        private void HandleModalOpened(IModal modal, bool finished)
+        {
+            if (finished)
+            {
                 return;
             }
 
@@ -162,8 +185,10 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             _modalOpened = true;
         }
 
-        private void HandleModalClosed(IModal modal, bool finished) {
-            if (finished) {
+        private void HandleModalClosed(IModal modal, bool finished)
+        {
+            if (finished)
+            {
                 return;
             }
 
@@ -171,8 +196,10 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             _modalOpened = false;
         }
 
-        private void HandleSelectedIndexesUpdated(IReadOnlyCollection<int> indexes) {
-            if (indexes.Count == 0) {
+        private void HandleSelectedIndexesUpdated(IReadOnlyCollection<int> indexes)
+        {
+            if (indexes.Count == 0)
+            {
                 return;
             }
 
@@ -184,12 +211,14 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             _previewCell.Init(item.key, item.param);
         }
 
-        private void HandleItemAdded(TKey key, TParam param) {
+        private void HandleItemAdded(TKey key, TParam param)
+        {
             var option = new DropdownOption { key = key, param = param };
 
             _options.Add(option);
 
-            if (_modalOpened) {
+            if (_modalOpened)
+            {
                 Table.Items.Add(option);
                 Table.Refresh(false);
             }
@@ -198,12 +227,14 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             RefreshSelection();
         }
 
-        private void HandleItemRemoved(TKey key, TParam param) {
+        private void HandleItemRemoved(TKey key, TParam param)
+        {
             var option = new DropdownOption { key = key };
 
             _options.Remove(option);
 
-            if (_modalOpened) {
+            if (_modalOpened)
+            {
                 Table.Items.Remove(option);
                 Table.Refresh();
             }
@@ -212,10 +243,12 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             RefreshSelection();
         }
 
-        private void HandleAllItemsRemoved() {
+        private void HandleAllItemsRemoved()
+        {
             _options.Clear();
 
-            if (_modalOpened) {
+            if (_modalOpened)
+            {
                 Table.Items.Clear();
                 Table.Refresh();
             }

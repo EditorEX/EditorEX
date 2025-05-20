@@ -20,7 +20,7 @@ namespace EditorEX.SDK.ReactiveComponents
         public float FontSize
         {
             get => _label.FontSize;
-            set =>_label.FontSize = value;
+            set => _label.FontSize = value;
         }
 
         public Action OnClick
@@ -37,7 +37,8 @@ namespace EditorEX.SDK.ReactiveComponents
 
         protected override GameObject Construct()
         {
-            return new EditorBackground() {
+            return new EditorBackground()
+            {
                 Source = "#Background8px",
                 ImageType = Image.Type.Sliced,
                 Children = {

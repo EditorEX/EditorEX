@@ -8,7 +8,8 @@ using UnityEngine.UI;
 
 namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 {
-    public class EditorScrollArea : ReactiveComponent {
+    public class EditorScrollArea : ReactiveComponent
+    {
         #region Events
 
         public event Action<float>? ScrollDestinationPosChangedEvent;
@@ -19,12 +20,15 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         #region Props
 
-        public IReactiveComponent? ScrollContent {
+        public IReactiveComponent? ScrollContent
+        {
             get => _scrollContent;
-            set {
+            set
+            {
                 _scrollContent?.Use(null);
                 _scrollContent = value;
-                if (_scrollContent != null) {
+                if (_scrollContent != null)
+                {
                     _scrollContent.Use(_viewport);
                     _contentTransform = _scrollContent.ContentTransform;
                     ReloadContent();
@@ -32,9 +36,11 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
             }
         }
 
-        public ScrollOrientation ScrollOrientation {
+        public ScrollOrientation ScrollOrientation
+        {
             get => _scrollOrientation;
-            set {
+            set
+            {
                 _scrollOrientation = value;
                 ReloadContent();
             }
@@ -53,10 +59,12 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
         private RectTransform? _contentTransform;
         private float _lastScrollDeltaTime;
 
-        protected override void OnUpdate() {
+        protected override void OnUpdate()
+        {
             if (_contentTransform == null) return;
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (_lastScrollDeltaTime != -1f && _lastScrollDeltaTime != Time.deltaTime) {
+            if (_lastScrollDeltaTime != -1f && _lastScrollDeltaTime != Time.deltaTime)
+            {
                 ScrollWithJoystickFinishedEvent?.Invoke();
                 _lastScrollDeltaTime = -1f;
             }
@@ -68,15 +76,18 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         #region Scroll
 
-        public void ScrollTo(float pos, bool immediately = false) {
+        public void ScrollTo(float pos, bool immediately = false)
+        {
             SetDestinationPos(pos, immediately);
         }
 
-        public void ScrollToStart(bool immediately = false) {
+        public void ScrollToStart(bool immediately = false)
+        {
             SetDestinationPos(0f, immediately);
         }
 
-        public void ScrollToEnd(bool immediately = false) {
+        public void ScrollToEnd(bool immediately = false)
+        {
             if (_contentTransform == null) return;
             SetDestinationPos(_contentTransform.rect.height, immediately);
         }
@@ -85,16 +96,20 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         #region Scrollbar
 
-        public IScrollbar? Scrollbar {
+        public IScrollbar? Scrollbar
+        {
             get => _scrollbar;
-            set {
-                if (_scrollbar != null) {
+            set
+            {
+                if (_scrollbar != null)
+                {
                     _scrollbar.ScrollBackwardButtonPressedEvent -= HandleUpButtonClicked;
                     _scrollbar.ScrollForwardButtonPressedEvent -= HandleDownButtonClicked;
                     _scrollbar.SetActive(false);
                 }
                 _scrollbar = value;
-                if (_scrollbar != null) {
+                if (_scrollbar != null)
+                {
                     _scrollbar.ScrollBackwardButtonPressedEvent += HandleUpButtonClicked;
                     _scrollbar.ScrollForwardButtonPressedEvent += HandleDownButtonClicked;
                     _scrollbar.SetActive(true);
@@ -103,9 +118,11 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
             }
         }
 
-        public bool HideScrollbarWhenNothingToScroll {
+        public bool HideScrollbarWhenNothingToScroll
+        {
             get => _hideScrollbarWhenNothingToScroll;
-            set {
+            set
+            {
                 _hideScrollbarWhenNothingToScroll = value;
                 RefreshScrollbar();
             }
@@ -114,8 +131,10 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
         private bool _hideScrollbarWhenNothingToScroll = true;
         private IScrollbar? _scrollbar;
 
-        private void RefreshScrollbar() {
-            if (_scrollbar == null || _contentTransform == null) {
+        private void RefreshScrollbar()
+        {
+            if (_scrollbar == null || _contentTransform == null)
+            {
                 return;
             }
 
@@ -125,7 +144,8 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
             _scrollbar.CanScrollDown = Math.Abs(_destinationPos - ScrollMaxSize) > 0.01f;
             _scrollbar.CanScrollUp = _destinationPos > 0.01f;
 
-            if (_hideScrollbarWhenNothingToScroll) {
+            if (_hideScrollbarWhenNothingToScroll)
+            {
                 _scrollbar.SetActive(ContentSize > ScrollPageSize);
             }
         }
@@ -142,15 +162,19 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         private float _destinationPos;
 
-        private void ReloadContent() {
+        private void ReloadContent()
+        {
             if (_contentTransform == null) return;
             //
-            if (ScrollOrientation is ScrollOrientation.Vertical) {
+            if (ScrollOrientation is ScrollOrientation.Vertical)
+            {
                 _contentTransform.anchorMin = new(0f, 0f);
                 _contentTransform.anchorMax = new(1f, 0f);
                 _contentTransform.sizeDelta = new(0f, _contentTransform.sizeDelta.y);
                 _contentTransform.pivot = new(1f, 1f);
-            } else {
+            }
+            else
+            {
                 _contentTransform.anchorMin = new(0f, 0f);
                 _contentTransform.anchorMax = new(0f, 1f);
                 _contentTransform.sizeDelta = new(_contentTransform.sizeDelta.x, 0f);
@@ -158,7 +182,8 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
             }
         }
 
-        private void SetDestinationPos(float pos, bool immediately = false) {
+        private void SetDestinationPos(float pos, bool immediately = false)
+        {
             if (_contentTransform == null || Math.Abs(_destinationPos - pos) < 0.01f) return;
             _destinationPos = ScrollMaxSize <= 0f ? 0f : Mathf.Clamp(pos, 0f, ScrollMaxSize);
             ScrollDestinationPosChangedEvent?.Invoke(_destinationPos);
@@ -166,10 +191,12 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
             if (immediately) RefreshContentPos(true);
         }
 
-        private void RefreshContentPos(bool immediately) {
+        private void RefreshContentPos(bool immediately)
+        {
             //calculating pos
             var sourcePos = (Vector2)_contentTransform!.localPosition;
-            var destinationPos = immediately switch {
+            var destinationPos = immediately switch
+            {
                 false => Vector2.Lerp(sourcePos, DestinationPos, Time.deltaTime * 4f),
                 _ => DestinationPos
             };
@@ -184,19 +211,23 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         #region Translation
 
-        private Vector2 Translate(float value) {
-            return ScrollOrientation switch {
+        private Vector2 Translate(float value)
+        {
+            return ScrollOrientation switch
+            {
                 ScrollOrientation.Vertical => new Vector2(0f, value),
                 ScrollOrientation.Horizontal => new Vector2(value, 0f),
                 _ => throw new ArgumentOutOfRangeException()
             };
         }
 
-        private float Translate(Vector2 vector) {
+        private float Translate(Vector2 vector)
+        {
             return vector[(int)ScrollOrientation];
         }
 
-        private float Translate(Rect rect) {
+        private float Translate(Rect rect)
+        {
             return Translate(rect.size);
         }
 
@@ -207,9 +238,11 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
         private PointerEventsHandler _pointerEventsHandler = null!;
         private RectTransform _viewport = null!;
 
-        protected override GameObject Construct() {
+        protected override GameObject Construct()
+        {
             //container
-            return new Background {
+            return new Background
+            {
                 Sprite = ReactiveResources.TransparentPixel,
                 Children = {
                     //viewport
@@ -225,11 +258,13 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
             ).Use();
         }
 
-        protected override void OnInitialize() {
+        protected override void OnInitialize()
+        {
             SetDestinationPos(0f, true);
         }
 
-        protected override void OnRectDimensionsChanged() {
+        protected override void OnRectDimensionsChanged()
+        {
             if (_scrollContent == null) return;
             RefreshContentPos(true);
         }
@@ -238,25 +273,31 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         #region Callbacks
 
-        private void HandlePointerScroll(PointerEventsHandler handler, PointerEventData eventData) {
+        private void HandlePointerScroll(PointerEventsHandler handler, PointerEventData eventData)
+        {
             var destinationPos = _destinationPos;
             var mul = ScrollSize * 0.1f;
-            if (ScrollOrientation is ScrollOrientation.Vertical) {
+            if (ScrollOrientation is ScrollOrientation.Vertical)
+            {
                 destinationPos -= eventData.scrollDelta.y * mul;
-            } else {
+            }
+            else
+            {
                 destinationPos += eventData.scrollDelta.y * mul;
             }
             _lastScrollDeltaTime = Time.deltaTime;
             SetDestinationPos(destinationPos);
         }
 
-        private void HandleUpButtonClicked() {
+        private void HandleUpButtonClicked()
+        {
             var destinationPos = _destinationPos;
             destinationPos -= ScrollbarScrollSize ?? ScrollSize;
             SetDestinationPos(destinationPos);
         }
 
-        private void HandleDownButtonClicked() {
+        private void HandleDownButtonClicked()
+        {
             var destinationPos = _destinationPos;
             destinationPos += ScrollbarScrollSize ?? ScrollSize;
             SetDestinationPos(destinationPos);

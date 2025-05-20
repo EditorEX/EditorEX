@@ -38,8 +38,9 @@ namespace EditorEX.UI.Patches.SDK
             if (firstActivation)
             {
                 var tab = ValueUtils.Remember(0);
-                
-                new Layout() {
+
+                new Layout()
+                {
                     Children = {
                         new EditorSegmentedControl() {
                             Values = _viewNames.ToArray(),

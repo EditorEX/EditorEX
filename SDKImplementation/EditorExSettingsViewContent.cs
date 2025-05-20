@@ -13,7 +13,8 @@ namespace EditorEX.SDKImplementation
     {
         public ReactiveComponent Create()
         {
-            return new Layout() {
+            return new Layout()
+            {
                 Children = {
                     new EditorHeaderLabel() {
                         Text = "Camera Settings",

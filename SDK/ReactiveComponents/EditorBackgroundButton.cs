@@ -28,12 +28,14 @@ namespace EditorEX.SDK.ReactiveComponents
             set => Component.RaycastTarget = value;
         }
 
-        public bool Visible {
+        public bool Visible
+        {
             get => Component.Visible;
             set => Component.Visible = value;
         }
 
-        public string Source {
+        public string Source
+        {
             set => Component.Source = value;
         }
     }

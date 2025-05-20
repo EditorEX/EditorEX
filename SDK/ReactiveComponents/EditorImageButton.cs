@@ -16,27 +16,32 @@ namespace EditorEX.SDK.ReactiveComponents
             set => _button.onClick.AddListener(() => value?.Invoke());
         }
 
-        public float Skew {
+        public float Skew
+        {
             get => _background.Skew;
             set => _background.Skew = value;
         }
 
-        public bool Interactable {
+        public bool Interactable
+        {
             get => _button.interactable;
             set => _button.interactable = value;
         }
 
-        public bool RaycastTarget {
+        public bool RaycastTarget
+        {
             get => _background.RaycastTarget;
             set => _background.RaycastTarget = value;
         }
 
-        public bool Visible {
+        public bool Visible
+        {
             get => _background.WrappedImage.ImageView.enabled;
             set => _background.WrappedImage.ImageView.enabled = value;
         }
 
-        public string Source {
+        public string Source
+        {
             set => _background.Source = value;
         }
 
@@ -48,7 +53,8 @@ namespace EditorEX.SDK.ReactiveComponents
 
         protected override GameObject Construct()
         {
-            return new EditorBackground() {
+            return new EditorBackground()
+            {
                 Source = "#Background4px",
                 ImageType = Image.Type.Sliced
             }

@@ -22,7 +22,8 @@ namespace EditorEX.SDK.ReactiveComponents
 
         protected override GameObject Construct()
         {
-            return new EditorBackground() {
+            return new EditorBackground()
+            {
                 Source = "#Background4px",
                 ImageType = Image.Type.Sliced,
                 Children = {

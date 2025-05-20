@@ -6,49 +6,60 @@ using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents.Dropdown
 {
-    public partial class EditorDropdown<TKey, TParam, TCell> {
-        private class EditorDropdownCellWrapper : TableCell<DropdownOption> {
+    public partial class EditorDropdown<TKey, TParam, TCell>
+    {
+        private class EditorDropdownCellWrapper : TableCell<DropdownOption>
+        {
             private TCell _cell = default!;
 
-            protected override void OnInit(DropdownOption item) {
+            protected override void OnInit(DropdownOption item)
+            {
                 _cell.Init(item.key, item.param);
             }
 
-            protected override void OnCellStateChange(bool selected) {
+            protected override void OnCellStateChange(bool selected)
+            {
                 _cell.OnCellStateChange(selected);
             }
 
-            protected override GameObject Construct() {
+            protected override GameObject Construct()
+            {
                 return new TCell().Bind(ref _cell).Use(null);
             }
 
-            protected override void OnInitialize() {
+            protected override void OnInitialize()
+            {
                 this.WithSizeDelta(0f, 40f);
                 _cell.CellAskedToBeSelectedEvent += HandleCellAskedToBeSelected;
             }
 
-            private void HandleCellAskedToBeSelected(TKey key) {
+            private void HandleCellAskedToBeSelected(TKey key)
+            {
                 SelectSelf(true);
             }
         }
 
-        private class EditorDropdownOptionsModal : ModalBase {
+        private class EditorDropdownOptionsModal : ModalBase
+        {
             private const int MaxDisplayedItems = 5;
             private const float ItemSize = 40f;
 
             private RectTransform _buttonTransform = null!;
 
-            public void ApplyLayout(RectTransform buttonRect) {
+            public void ApplyLayout(RectTransform buttonRect)
+            {
                 _buttonTransform = buttonRect;
-                
+
                 var width = buttonRect.rect.width;
                 var height = Mathf.Clamp(Table.Items.Count, 1, MaxDisplayedItems) * ItemSize + 2;
 
                 this.AsFlexItem(size: new() { x = width, y = height });
             }
 
-            protected override void OnOpen(bool opened) {
-                if (!opened) {
+            protected override void OnOpen(bool opened)
+            {
+                if (!opened)
+                {
                     this.WithAnchor(_buttonTransform, RelativePlacement.BottomCenter);
                 }
             }
@@ -57,8 +68,10 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
             private EditorTable<DropdownOption, EditorDropdownCellWrapper> _table = null!;
 
-            protected override GameObject Construct() {
-                return new Layout {
+            protected override GameObject Construct()
+            {
+                return new Layout
+                {
                     Children = {
                         new EditorBackground() {
                                 Source = "#Background4px",
@@ -89,8 +102,10 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             }
         }
 
-        private class SharedDropdownOptionsModal : SharedModal<EditorDropdownOptionsModal> {
-            protected override void OnSpawn() {
+        private class SharedDropdownOptionsModal : SharedModal<EditorDropdownOptionsModal>
+        {
+            protected override void OnSpawn()
+            {
                 Modal.WithJumpAnimation();
             }
         }

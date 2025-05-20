@@ -19,7 +19,8 @@ namespace EditorEX.Util
         public static T EnabledWithObservable<T, R>(this T component, ObservableValue<R> observable, R value) where T : ReactiveComponent
         {
             component.Enabled = observable.Value?.Equals(value) ?? true;
-            component.Animate(observable, () => {
+            component.Animate(observable, () =>
+            {
                 component.Enabled = observable.Value?.Equals(value) ?? true;
             });
             return component;

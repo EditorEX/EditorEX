@@ -15,7 +15,7 @@ namespace EditorEX.SDK.Components
         {
             _segmentedControl = segmentedControl;
 
-            AddBindings(qwerty); 
+            AddBindings(qwerty);
         }
 
         public void AddBindings(bool qwerty)

@@ -18,7 +18,8 @@ namespace EditorEX.SDK.ReactiveComponents
             {
                 _values = value;
                 _layout.Children.Clear();
-                _layout.Children.AddRange(_values.Select((value, index) => new EditorSegmentedControlButton(GetPosition(index, _values.Length)) {
+                _layout.Children.AddRange(_values.Select((value, index) => new EditorSegmentedControlButton(GetPosition(index, _values.Length))
+                {
                     Text = value,
                     Position = index,
                     SelectedIndex = _selectedIndex,
@@ -64,7 +65,7 @@ namespace EditorEX.SDK.ReactiveComponents
                 }
                 _keyboardBinder.ClearBindings();
                 AddBindings();
-                
+
                 NotifyPropertyChanged();
             }
         }

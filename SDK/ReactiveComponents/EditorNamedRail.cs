@@ -4,17 +4,22 @@ using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorNamedRail : ReactiveComponent {
+    public class EditorNamedRail : ReactiveComponent
+    {
         public EditorLabel Label => _label;
 
-        public ILayoutItem? Component {
+        public ILayoutItem? Component
+        {
             get => _component;
-            set {
-                if (_component != null) {
+            set
+            {
+                if (_component != null)
+                {
                     _container.Children.Remove(_component);
                 }
                 _component = value;
-                if (_component != null) {
+                if (_component != null)
+                {
                     _component.AsFlexItem();
                     _container.Children.Add(_component);
                 }
@@ -25,8 +30,10 @@ namespace EditorEX.SDK.ReactiveComponents
         private EditorLabel _label = null!;
         private Layout _container = null!;
 
-        protected override GameObject Construct() {
-            return new Layout {
+        protected override GameObject Construct()
+        {
+            return new Layout
+            {
                 Children = {
                     new EditorLabel {
                         Text = "Oops, text is missing"
@@ -38,7 +45,8 @@ namespace EditorEX.SDK.ReactiveComponents
             ).Bind(ref _container).Use();
         }
 
-        protected override void OnInitialize() {
+        protected override void OnInitialize()
+        {
             this.AsFlexItem();
         }
     }
