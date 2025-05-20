@@ -21,7 +21,8 @@ namespace EditorEX.SDK.ReactiveComponents
                             new EditorLabel()
                             {
                                 Text = "",
-                                FontSize = 18f
+                                FontSize = 18f,
+                                Alignment = TextAlignmentOptions.Left,
                             }
                             .Attach<ColorSOAttachable>("Input/Text/Normal")
                             .Export(out var _text)

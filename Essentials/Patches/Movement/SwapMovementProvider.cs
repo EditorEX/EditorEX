@@ -4,7 +4,6 @@ using System.Reflection.Emit;
 using BeatmapEditor3D;
 using HarmonyLib;
 using SiraUtil.Affinity;
-using UnityEngine;
 
 namespace EditorEX.Essentials.Patches.Movement
 {
@@ -23,7 +22,6 @@ namespace EditorEX.Essentials.Patches.Movement
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
         {
-            Debug.Log("Swapping Movement Provider");
             var result = new CodeMatcher(instructions)
                 .MatchForward(false, new CodeMatch(OpCodes.Callvirt, _installOld))
                 .ThrowIfNotMatch("die")

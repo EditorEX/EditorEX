@@ -28,7 +28,6 @@ namespace EditorEX.SDK.Collectors
                 {
                     string remappedName = transition.name.Substring(14).Replace(".", "/");
                     _transitions[remappedName] = transition;
-                    //Debug.Log($"Found transition: {remappedName}");
                 }
             }
 

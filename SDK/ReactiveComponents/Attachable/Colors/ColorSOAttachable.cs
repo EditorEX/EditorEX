@@ -1,6 +1,5 @@
 using EditorEX.SDK.ReactiveComponents.Native;
 using Reactive;
-using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents.Attachable
 {
@@ -28,7 +27,6 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
 
         public void Attach(ReactiveComponent component)
         {
-            Debug.Log($"Attaching ColorSOAttachable to {component.GetType().Name}");
             if (component is IColorSOAttachable colorSOAttachable)
             {
                 var container = component.Content.transform.GetComponentInParent<ReactiveContainerHolder>().ReactiveContainer;

@@ -1,15 +1,12 @@
 ﻿using BeatmapEditor3D;
-using EditorEX.SDK.Factories;
 using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.Settings;
 using EditorEX.SDK.ViewContent;
 using EditorEX.Util;
-using HMUI;
 using Reactive;
 using Reactive.Yoga;
 using SiraUtil.Affinity;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
