@@ -36,7 +36,7 @@ namespace EditorEX.SDK.ReactiveComponents
                     .Bind(ref _checkmark)
                 }
             }
-            .AsFlexGroup(padding: 3f)
+            .AsFlexGroup(padding: 8f)
             .AsFlexItem(size: new Reactive.Yoga.YogaVector("fit-content", "fit-content"))
             .Bind(ref _background)
             .WithNativeComponent(out _toggle)

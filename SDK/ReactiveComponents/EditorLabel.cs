@@ -1,4 +1,5 @@
 using System;
+using EditorEX.SDK.ReactiveComponents.Attachable;
 using EditorEX.SDK.ReactiveComponents.Native;
 using HMUI;
 using Reactive;
@@ -10,9 +11,9 @@ using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorLabel : ReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutItem
+    public class EditorLabel : AttachableReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutItem, IFontAttachable, IColorSOAttachable
     {
-        public string Text
+        public virtual string Text
         {
             get => _text.text;
             set
@@ -73,7 +74,7 @@ namespace EditorEX.SDK.ReactiveComponents
             }
         }
 
-        public FontStyles FontStyle
+        public virtual FontStyles FontStyle
         {
             get => _text.fontStyle;
             set
@@ -143,6 +144,26 @@ namespace EditorEX.SDK.ReactiveComponents
             }
         }
 
+        public ColorSO ColorSO
+        {
+            get => _text._colorSo;
+            set
+            {
+                _text._colorSo = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool UseScriptableObjectColors
+        {
+            get => _text._useScriptableObjectColors;
+            set
+            {
+                _text._useScriptableObjectColors = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public bool RaycastTarget
         {
             get => _text.raycastTarget;
@@ -169,9 +190,9 @@ namespace EditorEX.SDK.ReactiveComponents
             }
         }
 
-        public TextMeshProUGUI TextMesh => _text;
+        public CurvedTextMeshPro TextMesh => _text;
 
-        private TextMeshProUGUI _text = null!;
+        protected CurvedTextMeshPro _text = null!;
         private readonly ReactiveContainer _reactiveContainer;
 
         protected override void Construct(RectTransform rect)
@@ -185,15 +206,15 @@ namespace EditorEX.SDK.ReactiveComponents
             FontSize = 12f;
             Alignment = TextAlignmentOptions.Center;
             EnableWrapping = false;
+            var x = this;
+            x.Attach<FontAttachable>();
+            x.Attach<ColorSOAttachable>("Button/Text/Normal");
         }
 
         protected override void OnStart()
         {
+            base.OnStart();
             RequestLeafRecalculation();
-            var container = Content.transform.GetComponentInParent<ReactiveContainerHolder>().ReactiveContainer;
-            _text.fontSharedMaterial = container.FontCollector.GetMaterial();
-            _text.font = container.FontCollector.GetFontAsset();
-            _text.color = container.ColorCollector.GetColor("Button/Text/Normal");
         }
 
         public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
@@ -212,7 +233,7 @@ namespace EditorEX.SDK.ReactiveComponents
             };
         }
 
-        private void RequestLeafRecalculation()
+        protected void RequestLeafRecalculation()
         {
             LeafLayoutUpdatedEvent?.Invoke(this);
             ScheduleLayoutRecalculation();

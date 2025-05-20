@@ -1,7 +1,9 @@
+using BeatmapEditor3D;
 using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.ReactiveComponents.Native;
 using Reactive;
 using Reactive.BeatSaber.Components;
+using Reactive.Components;
 using UnityEngine;
 
 namespace EditorEX.Util
@@ -38,6 +40,12 @@ namespace EditorEX.Util
                     ((ISkewedComponent)x.Label).Skew = skewedComponent.Skew;
                 }
             });
+        }
+
+        public static void PresentEditor(this IModal comp, Transform child, bool animated = true)
+        {
+            Transform transform = child.GetComponentInParent<ReactiveContainerHolder>().transform;
+            ModalSystem<Reactive.Components.Basic.ModalSystem>.PresentModal(comp, transform, animated);
         }
     }
 }

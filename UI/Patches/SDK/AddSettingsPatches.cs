@@ -9,6 +9,7 @@ using Reactive;
 using Reactive.Yoga;
 using SiraUtil.Affinity;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -46,14 +47,15 @@ namespace EditorEX.UI.Patches.SDK
                         new EditorSegmentedControl() {
                             Values = _viewNames.ToArray(),
                             SelectedIndex = tab
-                        }.AsFlexItem()
+                        }
                     }
-                }.AsFlexGroup(FlexDirection.Column, gap: 10f, padding: 10)
+                }.AsFlexGroup(FlexDirection.Column, gap: 20f, padding: 30)
                 .Export(out var layout)
                 .WithReactiveContainer(_reactiveContainer)
                 .Use(__instance.transform);
 
                 var vanillaContainer = __instance.transform.Find("Container").gameObject.AddComponent<LayoutElement>();
+                vanillaContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(0f, 0f);
 
                 layout.Children.Add(new LayoutElementComponent(vanillaContainer).AsFlexItem().EnabledWithObservable(tab, 0));
                 layout.Children.AddRange(_viewContents.Select((x, index) => x.Create().EnabledWithObservable(tab, index + 1)));
