@@ -1,10 +1,11 @@
+using EditorEX.SDK.ReactiveComponents.Attachable;
 using HMUI;
 using Reactive.Components;
 using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorBackground : ComponentLayout<EditorImage>
+    public class EditorBackground : ComponentLayout<EditorImage>, IColorSOAttachable
     {
         public Sprite? Sprite
         {

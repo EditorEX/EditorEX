@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorLabel : AttachableReactiveComponent, ISkewedComponent, IGraphic, ILeafLayoutItem, IFontAttachable, IColorSOAttachable
+    public class EditorLabel : AttachableReactiveComponent<EditorLabel>, ISkewedComponent, IGraphic, ILeafLayoutItem, IFontAttachable, IColorSOAttachable
     {
         public virtual string Text
         {
@@ -150,6 +150,7 @@ namespace EditorEX.SDK.ReactiveComponents
             set
             {
                 _text._colorSo = value;
+                UseScriptableObjectColors = true;
                 NotifyPropertyChanged();
             }
         }
@@ -206,9 +207,8 @@ namespace EditorEX.SDK.ReactiveComponents
             FontSize = 12f;
             Alignment = TextAlignmentOptions.Center;
             EnableWrapping = false;
-            var x = this;
-            x.Attach<FontAttachable>();
-            x.Attach<ColorSOAttachable>("Button/Text/Normal");
+            Attach<FontAttachable>();
+            Attach<ColorSOAttachable>("Button/Text/Normal");
         }
 
         protected override void OnStart()

@@ -1,15 +1,31 @@
 using System.Collections.Generic;
 using EditorEX.SDK.ReactiveComponents.Native;
+using Microsoft.Build.Framework;
 using Reactive;
 
 namespace EditorEX.SDK.ReactiveComponents.Attachable
 {
-    public abstract class AttachableReactiveComponent : ReactiveComponent
+    public abstract class AttachableReactiveComponent<T> : ReactiveComponent, ICanAttach where T : AttachableReactiveComponent<T>
     {
         public IReadOnlyList<IAttachable> Attachables => _attachables;
 
         private readonly List<IAttachable> _attachables = new List<IAttachable>();
         private bool _isAttached;
+
+        public T Attach<TAttachable, TValue>(TValue value) where TAttachable : IAttachable<TValue>, new()
+        {
+            return (this as T)!.Attach<T, TAttachable, TValue>(value);
+        }
+
+        public T Attach<TAttachable>(string value) where TAttachable : IAttachable<string>, new()
+        {
+            return (this as T)!.Attach<T, TAttachable, string>(value);
+        }
+
+        public T Attach<TAttachable>() where TAttachable : IAttachable, new()
+        {
+            return (this as T)!.Attach<TAttachable>();
+        }
 
         public void AttachAll()
         {

@@ -1,5 +1,6 @@
 using System;
 using BeatSaberMarkupLanguage;
+using EditorEX.SDK.ReactiveComponents.Attachable;
 using HMUI;
 using Reactive;
 using Reactive.BeatSaber.Components;
@@ -9,7 +10,7 @@ using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorImage : ReactiveComponent, IComponentHolder<EditorImage>, ISkewedComponent, IGraphic, ILeafLayoutItem
+    public class EditorImage : AttachableReactiveComponent<EditorImage>, IComponentHolder<EditorImage>, ISkewedComponent, IGraphic, ILeafLayoutItem, IColorSOAttachable
     {
         public Sprite? Sprite
         {
@@ -46,6 +47,7 @@ namespace EditorEX.SDK.ReactiveComponents
             set
             {
                 _image._colorSo = value;
+                UseScriptableObjectColors = true;
                 NotifyPropertyChanged();
             }
         }

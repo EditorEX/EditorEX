@@ -17,7 +17,8 @@ namespace EditorEX.SDKImplementation
                 Children = {
                     new EditorHeaderLabel() {
                         Text = "Camera Settings",
-                    }.AsFlexItem(),
+                        FontStyle = TMPro.FontStyles.Bold,
+                    }.AsFlexItem(margin: new YogaFrame(0f, 0f, 0f, 10f)),
                     new EditorToggle() {
                         OnClick = x => { Debug.Log($"Toggle: {x}"); }
                     }.InEditorNamedRail("Toggle", 18f),
