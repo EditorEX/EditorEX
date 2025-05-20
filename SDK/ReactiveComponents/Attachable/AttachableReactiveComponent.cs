@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using EditorEX.SDK.ReactiveComponents.Native;
-using Microsoft.Build.Framework;
 using Reactive;
 
 namespace EditorEX.SDK.ReactiveComponents.Attachable
@@ -24,7 +22,7 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
 
         public T Attach<TAttachable>() where TAttachable : IAttachable, new()
         {
-            return (this as T)!.Attach<TAttachable>();
+            return (this as T)!.Attach<T, TAttachable>();
         }
 
         public void AttachAll()
@@ -58,4 +56,4 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
             AttachAll();
         }
     }
-}
+} 
