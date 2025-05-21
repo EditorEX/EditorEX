@@ -3,7 +3,7 @@ using Reactive.Components;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorBackgroundButton : ComponentLayout<EditorImageButton>, IComponentHolder<EditorImageButton>
+    public class EditorBackgroundButton : ComponentLayout<EditorImageButton>
     {
         public Action OnClick
         {

@@ -51,7 +51,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                             FontSize = 18f
                         }.AsFlexItem(flexGrow: 99f).WithRectExpand().Bind(ref _label)
                     }
-                }.AsFlexGroup().AsFlexItem(size: new() { x = "auto", y = 40f }).Bind(ref _button).Use();
+                }.AsFlexGroup(alignItems: Reactive.Yoga.Align.Center).AsFlexItem(size: new() { x = "auto", y = 40f }).Bind(ref _button).Use();
             }
 
             public override void OnCellStateChange(bool selected)

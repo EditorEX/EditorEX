@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorBackground : ComponentLayout<EditorImage>, IColorSOAttachable
+    public class EditorBackground : ComponentLayout<EditorImage>, IColorSOAttachable, IComponentHolder<EditorImage>
     {
         public Sprite? Sprite
         {

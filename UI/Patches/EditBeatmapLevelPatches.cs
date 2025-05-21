@@ -30,12 +30,9 @@ namespace EditorEX.UI.Patches
     {
         private readonly BeatmapLevelDataModel _beatmapLevelDataModel;
         private readonly TextSegmentedControlFactory _textSegmentedControlFactory;
-        private readonly DropdownFactory _dropdownFactory;
         private readonly ButtonFactory _buttonFactory;
-        private readonly ImageFactory _imageFactory;
         private readonly ClickableImageFactory _clickableImageFactory;
         private readonly StringInputFactory _stringInputFactory;
-        private readonly ScrollViewFactory _scrollViewFactory;
         private readonly LevelCustomDataModel _levelCustomDataModel;
         private readonly IInstantiator _instantiator;
         private readonly AddressableSignalBus _addressableSignalBus;
@@ -67,12 +64,9 @@ namespace EditorEX.UI.Patches
         private EditBeatmapLevelPatches(
             BeatmapLevelDataModel beatmapLevelDataModel,
             TextSegmentedControlFactory textSegmentedControlFactory,
-            DropdownFactory dropdownFactory,
             ButtonFactory buttonFactory,
-            ImageFactory imageFactory,
             ClickableImageFactory clickableImageFactory,
             StringInputFactory stringInputFactory,
-            ScrollViewFactory scrollViewFactory,
             LevelCustomDataModel levelCustomDataModel,
             IInstantiator instantiator,
             AddressableSignalBus addressableSignalBus,
@@ -84,12 +78,9 @@ namespace EditorEX.UI.Patches
         {
             _beatmapLevelDataModel = beatmapLevelDataModel;
             _textSegmentedControlFactory = textSegmentedControlFactory;
-            _dropdownFactory = dropdownFactory;
             _buttonFactory = buttonFactory;
-            _imageFactory = imageFactory;
             _clickableImageFactory = clickableImageFactory;
             _stringInputFactory = stringInputFactory;
-            _scrollViewFactory = scrollViewFactory;
             _levelCustomDataModel = levelCustomDataModel;
             _instantiator = instantiator;
             _addressableSignalBus = addressableSignalBus;
@@ -247,6 +238,30 @@ namespace EditorEX.UI.Patches
         {
             if (firstActivation)
             {
+                var difficultyBeatmapSetContainer = __instance.transform.Find("DifficultyBeatmapSetContainer").gameObject;
+                difficultyBeatmapSetContainer.SetActive(false);
+                _beatmapsRoot = difficultyBeatmapSetContainer;
+
+                var root = new Layout
+                {
+                    Children = {
+                        new EditorSegmentedControl() {
+                            SelectedIndex = ValueUtils.Remember(0),
+                            Values = [ "Song Info", "Beatmaps" ],
+                            TabbingType = TabbingType.Alpha,
+                        }.AsFlexItem(size: new YogaVector(300f, 30f)),
+                        new Layout() {
+                            Children = {
+                                
+
+                            }
+                        }.AsFlexGroup(gap: 100f, direction: FlexDirection.Row, alignItems: Align.Center)
+                        .AsFlexItem()
+                    }
+                }.AsFlexGroup(gap: 10f, direction: FlexDirection.Column, alignItems: Align.Center)
+                .WithReactiveContainer(_reactiveContainer)
+                .Use(_songInfoRoot);
+
                 _rootSegmentedControl = _textSegmentedControlFactory.Create(__instance.transform, new string[] { "Song Info | 1", "Beatmaps | 2" }, RootSelected);
                 (_rootSegmentedControl.transform as RectTransform).anchoredPosition = new Vector2(0f, 500f);
                 _rootTabbingSegmentedControlController = _rootSegmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
@@ -257,10 +272,6 @@ namespace EditorEX.UI.Patches
                 _songInfoRoot = new GameObject("SongInfoRoot");
                 _songInfoRoot.transform.SetParent(__instance.transform, false);
                 _songInfoRoot.transform.localPosition = new Vector3(-500f, 430f, 0f);
-
-                var difficultyBeatmapSetContainer = __instance.transform.Find("DifficultyBeatmapSetContainer").gameObject;
-                difficultyBeatmapSetContainer.SetActive(false);
-                _beatmapsRoot = difficultyBeatmapSetContainer;
 
                 var beatmapInfoContainer = __instance.transform.Find("BeatmapInfoContainer");
 
@@ -329,7 +340,7 @@ namespace EditorEX.UI.Patches
                             SelectedIndex = tab,
                             Values = [ "Environments", "Contributors" ],
                             TabbingType = TabbingType.Qwerty,
-                        }.AsFlexItem(size: new YogaVector("auto", 30f)),
+                        }.AsFlexItem(size: new YogaVector(250f, 30f)),
                         new EditorBackground {
                             ColorSO = _colorCollector.GetColor("Navbar/Background/Normal"),
                             UseScriptableObjectColors = true,

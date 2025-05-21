@@ -5,10 +5,6 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
 {
     public class FontAttachable : IAttachable
     {
-        public FontAttachable()
-        {
-        }
-
         public void Attach(ReactiveComponent component)
         {
             if (component is IFontAttachable fontAttachable)

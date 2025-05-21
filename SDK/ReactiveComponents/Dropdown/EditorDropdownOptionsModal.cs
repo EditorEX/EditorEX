@@ -1,7 +1,9 @@
+using EditorEX.SDK.ReactiveComponents.Attachable;
 using EditorEX.SDK.ReactiveComponents.Table;
 using Reactive;
 using Reactive.BeatSaber.Components;
 using Reactive.Components;
+using Reactive.Yoga;
 using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents.Dropdown
@@ -75,7 +77,6 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                     Children = {
                         new EditorBackground() {
                                 Source = "#Background4px",
-                                Color = new Color(0.17f, 0.18f, 0.2f, 1f),
                                 ImageType = UnityEngine.UI.Image.Type.Sliced,
                                 Children = {
                                     new EditorTable<DropdownOption, EditorDropdownCellWrapper>()
@@ -83,20 +84,20 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                                             x => x.SelectedIndexes,
                                             _ => CloseInternal()
                                         )
-                                        .AsFlexItem(flexGrow: 1f)
-                                        .Bind(ref _table)
+                                        .AsFlexItem(flexGrow: 0.95f)
+                                        .Bind(ref _table),
+                                        // Scrollbar
+                                    new EditorScrollbar()
+                                        .AsFlexItem(
+                                            size: new() { x = 7f, y = 100.pct() },
+                                            position: new() { right = 2f }
+                                        )
+                                        .With(x => Table.Scrollbar = x)
                                 }
                             }
-                            .AsFlexGroup(padding: new() { top = 1f, bottom = 1f })
+                            .With(x => x.WrappedImage.Attach<ColorSOAttachable>("Button/Background/Normal"))
+                            .AsFlexGroup(padding: 2f)
                             .AsFlexItem(flexGrow: 1f),
-
-                        // Scrollbar
-                        /*new Scrollbar()
-                            .AsFlexItem(
-                                size: new() { x = 2f, y = 100.pct() },
-                                position: new() { right = -4f }
-                            )
-                            .With(x => Table.Scrollbar = x)*/
                     }
                 }.AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false).Use();
             }

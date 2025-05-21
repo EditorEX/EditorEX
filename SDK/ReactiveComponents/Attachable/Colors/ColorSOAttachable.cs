@@ -5,10 +5,6 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
 {
     public class ColorSOAttachable : IAttachable<string>
     {
-        public ColorSOAttachable()
-        {
-        }
-
         public virtual string ColorSource
         {
             get => _colorSource;
