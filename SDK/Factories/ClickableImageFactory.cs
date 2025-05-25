@@ -25,9 +25,9 @@ namespace EditorEX.SDK.Factories
             _instantiator = instantiator;
         }
 
-        public EditorClickableImage Create(Transform parent, string location, LayoutData layoutData, Action<PointerEventData> onClick)
+        public EditorNativeClickableImage Create(Transform parent, string location, LayoutData layoutData, Action<PointerEventData> onClick)
         {
-            var clickableImage = _imageFactory.Create<EditorClickableImage>(parent, location, layoutData);
+            var clickableImage = _imageFactory.Create<EditorNativeClickableImage>(parent, location, layoutData);
             clickableImage.OnClickEvent += onClick;
 
             clickableImage.useScriptableObjectColors = false;
@@ -47,7 +47,7 @@ namespace EditorEX.SDK.Factories
             return clickableImage;
         }
 
-        public EditorClickableImage Create(Transform parent, string location, LayoutData layoutData, Action onClick)
+        public EditorNativeClickableImage Create(Transform parent, string location, LayoutData layoutData, Action onClick)
         {
             return Create(parent, location, layoutData, _ => onClick());
         }

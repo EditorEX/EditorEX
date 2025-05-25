@@ -1,6 +1,6 @@
 ﻿namespace EditorEX.SDK.Components
 {
-    public class NoTransitionClickableImageSelectableStateController : SelectableStateController<EditorClickableImage>
+    public class NoTransitionClickableImageSelectableStateController : SelectableStateController<EditorNativeClickableImage>
     {
         protected void OnEnable()
         {
@@ -13,22 +13,22 @@
             _component.selectionStateDidChangeEvent -= HandleNoTransitionButtonSelectionStateDidChange;
         }
 
-        private void HandleNoTransitionButtonSelectionStateDidChange(EditorClickableImage.SelectionState state)
+        private void HandleNoTransitionButtonSelectionStateDidChange(EditorNativeClickableImage.SelectionState state)
         {
             ResolveSelectionState(state);
         }
 
-        private void ResolveSelectionState(EditorClickableImage.SelectionState state, bool animated = true)
+        private void ResolveSelectionState(EditorNativeClickableImage.SelectionState state, bool animated = true)
         {
             switch (state)
             {
-                case EditorClickableImage.SelectionState.Highlighted:
+                case EditorNativeClickableImage.SelectionState.Highlighted:
                     SetState(ViewState.Highlighted, animated);
                     return;
-                case EditorClickableImage.SelectionState.Pressed:
+                case EditorNativeClickableImage.SelectionState.Pressed:
                     SetState(ViewState.Pressed, animated);
                     return;
-                case EditorClickableImage.SelectionState.Disabled:
+                case EditorNativeClickableImage.SelectionState.Disabled:
                     SetState(ViewState.Disabled, animated);
                     return;
                 default:

@@ -53,7 +53,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 _buttonTransform = buttonRect;
 
                 var width = buttonRect.rect.width;
-                var height = Mathf.Clamp(Table.Items.Count, 1, MaxDisplayedItems) * ItemSize + 2;
+                var height = Mathf.Clamp(Table.Items.Count, 1, MaxDisplayedItems) * ItemSize + 4;
 
                 this.AsFlexItem(size: new() { x = width, y = height });
             }
@@ -84,7 +84,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                                             x => x.SelectedIndexes,
                                             _ => CloseInternal()
                                         )
-                                        .AsFlexItem(flexGrow: 0.95f)
+                                        .AsFlexItem(flexGrow: 0.98f)
                                         .Bind(ref _table),
                                         // Scrollbar
                                     new EditorScrollbar()

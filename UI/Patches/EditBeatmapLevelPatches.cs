@@ -105,7 +105,7 @@ namespace EditorEX.UI.Patches
 
             string input = Path.Combine(_beatmapProjectManager.Value._workingBeatmapProject, contributorData.IconPath);
 
-            EditorClickableImage image = null;
+            EditorNativeClickableImage image = null;
             image = _clickableImageFactory.Create(root.transform, input, new LayoutData(null, null), _ =>
             {
                 string text = NativeFileDialogs.OpenFileDialog("",
@@ -253,19 +253,13 @@ namespace EditorEX.UI.Patches
                         new Layout() {
                             Children = {
                                 
-
                             }
                         }.AsFlexGroup(gap: 100f, direction: FlexDirection.Row, alignItems: Align.Center)
                         .AsFlexItem()
                     }
                 }.AsFlexGroup(gap: 10f, direction: FlexDirection.Column, alignItems: Align.Center)
                 .WithReactiveContainer(_reactiveContainer)
-                .Use(_songInfoRoot);
-
-                _rootSegmentedControl = _textSegmentedControlFactory.Create(__instance.transform, new string[] { "Song Info | 1", "Beatmaps | 2" }, RootSelected);
-                (_rootSegmentedControl.transform as RectTransform).anchoredPosition = new Vector2(0f, 500f);
-                _rootTabbingSegmentedControlController = _rootSegmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
-                _rootTabbingSegmentedControlController.Setup(_rootSegmentedControl, false);
+                .Use(__instance.transform);
 
                 __instance.gameObject.SetActive(false);
 
@@ -373,11 +367,11 @@ namespace EditorEX.UI.Patches
             }
             else
             {
-                _rootTabbingSegmentedControlController.AddBindings(false);
+                //_rootTabbingSegmentedControlController.AddBindings(false);
                 //_extraSongInfoTabbingSegmentedControlController.AddBindings(true);
             }
 
-            _rootTabbingSegmentedControlController.ClickCell(0);
+            //_rootTabbingSegmentedControlController.ClickCell(0);
             //_extraSongInfoTabbingSegmentedControlController.ClickCell(0);
         }
 

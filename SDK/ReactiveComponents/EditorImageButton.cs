@@ -58,7 +58,6 @@ namespace EditorEX.SDK.ReactiveComponents
                 Source = "#Background4px",
                 ImageType = Image.Type.Sliced
             }
-            .AsFlexGroup(padding: 8f)
             .AsFlexItem(size: new Reactive.Yoga.YogaVector("fit-content", "fit-content"))
             .Bind(ref _background)
             .WithNativeComponent(out _button)

@@ -1,10 +1,10 @@
-﻿using HMUI;
+﻿using Reactive.BeatSaber.Components;
 using System;
 using UnityEngine.EventSystems;
 
 namespace EditorEX.SDK.Components
 {
-    public class EditorClickableImage : ImageView, IPointerDownHandler, IPointerClickHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
+    public class EditorNativeClickableImage : FixedImageView, IPointerDownHandler, IPointerClickHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
     {
         public SelectionState state { get; private set; } = SelectionState.Normal;
 

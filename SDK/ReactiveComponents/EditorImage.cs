@@ -178,7 +178,7 @@ namespace EditorEX.SDK.ReactiveComponents
         EditorImage IComponentHolder<EditorImage>.Component => this;
         public FixedImageView ImageView => _image;
 
-        private FixedImageView _image = null!;
+        protected FixedImageView _image = null!;
 
         protected override void Construct(RectTransform rect)
         {
