@@ -1,3 +1,5 @@
+using System;
+using BeatmapEditor3D;
 using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.ReactiveComponents.Native;
 using Reactive;
@@ -26,13 +28,30 @@ namespace EditorEX.Util
             return component;
         }
 
-        public static EditorNamedRail InEditorNamedRail(this ILayoutItem comp, string text, float fontSize = 12f)
+        public static GameObject EnabledWithObservable<R>(this GameObject component, ObservableValue<R> observable, R value)
+        {
+            component.SetActive(observable.Value?.Equals(value) ?? true);
+            void Closure(R val)
+            {
+                if (component == null)
+                {
+                    observable.ValueChangedEvent -= Closure;
+                    return;
+                }
+                component.SetActive(observable.Value?.Equals(value) ?? true);
+            }
+            observable.ValueChangedEvent += Closure;
+            return component;
+        }
+
+        public static EditorNamedRail InEditorNamedRail(this ILayoutItem comp, string text, float fontSize = 12f, float ratio = 70f)
         {
             ILayoutItem comp2 = comp;
             EditorNamedRail namedRail = new EditorNamedRail();
             namedRail.Label.Text = text;
             namedRail.Label.FontSize = fontSize;
             namedRail.Component = comp2;
+            namedRail.Ratio = ratio;
             return namedRail.With(delegate (EditorNamedRail x)
             {
                 if (comp2 is ISkewedComponent skewedComponent)
@@ -40,6 +59,54 @@ namespace EditorEX.Util
                     ((ISkewedComponent)x.Label).Skew = skewedComponent.Skew;
                 }
             });
+        }
+
+        public static EditorNamedRail LinkNamedRailWithValidator<T, U>(this EditorNamedRail namedRail) where T : BaseInputFieldValidator<U>
+        {
+            Debug.Assert(namedRail.Component is ReactiveComponent, "Component must be a ReactiveComponent to link with a validator.");
+            Debug.Assert((namedRail.Component as ReactiveComponent)!.Content, "Component has no content.");
+            Debug.Assert((namedRail.Component as ReactiveComponent)!.Content.GetComponent<T>() == null, "Component must have a validator.");
+            var component = (namedRail.Component as ReactiveComponent)!.Content.GetComponent<T>();
+            component._valueModifiedHintGo = namedRail.ModifiedHint;
+            return namedRail;
+        }
+
+        public static EditorStringInput WithInputValidator<T, U>(this EditorStringInput input, out T comp, Action<U>? onInputValidated = null) where T : BaseInputFieldValidator<U>
+        {
+            input.Content.SetActive(false);
+            comp = input.Content.AddComponent<T>();
+            comp._inputField = input.InputField;
+            if (onInputValidated != null)
+            {
+                comp.onInputValidated += onInputValidated;
+            }
+            input.Content.SetActive(true);
+            return input;
+        }
+
+        public static EditorStringInput WithInputValidatorCopy<T, U>(this EditorStringInput input, T orig, ref T comp, Action<U>? onInputValidated = null) where T : BaseInputFieldValidator<U>
+        {
+            WithInputValidator(input, out comp, onInputValidated);
+            switch (orig)
+            {
+                case FloatInputFieldValidator floatValidator:
+                    var newFloatValidator = comp as FloatInputFieldValidator;
+                    newFloatValidator!._min = floatValidator._min;
+                    newFloatValidator._max = floatValidator._max;
+                    newFloatValidator._validatorType = floatValidator._validatorType;
+                    break;
+                case IntInputFieldValidator intValidator:
+                    var newIntValidator = comp as IntInputFieldValidator;
+                    newIntValidator!._min = intValidator._min;
+                    newIntValidator._max = intValidator._max;
+                    newIntValidator._validatorType = intValidator._validatorType;
+                    break;
+                case StringInputFieldValidator stringValidator:
+                    var newStringValidator = comp as StringInputFieldValidator;
+                    newStringValidator!._trimSpaces = stringValidator._trimSpaces;
+                    break;
+            }
+            return input;
         }
 
         public static void PresentEditor(this IModal comp, Transform child, bool animated = true)

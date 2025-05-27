@@ -29,10 +29,6 @@ namespace EditorEX.UI.Patches
     internal class EditBeatmapLevelPatches : IAffinity
     {
         private readonly BeatmapLevelDataModel _beatmapLevelDataModel;
-        private readonly TextSegmentedControlFactory _textSegmentedControlFactory;
-        private readonly ButtonFactory _buttonFactory;
-        private readonly ClickableImageFactory _clickableImageFactory;
-        private readonly StringInputFactory _stringInputFactory;
         private readonly LevelCustomDataModel _levelCustomDataModel;
         private readonly IInstantiator _instantiator;
         private readonly AddressableSignalBus _addressableSignalBus;
@@ -42,9 +38,6 @@ namespace EditorEX.UI.Patches
         private readonly CustomPlatformsListModel _customPlatformsListModel;
         private readonly ReactiveContainer _reactiveContainer;
 
-        private TextSegmentedControl _rootSegmentedControl;
-        private TabbingSegmentedControlController _rootTabbingSegmentedControlController;
-
         private GameObject _songInfoRoot;
         private GameObject _beatmapsRoot;
 
@@ -53,20 +46,11 @@ namespace EditorEX.UI.Patches
         private SimpleTextEditorDropdownView _allDirectionsEnvironmentDropdown;
         private SimpleTextEditorDropdownView _customPlatformDropdown;
 
-        private TextSegmentedControl _extraSongInfoSegmentedControl;
-        private TabbingSegmentedControlController _extraSongInfoTabbingSegmentedControlController;
-
-        private GameObject _environmentRoot;
-
-        private GameObject _contributorsRoot;
-        private ScrollView _scrollView;
+        private ObservableValue<bool> V4Level = ValueUtils.Remember(false);
+        private ObservableValue<int> MainTab = ValueUtils.Remember(0);
 
         private EditBeatmapLevelPatches(
             BeatmapLevelDataModel beatmapLevelDataModel,
-            TextSegmentedControlFactory textSegmentedControlFactory,
-            ButtonFactory buttonFactory,
-            ClickableImageFactory clickableImageFactory,
-            StringInputFactory stringInputFactory,
             LevelCustomDataModel levelCustomDataModel,
             IInstantiator instantiator,
             AddressableSignalBus addressableSignalBus,
@@ -77,10 +61,6 @@ namespace EditorEX.UI.Patches
             ReactiveContainer reactiveContainer)
         {
             _beatmapLevelDataModel = beatmapLevelDataModel;
-            _textSegmentedControlFactory = textSegmentedControlFactory;
-            _buttonFactory = buttonFactory;
-            _clickableImageFactory = clickableImageFactory;
-            _stringInputFactory = stringInputFactory;
             _levelCustomDataModel = levelCustomDataModel;
             _instantiator = instantiator;
             _addressableSignalBus = addressableSignalBus;
@@ -91,98 +71,6 @@ namespace EditorEX.UI.Patches
             _reactiveContainer = reactiveContainer;
         }
 
-        private void MakeContributorCell(ContributorData contributorData)
-        {
-            var root = new GameObject($"Contributor {contributorData.Name}");
-            root.transform.SetParent(_scrollView.contentTransform, false);
-            var horizontal = root.AddComponent<HorizontalLayoutGroup>();
-
-            horizontal.childForceExpandWidth = false;
-            horizontal.spacing = 15f;
-
-            var layoutElement = root.AddComponent<LayoutElement>();
-            layoutElement.minHeight = 160f;
-
-            string input = Path.Combine(_beatmapProjectManager.Value._workingBeatmapProject, contributorData.IconPath);
-
-            EditorNativeClickableImage image = null;
-            image = _clickableImageFactory.Create(root.transform, input, new LayoutData(null, null), _ =>
-            {
-                string text = NativeFileDialogs.OpenFileDialog("",
-                [
-                    new("", "png", "jpg", "jpeg")
-                ], null);
-
-                if (string.IsNullOrEmpty(text) || text == contributorData.IconPath)
-                {
-                    return;
-                }
-
-                BeatmapProjectFileHelper.SaveBeatmapAssetFile(
-                    Path.Combine(_beatmapProjectManager.Value._workingBeatmapProject, contributorData.IconPath),
-                    _beatmapProjectManager.Value._workingBeatmapProject,
-                    text);
-
-                contributorData.IconPath = Path.GetFileName(text);
-
-                _levelCustomDataModel.UpdateWith(null, null, null, null, null, null, null, _levelCustomDataModel.Contributors);
-
-                image.SetImageAsync(text, false);
-            });
-            var imageLayoutElement = image.gameObject.AddComponent<LayoutElement>();
-            imageLayoutElement.minWidth = 160f;
-            imageLayoutElement.minHeight = 160f;
-            imageLayoutElement.preferredWidth = 160f;
-            imageLayoutElement.preferredHeight = 160f;
-
-            _addressableSignalBus.Subscribe<Material>("rounded-corners", null, x =>
-            {
-                image.material = x.GetValue();
-            });
-
-            var vertical = new GameObject($"Vertical");
-            vertical.transform.SetParent(root.transform, false);
-            vertical.AddComponent<VerticalLayoutGroup>();
-
-            _stringInputFactory.Create(vertical.transform, "Name", 450f, x =>
-            {
-                contributorData.Name = x;
-                _levelCustomDataModel.UpdateWith(null, null, null, null, null, null, null, _levelCustomDataModel.Contributors);
-            }).SetTextWithoutNotify(contributorData.Name);
-
-            _stringInputFactory.Create(vertical.transform, "Role", 450f, x =>
-            {
-                contributorData.Role = x;
-                _levelCustomDataModel.UpdateWith(null, null, null, null, null, null, null, _levelCustomDataModel.Contributors);
-            }).SetTextWithoutNotify(contributorData.Role);
-        }
-
-        private void ReloadContributors()
-        {
-            foreach (Transform child in _scrollView.contentTransform)
-            {
-                GameObject.Destroy(child.gameObject);
-            }
-
-            foreach (var contributor in _levelCustomDataModel.Contributors)
-            {
-                MakeContributorCell(contributor);
-            }
-
-            var newContributor = new GameObject("New Contributor");
-            newContributor.transform.SetParent(_scrollView.contentTransform, false);
-            var horizontal = newContributor.AddComponent<HorizontalLayoutGroup>();
-
-            var button = _buttonFactory.Create(horizontal.transform, "New Contributor", () =>
-            {
-                _levelCustomDataModel.Contributors.Add(new ContributorData("New Contributor", "", "Contributor Role"));
-                _levelCustomDataModel.UpdateWith(null, null, null, null, null, null, null, _levelCustomDataModel.Contributors);
-
-                ReloadContributors();
-            });
-            button.transform.GetChild(0).GetComponent<ImageView>()._colorSo = _colorCollector.GetColor("BpmRegion/Handle");
-        }
-
         [AffinityPostfix]
         [AffinityPatch(typeof(EditBeatmapLevelViewController), nameof(EditBeatmapLevelViewController.RefreshData))]
         private void RefreshData(EditBeatmapLevelViewController __instance, bool clearModifiedState)
@@ -191,14 +79,11 @@ namespace EditorEX.UI.Patches
             {
                 return;
             }
-            _levelAuthorInputValidator.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
+            V4Level.Value = LevelContext.Version.Major >= 4;
             //_environmentDropdown.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
             //_allDirectionsEnvironmentDropdown.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
 
-            _songInfoRoot.SetActive(false);
-            _songInfoRoot.SetActive(true); // Fix layout
-
-            if (LevelContext.Version.Major < 4)
+            if (!V4Level)
             {
                 _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
                 //_environmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.EnvironmentName), clearModifiedState);
@@ -232,176 +117,168 @@ namespace EditorEX.UI.Patches
             //ReloadContributors();
         }
 
-        [AffinityPostfix]
+        [AffinityPrefix]
         [AffinityPatch(typeof(EditBeatmapLevelViewController), nameof(EditBeatmapLevelViewController.DidActivate))]
         private void ModifyUI(EditBeatmapLevelViewController __instance, bool firstActivation)
         {
             if (firstActivation)
             {
                 var difficultyBeatmapSetContainer = __instance.transform.Find("DifficultyBeatmapSetContainer").gameObject;
-                difficultyBeatmapSetContainer.SetActive(false);
                 _beatmapsRoot = difficultyBeatmapSetContainer;
+                _beatmapsRoot.EnabledWithObservable(MainTab, 1);
+                __instance.transform.Find("BeatmapInfoContainer").gameObject.SetActive(false);
 
-                var root = new Layout
+                var secondaryTab = ValueUtils.Remember(0);
+
+                new Layout
                 {
                     Children = {
                         new EditorSegmentedControl() {
-                            SelectedIndex = ValueUtils.Remember(0),
+                            SelectedIndex = MainTab,
                             Values = [ "Song Info", "Beatmaps" ],
                             TabbingType = TabbingType.Alpha,
                         }.AsFlexItem(size: new YogaVector(300f, 30f)),
                         new Layout() {
                             Children = {
-                                
+                                new Layout() {
+                                    Children = {
+                                        new Layout() {
+                                            Children = {
+                                                new EditorImage() {
+                                                    Source = "https://picsum.photos/200"
+                                                }.AsFlexItem(size: new () {x = 160f, y = 160f}),
+                                            }
+                                        }
+                                        .AsFlexGroup(gap: 40f, direction: FlexDirection.Column, alignItems: Align.FlexStart)
+                                        .AsFlexItem(),
+
+                                        new Layout()
+                                        {
+                                            Children =
+                                            {
+                                                new EditorStringInput()
+                                                    .WithInputValidatorCopy<StringInputFieldValidator, string>(__instance._songNameInputValidator, ref __instance._songNameInputValidator)
+                                                    .InEditorNamedRail("Song Name", 18f, 55f)
+                                                    .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
+                                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto"
+                                                    }),
+
+                                                new EditorStringInput()
+                                                    .WithInputValidatorCopy<StringInputFieldValidator, string>(__instance._songSubNameInputValidator, ref __instance._songSubNameInputValidator)
+                                                    .InEditorNamedRail("Song Sub Name", 18f, 55f)
+                                                    .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
+                                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto"
+                                                    }),
+
+                                                new EditorStringInput()
+                                                    .WithInputValidatorCopy<StringInputFieldValidator, string>(__instance._songAuthorNameInputValidator, ref __instance._songAuthorNameInputValidator)
+                                                    .InEditorNamedRail("Song Author Name", 18f, 55f)
+                                                    .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
+                                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto"
+                                                    }),
+
+                                                new EditorStringInput()
+                                                    .WithInputValidator<StringInputFieldValidator, string>(out _levelAuthorInputValidator, x => __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, x)))
+                                                    .InEditorNamedRail("Level Author Name", 18f, 55f)
+                                                    .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
+                                                    .EnabledWithObservable(V4Level, false)
+                                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto"
+                                                    }),
+                                            }
+                                        }
+                                        .AsFlexGroup(gap: 40f, direction: FlexDirection.Column, alignItems: Align.FlexStart)
+                                        .AsFlexItem(),
+                                        
+                                        new Layout()
+                                        {
+                                            Children =
+                                            {
+                                                new Layout()
+                                                {
+                                                    Children = {
+                                                        new EditorBackgroundButton()
+                                                        {
+                                                            Source = "#Background8px",
+                                                            Children = {
+                                                                new EditorImage()
+                                                                {
+                                                                    Source = "#IconOpen"
+                                                                }.AsFlexItem(size: new YogaVector(30f, 30f))
+                                                            }
+                                                        }.AsFlexGroup(justifyContent: Justify.Center, alignItems: Align.Center)
+                                                        .AsFlexItem(size: new YogaVector(40f, 40f))
+                                                        .With(x => {
+                                                            __instance._editBpmGridButton = x.Component.Button;
+                                                        }),
+                                                        new EditorStringInput()
+                                                            .WithInputValidatorCopy<FloatInputFieldValidator, float>(__instance._beatsPerMinuteInputValidator, ref __instance._beatsPerMinuteInputValidator)
+                                                            .InEditorNamedRail("BPM", 18f, 35f)
+                                                            .LinkNamedRailWithValidator<FloatInputFieldValidator, float>()
+                                                            .AsFlexItem(size: new() { x = 260f, y = "auto"}),
+                                                    }
+                                                }.AsFlexGroup(gap: 4f)
+                                                .AsFlexItem(size: new() { x = 100f.pct(), y = "auto"}),
+
+                                                new EditorStringInput()
+                                                    .WithInputValidatorCopy<FloatInputFieldValidator, float>(__instance._previewStartTimeInputValidator, ref __instance._previewStartTimeInputValidator)
+                                                    .InEditorNamedRail("Preview Start Time", 18f, 30f)
+                                                    .LinkNamedRailWithValidator<FloatInputFieldValidator, float>()
+                                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto"}),
+
+                                                new EditorStringInput()
+                                                    .WithInputValidatorCopy<FloatInputFieldValidator, float>(__instance._previewDurationInputValidator, ref __instance._previewDurationInputValidator)
+                                                    .InEditorNamedRail("Preview Duration", 18f, 30f)
+                                                    .LinkNamedRailWithValidator<FloatInputFieldValidator, float>()
+                                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto"}),
+                                            }
+                                        }
+                                        .AsFlexGroup(gap: 40f, direction: FlexDirection.Column, alignItems: Align.FlexStart)
+                                        .AsFlexItem(size: new () {x = 60f.pct(), y = "auto"}),
+                                    }
+                                }.AsFlexGroup(gap: 60f, direction: FlexDirection.Column, alignItems: Align.FlexStart, padding: new YogaFrame(40f, 0f, 0f, 0f))
+                                .AsFlexItem(size: new () {x = 500f, y = "auto"}),
+                                new Layout
+                                {
+                                    Children = {
+                                        new EditorSegmentedControl() {
+                                            SelectedIndex = secondaryTab,
+                                            Values = [ "Environments", "Contributors" ],
+                                            TabbingType = TabbingType.Qwerty,
+                                        }.AsFlexItem(size: new YogaVector(250f, 30f)),
+                                        new EditorBackground {
+                                            ColorSO = _colorCollector.GetColor("Navbar/Background/Normal"),
+                                            UseScriptableObjectColors = true,
+                                            Source = "#Background8px",
+                                            ImageType = Image.Type.Sliced,
+                                            Children = {
+                                                new Layout {
+                                                    Children = {
+                                                        new EditorImage {
+                                                            Source = "https://picsum.photos/200"
+                                                        }.EnabledWithObservable(secondaryTab, 0)
+                                                        .AsFlexItem(size: new () {x = 200f, y = 200f}),
+                                                        new EditorImage {
+                                                            Source = "https://picsum.photos/200"
+                                                        }.EnabledWithObservable(secondaryTab, 1)
+                                                        .AsFlexItem(size: new () {x = 200f, y = 200f}),
+                                                    }
+                                                }.AsFlexGroup(gap: 5f, padding: 24f).AsFlexItem(),
+                                            }
+                                        }.AsFlexItem(minSize: new () {x = 800f, y = 800f})
+                                    }
+                                }.AsFlexGroup(gap: 10f, direction: FlexDirection.Column, alignItems: Align.Center)
+                                .AsFlexItem()
                             }
-                        }.AsFlexGroup(gap: 100f, direction: FlexDirection.Row, alignItems: Align.Center)
+                        }.AsFlexGroup(gap: 250f, direction: FlexDirection.Row, alignItems: Align.FlexStart)
                         .AsFlexItem()
+                        .EnabledWithObservable(MainTab, 0)
                     }
-                }.AsFlexGroup(gap: 10f, direction: FlexDirection.Column, alignItems: Align.Center)
+                }.AsFlexGroup(gap: 60f, padding: 10f, direction: FlexDirection.Column, alignItems: Align.Center)
                 .WithReactiveContainer(_reactiveContainer)
                 .Use(__instance.transform);
 
-                __instance.gameObject.SetActive(false);
-
-                _songInfoRoot = new GameObject("SongInfoRoot");
-                _songInfoRoot.transform.SetParent(__instance.transform, false);
-                _songInfoRoot.transform.localPosition = new Vector3(-500f, 430f, 0f);
-
-                var beatmapInfoContainer = __instance.transform.Find("BeatmapInfoContainer");
-
-                beatmapInfoContainer.SetParent(_songInfoRoot.transform, false);
-
-                var infoContainerVerticalLayoutGroup = beatmapInfoContainer.gameObject.AddComponent<VerticalLayoutGroup>();
-                infoContainerVerticalLayoutGroup.spacing = 50f;
-                infoContainerVerticalLayoutGroup.childForceExpandWidth = true;
-                infoContainerVerticalLayoutGroup.childForceExpandHeight = false;
-                infoContainerVerticalLayoutGroup.childControlWidth = false;
-                infoContainerVerticalLayoutGroup.childControlHeight = false;
-
-                var infoContainerSizeFitter = beatmapInfoContainer.gameObject.AddComponent<ContentSizeFitter>();
-                infoContainerSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-                infoContainerSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-                var songImageInfo = beatmapInfoContainer.Find("SongImageInfo");
-                var songImageInfoHorizontalLayoutGroup = songImageInfo.gameObject.AddComponent<HorizontalLayoutGroup>();
-                songImageInfoHorizontalLayoutGroup.spacing = 25f;
-                songImageInfoHorizontalLayoutGroup.childForceExpandWidth = true;
-                songImageInfoHorizontalLayoutGroup.childForceExpandHeight = false;
-                songImageInfoHorizontalLayoutGroup.childControlWidth = false;
-                songImageInfoHorizontalLayoutGroup.childControlHeight = false;
-
-                var songImageInfoInputs = songImageInfo.Find("Inputs");
-                songImageInfoInputs.GetComponent<VerticalLayoutGroup>().childControlWidth = false;
-                (songImageInfoInputs.transform as RectTransform).sizeDelta = new Vector2(380f, 0f);
-                (songImageInfoInputs.Find("SongWrapper").transform as RectTransform).sizeDelta = new Vector2(380f, 70f);
-                (songImageInfoInputs.Find("CoverImageWrapper").transform as RectTransform).sizeDelta = new Vector2(380f, 70f);
-                (songImageInfo.Find("CoverImage").transform as RectTransform).sizeDelta = new Vector2(160f, 160f);
-
-                var songImageInfoSizeFitter = songImageInfo.gameObject.AddComponent<ContentSizeFitter>();
-                songImageInfoSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-                songImageInfoSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-                var songInfo = beatmapInfoContainer.Find("SongInfo");
-
-                var songInfoSizeFitter = songInfo.gameObject.AddComponent<ContentSizeFitter>();
-                songInfoSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-                songInfoSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-                _levelAuthorInputValidator = GameObject.Instantiate(__instance._songAuthorNameInputValidator.transform.parent, songInfo.transform).GetComponentInChildren<StringInputFieldValidator>();
-
-                _levelAuthorInputValidator.onInputValidated += x =>
-                {
-                    __instance._signalBus.Fire(new BeatmapDataModelSignals.UpdateBeatmapDataSignal(null, null, null, x));
-                };
-
-                _levelAuthorInputValidator.transform.parent.Find("Label").GetComponent<TextMeshProUGUI>().text = "Level Author Name";
-
-                var timingInfo = beatmapInfoContainer.Find("TimingInfo");
-
-                var timingInfoSizeFitter = timingInfo.gameObject.AddComponent<ContentSizeFitter>();
-                timingInfoSizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-                timingInfoSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-                var previewWaveform = new GameObject("PreviewWaveform");
-                previewWaveform.transform.SetParent(beatmapInfoContainer);
-
-                var tab = ValueUtils.Remember(0);
-
-                var additionalInfo = new Layout
-                {
-                    Children = {
-                        new EditorSegmentedControl() {
-                            SelectedIndex = tab,
-                            Values = [ "Environments", "Contributors" ],
-                            TabbingType = TabbingType.Qwerty,
-                        }.AsFlexItem(size: new YogaVector(250f, 30f)),
-                        new EditorBackground {
-                            ColorSO = _colorCollector.GetColor("Navbar/Background/Normal"),
-                            UseScriptableObjectColors = true,
-                            Source = "#Background8px",
-                            ImageType = Image.Type.Sliced,
-                            Children = {
-                                new Layout {
-                                    Children = {
-                                        new EditorImage {
-                                            Source = "https://picsum.photos/200"
-                                        }.EnabledWithObservable(tab, 0)
-                                        .AsFlexItem(size: new () {x = 200f, y = 200f}),
-                                        new EditorImage {
-                                            Source = "https://picsum.photos/200"
-                                        }.EnabledWithObservable(tab, 1)
-                                        .AsFlexItem(size: new () {x = 200f, y = 200f}),
-                                    }
-                                }.AsFlexGroup(gap: 5f).AsFlexItem(),
-                            }
-                        }.AsFlexItem(minSize: new () {x = 800f, y = 800f})
-                    }
-                }.AsFlexGroup(gap: 10f, direction: FlexDirection.Column, alignItems: Align.Center)
-                .AsRectItem()
-                .WithReactiveContainer(_reactiveContainer)
-                .Use(_songInfoRoot);
-
-                additionalInfo.anchoredPosition = new Vector2(950f, -100f);
-
                 __instance.gameObject.SetActive(true);
             }
-            else
-            {
-                //_rootTabbingSegmentedControlController.AddBindings(false);
-                //_extraSongInfoTabbingSegmentedControlController.AddBindings(true);
-            }
-
-            //_rootTabbingSegmentedControlController.ClickCell(0);
-            //_extraSongInfoTabbingSegmentedControlController.ClickCell(0);
-        }
-
-        [AffinityPostfix]
-        [AffinityPatch(typeof(EditBeatmapLevelViewController), nameof(EditBeatmapLevelViewController.DidDeactivate))]
-        private void DidDeactivate()
-        {
-            _rootTabbingSegmentedControlController.ClearBindings();
-            //_extraSongInfoTabbingSegmentedControlController.ClearBindings();
-        }
-
-        private void RootSelected(SegmentedControl segmentedControl, int idx)
-        {
-            _songInfoRoot.SetActive(idx == 0);
-            _beatmapsRoot.SetActive(idx == 1);
-
-            if (idx == 1)
-            {
-                _extraSongInfoTabbingSegmentedControlController.ClearBindings();
-            }
-            else
-            {
-                _extraSongInfoTabbingSegmentedControlController.AddBindings(true);
-            }
-        }
-
-        private void ExtraSongInfoSelected(SegmentedControl segmentedControl, int idx)
-        {
-            _environmentRoot.SetActive(idx == 0);
-            _contributorsRoot.SetActive(idx == 1);
         }
     }
 }

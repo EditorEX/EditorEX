@@ -38,5 +38,7 @@ namespace EditorEX.SDK.ReactiveComponents
         {
             set => Component.Source = value;
         }
+
+        public new EditorImageButton Component => base.Component;
     }
 }
