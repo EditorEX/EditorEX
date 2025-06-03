@@ -23,7 +23,7 @@ namespace EditorEX.SDKImplementation
                     new EditorToggle() {
                         OnClick = x => { Debug.Log($"Toggle: {x}"); }
                     }.InEditorNamedRail("Toggle", 18f),
-                    new EditorTextDropdown<string>() {
+                    new EditorTextDropdown<string> {
                         Items = {
                             {"Option 1", "Option 1"},
                             {"Option 2", "Option 2"},

@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using BeatmapEditor3D;
 using EditorEX.SDK.ReactiveComponents;
+using EditorEX.SDK.ReactiveComponents.Dropdown;
 using EditorEX.SDK.ReactiveComponents.Native;
+using JetBrains.Annotations;
 using Reactive;
 using Reactive.BeatSaber.Components;
 using Reactive.Components;
@@ -113,6 +116,37 @@ namespace EditorEX.Util
         {
             Transform transform = child.GetComponentInParent<ReactiveContainerHolder>().transform;
             ModalSystem<Reactive.Components.Basic.ModalSystem>.PresentModal(comp, transform, animated);
+        }
+
+        public static EditorTextDropdown<T> ExtractObservableFromDropdown<T>(this EditorTextDropdown<T> component, out ObservableValue<(T, string)> observable)
+        {
+            return component.ExtractObservable(out observable, (component.SelectedKey, component.Items[component.SelectedKey]));
+        }
+
+        public static T ExtractObservable<T, R>(this T component, out ObservableValue<R> observable, R value) where T : ReactiveComponent
+        {
+            observable = new ObservableValue<R>(value);
+            return component;
+        }
+
+        public static EditorTextDropdown<T> DropdownWithObservable<T>(this EditorTextDropdown<T> component, ObservableValue<(T, string)> observable)
+        {
+            component.SelectedKeyChangedEvent += (key) =>
+            {
+                if (observable?.Value.Item1?.Equals(key) ?? false)
+                {
+                    return;
+                }
+                observable.Value = (key, component.Items[key]);
+            };
+            observable.ValueChangedEvent += (value) =>
+            {
+                if (component.Items.ContainsKey(value.Item1))
+                {
+                    component.Select(value.Item1);
+                }
+            };
+            return component;
         }
     }
 }

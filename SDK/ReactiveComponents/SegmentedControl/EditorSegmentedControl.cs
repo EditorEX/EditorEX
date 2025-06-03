@@ -107,6 +107,7 @@ namespace EditorEX.SDK.ReactiveComponents
         {
             if (InputUtils.IsInputFieldActive())
                 return;
+                
             foreach (var child in _layout.Children.OfType<EditorSegmentedControlButton>())
             {
                 if (child.Position == number)

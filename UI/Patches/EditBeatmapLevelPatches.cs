@@ -9,6 +9,7 @@ using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
 using EditorEX.SDK.ReactiveComponents;
+using EditorEX.SDK.ReactiveComponents.Dropdown;
 using EditorEX.SDK.ReactiveComponents.SegmentedControl;
 using EditorEX.Util;
 using HMUI;
@@ -42,9 +43,9 @@ namespace EditorEX.UI.Patches
         private GameObject _beatmapsRoot;
 
         private StringInputFieldValidator _levelAuthorInputValidator;
-        private SimpleTextEditorDropdownView _environmentDropdown;
-        private SimpleTextEditorDropdownView _allDirectionsEnvironmentDropdown;
-        private SimpleTextEditorDropdownView _customPlatformDropdown;
+        private EditorTextDropdown<string> _environmentDropdown;
+        private EditorTextDropdown<string> _allDirectionsEnvironmentDropdown;
+        private EditorTextDropdown<string> _customPlatformDropdown;
 
         private ObservableValue<bool> V4Level = ValueUtils.Remember(false);
         private ObservableValue<int> MainTab = ValueUtils.Remember(0);
@@ -80,14 +81,12 @@ namespace EditorEX.UI.Patches
                 return;
             }
             V4Level.Value = LevelContext.Version.Major >= 4;
-            //_environmentDropdown.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
-            //_allDirectionsEnvironmentDropdown.transform.parent.gameObject.SetActive(LevelContext.Version.Major < 4);
 
             if (!V4Level)
             {
                 _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
-                //_environmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.EnvironmentName), clearModifiedState);
-                //_allDirectionsEnvironmentDropdown.SelectCellWithIdx(_environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle).Select(x => x.serializedName).ToList().IndexOf(_levelCustomDataModel.AllDirectionsEnvironmentName), clearModifiedState);
+                _environmentDropdown.Select(_levelCustomDataModel.EnvironmentName);
+                _allDirectionsEnvironmentDropdown.Select(_levelCustomDataModel.AllDirectionsEnvironmentName);
             }
 
             var customPlatIndex = _customPlatformsListModel.CustomPlatforms.Select(x => x.FilePath).ToList().IndexOf(_levelCustomDataModel.CustomPlatformInfo.FilePath);
@@ -133,14 +132,14 @@ namespace EditorEX.UI.Patches
                 new Layout
                 {
                     Children = {
-                        new EditorSegmentedControl() {
+                        new EditorSegmentedControl {
                             SelectedIndex = MainTab,
                             Values = [ "Song Info", "Beatmaps" ],
                             TabbingType = TabbingType.Alpha,
                         }.AsFlexItem(size: new YogaVector(300f, 30f)),
-                        new Layout() {
+                        new Layout {
                             Children = {
-                                new Layout() {
+                                new Layout {
                                     Children = {
                                         new Layout() {
                                             Children = {
@@ -189,18 +188,18 @@ namespace EditorEX.UI.Patches
                                         .AsFlexGroup(gap: 40f, direction: FlexDirection.Column, alignItems: Align.FlexStart)
                                         .AsFlexItem(),
                                         
-                                        new Layout()
+                                        new Layout // Audio Info
                                         {
                                             Children =
                                             {
-                                                new Layout()
+                                                new Layout
                                                 {
                                                     Children = {
-                                                        new EditorBackgroundButton()
+                                                        new EditorBackgroundButton
                                                         {
                                                             Source = "#Background8px",
                                                             Children = {
-                                                                new EditorImage()
+                                                                new EditorImage
                                                                 {
                                                                     Source = "#IconOpen"
                                                                 }.AsFlexItem(size: new YogaVector(30f, 30f))
@@ -237,10 +236,10 @@ namespace EditorEX.UI.Patches
                                     }
                                 }.AsFlexGroup(gap: 60f, direction: FlexDirection.Column, alignItems: Align.FlexStart, padding: new YogaFrame(40f, 0f, 0f, 0f))
                                 .AsFlexItem(size: new () {x = 500f, y = "auto"}),
-                                new Layout
+                                new Layout // Right Side
                                 {
                                     Children = {
-                                        new EditorSegmentedControl() {
+                                        new EditorSegmentedControl {
                                             SelectedIndex = secondaryTab,
                                             Values = [ "Environments", "Contributors" ],
                                             TabbingType = TabbingType.Qwerty,
@@ -251,18 +250,51 @@ namespace EditorEX.UI.Patches
                                             Source = "#Background8px",
                                             ImageType = Image.Type.Sliced,
                                             Children = {
-                                                new Layout {
+                                                new Layout { // Environments
                                                     Children = {
-                                                        new EditorImage {
-                                                            Source = "https://picsum.photos/200"
-                                                        }.EnabledWithObservable(secondaryTab, 0)
-                                                        .AsFlexItem(size: new () {x = 200f, y = 200f}),
-                                                        new EditorImage {
-                                                            Source = "https://picsum.photos/200"
-                                                        }.EnabledWithObservable(secondaryTab, 1)
-                                                        .AsFlexItem(size: new () {x = 200f, y = 200f}),
+                                                        new EditorTextDropdown<string>()
+                                                        .With(x => {
+                                                            x.Items.AddRange(
+                                                                _environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Normal)
+                                                                .Select(x => (x.serializedName, x.environmentName))
+                                                                .ToDictionary(x => x.serializedName, x => x.environmentName));
+                                                        })
+                                                        .EnabledWithObservable(V4Level, false)
+                                                        .Bind(ref _environmentDropdown)
+                                                        .ExtractObservable(out var normalEnvironmentValue, _environmentDropdown.Items.First().ExtractTupleFromKVP())
+                                                        .DropdownWithObservable(normalEnvironmentValue)
+                                                        .Animate(normalEnvironmentValue, (x, v) => {
+                                                            Debug.Log($"Selected Normal Environment: {v}");
+                                                        })
+                                                        .AsFlexItem(size: new YogaVector(200f, 40f))
+                                                        .InEditorNamedRail("Environment", 18f),
+
+                                                        new EditorTextDropdown<string>()
+                                                        .With(x => {
+                                                            x.Items.AddRange(
+                                                                _environmentsListModel.GetAllEnvironmentInfosWithType(EnvironmentType.Circle)
+                                                                .ToDictionary(x => x.serializedName, x => x.environmentName));
+                                                        })
+                                                        .EnabledWithObservable(V4Level, false)
+                                                        .Bind(ref _allDirectionsEnvironmentDropdown)
+                                                        .ExtractObservable(out var allDirectionsEnvironmentValue, _allDirectionsEnvironmentDropdown.Items.First().ExtractTupleFromKVP())
+                                                        .DropdownWithObservable(allDirectionsEnvironmentValue)
+                                                        .Animate(allDirectionsEnvironmentValue, (x, v) => {
+                                                            Debug.Log($"Selected All Directions Environment: {v}");
+                                                        })
+                                                        .AsFlexItem(size: new YogaVector(200f, 40f))
+                                                        .InEditorNamedRail("360 Environment", 18f),
                                                     }
-                                                }.AsFlexGroup(gap: 5f, padding: 24f).AsFlexItem(),
+                                                }.EnabledWithObservable(secondaryTab, 0)
+                                                .AsFlexGroup(FlexDirection.Column, gap: 5f, padding: new YogaFrame(24f, 80f))
+                                                .AsFlexItem(size: 100.pct()),
+
+                                                new Layout { // Contributors
+                                                    Children = {
+                                                    }
+                                                }.EnabledWithObservable(secondaryTab, 1)
+                                                .AsFlexGroup(gap: 5f, padding: 24f)
+                                                .AsFlexItem(),
                                             }
                                         }.AsFlexItem(minSize: new () {x = 800f, y = 800f})
                                     }
