@@ -12,7 +12,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
     {
         private NoteEditorData? _editorData;
 
-        private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper;
+        private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper = null!;
 
         [Inject]
         public void Construct(BeatmapObjectPlacementHelper beatmapObjectPlacementHelper)
@@ -20,7 +20,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
         {
             _editorData = editorData as NoteEditorData;
             if (editorData == null) return;

@@ -17,24 +17,21 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
     public class EditorArcGameMovement : MonoBehaviour, IObjectMovement
     {
         // Injected fields
-        private IEditorBeatmapObjectSpawnMovementData _editorBeatmapObjectSpawnMovementData;
-        private EditorDeserializedData _editorDeserializedData;
-        private AnimationHelper _animationHelper;
-        private IReadonlyBeatmapState _state;
-        private ColorManager _colorManager;
-        private IAudioTimeSource _audioTimeSyncController;
-        private AudioDataModel _audioDataModel;
-        private IVariableMovementDataProvider _variableMovementDataProvider;
+        private IEditorBeatmapObjectSpawnMovementData _editorBeatmapObjectSpawnMovementData = null!;
+        private EditorDeserializedData _editorDeserializedData = null!;
+        private AnimationHelper _animationHelper = null!;
+        private IReadonlyBeatmapState _state = null!;
+        private ColorManager _colorManager = null!;
+        private IAudioTimeSource _audioTimeSyncController = null!;
+        private AudioDataModel _audioDataModel = null!;
+        private IVariableMovementDataProvider _variableMovementDataProvider = null!;
 
         // Arc related fields
         private LengthType _lengthType;
         private ArcEditorData? _sliderEditorData;
-        private SliderData _sliderData;
-        private Saber _saber;
-        private float _headJumpOffsetY;
+        private SliderData? _sliderData;
         private float _sliderDuration;
         private Color _initColor;
-        private bool _attractingSaber;
         private float _randomValue;
         private float _zDistanceBetweenNotes;
 
@@ -48,9 +45,9 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         private float _timeSinceHeadNoteJump;
 
         // Object fields
-        private SliderMeshController _sliderMeshController;
-        private MaterialPropertyBlockController _materialPropertyBlockController;
-        private EditorSliderIntensityEffect _sliderIntensityEffect;
+        private SliderMeshController? _sliderMeshController;
+        private MaterialPropertyBlockController? _materialPropertyBlockController;
+        private EditorSliderIntensityEffect? _sliderIntensityEffect;
 
         [Inject]
         private void Construct(
@@ -71,7 +68,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             _audioDataModel = audioDataModel;
         }
 
-        public LengthType GetLengthFromSliderData(BaseSliderEditorData? sliderNoteData, SliderSpawnData sliderSpawnData)
+        public LengthType GetLengthFromSliderData(BaseSliderEditorData sliderNoteData, SliderSpawnData sliderSpawnData)
         {
             float jumpDuration = _variableMovementDataProvider.jumpDuration;
             float num = ((_variableMovementDataProvider.jumpEndPosition + sliderSpawnData.headNoteOffset).z - (_variableMovementDataProvider.moveEndPosition + sliderSpawnData.headNoteOffset).z) / jumpDuration;
@@ -136,7 +133,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             SliderShaderHelper.SetInitialProperties(materialPropertyBlock.materialPropertyBlock, _initColor * _sliderIntensityEffect.colorIntensity, _zDistanceBetweenNotes, _sliderMeshController.pathLength, EditorSpawnDataRepository.GetSpawnData(_sliderEditorData).hasHeadNote, EditorSpawnDataRepository.GetSpawnData(_sliderEditorData).hasTailNote, _randomValue);
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
         {
             var arcvView = GetComponent<ArcView>();
             _sliderMeshController = arcvView._arcMeshController;

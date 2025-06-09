@@ -8,8 +8,8 @@ namespace EditorEX.SDK.Factories
     // This class MUST be injected using Zenject. You cannot create it manually.
     public class TextFactory
     {
-        private ColorCollector _colorCollector;
-        private FontCollector _fontCollector;
+        private ColorCollector _colorCollector = null!;
+        private FontCollector _fontCollector = null!;
 
         [Inject]
         private void Construct(

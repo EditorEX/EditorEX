@@ -184,7 +184,7 @@ namespace EditorEX.Essentials.Movement.Data
             return 2f * (HighestJumpPosYForLineLayerWithoutJumpOffset(lineLayer) - StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(beforeJumpLineLayer)) / (num * num);
         }
 
-        private EditorSpawnDataManager _editorSpawnDataManager;
+        private EditorSpawnDataManager _editorSpawnDataManager = null!;
 
         private Vector3 _centerPos = new(0f, 0f, 0.65f);
         internal float _maxHalfJumpDistance = kDefaultMaxHalfJumpDistance;

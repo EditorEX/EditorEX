@@ -10,11 +10,11 @@ namespace EditorEX.Essentials.Visuals.Note
     internal class EditorBombGameVisuals : MonoBehaviour, IObjectVisuals
     {
         // Injected fields
-        private VisualAssetProvider _visualAssetProvider;
-        private ColorManager _colorManager;
-        private IReadonlyBeatmapState _state;
-        private EditorDeserializedData _editorDeserializedData;
-        private AnimationHelper _animationHelper;
+        private VisualAssetProvider _visualAssetProvider = null!;
+        private ColorManager _colorManager = null!;
+        private IReadonlyBeatmapState _state = null!;
+        private EditorDeserializedData _editorDeserializedData = null!;
+        private AnimationHelper _animationHelper = null!;
 
         // Visuals fields
         private bool _active;

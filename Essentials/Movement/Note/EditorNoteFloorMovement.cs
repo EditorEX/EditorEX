@@ -36,11 +36,11 @@ namespace EditorEX.Essentials.Movement.Note
 
         // Injected Fields
 
-        private EditorDeserializedData _editorDeserializedData;
-        private AnimationHelper _animationHelper;
-        private PlayerTransforms _playerTransforms;
-        private IVariableMovementDataProvider _variableMovementDataProvider;
-        private IAudioTimeSource _audioTimeSyncController;
+        private EditorDeserializedData _editorDeserializedData = null!;
+        private AnimationHelper _animationHelper = null!;
+        private PlayerTransforms _playerTransforms = null!;
+        private IVariableMovementDataProvider _variableMovementDataProvider = null!;
+        private IAudioTimeSource _audioTimeSyncController = null!;
 
         [Inject]
         private void Construct(
@@ -55,7 +55,7 @@ namespace EditorEX.Essentials.Movement.Note
             _audioTimeSyncController = audioTimeSyncController;
         }
 
-        public void Init(NoteEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, float worldRotation, float beatTime, Vector3 moveStartOffset, Vector3 moveEndOffset, Func<IObjectVisuals> getVisualRoot)
+        public void Init(NoteEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, float worldRotation, float beatTime, Vector3 moveStartOffset, Vector3 moveEndOffset, Func<IObjectVisuals>? getVisualRoot)
         {
             _editorData = editorData;
             if (!(_editorDeserializedData?.Resolve(editorData, out _noodleData) ?? false))

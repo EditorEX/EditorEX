@@ -12,9 +12,9 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
 {
     public class EditorArcBasicMovement : MonoBehaviour, IObjectMovement
     {
-        private BaseSliderEditorData _editorData;
+        private BaseSliderEditorData? _editorData;
 
-        private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper;
+        private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper = null!;
 
         [Inject]
         public void Construct(BeatmapObjectPlacementHelper beatmapObjectPlacementHelper)
@@ -22,7 +22,7 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
         {
             _editorData = editorData as BaseSliderEditorData;
             Vector3 localPosition = transform.localPosition;

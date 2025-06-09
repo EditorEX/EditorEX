@@ -11,8 +11,8 @@ namespace EditorEX.SDK.Collectors
     public class AddressableCollector : IInitializable
     {
         private List<IAddressableCollectorItemLoadedSignal> _signals = new();
-        private List<IAddressableCollectorItem> _collectingItems;
-        private SignalBus _signalBus;
+        private List<IAddressableCollectorItem> _collectingItems = null!;
+        private SignalBus _signalBus = null!;
 
         [Inject]
         private void Construct(

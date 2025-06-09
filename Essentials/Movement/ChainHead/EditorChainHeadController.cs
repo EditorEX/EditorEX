@@ -10,17 +10,15 @@ namespace EditorEX.Essentials.Movement.ChainHead
 {
     public class EditorChainHeadController : MonoBehaviour, IDisposable
     {
-        private IReadonlyBeatmapState _state;
-
-        private IObjectMovement? _arcMovement;
-        private IVariableMovementDataProvider _variableMovementDataProvider;
-        private MovementTypeProvider _movementTypeProvider;
-        private VariableMovementTypeProvider _variableMovementTypeProvider;
-        private ActiveViewMode _activeViewMode;
+        private IReadonlyBeatmapState _state = null!;
+        private MovementTypeProvider _movementTypeProvider = null!;
+        private VariableMovementTypeProvider _variableMovementTypeProvider = null!;
+        private ActiveViewMode _activeViewMode = null!;
+        private EditorBasicBeatmapObjectSpawnMovementData _movementData = null!;
 
         private ArcEditorData? _data;
-
-        private EditorBasicBeatmapObjectSpawnMovementData _movementData;
+        private IObjectMovement? _arcMovement;
+        private IVariableMovementDataProvider? _variableMovementDataProvider;
 
         [Inject]
         private void Construct(

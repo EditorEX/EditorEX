@@ -3,15 +3,14 @@ using EditorEX.UI.ContextMenu;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Zenject;
-using static BeatmapEditor3D.DataModels.BeatmapsCollectionDataModel;
 
-namespace EditorEX.UI.Components
+namespace EditorEX.UI.Components.ContextMenu
 {
-    public class BeatmapListContextMenu : MonoBehaviour, IPointerClickHandler
+    public class SourceListContextMenu : MonoBehaviour, IPointerClickHandler
     {
-        private ContextMenuComponent _contextMenu;
+        private ContextMenuComponent _contextMenu = null!;
 
-        private BeatmapInfoData _beatmapInfoData;
+        private string _source;
 
         [Inject]
         private void Construct(
@@ -20,17 +19,17 @@ namespace EditorEX.UI.Components
             _contextMenu = contextMenu;
         }
 
-        public void SetData(BeatmapInfoData beatmapInfoData)
+        public void SetData(string source)
         {
             _contextMenu.TryInvalidate(gameObject);
-            _beatmapInfoData = beatmapInfoData;
+            _source = source;
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
             if (eventData.button == PointerEventData.InputButton.Right)
             {
-                _contextMenu.ShowContextMenu(new BeatmapListContextMenuObject(_beatmapInfoData), eventData.position, gameObject);
+                _contextMenu.ShowContextMenu(new SourceListContextMenuObject(_source), eventData.position, gameObject);
             }
         }
 

@@ -15,11 +15,11 @@ namespace EditorEX.MapData.SaveDataLoaders
 {
     public class V4CustomSaveDataLoader : ICustomSaveDataLoader
     {
-        private EnvironmentsListModel _environmentsListModel;
-        private BeatmapCharacteristicCollection _beatmapCharacteristicCollection;
-        private BeatmapLevelDataModel _beatmapLevelDataModel;
-        private LevelCustomDataModel _levelCustomDataModel;
-        private CustomLevelLoader _customLevelLoader;
+        private EnvironmentsListModel _environmentsListModel = null!;
+        private BeatmapCharacteristicCollection _beatmapCharacteristicCollection = null!;
+        private BeatmapLevelDataModel _beatmapLevelDataModel = null!;
+        private LevelCustomDataModel _levelCustomDataModel = null!;
+        private CustomLevelLoader _customLevelLoader = null!;
 
         [Inject]
         private void Construct(
@@ -55,7 +55,7 @@ namespace EditorEX.MapData.SaveDataLoaders
         {
             CustomDataRepository.ClearAll();
 
-            SerializedCustomBeatmapLevelSaveData customBeatmapLevelSaveData = JsonConvert.DeserializeObject<SerializedCustomBeatmapLevelSaveData>(File.ReadAllText(Path.Combine(projectPath, "Info.dat")));
+            SerializedCustomBeatmapLevelSaveData? customBeatmapLevelSaveData = JsonConvert.DeserializeObject<SerializedCustomBeatmapLevelSaveData>(File.ReadAllText(Path.Combine(projectPath, "Info.dat")));
             if (customBeatmapLevelSaveData == null)
             {
                 return;
@@ -82,7 +82,7 @@ namespace EditorEX.MapData.SaveDataLoaders
                     GetColorFromHtmlString(colorScheme.environmentColor0Boost),
                     GetColorFromHtmlString(colorScheme.environmentColor1Boost))).ToList();
 
-            string defaultEnvironment = _environmentsListModel.GetLastEnvironmentInfoWithType(EnvironmentType.Normal).serializedName;
+            string defaultEnvironment = _environmentsListModel.GetLastEnvironmentInfoWithType(EnvironmentType.Normal)!.serializedName;
             List<EnvironmentName> environmentNames = customBeatmapLevelSaveData.environmentNames.Select((string environmentName) => new EnvironmentName(environmentName)).ToList<EnvironmentName>();
 
             Dictionary<ValueTuple<BeatmapCharacteristicSO, BeatmapDifficulty>, DifficultyBeatmapData> beatmapDatas = new Dictionary<ValueTuple<BeatmapCharacteristicSO, BeatmapDifficulty>, DifficultyBeatmapData>();

@@ -11,18 +11,17 @@ namespace EditorEX.Essentials.Movement.Note
 {
     internal class EditorNoteController : MonoBehaviour, IDisposable
     {
-        private IObjectMovement _noteMovement;
-        private IObjectVisuals _noteVisuals;
-        private IVariableMovementDataProvider _variableMovementDataProvider;
-
-        private IReadonlyBeatmapState _state;
-        private MovementTypeProvider _movementTypeProvider;
-        private VisualsTypeProvider _visualsTypeProvider;
-        private VariableMovementTypeProvider _variableMovementTypeProvider;
-        private ActiveViewMode _activeViewMode;
-        private EditorBasicBeatmapObjectSpawnMovementData _movementData;
+        private IReadonlyBeatmapState _state = null!;
+        private MovementTypeProvider _movementTypeProvider = null!;
+        private VisualsTypeProvider _visualsTypeProvider = null!;
+        private VariableMovementTypeProvider _variableMovementTypeProvider = null!;
+        private ActiveViewMode _activeViewMode = null!;
+        private EditorBasicBeatmapObjectSpawnMovementData _movementData = null!;
 
         private NoteEditorData? _data;
+        private IObjectMovement? _noteMovement;
+        private IObjectVisuals? _noteVisuals;
+        private IVariableMovementDataProvider? _variableMovementDataProvider;
 
         [Inject]
         private void Construct(

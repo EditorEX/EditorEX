@@ -9,9 +9,9 @@ namespace EditorEX.SDK.Factories
 {
     internal class ModalFactory
     {
-        private ImageFactory _imageFactory;
-        private ColorCollector _colorCollector;
-        private IInstantiator _instantiator;
+        private ImageFactory _imageFactory = null!;
+        private ColorCollector _colorCollector = null!;
+        private IInstantiator _instantiator = null!;
 
         [Inject]
         private void Construct(

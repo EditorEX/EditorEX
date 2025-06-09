@@ -10,9 +10,9 @@ namespace EditorEX.SDK.Factories
     // This class MUST be injected using Zenject. You cannot create it manually.
     public class ButtonFactory
     {
-        private ImageFactory _imageFactory;
-        private PrefabCollector _prefabCollector;
-        private DiContainer _container;
+        private ImageFactory _imageFactory = null!;
+        private PrefabCollector _prefabCollector = null!;
+        private DiContainer _container = null!;
 
         [Inject]
         private void Construct(

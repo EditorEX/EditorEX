@@ -54,12 +54,12 @@ namespace EditorEX.Essentials.Movement.Note
         private bool _rotateTowardsPlayer;
 
         // Injected fields
-        private PlayerTransforms _playerTransforms;
-        private IAudioTimeSource _audioTimeSyncController;
-        private AnimationHelper _animationHelper;
-        private EditorDeserializedData _editorDeserializedData;
-        private AudioDataModel _audioDataModel;
-        private IVariableMovementDataProvider _variableMovementDataProvider;
+        private PlayerTransforms _playerTransforms = null!;
+        private IAudioTimeSource _audioTimeSyncController = null!;
+        private AnimationHelper _animationHelper = null!;
+        private EditorDeserializedData _editorDeserializedData = null!;
+        private AudioDataModel _audioDataModel = null!;
+        private IVariableMovementDataProvider _variableMovementDataProvider = null!;
 
         [Inject]
         public void Construct(
@@ -76,7 +76,7 @@ namespace EditorEX.Essentials.Movement.Note
             _audioDataModel = audioDataModel;
         }
 
-        public void Init(NoteEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, float noteTime, float worldRotation, Vector3 moveEndOffset, Vector3 jumpEndOffset, float gravityBase, float flipYSide, float endRotation, Func<IObjectVisuals> getVisualRoot)
+        public void Init(NoteEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, float noteTime, float worldRotation, Vector3 moveEndOffset, Vector3 jumpEndOffset, float gravityBase, float flipYSide, float endRotation, Func<IObjectVisuals>? getVisualRoot)
         {
             _editorData = editorData;
             if (!(_editorDeserializedData?.Resolve(editorData, out NoodleData) ?? false))

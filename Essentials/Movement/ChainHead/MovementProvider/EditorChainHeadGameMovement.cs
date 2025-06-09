@@ -18,7 +18,7 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
             throw new NotImplementedException();
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
         {
             throw new NotImplementedException();
         }

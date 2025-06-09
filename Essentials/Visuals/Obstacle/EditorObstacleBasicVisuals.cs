@@ -15,8 +15,8 @@ namespace EditorEX.Essentials.Visuals.Obstacle
 
         private bool _active;
 
-        private ColorManager _colorManager;
-        private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper;
+        private ColorManager _colorManager = null!;
+        private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper = null!;
 
         [Inject]
         private void Construct(

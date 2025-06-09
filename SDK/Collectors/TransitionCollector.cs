@@ -10,7 +10,7 @@ namespace EditorEX.SDK.Collectors
     {
         internal Dictionary<string, BaseTransitionSO> _transitions = new();
 
-        private ColorCollector _colorCollector;
+        private ColorCollector _colorCollector = null!;
 
         [Inject]
         private void Construct(

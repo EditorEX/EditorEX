@@ -17,9 +17,9 @@ namespace EditorEX.MapData.SaveDataSavers
 {
     internal class V2CustomSaveDataSaver : ICustomSaveDataSaver
     {
-        private BeatmapLevelDataModel _beatmapLevelDataModel;
-        private PluginMetadata _metadata;
-        private LevelCustomDataModel _levelCustomDataModel;
+        private BeatmapLevelDataModel _beatmapLevelDataModel = null!;
+        private PluginMetadata _metadata = null!;
+        private LevelCustomDataModel _levelCustomDataModel = null!;
 
         [Inject]
         private void Construct(

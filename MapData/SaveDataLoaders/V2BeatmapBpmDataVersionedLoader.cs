@@ -9,11 +9,11 @@ namespace EditorEX.MapData.SaveDataLoaders
     public class V2BeatmapBpmDataVersionedLoader
     {
         [Inject]
-        private readonly BeatmapLevelDataModel _beatmapLevelDataModel;
+        private readonly BeatmapLevelDataModel _beatmapLevelDataModel = null!;
 
         private readonly Version _version100 = new(1, 0, 0);
 
-        public BpmData Load(string projectPath)
+        public BpmData? Load(string projectPath)
         {
             if (BeatmapProjectFileHelper.GetVersionedJSONVersion(projectPath, "BPMInfo.dat") == _version100)
             {
@@ -25,7 +25,7 @@ namespace EditorEX.MapData.SaveDataLoaders
             }
         }
 
-        private BpmData LoadCurrent(string projectPath)
+        private BpmData? LoadCurrent(string projectPath)
         {
             BpmInfoSerializedDataV2 bpmSerializedData = BeatmapProjectFileHelper.LoadBeatmapJsonObject<BpmInfoSerializedDataV2>(projectPath, "BPMInfo.dat");
             if (bpmSerializedData != null)
@@ -37,7 +37,7 @@ namespace EditorEX.MapData.SaveDataLoaders
             return null;
         }
 
-        private BpmData Load_v1(string projectPath)
+        private BpmData? Load_v1(string projectPath)
         {
             BpmInfoSerializedDataV1 bpmSerializedData = BeatmapProjectFileHelper.LoadBeatmapJsonObject<BpmInfoSerializedDataV1>(projectPath, "BPMInfo.dat");
             if (bpmSerializedData != null)

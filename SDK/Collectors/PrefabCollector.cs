@@ -1,4 +1,5 @@
-﻿using BeatmapEditor3D;
+﻿using System;
+using BeatmapEditor3D;
 using HMUI;
 using TMPro;
 using UnityEngine.UI;
@@ -8,15 +9,15 @@ namespace EditorEX.SDK.Collectors
 {
     public class PrefabCollector : IInitializable
     {
-        private DiContainer _container;
+        private DiContainer _container = null!;
 
-        private Button _buttonPrefab;
-        private Button _iconButtonPrefab;
-        private Toggle _togglePrefab;
-        private TextSegmentedControl _segmentedControlPrefab;
-        private TMP_InputField _inputFieldPrefab;
-        private ScrollView _scrollViewPrefab;
-        private DropdownEditorView _textDropdownPrefab;
+        private Button? _buttonPrefab;
+        private Button? _iconButtonPrefab;
+        private Toggle? _togglePrefab;
+        private TextSegmentedControl? _segmentedControlPrefab;
+        private TMP_InputField? _inputFieldPrefab;
+        private ScrollView? _scrollViewPrefab;
+        private DropdownEditorView? _textDropdownPrefab;
 
         [Inject]
         private void Construct(
@@ -51,37 +52,37 @@ namespace EditorEX.SDK.Collectors
 
         public Button GetButtonPrefab()
         {
-            return _buttonPrefab;
+            return _buttonPrefab!;
         }
 
         public Button GetIconButtonPrefab()
         {
-            return _iconButtonPrefab;
+            return _iconButtonPrefab!;
         }
 
         public Toggle GetTogglePrefab()
         {
-            return _togglePrefab;
+            return _togglePrefab!;
         }
 
         public TextSegmentedControl GetSegmentedControlPrefab()
         {
-            return _segmentedControlPrefab;
+            return _segmentedControlPrefab!;
         }
 
         public TMP_InputField GetInputFieldPrefab()
         {
-            return _inputFieldPrefab;
+            return _inputFieldPrefab!;
         }
 
         public ScrollView GetScrollViewPrefab()
         {
-            return _scrollViewPrefab;
+            return _scrollViewPrefab!;
         }
 
         public DropdownEditorView GetTextDropdownPrefab()
         {
-            return _textDropdownPrefab;
+            return _textDropdownPrefab!;
         }
     }
 }

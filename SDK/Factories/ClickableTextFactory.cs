@@ -9,9 +9,9 @@ namespace EditorEX.SDK.Factories
 {
     public class ClickableTextFactory
     {
-        private TextFactory _textFactory;
-        private TransitionCollector _transitionCollector;
-        private IInstantiator _instantiator;
+        private TextFactory _textFactory = null!;
+        private TransitionCollector _transitionCollector = null!;
+        private IInstantiator _instantiator = null!;
 
         [Inject]
         private void Construct(

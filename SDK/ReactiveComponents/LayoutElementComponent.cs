@@ -28,7 +28,8 @@ namespace EditorEX.SDK.ReactiveComponents
             var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
             var measuredHeight = heightMode == MeasureMode.Undefined ? Mathf.Infinity : height;
 
-            var elementSize = new Vector2(_layoutElement.preferredWidth, _layoutElement.preferredHeight);
+            var rect = _layoutElement.GetComponent<RectTransform>().rect;
+            var elementSize = new Vector2(rect.width, rect.height);
 
             return new()
             {

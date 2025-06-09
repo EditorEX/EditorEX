@@ -7,6 +7,7 @@ using EditorEX.NoodleExtensions.ObjectData;
 using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
+using SiraUtil.Logging;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,14 +18,15 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
     public class EditorObstacleGameMovement : MonoBehaviour, IObjectMovement
     {
         // Injected fields
-        private IEditorBeatmapObjectSpawnMovementData _editorBeatmapObjectSpawnMovementData;
-        private EditorDeserializedData _editorDeserializedData;
-        private AnimationHelper _animationHelper;
-        private IReadonlyBeatmapState _state;
-        private ColorManager _colorManager;
-        private IAudioTimeSource _audioTimeSyncController;
-        private AudioDataModel _audioDataModel;
-        private IVariableMovementDataProvider _variableMovementDataProvider;
+        private IEditorBeatmapObjectSpawnMovementData _editorBeatmapObjectSpawnMovementData = null!;
+        private EditorDeserializedData _editorDeserializedData = null!;
+        private AnimationHelper _animationHelper = null!;
+        private IReadonlyBeatmapState _state = null!;
+        private ColorManager _colorManager = null!;
+        private IAudioTimeSource _audioTimeSyncController = null!;
+        private AudioDataModel _audioDataModel = null!;
+        private IVariableMovementDataProvider _variableMovementDataProvider = null!;
+        private SiraLog _siraLog = null!;
 
         // Obstacle related fields
         private ObstacleEditorData? _editorData;
@@ -43,22 +45,23 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
         private float _passedAvoidedMarkTime;
         private float _finishMovementTime;
         private Bounds _bounds;
-        private bool _dissolving;
         private Color _color;
         private Quaternion _worldRotation;
         private Quaternion _inverseWorldRotation;
 
         // Object fields
-        private StretchableObstacle _stretchableObstacle;
-        private ObstacleViewSelection _selection;
+        private StretchableObstacle? _stretchableObstacle;
+        private ObstacleViewSelection? _selection;
 
         [Inject]
-        private void Construct([InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
+        private void Construct(
+            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
             IReadonlyBeatmapState state,
             ColorManager colorManager,
             IAudioTimeSource audioTimeSyncController,
-            AudioDataModel audioDataModel)
+            AudioDataModel audioDataModel,
+            SiraLog siraLog)
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
@@ -66,13 +69,14 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             _colorManager = colorManager;
             _audioTimeSyncController = audioTimeSyncController;
             _audioDataModel = audioDataModel;
+            _siraLog = siraLog;
         }
 
         private Quaternion GetWorldRotation(ObstacleEditorData? obstacleData, float @default)
         {
             Quaternion worldRotation = Quaternion.Euler(0, @default, 0);
 
-            if (!(_editorDeserializedData?.Resolve(obstacleData, out EditorNoodleObstacleData? noodleData) ?? false))
+            if (!_editorDeserializedData.Resolve(obstacleData, out EditorNoodleObstacleData? noodleData) || noodleData == null)
             {
                 return worldRotation;
             }
@@ -102,7 +106,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             return noodleData?.Length * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance ?? @default;
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
         {
             _stretchableObstacle = transform.Find("GameWallRoot").GetComponent<StretchableObstacle>();
             _selection = GetComponent<ObstacleViewSelection>();
@@ -111,6 +115,12 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
             _editorBeatmapObjectSpawnMovementData = movementData;
             _editorData = editorData as ObstacleEditorData;
+            if (_editorData == null)
+            {
+                _siraLog.Error("EditorObstacleGameMovement: Null editorData");
+                return;
+            }
+
             var obstacleSpawnData = _editorBeatmapObjectSpawnMovementData.GetObstacleSpawnData(_editorData);
 
             float worldRotation = 0f;
@@ -136,8 +146,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             transform.localPosition = vector;
             transform.localRotation = _worldRotation;
 
-            EditorNoodleObstacleData? noodleData = null;
-            if (!(_editorDeserializedData?.Resolve(editorData, out noodleData) ?? false))
+            if (!_editorDeserializedData.Resolve(editorData, out EditorNoodleObstacleData? noodleData) || noodleData == null)
             {
                 return;
             }
@@ -190,8 +199,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
         private bool NoodleGetPosForTime(float time, out Vector3 __result)
         {
             __result = default;
-            EditorNoodleObstacleData? noodleData = null;
-            if (!(_editorDeserializedData?.Resolve(_editorData, out noodleData) ?? false))
+            if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleObstacleData? noodleData) || noodleData == null)
             {
                 return false;
             }
@@ -249,8 +257,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
         public void NoodleUpdate()
         {
-            EditorNoodleObstacleData? noodleData = null;
-            if (!(_editorDeserializedData?.Resolve(_editorData, out noodleData) ?? false) || noodleData == null)
+            if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleObstacleData? noodleData) || noodleData == null)
             {
                 return;
             }

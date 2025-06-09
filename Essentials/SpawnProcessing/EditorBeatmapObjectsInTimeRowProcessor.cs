@@ -22,8 +22,8 @@ namespace EditorEX.Essentials.SpawnProcessing
 {
     public class EditorBeatmapObjectsInTimeRowProcessor
     {
-        private SiraLog _siraLog;
-        public EditorDeserializedData editorDeserializedData;
+        private SiraLog _siraLog = null!;
+        public EditorDeserializedData editorDeserializedData = null!;
 
         public EditorBeatmapObjectsInTimeRowProcessor()
         {

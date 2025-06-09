@@ -58,14 +58,18 @@ namespace EditorEX.CustomDataModels
             public string FilePath { get; set; }
             public string Hash { get; set; }
 
-            public static CustomPlatformInfo DeserializeV2(CustomData customData)
+            public static CustomPlatformInfo? DeserializeV2(CustomData? customData)
             {
-                return new CustomPlatformInfo(customData.Get<string>("_customEnvironment") ?? "", customData.Get<string>("_customEnvironmentHash") ?? "");
+                if (customData == null)
+                    return null;
+                return new CustomPlatformInfo(customData?.Get<string>("_customEnvironment") ?? "", customData?.Get<string>("_customEnvironmentHash") ?? "");
             }
 
-            public static CustomPlatformInfo DeserializeV4(CustomData customData)
+            public static CustomPlatformInfo? DeserializeV4(CustomData? customData)
             {
-                return new CustomPlatformInfo(customData.Get<string>("customEnvironment") ?? "", customData.Get<string>("customEnvironmentHash") ?? "");
+                if (customData == null)
+                    return null;
+                return new CustomPlatformInfo(customData?.Get<string>("customEnvironment") ?? "", customData?.Get<string>("customEnvironmentHash") ?? "");
             }
 
             public static void SerializeV2(CustomData customData, CustomPlatformInfo customPlatformInfo)

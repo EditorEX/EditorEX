@@ -48,11 +48,11 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 
         // Injected fields
 
-        private EditorDeserializedData _editorDeserializedData;
-        private AnimationHelper _animationHelper;
-        private IReadonlyBeatmapState _state;
-        private AudioDataModel _audioDataModel;
-        private IVariableMovementDataProvider _variableMovementDataProvider;
+        private EditorDeserializedData _editorDeserializedData = null!;
+        private AnimationHelper _animationHelper = null!;
+        private IReadonlyBeatmapState _state = null!;
+        private AudioDataModel _audioDataModel = null!;
+        private IVariableMovementDataProvider _variableMovementDataProvider = null!;
 
         [Inject]
         private void Construct(
@@ -67,7 +67,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             _audioDataModel = audioDataModel;
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
         {
             EditorNoodleNoteData? noodleData = null;
             _editorDeserializedData?.Resolve(editorData, out noodleData);

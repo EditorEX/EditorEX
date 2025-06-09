@@ -27,15 +27,15 @@ namespace EditorEX.UI.Patches
         private readonly SourcesConfig _sourcesConfig;
         private readonly BeatmapsCollectionDataModel _beatmapsCollectionDataModel;
 
-        private Material _roundedCornersMaterial;
+        private Material? _roundedCornersMaterial;
 
-        private TextSegmentedControl _segmentedControl;
-        private TabbingSegmentedControlController _tabbingSegmentedControlController;
+        private TextSegmentedControl? _segmentedControl;
+        private TabbingSegmentedControlController? _tabbingSegmentedControlController;
 
         private List<GameObject> gameObjects = new();
 
         // New Source
-        private TMP_InputField _tempNewSourceName;
+        private TMP_InputField? _tempNewSourceName;
 
         private BeatmapsListViewControllerPatches(
             TextSegmentedControlFactory textSegmentedControlFactory,
@@ -90,11 +90,11 @@ namespace EditorEX.UI.Patches
                 __instance.gameObject.SetActive(false);
 
                 _segmentedControl = _textSegmentedControlFactory.Create(__instance.transform, SetupSources(), Selected);
-                (_segmentedControl.transform as RectTransform).anchoredPosition = new Vector2(0f, 500f);
-                _tabbingSegmentedControlController = _segmentedControl.gameObject.AddComponent<TabbingSegmentedControlController>();
+                (_segmentedControl?.transform as RectTransform)?.anchoredPosition = new Vector2(0f, 500f);
+                _tabbingSegmentedControlController = _segmentedControl!.gameObject.AddComponent<TabbingSegmentedControlController>();
                 _tabbingSegmentedControlController.Setup(_segmentedControl, false);
 
-                (_segmentedControl.cells.Last().transform as RectTransform).sizeDelta = new Vector2(80f, 30f);
+                (_segmentedControl.cells.Last().transform as RectTransform)!.sizeDelta = new Vector2(80f, 30f);
                 _segmentedControl.gameObject.name = "SourcesSegmentedControl";
 
                 _segmentedControl.ReloadData();
@@ -130,8 +130,8 @@ namespace EditorEX.UI.Patches
                 fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
                 fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-                _tempNewSourceName = _stringInputFactory.Create(NewSourceParent.transform, "Source Name", 200f, null);
-                (_tempNewSourceName.transform.parent as RectTransform).sizeDelta = new Vector2(400f, 40f);
+                _tempNewSourceName = _stringInputFactory.Create(NewSourceParent.transform, "Source Name", 200f, null!);
+                (_tempNewSourceName.transform.parent as RectTransform)!.sizeDelta = new Vector2(400f, 40f);
 
                 _buttonFactory.Create(NewSourceParent.transform, "Add Source", AddSource);
 
@@ -141,18 +141,18 @@ namespace EditorEX.UI.Patches
             }
             else
             {
-                _tabbingSegmentedControlController.AddBindings(false);
+                _tabbingSegmentedControlController!.AddBindings(false);
             }
 
             _tabbingSegmentedControlController.ClickCell(0);
-            Selected(_segmentedControl, 0);
+            Selected(_segmentedControl!, 0);
         }
 
         [AffinityPostfix]
         [AffinityPatch(typeof(BeatmapsListViewController), nameof(BeatmapsListViewController.DidDeactivate))]
         private void DidDeactivate()
         {
-            _tabbingSegmentedControlController.ClearBindings();
+            _tabbingSegmentedControlController!.ClearBindings();
         }
 
         private IEnumerable<string> SetupSources()
@@ -185,21 +185,21 @@ namespace EditorEX.UI.Patches
 
         private void AddSource()
         {
-            if (_tempNewSourceName.text != "")
+            if (_tempNewSourceName!.text != "")
             {
                 _sourcesConfig.Sources.Add(_tempNewSourceName.text, "");
                 _tempNewSourceName.text = "";
 
-                _segmentedControl.SetTexts(SetupSources().ToArray());
+                _segmentedControl!.SetTexts(SetupSources().ToArray());
                 _segmentedControl.ReloadData();
 
-                _tabbingSegmentedControlController.ClickCell(_segmentedControl.cells.Count - 1);
+                _tabbingSegmentedControlController!.ClickCell(_segmentedControl.cells.Count - 1);
             }
         }
 
         public void ReloadCells()
         {
-            _segmentedControl.SetTexts(SetupSources().ToArray());
+            _segmentedControl!.SetTexts(SetupSources().ToArray());
             _segmentedControl.ReloadData();
 
             _beatmapsCollectionDataModel.RefreshCollection();

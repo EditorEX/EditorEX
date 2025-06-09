@@ -11,9 +11,9 @@ namespace EditorEX.UI.ContextMenu
 {
     public class ContextMenuComponent : MonoBehaviour
     {
-        private List<IContextMenuProvider> _contextMenuProviders;
-        private ModalFactory _modalFactory;
-        private ClickableTextFactory _clickableTextFactory;
+        private List<IContextMenuProvider> _contextMenuProviders = null!;
+        private ModalFactory _modalFactory = null!;
+        private ClickableTextFactory _clickableTextFactory = null!;
 
         private VerticalLayoutGroup _verticalLayoutGroup;
         private object? _linkedObject;

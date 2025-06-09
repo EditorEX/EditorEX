@@ -12,10 +12,10 @@ namespace EditorEX.MapData.SaveDataLoaders
 {
     public class V2CustomSaveDataLoader : ICustomSaveDataLoader
     {
-        private BeatmapCharacteristicCollection _beatmapCharacteristicCollection;
-        private BeatmapLevelDataModel _beatmapLevelDataModel;
-        private LevelCustomDataModel _levelCustomDataModel;
-        private CustomLevelLoader _customLevelLoader;
+        private BeatmapCharacteristicCollection _beatmapCharacteristicCollection = null!;
+        private BeatmapLevelDataModel _beatmapLevelDataModel = null!;
+        private LevelCustomDataModel _levelCustomDataModel = null!;
+        private CustomLevelLoader _customLevelLoader = null!;
 
         [Inject]
         private void Construct(BeatmapCharacteristicCollection beatmapCharacteristicCollection,
@@ -77,7 +77,7 @@ namespace EditorEX.MapData.SaveDataLoaders
             }
             else
             {
-                foreach (string text in standardLevelInfoSaveData.environmentNames)
+                foreach (string text in standardLevelInfoSaveData.environmentNames ?? [])
                 {
                     list.Add(_customLevelLoader.CreateEnvironmentName(text, _customLevelLoader._defaultEnvironmentInfo));
                 }
@@ -129,7 +129,7 @@ namespace EditorEX.MapData.SaveDataLoaders
             Dictionary<string, CustomData> beatmapCustomDatasByFilename =
                 standardLevelInfoSaveData.difficultyBeatmapSets
                 .SelectMany(x =>
-                    x.difficultyBeatmaps.Select(x => (x.beatmapFilename, (x as CustomLevelInfoSaveData.DifficultyBeatmap).customData)))
+                    x.difficultyBeatmaps.Select(x => (x.beatmapFilename, (x as CustomLevelInfoSaveData.DifficultyBeatmap)!.customData)))
                 .ToDictionary(x => x.beatmapFilename, x => x.customData);
 
             _levelCustomDataModel.UpdateWith(standardLevelInfoSaveData.levelAuthorName, standardLevelInfoSaveData.allDirectionsEnvironmentName, standardLevelInfoSaveData.environmentName, standardLevelInfoSaveData.shuffle, standardLevelInfoSaveData.shufflePeriod, standardLevelInfoSaveData.customData, beatmapCustomDatasByFilename);

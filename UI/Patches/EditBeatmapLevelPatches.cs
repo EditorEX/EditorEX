@@ -39,13 +39,13 @@ namespace EditorEX.UI.Patches
         private readonly CustomPlatformsListModel _customPlatformsListModel;
         private readonly ReactiveContainer _reactiveContainer;
 
-        private GameObject _songInfoRoot;
-        private GameObject _beatmapsRoot;
+        private GameObject? _songInfoRoot;
+        private GameObject? _beatmapsRoot;
 
-        private StringInputFieldValidator _levelAuthorInputValidator;
-        private EditorTextDropdown<string> _environmentDropdown;
-        private EditorTextDropdown<string> _allDirectionsEnvironmentDropdown;
-        private EditorTextDropdown<string> _customPlatformDropdown;
+        private StringInputFieldValidator? _levelAuthorInputValidator;
+        private EditorTextDropdown<string>? _environmentDropdown;
+        private EditorTextDropdown<string>? _allDirectionsEnvironmentDropdown;
+        private EditorTextDropdown<string>? _customPlatformDropdown;
 
         private ObservableValue<bool> V4Level = ValueUtils.Remember(false);
         private ObservableValue<int> MainTab = ValueUtils.Remember(0);
@@ -80,25 +80,32 @@ namespace EditorEX.UI.Patches
             {
                 return;
             }
+
             V4Level.Value = LevelContext.Version.Major >= 4;
 
             if (!V4Level)
             {
-                _levelAuthorInputValidator.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
-                _environmentDropdown.Select(_levelCustomDataModel.EnvironmentName);
-                _allDirectionsEnvironmentDropdown.Select(_levelCustomDataModel.AllDirectionsEnvironmentName);
+                _levelAuthorInputValidator!.SetValueWithoutNotify(_levelCustomDataModel.LevelAuthorName, clearModifiedState);
+                if (_levelCustomDataModel.EnvironmentName != null)
+                    _environmentDropdown!.Select(_levelCustomDataModel.EnvironmentName);
+                if (_levelCustomDataModel.AllDirectionsEnvironmentName != null)
+                    _allDirectionsEnvironmentDropdown!.Select(_levelCustomDataModel.AllDirectionsEnvironmentName);
             }
 
-            var customPlatIndex = _customPlatformsListModel.CustomPlatforms.Select(x => x.FilePath).ToList().IndexOf(_levelCustomDataModel.CustomPlatformInfo.FilePath);
-            customPlatIndex = customPlatIndex == -1 ? _customPlatformsListModel.CustomPlatforms.Select(x => x.Hash).ToList().IndexOf(_levelCustomDataModel.CustomPlatformInfo.Hash) : customPlatIndex;
 
-            if (customPlatIndex == -1)
+            if (_levelCustomDataModel.CustomPlatformInfo != null)
             {
-                //_customPlatformDropdown._text.text = _levelCustomDataModel.CustomPlatformInfo.FilePath;
-            }
-            else
-            {
-                //_customPlatformDropdown.SelectCellWithIdx(customPlatIndex);
+                var customPlatIndex = _customPlatformsListModel.CustomPlatforms.Select(x => x.FilePath).ToList().IndexOf(_levelCustomDataModel.CustomPlatformInfo.FilePath);
+                customPlatIndex = customPlatIndex == -1 ? _customPlatformsListModel.CustomPlatforms.Select(x => x.Hash).ToList().IndexOf(_levelCustomDataModel.CustomPlatformInfo.Hash) : customPlatIndex;
+
+                if (customPlatIndex == -1)
+                {
+                    //_customPlatformDropdown._text.text = _levelCustomDataModel.CustomPlatformInfo.FilePath;
+                }
+                else
+                {
+                    //_customPlatformDropdown.SelectCellWithIdx(customPlatIndex);
+                }
             }
 
             //ReloadContributors();
@@ -108,7 +115,7 @@ namespace EditorEX.UI.Patches
         [AffinityPatch(typeof(EditBeatmapLevelViewController), nameof(EditBeatmapLevelViewController.HandleBeatmapProjectSaved))]
         private void HandleBeatmapProjectSaved(EditBeatmapLevelViewController __instance)
         {
-            _levelAuthorInputValidator.ClearDirtyState();
+            _levelAuthorInputValidator!.ClearDirtyState();
             //_environmentDropdown.ClearDirtyState();
             //_allDirectionsEnvironmentDropdown.ClearDirtyState();
             //_customPlatformDropdown.ClearDirtyState();
@@ -125,12 +132,12 @@ namespace EditorEX.UI.Patches
                 var difficultyBeatmapSetContainer = __instance.transform.Find("DifficultyBeatmapSetContainer").gameObject;
                 _beatmapsRoot = difficultyBeatmapSetContainer;
                 _beatmapsRoot.EnabledWithObservable(MainTab, 1);
-                __instance.transform.Find("BeatmapInfoContainer").gameObject.SetActive(false);
+                var infoContainer = __instance.transform.Find("BeatmapInfoContainer");
+                infoContainer.gameObject.SetActive(false);
 
                 var secondaryTab = ValueUtils.Remember(0);
 
-                new Layout
-                {
+                new Layout {
                     Children = {
                         new EditorSegmentedControl {
                             SelectedIndex = MainTab,
@@ -141,20 +148,22 @@ namespace EditorEX.UI.Patches
                             Children = {
                                 new Layout {
                                     Children = {
-                                        new Layout() {
+                                        new Layout {
                                             Children = {
-                                                new EditorImage() {
+                                                new EditorImage {
                                                     Source = "https://picsum.photos/200"
-                                                }.AsFlexItem(size: new () {x = 160f, y = 160f}),
-                                            }
-                                        }
-                                        .AsFlexGroup(gap: 40f, direction: FlexDirection.Column, alignItems: Align.FlexStart)
-                                        .AsFlexItem(),
+                                                }.AsFlexItem(size: 200f),
 
-                                        new Layout()
-                                        {
-                                            Children =
-                                            {
+                                                new Layout {
+                                                    
+                                                }.AsFlexItem()
+                                                .AsFlexGroup(FlexDirection.Column)
+                                            }
+                                        }.AsFlexItem()
+                                        .AsFlexGroup(FlexDirection.Row),
+
+                                        new Layout {
+                                            Children = {
                                                 new EditorStringInput()
                                                     .WithInputValidatorCopy<StringInputFieldValidator, string>(__instance._songNameInputValidator, ref __instance._songNameInputValidator)
                                                     .InEditorNamedRail("Song Name", 18f, 55f)
@@ -187,7 +196,7 @@ namespace EditorEX.UI.Patches
                                         }
                                         .AsFlexGroup(gap: 40f, direction: FlexDirection.Column, alignItems: Align.FlexStart)
                                         .AsFlexItem(),
-                                        
+
                                         new Layout // Audio Info
                                         {
                                             Children =
@@ -261,7 +270,7 @@ namespace EditorEX.UI.Patches
                                                         })
                                                         .EnabledWithObservable(V4Level, false)
                                                         .Bind(ref _environmentDropdown)
-                                                        .ExtractObservable(out var normalEnvironmentValue, _environmentDropdown.Items.First().ExtractTupleFromKVP())
+                                                        .ExtractObservable(out var normalEnvironmentValue, _environmentDropdown!.Items.First().ExtractTupleFromKVP())
                                                         .DropdownWithObservable(normalEnvironmentValue)
                                                         .Animate(normalEnvironmentValue, (x, v) => {
                                                             Debug.Log($"Selected Normal Environment: {v}");
@@ -277,7 +286,7 @@ namespace EditorEX.UI.Patches
                                                         })
                                                         .EnabledWithObservable(V4Level, false)
                                                         .Bind(ref _allDirectionsEnvironmentDropdown)
-                                                        .ExtractObservable(out var allDirectionsEnvironmentValue, _allDirectionsEnvironmentDropdown.Items.First().ExtractTupleFromKVP())
+                                                        .ExtractObservable(out var allDirectionsEnvironmentValue, _allDirectionsEnvironmentDropdown!.Items.First().ExtractTupleFromKVP())
                                                         .DropdownWithObservable(allDirectionsEnvironmentValue)
                                                         .Animate(allDirectionsEnvironmentValue, (x, v) => {
                                                             Debug.Log($"Selected All Directions Environment: {v}");

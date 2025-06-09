@@ -24,16 +24,16 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
 {
     internal class EditorEnvironmentEnhancementManager : MonoBehaviour
     {
-        private SiraLog _log;
-        private Dictionary<string, Track> _tracks;
+        private SiraLog _log = null!;
+        private Dictionary<string, Track> _tracks = null!;
         private bool _leftHanded;
-        private EditorGeometryFactory _geometryFactory;
-        private TrackLaneRingOffset _trackLaneRingOffset;
-        private ParametricBoxControllerTransformOverride _parametricBoxControllerTransformOverride;
-        private EditorDuplicateInitializer _duplicateInitializer;
-        private EditorComponentCustomizer _componentCustomizer;
-        private TransformControllerFactory _controllerFactory;
-        private SavedEnvironmentLoader _savedEnvironmentLoader;
+        private EditorGeometryFactory _geometryFactory = null!;
+        private TrackLaneRingOffset _trackLaneRingOffset = null!;
+        private ParametricBoxControllerTransformOverride _parametricBoxControllerTransformOverride = null!;
+        private EditorDuplicateInitializer _duplicateInitializer = null!;
+        private EditorComponentCustomizer _componentCustomizer = null!;
+        private TransformControllerFactory _controllerFactory = null!;
+        private SavedEnvironmentLoader _savedEnvironmentLoader = null!;
         private bool _usingOverrideEnvironment;
 
         [Inject]

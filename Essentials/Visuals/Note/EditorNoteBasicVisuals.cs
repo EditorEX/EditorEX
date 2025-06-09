@@ -6,7 +6,7 @@ namespace EditorEX.Essentials.Visuals.Note
 {
     internal class EditorNoteBasicVisuals : MonoBehaviour, IObjectVisuals
     {
-        private GameObject _basicRoot;
+        private GameObject _basicRoot = null!;
 
         private bool active;
 

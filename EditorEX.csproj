@@ -13,6 +13,7 @@
     <Product>EditorEX</Product>
     <Copyright>Copyright ©  2024</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <RunCommand>rundll32.exe</RunCommand>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -320,4 +321,9 @@
     <Compile Remove="CustomJSONData\Patches\BeatmapLevelDataModelVersionedLoaderV3.cs" />
     <Compile Remove="CustomJSONData\Patches\BeatmapProjectManagerV2Support.cs" />
   </ItemGroup>
+  <Target Name="bruh"
+        AfterTargets="BSMT_CopyToPlugins">
+    <Message Text="Running $(GameDirectory)" Importance="high" />
+    <Exec WorkingDirectory="$(GameDirectory)" Command="BS.exe.lnk editor --verbose" StandardOutputImportance="low" StandardErrorImportance="low" />
+  </Target>
 </Project>

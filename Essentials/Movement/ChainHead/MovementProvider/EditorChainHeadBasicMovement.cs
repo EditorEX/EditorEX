@@ -10,9 +10,9 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
 {
     public class EditorChainHeadBasicMovement : MonoBehaviour, IObjectMovement
     {
-        private ChainEditorData _editorData;
+        private ChainEditorData? _editorData;
 
-        private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper;
+        private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper = null!;
 
         [Inject]
         public void Construct(BeatmapObjectPlacementHelper beatmapObjectPlacementHelper)
@@ -20,7 +20,7 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
         {
             if (editorData == null || editorData is not ChainEditorData)
             {

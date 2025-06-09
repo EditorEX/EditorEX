@@ -20,16 +20,16 @@ namespace EditorEX.Essentials.Visuals.Note
     internal class EditorNoteGameVisuals : MonoBehaviour, IObjectVisuals
     {
         // Injected fields
-        private VisualAssetProvider _visualAssetProvider;
-        private ColorManager _colorManager;
-        private IReadonlyBeatmapState _state;
-        private AudioDataModel _audioDataModel;
-        private EditorDeserializedData _vivifyEditorDeserializedData;
-        private EditorDeserializedData _noodleEditorDeserializedData;
-        private EditorDeserializedData _chromeEditorDeserializedData;
-        private AnimationHelper _animationHelper;
-        private EditorBeatmapObjectPrefabManager _prefabManager;
-        private EditorVivifyNotePrefabManager _vivifyNotePrefabManager;
+        private VisualAssetProvider _visualAssetProvider = null!;
+        private ColorManager _colorManager = null!;
+        private IReadonlyBeatmapState _state = null!;
+        private AudioDataModel _audioDataModel = null!;
+        private EditorDeserializedData _vivifyEditorDeserializedData = null!;
+        private EditorDeserializedData _noodleEditorDeserializedData = null!;
+        private EditorDeserializedData _chromeEditorDeserializedData = null!;
+        private AnimationHelper _animationHelper = null!;
+        private EditorBeatmapObjectPrefabManager _prefabManager = null!;
+        private EditorVivifyNotePrefabManager _vivifyNotePrefabManager = null!;
 
         // Visuals fields
         private NoteEditorData? _editorData;

@@ -9,22 +9,22 @@ namespace EditorEX.Analyzer.Swings
 {
     public class AnalyzerSaberManager : MonoBehaviour, IInitializable, ITickable
     {
-        private SaberManager _saberManager;
-        private IReadonlyBeatmapState _state;
+        private SaberManager _saberManager = null!;
+        private IReadonlyBeatmapState _state = null!;
 
-        private LevelUtils _levelUtils;
+        private LevelUtils _levelUtils = null!;
 
-        private Saber _leftSaber;
-        private Saber _rightSaber;
+        private Saber _leftSaber = null!;
+        private Saber _rightSaber = null!;
 
-        private BakedSwingTrack _swingTrackLeft;
-        private BakedSwingTrack _swingTrackRight;
+        private BakedSwingTrack? _swingTrackLeft;
+        private BakedSwingTrack? _swingTrackRight;
 
-        private SwingTrackGenerator _swingTrackGeneratorLeft;
-        private SwingTrackGenerator _swingTrackGeneratorRight;
+        private SwingTrackGenerator? _swingTrackGeneratorLeft;
+        private SwingTrackGenerator? _swingTrackGeneratorRight;
 
-        private AudioDataModel _audioDataModel;
-        private BeatmapObjectsDataModel _beatmapObjectsDataModel;
+        private AudioDataModel _audioDataModel = null!;
+        private BeatmapObjectsDataModel _beatmapObjectsDataModel = null!;
 
         [Inject]
         private void Construct(
@@ -61,8 +61,13 @@ namespace EditorEX.Analyzer.Swings
 
         public void Tick()
         {
+            if (_swingTrackGeneratorLeft == null || _swingTrackGeneratorRight == null)
+            {
+                return;
+            }
+            
             _saberManager.transform.parent.gameObject.SetActive(true);
-            if ((_swingTrackLeft == null || _swingTrackRight == null))
+            if (_swingTrackLeft == null || _swingTrackRight == null)
             {
                 _swingTrackLeft = _swingTrackGeneratorLeft.GetTrack();
                 _swingTrackRight = _swingTrackGeneratorRight.GetTrack();

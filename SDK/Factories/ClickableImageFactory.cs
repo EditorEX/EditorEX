@@ -10,9 +10,9 @@ namespace EditorEX.SDK.Factories
 {
     public class ClickableImageFactory
     {
-        private ImageFactory _imageFactory;
-        private TransitionCollector _transitionCollector;
-        private IInstantiator _instantiator;
+        private ImageFactory _imageFactory = null!;
+        private TransitionCollector _transitionCollector = null!;
+        private IInstantiator _instantiator = null!;
 
         [Inject]
         private void Construct(

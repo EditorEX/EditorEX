@@ -193,7 +193,6 @@ namespace EditorEX.SDK.ReactiveComponents
         public CurvedTextMeshPro TextMesh => _text;
 
         protected CurvedTextMeshPro _text = null!;
-        private readonly ReactiveContainer _reactiveContainer;
 
         protected override void Construct(RectTransform rect)
         {

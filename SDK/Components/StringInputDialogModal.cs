@@ -10,10 +10,10 @@ namespace EditorEX.SDK.Components
 {
     internal class StringInputDialogModal : MonoBehaviour
     {
-        private StringInputFactory _stringInputFactory;
-        private ModalFactory _modalFactory;
-        private ButtonFactory _buttonFactory;
-        private TextFactory _textFactory;
+        private StringInputFactory _stringInputFactory = null!;
+        private ModalFactory _modalFactory = null!;
+        private ButtonFactory _buttonFactory = null!;
+        private TextFactory _textFactory = null!;
 
         private TMP_InputField _inputField;
         private CurvedTextMeshPro _inputTitle;

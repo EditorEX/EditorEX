@@ -7,7 +7,7 @@ namespace EditorEX.Essentials.Patches.Preview
 {
     public class ArcPreview : IAffinity
     {
-        private ActiveViewMode _activeViewMode;
+        private ActiveViewMode _activeViewMode = null!;
 
         [Inject]
         private void Construct(ActiveViewMode activeViewMode)
@@ -19,6 +19,8 @@ namespace EditorEX.Essentials.Patches.Preview
         [AffinityPrefix]
         private bool SetMaterialPropertyBlock()
         {
+            if (_activeViewMode?.Mode == null)
+                return true;
             return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
@@ -26,6 +28,8 @@ namespace EditorEX.Essentials.Patches.Preview
         [AffinityPrefix]
         private bool DisableSelectionViews()
         {
+            if (_activeViewMode?.Mode == null)
+                return true;
             return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
@@ -33,6 +37,8 @@ namespace EditorEX.Essentials.Patches.Preview
         [AffinityPrefix]
         private bool DisableSelectionViews2()
         {
+            if (_activeViewMode?.Mode == null)
+                return true;
             return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
@@ -40,6 +46,8 @@ namespace EditorEX.Essentials.Patches.Preview
         [AffinityPrefix]
         private void DisableHandles(ref bool showHandle, ref bool showMoveHandle)
         {
+            if (_activeViewMode?.Mode == null)
+                return;
             showHandle &= _activeViewMode.Mode.ShowGridAndSelection;
             showMoveHandle &= _activeViewMode.Mode.ShowGridAndSelection;
         }

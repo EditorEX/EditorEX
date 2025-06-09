@@ -6,8 +6,8 @@ namespace EditorEX.Essentials.VariableMovement
     public class VariableMovementHolder : MonoBehaviour
     {
         [Inject]
-        internal EditorNoodleMovementDataProvider.Pool? Pool;
+        internal EditorNoodleMovementDataProvider.Pool? Pool = null!;
         [Inject]
-        public IVariableMovementDataProvider? Original;
+        public IVariableMovementDataProvider? Original = null!;
     }
 }

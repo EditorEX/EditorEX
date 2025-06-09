@@ -13,10 +13,10 @@ namespace EditorEX.SDK.Factories
 {
     public class DropdownFactory
     {
-        private ColorCollector _colorCollector;
-        private TransitionCollector _transitionCollector;
-        private PrefabCollector _prefabCollector;
-        private DiContainer _container;
+        private ColorCollector _colorCollector = null!;
+        private TransitionCollector _transitionCollector = null!;
+        private PrefabCollector _prefabCollector = null!;
+        private DiContainer _container = null!;
 
         [Inject]
         private void Construct(

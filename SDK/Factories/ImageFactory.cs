@@ -10,7 +10,7 @@ namespace EditorEX.SDK.Factories
     // This class MUST be injected using Zenject. You cannot create it manually.
     public class ImageFactory
     {
-        private ColorCollector _colorCollector;
+        private ColorCollector _colorCollector = null!;
 
         [Inject]
         private void Construct(

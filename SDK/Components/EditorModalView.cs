@@ -11,7 +11,7 @@ namespace EditorEX.SDK.Components
 {
     public class EditorModalView : MonoBehaviour
     {
-        private DiContainer _container;
+        private DiContainer _container = null!;
 
         private Transform _previousParent;
         public bool isShown;

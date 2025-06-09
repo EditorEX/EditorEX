@@ -10,9 +10,9 @@ namespace EditorEX.UI.Patches
 {
     internal class MapFilteringPatches : IAffinity
     {
-        private StringInputFactory _stringInputFactory;
+        private StringInputFactory _stringInputFactory = null!;
 
-        private TMP_InputField _filterInput;
+        private TMP_InputField? _filterInput;
 
         private MapFilteringPatches(
             StringInputFactory stringInputFactory)
@@ -36,7 +36,7 @@ namespace EditorEX.UI.Patches
 
         private void ApplyFilter(BeatmapsListViewController instance)
         {
-            var filteredMaps = BeatmapFilterUtil.Filter(instance._beatmapsCollectionDataModel._beatmapInfos, _filterInput.text);
+            var filteredMaps = BeatmapFilterUtil.Filter(instance._beatmapsCollectionDataModel._beatmapInfos, _filterInput!.text);
             instance._beatmapsListTableView.SetData(filteredMaps);
         }
 

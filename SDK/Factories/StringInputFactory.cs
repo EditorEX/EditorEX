@@ -12,7 +12,7 @@ namespace EditorEX.SDK.Factories
     // This class MUST be injected using Zenject. You cannot create it manually.
     public class StringInputFactory
     {
-        private PrefabCollector _prefabCollector;
+        private PrefabCollector _prefabCollector = null!;
 
         [Inject]
         private void Construct(

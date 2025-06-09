@@ -2,6 +2,7 @@
 using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Visuals;
+using SiraUtil.Logging;
 using System;
 using UnityEngine;
 using Zenject;
@@ -10,22 +11,30 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 {
     public class EditorObstacleBasicMovement : MonoBehaviour, IObjectMovement
     {
-        private ObstacleEditorData _editorData;
+        private ObstacleEditorData? _editorData;
 
-        private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper;
+        private BeatmapObjectPlacementHelper _beatmapObjectPlacementHelper = null!;
+        private SiraLog _siraLog = null!;
 
         [Inject]
         public void Construct(
-            BeatmapObjectPlacementHelper beatmapObjectPlacementHelper)
+            BeatmapObjectPlacementHelper beatmapObjectPlacementHelper,
+            SiraLog siraLog)
         {
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
+            _siraLog = siraLog;
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals> getVisualRoot)
+        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
         {
             _editorData = editorData as ObstacleEditorData;
-            float z = _beatmapObjectPlacementHelper.BeatToPosition(editorData.beat);
-            transform.localPosition = new Vector3(((float)_editorData.column - 2f + (float)_editorData.width / 2f) * 0.8f, 0.5f + (float)_editorData.row * 0.8f - 0.4f, z);
+            if (_editorData == null)
+            {
+                _siraLog.Error("EditorObstacleBasicMovement: Null editorData");
+                return;
+            }
+            float z = _beatmapObjectPlacementHelper.BeatToPosition(_editorData.beat);
+            transform.localPosition = new Vector3((_editorData.column - 2f + _editorData.width / 2f) * 0.8f, 0.5f + _editorData.row * 0.8f - 0.4f, z);
         }
 
         public void Enable()
@@ -45,6 +54,10 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
         public void ManualUpdate()
         {
+            if (_editorData == null)
+            {
+                return;
+            }
             Vector3 localPosition = transform.localPosition;
             localPosition.z = _beatmapObjectPlacementHelper.BeatToPosition(_editorData.beat);
             transform.localPosition = localPosition;

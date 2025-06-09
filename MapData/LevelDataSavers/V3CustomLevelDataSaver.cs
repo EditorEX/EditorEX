@@ -19,7 +19,7 @@ namespace EditorEX.MapData.LevelDataSavers
     public class V3CustomLevelDataSaver : ICustomLevelDataSaver
     {
         [Inject]
-        private SiraLog? _siraLog;
+        private SiraLog? _siraLog = null!;
         public bool IsVersion(Version version)
         {
             return version.Major == 3;

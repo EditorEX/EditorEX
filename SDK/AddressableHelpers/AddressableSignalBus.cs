@@ -7,9 +7,9 @@ namespace EditorEX.SDK.AddressableHelpers
 {
     public class AddressableSignalBus
     {
-        public SignalBus SignalBus { get; private set; }
+        public SignalBus SignalBus { get; private set; } = null!;
 
-        private AddressableCollector _addressableCollector;
+        private AddressableCollector _addressableCollector = null!;
 
         [Inject]
         private void Construct(

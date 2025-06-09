@@ -7,7 +7,7 @@ namespace EditorEX.Essentials.Patches.Preview
 {
     public class PreviewSelectionPatches : IAffinity
     {
-        private ActiveViewMode _activeViewMode;
+        private ActiveViewMode _activeViewMode = null!;
 
         [Inject]
         private void Construct(ActiveViewMode activeViewMode)
@@ -19,6 +19,8 @@ namespace EditorEX.Essentials.Patches.Preview
         [AffinityPrefix]
         private bool UpdateHighlight()
         {
+            if (_activeViewMode?.Mode == null)
+                return true;
             return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
@@ -26,6 +28,8 @@ namespace EditorEX.Essentials.Patches.Preview
         [AffinityPrefix]
         private void SetInitialState(ref bool onBeat, ref bool pastBeat, ref bool selected, ref bool highlighted, ref bool isDeleting)
         {
+            if (_activeViewMode?.Mode == null)
+                return;
             onBeat &= _activeViewMode.Mode.ShowGridAndSelection;
             pastBeat &= _activeViewMode.Mode.ShowGridAndSelection;
             selected &= _activeViewMode.Mode.ShowGridAndSelection;
@@ -37,6 +41,8 @@ namespace EditorEX.Essentials.Patches.Preview
         [AffinityPrefix]
         private bool UpdateState()
         {
+            if (_activeViewMode?.Mode == null)
+                return true;
             return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
@@ -44,6 +50,8 @@ namespace EditorEX.Essentials.Patches.Preview
         [AffinityPrefix]
         private bool SetObstacleData(ObstacleViewSelection __instance)
         {
+            if (_activeViewMode?.Mode == null)
+                return true;
             if (!_activeViewMode.Mode.ShowGridAndSelection)
             {
                 __instance._selection.SetActive(false);

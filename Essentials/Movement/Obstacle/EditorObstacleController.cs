@@ -6,21 +6,23 @@ using EditorEX.Essentials.VariableMovement;
 using UnityEngine;
 using Zenject;
 using EditorEX.Essentials.Features.ViewMode;
+using SiraUtil.Logging;
 
 namespace EditorEX.Essentials.Movement.Obstacle
 {
     internal class EditorObstacleController : MonoBehaviour, IDisposable
     {
-        private IObjectMovement _obstacleMovement;
-        private IObjectVisuals _obstacleVisuals;
-        private IVariableMovementDataProvider _variableMovementDataProvider;
+        private IObjectMovement? _obstacleMovement;
+        private IObjectVisuals? _obstacleVisuals;
+        private IVariableMovementDataProvider? _variableMovementDataProvider;
 
-        private IReadonlyBeatmapState _state;
-        private MovementTypeProvider _movementTypeProvider;
-        private VisualsTypeProvider _visualsTypeProvider;
-        private VariableMovementTypeProvider _variableMovementTypeProvider;
-        private ActiveViewMode _activeViewMode;
-        private EditorBasicBeatmapObjectSpawnMovementData _movementData;
+        private IReadonlyBeatmapState _state = null!;
+        private MovementTypeProvider _movementTypeProvider = null!;
+        private VisualsTypeProvider _visualsTypeProvider = null!;
+        private VariableMovementTypeProvider _variableMovementTypeProvider = null!;
+        private ActiveViewMode _activeViewMode = null!;
+        private EditorBasicBeatmapObjectSpawnMovementData _movementData = null!;
+        private SiraLog _siraLog = null!;
 
         private ObstacleEditorData? _data;
 
@@ -31,13 +33,15 @@ namespace EditorEX.Essentials.Movement.Obstacle
             MovementTypeProvider movementTypeProvider,
             VisualsTypeProvider visualsTypeProvider,
             VariableMovementTypeProvider variableMovementTypeProvider,
-            EditorBasicBeatmapObjectSpawnMovementData movementData)
+            EditorBasicBeatmapObjectSpawnMovementData movementData,
+            SiraLog siraLog)
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
             _visualsTypeProvider = visualsTypeProvider;
             _variableMovementTypeProvider = variableMovementTypeProvider;
             _movementData = movementData;
+            _siraLog = siraLog;
 
             _activeViewMode = activeViewMode;
             _activeViewMode.ModeChanged += RefreshObstacleMovementVisualsAndInit;
@@ -63,16 +67,30 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
         private void RefreshObstacleMovementVisuals()
         {
-            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _obstacleMovement, out IObjectMovement newObstacleMovement))
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _obstacleMovement, out IObjectMovement? newObstacleMovement))
             {
-                _obstacleMovement = newObstacleMovement;
-                _obstacleMovement.Enable();
+                if (newObstacleMovement == null)
+                {
+                    _siraLog.Error("EditorObstacleController: Failed to refresh, new movement provider is null!");
+                }
+                else
+                {
+                    _obstacleMovement = newObstacleMovement;
+                    _obstacleMovement.Enable();   
+                }
             }
 
-            if (TypeProviderUtils.GetProvidedComponent(gameObject, _visualsTypeProvider, _obstacleVisuals, out IObjectVisuals newObstacleVisuals))
+            if (TypeProviderUtils.GetProvidedComponent(gameObject, _visualsTypeProvider, _obstacleVisuals, out IObjectVisuals? newObstacleVisuals))
             {
-                _obstacleVisuals = newObstacleVisuals;
-                _obstacleVisuals.Enable();
+                if (newObstacleVisuals == null)
+                {
+                    _siraLog.Error("EditorObstacleController: Failed to refresh, new visuals provider is null!");
+                }
+                else
+                {
+                    _obstacleVisuals = newObstacleVisuals;
+                    _obstacleVisuals.Enable();   
+                }
             }
 
             if (TypeProviderUtils.GetProvidedVariableMovementDataProvider(gameObject, _variableMovementTypeProvider, _data, _variableMovementDataProvider, out var variableMovementDataProvider))
@@ -92,8 +110,11 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
             RefreshObstacleMovementVisuals();
 
-            _obstacleMovement.Init(obstacleData, _variableMovementDataProvider, _movementData, null);
-            _obstacleVisuals.Init(obstacleData);
+            if (_obstacleMovement != null && _obstacleVisuals != null && _variableMovementDataProvider != null)
+            {
+                _obstacleMovement.Init(obstacleData, _variableMovementDataProvider, _movementData, null);
+                _obstacleVisuals.Init(obstacleData);
+            }
 
             ManualUpdate();
         }
@@ -122,10 +143,13 @@ namespace EditorEX.Essentials.Movement.Obstacle
                 RefreshObstacleMovementVisualsAndInit();
             }
 
-            _obstacleMovement.Setup(_data);
+            if (_obstacleMovement != null && _obstacleVisuals != null)
+            {
+                _obstacleMovement.Setup(_data);
 
-            _obstacleMovement.ManualUpdate();
-            _obstacleVisuals.ManualUpdate();
+                _obstacleMovement.ManualUpdate();
+                _obstacleVisuals.ManualUpdate();
+            }
         }
     }
 }

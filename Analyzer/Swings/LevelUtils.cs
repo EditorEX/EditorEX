@@ -4,10 +4,11 @@ using Zenject;
 
 public class LevelUtils
 {
-    private EditorBasicBeatmapObjectSpawnMovementData _spawnMovementData;
+    private EditorBasicBeatmapObjectSpawnMovementData _spawnMovementData = null!;
 
     [Inject]
-    private void Construct(EditorBasicBeatmapObjectSpawnMovementData spawnMovementData)
+    private void Construct(
+        EditorBasicBeatmapObjectSpawnMovementData spawnMovementData)
     {
         _spawnMovementData = spawnMovementData;
     }
@@ -23,8 +24,8 @@ public class LevelUtils
         var _startVerticalVelocity = _gravity * _spawnMovementData._jumpDuration * 0.5f;
         var yPos = _startVerticalVelocity * 0.75f - _gravity * 0.75f * 0.75f * 0.5f;
 
-        float num = (float)(-(float)(4 - 1)) * 0.5f;
-        num = (num + (float)x) * 0.8f;
+        float num = (float)-(float)(4 - 1) * 0.5f;
+        num = (num + x) * 0.8f;
 
         return new Vector2(num, yPos);
     }

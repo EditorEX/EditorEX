@@ -19,7 +19,7 @@ namespace EditorEX.Heck.Installers
     public class EditorHeckSceneInstaller : Installer
     {
         [Inject]
-        private SiraLog? _siraLog;
+        private SiraLog? _siraLog = null!;
 
         public override void InstallBindings()
         {

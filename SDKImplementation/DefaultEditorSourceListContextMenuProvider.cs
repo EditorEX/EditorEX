@@ -10,9 +10,9 @@ namespace EditorEX.SDKImplementation
 {
     public class DefaultEditorSourceListContextMenuProvider : ContextMenuProvider<SourceListContextMenuObject>
     {
-        private SourcesConfig _sourcesConfig;
-        private BeatmapsListViewControllerPatches _beatmapsListViewControllerPatches;
-        private StringInputDialogModal _stringInputDialogModal;
+        private SourcesConfig _sourcesConfig = null!;
+        private BeatmapsListViewControllerPatches _beatmapsListViewControllerPatches = null!;
+        private StringInputDialogModal _stringInputDialogModal = null!;
 
         [Inject]
         private void Construct(

@@ -25,7 +25,7 @@ namespace EditorEX.Essentials.Installers
     public class EditorEssentialsSceneInstaller : Installer
     {
         [Inject]
-        private PopulateBeatmap populateBeatmap;
+        private PopulateBeatmap populateBeatmap = null!;
 
         public override void InstallBindings()
         {
