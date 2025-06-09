@@ -20,8 +20,8 @@ namespace EditorEX.SDK.Components
         private EditorModalView _modalView;
         private CurvedTextMeshPro _title;
 
-        private Action<string> _onConfirm;
-        private Action _onDeny;
+        private Action<string>? _onConfirm = null;
+        private Action? _onDeny = null;
 
         [Inject]
         private void Construct(
@@ -75,7 +75,7 @@ namespace EditorEX.SDK.Components
             _modalView.gameObject.SetActive(false);
         }
 
-        public void Prompt(string title, string inputTitle, string initialValue, Action<string> onConfirm, Action onDeny)
+        public void Prompt(string title, string inputTitle, string initialValue, Action<string>? onConfirm, Action? onDeny)
         {
             _title.text = title;
 

@@ -321,9 +321,8 @@
     <Compile Remove="CustomJSONData\Patches\BeatmapLevelDataModelVersionedLoaderV3.cs" />
     <Compile Remove="CustomJSONData\Patches\BeatmapProjectManagerV2Support.cs" />
   </ItemGroup>
-  <Target Name="bruh"
-        AfterTargets="BSMT_CopyToPlugins">
+  <Target Name="Launch Game">
     <Message Text="Running $(GameDirectory)" Importance="high" />
-    <Exec WorkingDirectory="$(GameDirectory)" Command="BS.exe.lnk editor --verbose" StandardOutputImportance="low" StandardErrorImportance="low" />
+    <Exec WorkingDirectory="$(GameDirectory)" Command="BS.exe.lnk --verbose editor" StandardOutputImportance="low" StandardErrorImportance="low" />
   </Target>
 </Project>

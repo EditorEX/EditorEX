@@ -27,12 +27,12 @@ namespace EditorEX.SDKImplementation
 
         public override ContextOption<SourceListContextMenuObject>[] GetContextOptions()
         {
-            return new ContextOption<SourceListContextMenuObject>[]
-            {
+            return
+            [
                 new ("Rename", Rename),
                 new ("Add Path", AddPath),
                 new ("Delete", Delete)
-            };
+            ];
         }
 
         private void Rename(SourceListContextMenuObject contextObject)
@@ -55,7 +55,7 @@ namespace EditorEX.SDKImplementation
             }
             _sourcesConfig.Sources.Remove(contextObject.SourceName);
 
-            _beatmapsListViewControllerPatches.ReloadCells();
+        _beatmapsListViewControllerPatches.ReloadCells();
         }
 
         private void AddPath(SourceListContextMenuObject contextObject)

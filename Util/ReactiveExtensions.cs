@@ -29,16 +29,76 @@ namespace EditorEX.Util
         /// <typeparam name="R">The type of the observable value</typeparam>
         /// <param name="component">The component to update</param>
         /// <param name="observable">The observable value to watch</param>
+        /// <param name="value">A function returning the value to check against</param>
+        /// <returns>The component for chaining</returns>
+        public static T EnabledWithObservable<T, R>(this T component, ObservableValue<R> observable, Func<R> value) where T : ReactiveComponent
+        {
+            component.Enabled = observable.Value?.Equals(value()) ?? true;
+            component.Animate(observable, () =>
+            {
+                component.Enabled = observable.Value?.Equals(value()) ?? true;
+            });
+            return component;
+        }
+
+        /// <summary>
+        /// Makes a GameObject's active state react to an observable value.
+        /// The GameObject will be active when the observable's value equals the specified value.
+        /// </summary>
+        /// <typeparam name="R">The type of the observable value</typeparam>
+        /// <param name="component">The GameObject to update</param>
+        /// <param name="observable">The observable value to watch</param>
+        /// <param name="value">A function returning the value to check against</param>
+        /// <returns>The GameObject for chaining</returns>
+        public static GameObject EnabledWithObservable<R>(this GameObject component, ObservableValue<R> observable, Func<R> value)
+        {
+            component.SetActive(observable.Value?.Equals(value()) ?? true);
+            void Closure(R val)
+            {
+                if (component == null)
+                {
+                    observable.ValueChangedEvent -= Closure;
+                    return;
+                }
+                component.SetActive(observable.Value?.Equals(value()) ?? true);
+            }
+            observable.ValueChangedEvent += Closure;
+            return component;
+        }
+        
+        /// <summary>
+        /// Makes a component's enabled state react inversely to an observable value.
+        /// The component will be disabled when the observable's value equals the specified value.
+        /// </summary>
+        /// <typeparam name="T">The type of the component</typeparam>
+        /// <typeparam name="R">The type of the observable value</typeparam>
+        /// <param name="component">The component to update</param>
+        /// <param name="observable">The observable value to watch</param>
+        /// <param name="value">A function returning the value to check against</param>
+        /// <returns>The component for chaining</returns>
+        public static T DisabledWithObservable<T, R>(this T component, ObservableValue<R> observable, Func<R> value) where T : ReactiveComponent
+        {
+            component.Enabled = !observable.Value?.Equals(value()) ?? false;
+            component.Animate(observable, () =>
+            {
+                component.Enabled = !observable.Value?.Equals(value()) ?? false;
+            });
+            return component;
+        }
+
+        /// <summary>
+        /// Makes a component's enabled state react to an observable value.
+        /// The component will be enabled when the observable's value equals the specified value.
+        /// </summary>
+        /// <typeparam name="T">The type of the component</typeparam>
+        /// <typeparam name="R">The type of the observable value</typeparam>
+        /// <param name="component">The component to update</param>
+        /// <param name="observable">The observable value to watch</param>
         /// <param name="value">The value to check against</param>
         /// <returns>The component for chaining</returns>
         public static T EnabledWithObservable<T, R>(this T component, ObservableValue<R> observable, R value) where T : ReactiveComponent
         {
-            component.Enabled = observable.Value?.Equals(value) ?? true;
-            component.Animate(observable, () =>
-            {
-                component.Enabled = observable.Value?.Equals(value) ?? true;
-            });
-            return component;
+            return component.EnabledWithObservable(observable, () => value);
         }
 
         /// <summary>
@@ -52,18 +112,7 @@ namespace EditorEX.Util
         /// <returns>The GameObject for chaining</returns>
         public static GameObject EnabledWithObservable<R>(this GameObject component, ObservableValue<R> observable, R value)
         {
-            component.SetActive(observable.Value?.Equals(value) ?? true);
-            void Closure(R val)
-            {
-                if (component == null)
-                {
-                    observable.ValueChangedEvent -= Closure;
-                    return;
-                }
-                component.SetActive(observable.Value?.Equals(value) ?? true);
-            }
-            observable.ValueChangedEvent += Closure;
-            return component;
+            return component.EnabledWithObservable(observable, () => value);
         }
         
         /// <summary>
@@ -78,12 +127,7 @@ namespace EditorEX.Util
         /// <returns>The component for chaining</returns>
         public static T DisabledWithObservable<T, R>(this T component, ObservableValue<R> observable, R value) where T : ReactiveComponent
         {
-            component.Enabled = !observable.Value?.Equals(value) ?? false;
-            component.Animate(observable, () =>
-            {
-                component.Enabled = !observable.Value?.Equals(value) ?? false;
-            });
-            return component;
+            return component.DisabledWithObservable(observable, () => value);
         }
 
         /// <summary>

@@ -24,6 +24,7 @@ namespace EditorEX.SDK.ReactiveComponents
                     Position = index,
                     SelectedIndex = _selectedIndex,
                 }.AsFlexItem(size: "max-content", minSize: "max-content", flex: 1)));
+                TabbingType = TabbingType;
                 NotifyPropertyChanged();
             }
         }

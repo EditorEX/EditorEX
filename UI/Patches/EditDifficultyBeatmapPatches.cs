@@ -41,7 +41,7 @@ namespace EditorEX.UI.Patches
 
             if (difficultyLabel == null)
             {
-                difficultyLabel = __instance.transform.Find("LabelWrapper").Find("DifficultyLabel");
+                difficultyLabel = __instance.transform!.Find("LabelWrapper").Find("DifficultyLabel");
             }
             else
             {
@@ -71,7 +71,7 @@ namespace EditorEX.UI.Patches
                 });
             }
 
-            button.interactable = __instance._beatmapData != null;
+            button!.interactable = __instance._beatmapData != null;
         }
     }
 }
