@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using EditorEX.SDK.ReactiveComponents.Table;
 using EditorEX.Util;
 using Reactive;
 using Reactive.BeatSaber.Components;
 using Reactive.Components;
-using Reactive.Components.Basic;
 using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents.Dropdown
@@ -123,7 +121,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             {
                 OnClick = () =>
                 {
-                    if (Items.Count == 0)
+                    if (Items.Count == 0 || _modal.ModalOpened)
                     {
                         return;
                     }
