@@ -3,6 +3,7 @@ using EditorEX.SDK.ReactiveComponents.Native;
 using HMUI;
 using Reactive;
 using Reactive.Components;
+using Reactive.Yoga;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -41,10 +42,15 @@ namespace EditorEX.SDK.ReactiveComponents
             {
                 Source = "#Background8px",
                 ImageType = Image.Type.Sliced,
-                Children = { new EditorLabel().AsFlexItem(size: "auto").Bind(ref _label) },
+                Children =
+                {
+                    new EditorLabel { Alignment = TMPro.TextAlignmentOptions.Center }
+                        .AsFlexItem(size: "auto")
+                        .Bind(ref _label),
+                },
             }
-                .AsFlexGroup(padding: 8f)
-                .AsFlexItem(size: new Reactive.Yoga.YogaVector("fit-content", "fit-content"))
+                .AsFlexGroup(padding: 8f, justifyContent: Justify.Center)
+                .AsFlexItem(size: new YogaVector("fit-content", "fit-content"))
                 .Bind(ref _background)
                 .WithNativeComponent(out _button)
                 .Use();
