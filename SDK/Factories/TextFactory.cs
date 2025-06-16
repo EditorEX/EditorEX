@@ -12,25 +12,26 @@ namespace EditorEX.SDK.Factories
         private FontCollector _fontCollector = null!;
 
         [Inject]
-        private void Construct(
-            ColorCollector colorCollector,
-            FontCollector fontCollector)
+        private void Construct(ColorCollector colorCollector, FontCollector fontCollector)
         {
             _colorCollector = colorCollector;
             _fontCollector = fontCollector;
         }
 
-        public CurvedTextMeshPro Create(Transform parent, string text, float fontSize, string colorType)
+        public CurvedTextMeshPro Create(
+            Transform parent,
+            string text,
+            float fontSize,
+            string colorType
+        )
         {
             return Create<CurvedTextMeshPro>(parent, text, fontSize, colorType);
         }
 
-        public T Create<T>(Transform parent, string text, float fontSize, string colorType) where T : CurvedTextMeshPro
+        public T Create<T>(Transform parent, string text, float fontSize, string colorType)
+            where T : CurvedTextMeshPro
         {
-            GameObject gameObj = new($"Ex{typeof(T).Name}")
-            {
-                layer = 5,
-            };
+            GameObject gameObj = new($"Ex{typeof(T).Name}") { layer = 5 };
 
             gameObj.SetActive(false);
             gameObj.transform.SetParent(parent, false);

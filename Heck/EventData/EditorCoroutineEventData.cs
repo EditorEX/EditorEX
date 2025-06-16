@@ -1,10 +1,10 @@
-﻿using EditorEX.CustomJSONData.CustomEvents;
-using CustomJSONData.CustomBeatmap;
-using HarmonyLib;
-using Heck.Animation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData.CustomEvents;
+using HarmonyLib;
+using Heck.Animation;
 using Heck.Deserialize;
 using SiraUtil.Logging;
 
@@ -19,14 +19,26 @@ namespace EditorEX.Heck.EventData
             CustomEventEditorData customEventData,
             Dictionary<string, List<object>> pointDefinitions,
             Dictionary<string, Track> beatmapTracks,
-            bool v2)
+            bool v2
+        )
         {
             _siraLog = siraLog;
             CustomData data = customEventData.customData;
             IEnumerable<Track> tracks = data.GetTrackArray(beatmapTracks, v2);
 
-            string[] excludedStrings = { Constants.V2_TRACK, Constants.V2_DURATION, Constants.V2_EASING, Constants.TRACK, Constants.DURATION, Constants.EASING, Constants.REPEAT };
-            IEnumerable<string> propertyKeys = data.Keys.Where(n => excludedStrings.All(m => m != n)).ToList();
+            string[] excludedStrings =
+            {
+                Constants.V2_TRACK,
+                Constants.V2_DURATION,
+                Constants.V2_EASING,
+                Constants.TRACK,
+                Constants.DURATION,
+                Constants.EASING,
+                Constants.REPEAT,
+            };
+            IEnumerable<string> propertyKeys = data
+                .Keys.Where(n => excludedStrings.All(m => m != n))
+                .ToList();
             List<CoroutineInfo> coroutineInfos = new List<CoroutineInfo>();
             foreach (Track track in tracks)
             {
@@ -40,7 +52,9 @@ namespace EditorEX.Heck.EventData
                         path = true;
                         break;
                     default:
-                        throw new InvalidOperationException("Custom event was not of correct type.");
+                        throw new InvalidOperationException(
+                            "Custom event was not of correct type."
+                        );
                 }
                 ;
 
@@ -61,7 +75,9 @@ namespace EditorEX.Heck.EventData
                     {
                         if (path)
                         {
-                            Track.GetPathAliases(propertyKey).Do(n => HandlePathProperty(n, propertyKey));
+                            Track
+                                .GetPathAliases(propertyKey)
+                                .Do(n => HandlePathProperty(n, propertyKey));
                         }
                         else
                         {
@@ -71,9 +87,18 @@ namespace EditorEX.Heck.EventData
 
                     continue;
 
-                    void CreateInfo(BaseProperty property, IPropertyBuilder builder, string name, string alias)
+                    void CreateInfo(
+                        BaseProperty property,
+                        IPropertyBuilder builder,
+                        string name,
+                        string alias
+                    )
                     {
-                        CoroutineInfo coroutineInfo = new CoroutineInfo(builder.GetPointData(data, alias ?? name, pointDefinitions), property, track);
+                        CoroutineInfo coroutineInfo = new CoroutineInfo(
+                            builder.GetPointData(data, alias ?? name, pointDefinitions),
+                            property,
+                            track
+                        );
                         coroutineInfos.Add(coroutineInfo);
                     }
 
@@ -86,7 +111,12 @@ namespace EditorEX.Heck.EventData
                             return;
                         }
 
-                        CreateInfo(track.GetOrCreatePathProperty(name, builder), builder, name, alias);
+                        CreateInfo(
+                            track.GetOrCreatePathProperty(name, builder),
+                            builder,
+                            name,
+                            alias
+                        );
                     }
 
                     void HandleProperty(string name, string alias = null)
@@ -104,7 +134,9 @@ namespace EditorEX.Heck.EventData
             }
 
             Duration = data.Get<float?>(v2 ? Constants.V2_DURATION : Constants.DURATION) ?? 0f;
-            Easing = data.GetStringToEnum<Functions?>(v2 ? Constants.V2_EASING : Constants.EASING) ?? Functions.easeLinear;
+            Easing =
+                data.GetStringToEnum<Functions?>(v2 ? Constants.V2_EASING : Constants.EASING)
+                ?? Functions.easeLinear;
             CoroutineInfos = coroutineInfos;
 
             if (!v2)
@@ -123,7 +155,11 @@ namespace EditorEX.Heck.EventData
 
         internal readonly struct CoroutineInfo
         {
-            internal CoroutineInfo(IPointDefinition pointDefinition, BaseProperty property, Track track)
+            internal CoroutineInfo(
+                IPointDefinition pointDefinition,
+                BaseProperty property,
+                Track track
+            )
             {
                 PointDefinition = pointDefinition;
                 Property = property;

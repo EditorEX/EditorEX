@@ -35,7 +35,8 @@ namespace EditorEX.Vivify.Events
             IAudioTimeSource audioTimeSource,
             IBpmController bpmController,
             CoroutineDummy coroutineDummy,
-            PopulateBeatmap populateBeatmap)
+            PopulateBeatmap populateBeatmap
+        )
         {
             _assetBundleManager = assetBundleManager;
             _deserializedData = deserializedData;
@@ -47,7 +48,12 @@ namespace EditorEX.Vivify.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out SetMaterialPropertyData? data))
+            if (
+                !_deserializedData.Resolve(
+                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    out SetMaterialPropertyData? data
+                )
+            )
             {
                 return;
             }
@@ -61,7 +67,13 @@ namespace EditorEX.Vivify.Events
             }
 
             List<MaterialProperty> properties = data.Properties;
-            SetMaterialProperties(material, properties, duration, data.Easing, _audioDataModel.bpmData.BeatToSeconds(customEventData.time));
+            SetMaterialProperties(
+                material,
+                properties,
+                duration,
+                data.Easing,
+                _audioDataModel.bpmData.BeatToSeconds(customEventData.time)
+            );
         }
 
         internal void SetMaterialProperties(
@@ -69,7 +81,8 @@ namespace EditorEX.Vivify.Events
             List<MaterialProperty> properties,
             float duration,
             Functions easing,
-            float startTime)
+            float startTime
+        )
         {
             foreach (MaterialProperty property in properties)
             {
@@ -95,7 +108,10 @@ namespace EditorEX.Vivify.Events
                                 {
                                     if (noDuration)
                                     {
-                                        material.SetColor(propertyId, colorAnimated.PointDefinition.Interpolate(1));
+                                        material.SetColor(
+                                            propertyId,
+                                            colorAnimated.PointDefinition.Interpolate(1)
+                                        );
                                     }
                                     else
                                     {
@@ -106,15 +122,24 @@ namespace EditorEX.Vivify.Events
                                             global::Vivify.MaterialPropertyType.Color,
                                             duration,
                                             startTime,
-                                            easing);
+                                            easing
+                                        );
                                     }
                                 }
                                 else
                                 {
-                                    List<float> color = ((List<object>)value).Select(Convert.ToSingle).ToList();
+                                    List<float> color = ((List<object>)value)
+                                        .Select(Convert.ToSingle)
+                                        .ToList();
                                     material.SetColor(
                                         propertyId,
-                                        new Color(color[0], color[1], color[2], color.Count > 3 ? color[3] : 1));
+                                        new Color(
+                                            color[0],
+                                            color[1],
+                                            color[2],
+                                            color.Count > 3 ? color[3] : 1
+                                        )
+                                    );
                                 }
 
                                 continue;
@@ -124,7 +149,10 @@ namespace EditorEX.Vivify.Events
                                 {
                                     if (noDuration)
                                     {
-                                        material.SetFloat(propertyId, floatAnimated.PointDefinition.Interpolate(1));
+                                        material.SetFloat(
+                                            propertyId,
+                                            floatAnimated.PointDefinition.Interpolate(1)
+                                        );
                                     }
                                     else
                                     {
@@ -135,7 +163,8 @@ namespace EditorEX.Vivify.Events
                                             global::Vivify.MaterialPropertyType.Float,
                                             duration,
                                             startTime,
-                                            easing);
+                                            easing
+                                        );
                                     }
                                 }
                                 else
@@ -150,7 +179,10 @@ namespace EditorEX.Vivify.Events
                                 {
                                     if (noDuration)
                                     {
-                                        material.SetVector(propertyId, vectorAnimated.PointDefinition.Interpolate(1));
+                                        material.SetVector(
+                                            propertyId,
+                                            vectorAnimated.PointDefinition.Interpolate(1)
+                                        );
                                     }
                                     else
                                     {
@@ -161,14 +193,19 @@ namespace EditorEX.Vivify.Events
                                             global::Vivify.MaterialPropertyType.Vector,
                                             duration,
                                             startTime,
-                                            easing);
+                                            easing
+                                        );
                                     }
                                 }
                                 else
                                 {
-                                    List<float> vector = ((List<object>)value).Select(Convert.ToSingle).ToList();
-                                    material.SetVector(propertyId,
-                                        new Vector4(vector[0], vector[1], vector[2], vector[3]));
+                                    List<float> vector = ((List<object>)value)
+                                        .Select(Convert.ToSingle)
+                                        .ToList();
+                                    material.SetVector(
+                                        propertyId,
+                                        new Vector4(vector[0], vector[1], vector[2], vector[3])
+                                    );
                                 }
 
                                 continue;
@@ -184,7 +221,11 @@ namespace EditorEX.Vivify.Events
                                 {
                                     if (noDuration)
                                     {
-                                        SetKeyword(material, name, keywordAnimated.PointDefinition.Interpolate(1) >= 1);
+                                        SetKeyword(
+                                            material,
+                                            name,
+                                            keywordAnimated.PointDefinition.Interpolate(1) >= 1
+                                        );
                                     }
                                     else
                                     {
@@ -195,7 +236,8 @@ namespace EditorEX.Vivify.Events
                                             global::Vivify.MaterialPropertyType.Float,
                                             duration,
                                             startTime,
-                                            easing);
+                                            easing
+                                        );
                                     }
                                 }
                                 else
@@ -210,7 +252,11 @@ namespace EditorEX.Vivify.Events
                 }
 
                 // im lazy, shoot me
-                throw new ArgumentOutOfRangeException(nameof(type), type, "Type not currently supported.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(type),
+                    type,
+                    "Type not currently supported."
+                );
             }
         }
 
@@ -233,7 +279,8 @@ namespace EditorEX.Vivify.Events
             global::Vivify.MaterialPropertyType type,
             float duration,
             float startTime,
-            Functions easing)
+            Functions easing
+        )
             where T : struct
         {
             while (true)
@@ -249,18 +296,24 @@ namespace EditorEX.Vivify.Events
                             switch (type)
                             {
                                 case global::Vivify.MaterialPropertyType.Color:
-                                    material.SetColor(propertyId,
-                                        (points as PointDefinition<Vector4>)!.Interpolate(time));
+                                    material.SetColor(
+                                        propertyId,
+                                        (points as PointDefinition<Vector4>)!.Interpolate(time)
+                                    );
                                     break;
 
                                 case global::Vivify.MaterialPropertyType.Float:
-                                    material.SetFloat(propertyId,
-                                        (points as PointDefinition<float>)!.Interpolate(time));
+                                    material.SetFloat(
+                                        propertyId,
+                                        (points as PointDefinition<float>)!.Interpolate(time)
+                                    );
                                     break;
 
                                 case global::Vivify.MaterialPropertyType.Vector:
-                                    material.SetVector(propertyId,
-                                        (points as PointDefinition<Vector4>)!.Interpolate(time));
+                                    material.SetVector(
+                                        propertyId,
+                                        (points as PointDefinition<Vector4>)!.Interpolate(time)
+                                    );
                                     break;
                             }
 
@@ -270,8 +323,11 @@ namespace EditorEX.Vivify.Events
                             switch (type)
                             {
                                 case global::Vivify.MaterialPropertyType.Keyword:
-                                    SetKeyword(material, name,
-                                        (points as PointDefinition<float>)!.Interpolate(time) >= 1);
+                                    SetKeyword(
+                                        material,
+                                        name,
+                                        (points as PointDefinition<float>)!.Interpolate(time) >= 1
+                                    );
                                     break;
                             }
 
@@ -294,11 +350,13 @@ namespace EditorEX.Vivify.Events
             global::Vivify.MaterialPropertyType type,
             float duration,
             float startTime,
-            Functions easing)
+            Functions easing
+        )
             where T : struct
         {
             _coroutineDummy.StartCoroutine(
-                AnimatePropertyCoroutine(points, material, id, type, duration, startTime, easing));
+                AnimatePropertyCoroutine(points, material, id, type, duration, startTime, easing)
+            );
         }
     }
 }

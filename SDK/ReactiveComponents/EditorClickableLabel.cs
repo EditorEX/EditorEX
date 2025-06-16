@@ -14,14 +14,21 @@ namespace EditorEX.SDK.ReactiveComponents
 
         protected override void OnStart()
         {
-            var container = Content.transform.GetComponentInParent<ReactiveContainerHolder>().ReactiveContainer;
+            var container = Content
+                .transform.GetComponentInParent<ReactiveContainerHolder>()
+                .ReactiveContainer;
             Content.SetActive(false);
 
-            var selectableStateController = container.Instantiator.InstantiateComponent<NoTransitionClickableTextSelectableStateController>(Content);
+            var selectableStateController =
+                container.Instantiator.InstantiateComponent<NoTransitionClickableTextSelectableStateController>(
+                    Content
+                );
             selectableStateController._component = (_text as EditorClickableText)!;
 
             var transition = Content.AddComponent<ColorTMPTextStateTransition>();
-            transition._transition = container.TransitionCollector.GetTransition<ColorTransitionSO>("Button/Text");
+            transition._transition = container.TransitionCollector.GetTransition<ColorTransitionSO>(
+                "Button/Text"
+            );
             transition._selectableStateController = selectableStateController;
             transition._component = (_text as EditorClickableText)!;
 

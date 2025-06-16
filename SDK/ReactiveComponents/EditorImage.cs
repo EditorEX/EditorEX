@@ -11,7 +11,12 @@ using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorImage : AttachableReactiveComponent<EditorImage>, IComponentHolder<EditorImage>, ISkewedComponent, IGraphic, ILeafLayoutItem, IColorSOAttachable
+    public class EditorImage
+        : AttachableReactiveComponent<EditorImage>,
+            IComponentHolder<EditorImage>,
+            IGraphic,
+            ILeafLayoutItem,
+            IColorSOAttachable
     {
         public Sprite? Sprite
         {
@@ -164,12 +169,6 @@ namespace EditorEX.SDK.ReactiveComponents
             }
         }
 
-        public float Skew
-        {
-            get => _image.Skew;
-            set => _image.Skew = value;
-        }
-
         public bool RaycastTarget
         {
             get => _image.raycastTarget;
@@ -188,15 +187,26 @@ namespace EditorEX.SDK.ReactiveComponents
 
         public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
 
-        public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode)
+        public Vector2 Measure(
+            float width,
+            MeasureMode widthMode,
+            float height,
+            MeasureMode heightMode
+        )
         {
             var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
             var measuredHeight = heightMode == MeasureMode.Undefined ? Mathf.Infinity : height;
 
             return new()
             {
-                x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(_image.preferredWidth, measuredWidth),
-                y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(_image.preferredHeight, measuredHeight)
+                x =
+                    widthMode == MeasureMode.Exactly
+                        ? width
+                        : Mathf.Min(_image.preferredWidth, measuredWidth),
+                y =
+                    heightMode == MeasureMode.Exactly
+                        ? height
+                        : Mathf.Min(_image.preferredHeight, measuredHeight),
             };
         }
     }

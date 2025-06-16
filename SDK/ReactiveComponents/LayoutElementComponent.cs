@@ -9,6 +9,7 @@ namespace EditorEX.SDK.ReactiveComponents
     public class LayoutElementComponent : ReactiveComponent, ILeafLayoutItem
     {
         private readonly LayoutElement _layoutElement;
+
         public LayoutElementComponent(LayoutElement layoutElement)
         {
             _layoutElement = layoutElement;
@@ -23,7 +24,12 @@ namespace EditorEX.SDK.ReactiveComponents
 
         public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
 
-        public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode)
+        public Vector2 Measure(
+            float width,
+            MeasureMode widthMode,
+            float height,
+            MeasureMode heightMode
+        )
         {
             var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
             var measuredHeight = heightMode == MeasureMode.Undefined ? Mathf.Infinity : height;
@@ -33,8 +39,14 @@ namespace EditorEX.SDK.ReactiveComponents
 
             return new()
             {
-                x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(elementSize.x, measuredWidth),
-                y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(elementSize.y, measuredHeight)
+                x =
+                    widthMode == MeasureMode.Exactly
+                        ? width
+                        : Mathf.Min(elementSize.x, measuredWidth),
+                y =
+                    heightMode == MeasureMode.Exactly
+                        ? height
+                        : Mathf.Min(elementSize.y, measuredHeight),
             };
         }
     }

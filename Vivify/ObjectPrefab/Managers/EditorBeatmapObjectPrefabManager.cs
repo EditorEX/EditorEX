@@ -30,7 +30,8 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
         SiraLog log,
         EditorAssetBundleManager assetBundleManager,
         IInstantiator instantiator,
-        [InjectOptional] ReLoader? reLoader)
+        [InjectOptional] ReLoader? reLoader
+    )
     {
         _log = log;
         _assetBundleManager = assetBundleManager;
@@ -66,7 +67,8 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
         PrefabList prefabList,
         string? assetName,
         LoadMode loadMode,
-        float time)
+        float time
+    )
     {
         PrefabPool? prefabPool = GetGameObjectPrefabPool(assetName);
         if (!prefabList.AddPool(prefabPool, loadMode, time))
@@ -79,7 +81,8 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
         PrefabDictionary prefabDictionary,
         IReadOnlyList<Track> tracks,
         string? assetName,
-        LoadMode loadMode)
+        LoadMode loadMode
+    )
     {
         PrefabPool? prefabPool = GetGameObjectPrefabPool(assetName);
         foreach (Track track in tracks)
@@ -96,7 +99,8 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
         string? assetName,
         TrailProperties trailProperties,
         LoadMode loadMode,
-        float time)
+        float time
+    )
     {
         TrailPool? trailPool = GetTrailPool(assetName, trailProperties);
         if (!trailList.AddPool(trailPool, loadMode, time))
@@ -129,7 +133,8 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
         IEnumerable<Track> tracks,
         PrefabDictionary prefabDictionary,
         Component component,
-        float startTime)
+        float startTime
+    )
     {
         IHijacker? hijacker = null;
         HashSet<IPrefabPool?>? activePool = null;
@@ -149,7 +154,8 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
                 ref hijacker,
                 ref activePool,
                 ref spawned,
-                ref hideOriginal);
+                ref hideOriginal
+            );
         }
 
         if (spawned != null)
@@ -161,7 +167,8 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
     internal void Spawn<TPool, TSpawned>(
         PrefabList<TPool> prefabList,
         Component component,
-        float startTime)
+        float startTime
+    )
         where TPool : class, IPrefabPool<TSpawned>
     {
         IHijacker? hijacker = null;
@@ -175,7 +182,8 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
             ref hijacker,
             ref activePool,
             ref spawned,
-            ref hideOriginal);
+            ref hideOriginal
+        );
 
         if (spawned != null)
         {
@@ -219,7 +227,10 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
                 return null;
             }
 
-            _trailPools[(assetName, trailProperties)] = trailPool = new TrailPool(material, trailProperties);
+            _trailPools[(assetName, trailProperties)] = trailPool = new TrailPool(
+                material,
+                trailProperties
+            );
         }
 
         return trailPool;
@@ -240,7 +251,8 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
         ref IHijacker? hijacker,
         ref HashSet<IPrefabPool?>? activePool,
         ref List<TSpawned>? spawned,
-        ref bool hideOriginal)
+        ref bool hideOriginal
+    )
         where TPool : IPrefabPool<TSpawned>
     {
         if (prefabPools.Count == 0)
@@ -248,20 +260,20 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
             return;
         }
 
-        if (hijacker == null &&
-            !Hijackers.TryGetValue(component, out hijacker))
+        if (hijacker == null && !Hijackers.TryGetValue(component, out hijacker))
         {
             Hijackers[component] = hijacker = component switch
             {
-                SaberTrail saberTrail => _instantiator.Instantiate<SaberTrailHijacker>([saberTrail]),
-                SaberModelController saberModelController => _instantiator.Instantiate<SaberModelControllerHijacker>(
-                    [saberModelController]),
-                _ => _instantiator.Instantiate<MpbControllerHijacker>([component])
+                SaberTrail saberTrail => _instantiator.Instantiate<SaberTrailHijacker>(
+                    [saberTrail]
+                ),
+                SaberModelController saberModelController =>
+                    _instantiator.Instantiate<SaberModelControllerHijacker>([saberModelController]),
+                _ => _instantiator.Instantiate<MpbControllerHijacker>([component]),
             };
         }
 
-        if (activePool == null &&
-            !ActivePools.TryGetValue(component, out activePool))
+        if (activePool == null && !ActivePools.TryGetValue(component, out activePool))
         {
             ActivePools[component] = activePool = [];
         }

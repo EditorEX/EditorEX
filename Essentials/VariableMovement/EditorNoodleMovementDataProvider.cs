@@ -31,13 +31,15 @@ namespace EditorEX.Essentials.VariableMovement
             IVariableMovementDataProvider original,
             PopulateBeatmap populateBeatmap,
             EditorBasicBeatmapObjectSpawnMovementData editorBasicBeatmapObjectSpawnMovementData,
-            [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData)
+            [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData
+        )
         {
             _original = original;
             _deserializedData = deserializedData;
             _movementData = editorBasicBeatmapObjectSpawnMovementData;
             _noteJumpStartBeatOffset = editorBasicBeatmapObjectSpawnMovementData._noteJumpValue;
-            _oneBeatDuration = populateBeatmap._beatmapLevelDataModel.beatsPerMinute.OneBeatDuration();
+            _oneBeatDuration =
+                populateBeatmap._beatmapLevelDataModel.beatsPerMinute.OneBeatDuration();
             _noteJumpValueType = editorBasicBeatmapObjectSpawnMovementData._noteJumpValueType;
         }
 
@@ -57,7 +59,8 @@ namespace EditorEX.Essentials.VariableMovement
 
         public float noteJumpSpeed => _noteJumpSpeedOverride ?? _original.noteJumpSpeed;
 
-        public Vector3 moveStartPosition => _moveStartPositionOverride ?? _original.moveStartPosition;
+        public Vector3 moveStartPosition =>
+            _moveStartPositionOverride ?? _original.moveStartPosition;
 
         public Vector3 moveEndPosition => _moveEndPositionOverride ?? _original.moveEndPosition;
 
@@ -72,7 +75,8 @@ namespace EditorEX.Essentials.VariableMovement
             BeatmapObjectSpawnMovementData.NoteJumpValueType noteJumpValueType,
             float noteJumpValue,
             Vector3 centerPosition,
-            Vector3 forwardVector)
+            Vector3 forwardVector
+        )
         {
             throw new System.NotImplementedException();
         }
@@ -83,8 +87,10 @@ namespace EditorEX.Essentials.VariableMovement
             return 2f * gravityBase / (halfJumpDur * halfJumpDur);
         }
 
-        public float JumpPosYForLineLayerAtDistanceFromPlayerWithoutJumpOffset(float highestJumpPosY,
-            float distanceFromPlayer)
+        public float JumpPosYForLineLayerAtDistanceFromPlayerWithoutJumpOffset(
+            float highestJumpPosY,
+            float distanceFromPlayer
+        )
         {
             float num = ((jumpDistance * 0.5f) - distanceFromPlayer) / noteJumpSpeed;
             float num2 = NoteJumpGravityForLineLayerWithoutJumpOffset(highestJumpPosY, 0);
@@ -108,8 +114,7 @@ namespace EditorEX.Essentials.VariableMovement
                 return;
             }
 
-            if (noodleData.Njs == null &&
-                noodleData.SpawnOffset == null)
+            if (noodleData.Njs == null && noodleData.SpawnOffset == null)
             {
                 return;
             }
@@ -129,19 +134,20 @@ namespace EditorEX.Essentials.VariableMovement
                     break;
 
                 case BeatmapObjectSpawnMovementData.NoteJumpValueType.BeatOffset:
-                    {
-                        float halfJumpDurationInBeats = CoreMathUtils.CalculateHalfJumpDurationInBeats(
-                            _movementData._startHalfJumpDurationInBeats,
-                            _movementData._maxHalfJumpDistance,
-                            njs,
-                            _oneBeatDuration,
-                            spawnOffset);
+                {
+                    float halfJumpDurationInBeats = CoreMathUtils.CalculateHalfJumpDurationInBeats(
+                        _movementData._startHalfJumpDurationInBeats,
+                        _movementData._maxHalfJumpDistance,
+                        njs,
+                        _oneBeatDuration,
+                        spawnOffset
+                    );
 
-                        float halfJump = _oneBeatDuration * halfJumpDurationInBeats;
-                        _halfJumpDurationOverride = halfJump;
-                        _jumpDurationOverride = halfJump * 2;
-                        break;
-                    }
+                    float halfJump = _oneBeatDuration * halfJumpDurationInBeats;
+                    _halfJumpDurationOverride = halfJump;
+                    _jumpDurationOverride = halfJump * 2;
+                    break;
+                }
             }
 
             _spawnAheadTimeOverride = VariableMovementDataProvider.kMoveDuration + halfJumpDuration;
@@ -153,18 +159,22 @@ namespace EditorEX.Essentials.VariableMovement
             Vector3 forward = Vector3.forward;
 
             _moveStartPositionOverride =
-                center + (forward * (VariableMovementDataProvider.kMoveDistance + halfJumpDistance));
+                center
+                + (forward * (VariableMovementDataProvider.kMoveDistance + halfJumpDistance));
             _moveEndPositionOverride = center + (forward * halfJumpDistance);
             _jumpEndPositionOverride = center - (forward * halfJumpDistance);
         }
 
         private static float LineYPosForLineLayer(float height)
         {
-            return StaticBeatmapObjectSpawnMovementData.kBaseLinesYPos +
-                   (height * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance); // offset by 0.25
+            return StaticBeatmapObjectSpawnMovementData.kBaseLinesYPos
+                + (height * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance); // offset by 0.25
         }
 
-        private float NoteJumpGravityForLineLayerWithoutJumpOffset(float highestJumpPosY, float beforeJumpLineLayer)
+        private float NoteJumpGravityForLineLayerWithoutJumpOffset(
+            float highestJumpPosY,
+            float beforeJumpLineLayer
+        )
         {
             float num = jumpDistance / noteJumpSpeed * 0.5f;
             return 2f * (highestJumpPosY - LineYPosForLineLayer(beforeJumpLineLayer)) / (num * num);
@@ -174,7 +184,8 @@ namespace EditorEX.Essentials.VariableMovement
         {
             public override void Reinitialize(
                 BaseEditorData baseEditorData,
-                EditorNoodleMovementDataProvider noodleMovementDataProvider)
+                EditorNoodleMovementDataProvider noodleMovementDataProvider
+            )
             {
                 noodleMovementDataProvider.InitObject(baseEditorData);
             }

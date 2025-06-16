@@ -8,7 +8,9 @@ namespace EditorEX.Chroma.Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesTo<EnvironmentMaterialsManager.EnvironmentMaterialsManagerInitializer>().AsSingle();
+            Container
+                .BindInterfacesTo<EnvironmentMaterialsManager.EnvironmentMaterialsManagerInitializer>()
+                .AsSingle();
 
             Container.BindInterfacesTo<InjectCustomDataIntoLivePreview>().AsSingle().NonLazy();
         }

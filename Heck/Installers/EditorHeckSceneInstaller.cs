@@ -1,18 +1,18 @@
-﻿using EditorEX.Heck.Deserialize;
+﻿using System.Collections.Generic;
+using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.Events;
 using EditorEX.Heck.Patches;
 using HarmonyLib;
 using Heck;
 using Heck.Animation;
 using Heck.Animation.Transform;
-using Heck.Event;
-using System.Collections.Generic;
 using Heck.BaseProvider;
 using Heck.BaseProviders;
+using Heck.Event;
 using Heck.HarmonyPatches;
 using Heck.ObjectInitialize;
-using Zenject;
 using SiraUtil.Logging;
+using Zenject;
 
 namespace EditorEX.Heck.Installers
 {
@@ -23,7 +23,8 @@ namespace EditorEX.Heck.Installers
 
         public override void InstallBindings()
         {
-            var beatmapTracks = EditorDeserializedDataContainer.Tracks ?? new Dictionary<string, Track>();
+            var beatmapTracks =
+                EditorDeserializedDataContainer.Tracks ?? new Dictionary<string, Track>();
             var deserializedDatas = EditorDeserializedDataContainer.DeserializeDatas;
             _siraLog.Info($"Deserialized {deserializedDatas.Count} custom data objects.");
 

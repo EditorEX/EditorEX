@@ -40,14 +40,13 @@ namespace EditorEX.Util
         public static bool FuzzyMatch(string stringToSearch, string pattern, out int outScore)
         {
             // Score consts
-            const int adjacencyBonus = 5;               // bonus for adjacent matches
-            const int separatorBonus = 10;              // bonus if match occurs after a separator
-            const int camelBonus = 10;                  // bonus if match is uppercase and prev is lower
+            const int adjacencyBonus = 5; // bonus for adjacent matches
+            const int separatorBonus = 10; // bonus if match occurs after a separator
+            const int camelBonus = 10; // bonus if match is uppercase and prev is lower
 
-            const int leadingLetterPenalty = -3;        // penalty applied for every letter in stringToSearch before the first match
-            const int maxLeadingLetterPenalty = -9;     // maximum penalty for leading letters
-            const int unmatchedLetterPenalty = -1;      // penalty for every letter that doesn't matter
-
+            const int leadingLetterPenalty = -3; // penalty applied for every letter in stringToSearch before the first match
+            const int maxLeadingLetterPenalty = -9; // maximum penalty for leading letters
+            const int unmatchedLetterPenalty = -1; // penalty for every letter that doesn't matter
 
             // Loop variables
             var score = 0;
@@ -57,7 +56,7 @@ namespace EditorEX.Util
             var strLength = stringToSearch.Length;
             var prevMatched = false;
             var prevLower = false;
-            var prevSeparator = true;                   // true if first letter match gets separator bonus
+            var prevSeparator = true; // true if first letter match gets separator bonus
 
             // Use "best" matched letter if multiple string letters match the pattern
             char? bestLetter = null;
@@ -73,7 +72,8 @@ namespace EditorEX.Util
                 var patternChar = patternIdx != patternLength ? pattern[patternIdx] as char? : null;
                 var strChar = stringToSearch[strIdx];
 
-                var patternLower = patternChar != null ? char.ToLower((char)patternChar) as char? : null;
+                var patternLower =
+                    patternChar != null ? char.ToLower((char)patternChar) as char? : null;
                 var strLower = char.ToLower(strChar);
                 var strUpper = char.ToUpper(strChar);
 
@@ -81,7 +81,8 @@ namespace EditorEX.Util
                 var rematch = bestLetter != null && bestLower == strLower;
 
                 var advanced = nextMatch && bestLetter != null;
-                var patternRepeat = bestLetter != null && patternChar != null && bestLower == patternLower;
+                var patternRepeat =
+                    bestLetter != null && patternChar != null && bestLower == patternLower;
                 if (advanced || patternRepeat)
                 {
                     score += bestLetterScore;
@@ -100,7 +101,10 @@ namespace EditorEX.Util
                     // Note: Math.Max because penalties are negative values. So max is smallest penalty.
                     if (patternIdx == 0)
                     {
-                        var penalty = Math.Max(strIdx * leadingLetterPenalty, maxLeadingLetterPenalty);
+                        var penalty = Math.Max(
+                            strIdx * leadingLetterPenalty,
+                            maxLeadingLetterPenalty
+                        );
                         score += penalty;
                     }
 

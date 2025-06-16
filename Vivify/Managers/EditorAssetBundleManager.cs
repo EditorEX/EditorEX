@@ -4,8 +4,8 @@ using System.IO;
 using EditorEX.Essentials.Patches;
 using SiraUtil.Logging;
 using UnityEngine;
-using Object = UnityEngine.Object;
 using static Vivify.VivifyController;
+using Object = UnityEngine.Object;
 
 // Based from https://github.com/Aeroluna/Vivify
 namespace EditorEX.Vivify.Managers;
@@ -16,15 +16,14 @@ public class EditorAssetBundleManager : IDisposable
     private readonly SiraLog _log;
     private readonly AssetBundle? _mainBundle;
 
-    private EditorAssetBundleManager(
-        SiraLog log,
-        PopulateBeatmap populateBeatmap)
+    private EditorAssetBundleManager(SiraLog log, PopulateBeatmap populateBeatmap)
     {
         _log = log;
 
         string path = Path.Combine(
             Path.GetDirectoryName(populateBeatmap._beatmapLevelDataModel.songFilePath)!,
-            BUNDLE_FILE);
+            BUNDLE_FILE
+        );
 
         if (!File.Exists(path))
         {

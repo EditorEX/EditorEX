@@ -1,9 +1,9 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using NoodleExtensions.Animation;
-using System;
 using UnityEngine;
 using Zenject;
 
@@ -11,13 +11,16 @@ namespace EditorEX.Essentials.Movement.Note
 {
     public class EditorNoteFloorMovement : MonoBehaviour
     {
-        //Events 
+        //Events
 
         public event Action floorMovementDidFinishEvent;
 
         // Properties
 
-        public float distanceToPlayer => Mathf.Abs(_localPosition.z - (_inverseWorldRotation * _playerTransforms.headPseudoLocalPos).z);
+        public float distanceToPlayer =>
+            Mathf.Abs(
+                _localPosition.z - (_inverseWorldRotation * _playerTransforms.headPseudoLocalPos).z
+            );
         public float noteTime => _beatTime;
         public Vector3 endPos => _variableMovementDataProvider.moveEndPosition + _moveEndOffset;
         public Quaternion worldRotation => _worldRotation;
@@ -33,7 +36,6 @@ namespace EditorEX.Essentials.Movement.Note
         internal Quaternion _worldRotation;
         internal Quaternion _inverseWorldRotation;
 
-
         // Injected Fields
 
         private EditorDeserializedData _editorDeserializedData = null!;
@@ -47,7 +49,8 @@ namespace EditorEX.Essentials.Movement.Note
             [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
             PlayerTransforms playerTransforms,
-            IAudioTimeSource audioTimeSyncController)
+            IAudioTimeSource audioTimeSyncController
+        )
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
@@ -55,7 +58,15 @@ namespace EditorEX.Essentials.Movement.Note
             _audioTimeSyncController = audioTimeSyncController;
         }
 
-        public void Init(NoteEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, float worldRotation, float beatTime, Vector3 moveStartOffset, Vector3 moveEndOffset, Func<IObjectVisuals>? getVisualRoot)
+        public void Init(
+            NoteEditorData? editorData,
+            IVariableMovementDataProvider variableMovementDataProvider,
+            float worldRotation,
+            float beatTime,
+            Vector3 moveStartOffset,
+            Vector3 moveEndOffset,
+            Func<IObjectVisuals>? getVisualRoot
+        )
         {
             _editorData = editorData;
             if (!(_editorDeserializedData?.Resolve(editorData, out _noodleData) ?? false))
@@ -81,7 +92,12 @@ namespace EditorEX.Essentials.Movement.Note
                 return original;
             }
 
-            _animationHelper.GetDefinitePositionOffset(noodleData.AnimationObject, noodleData.Track, 0, out Vector3? position);
+            _animationHelper.GetDefinitePositionOffset(
+                noodleData.AnimationObject,
+                noodleData.Track,
+                0,
+                out Vector3? position
+            );
             if (!position.HasValue)
             {
                 return original;
@@ -102,8 +118,19 @@ namespace EditorEX.Essentials.Movement.Note
 
         public Vector3 ManualUpdate()
         {
-            float num = _audioTimeSyncController.songTime - (_beatTime - _variableMovementDataProvider.moveDuration - _variableMovementDataProvider.halfJumpDuration); ;
-            _localPosition = Vector3.LerpUnclamped(_variableMovementDataProvider.moveStartPosition + _moveStartOffset, _variableMovementDataProvider.moveEndPosition + _moveEndOffset, num / _variableMovementDataProvider.moveDuration);
+            float num =
+                _audioTimeSyncController.songTime
+                - (
+                    _beatTime
+                    - _variableMovementDataProvider.moveDuration
+                    - _variableMovementDataProvider.halfJumpDuration
+                );
+            ;
+            _localPosition = Vector3.LerpUnclamped(
+                _variableMovementDataProvider.moveStartPosition + _moveStartOffset,
+                _variableMovementDataProvider.moveEndPosition + _moveEndOffset,
+                num / _variableMovementDataProvider.moveDuration
+            );
             Vector3 vector = _worldRotation * _localPosition;
             transform.localPosition = DefiniteNoteFloorMovement(vector);
             if (num >= _variableMovementDataProvider.moveDuration)

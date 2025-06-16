@@ -1,4 +1,8 @@
-﻿using Chroma.EnvironmentEnhancement;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Chroma.EnvironmentEnhancement;
 using Chroma.EnvironmentEnhancement.Component;
 using Chroma.EnvironmentEnhancement.Saved;
 using Chroma.HarmonyPatches.EnvironmentComponent;
@@ -9,10 +13,6 @@ using EditorEX.MapData.Contexts;
 using Heck.Animation;
 using Heck.Animation.Transform;
 using SiraUtil.Logging;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -29,7 +29,8 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
         private bool _leftHanded;
         private EditorGeometryFactory _geometryFactory = null!;
         private TrackLaneRingOffset _trackLaneRingOffset = null!;
-        private ParametricBoxControllerTransformOverride _parametricBoxControllerTransformOverride = null!;
+        private ParametricBoxControllerTransformOverride _parametricBoxControllerTransformOverride =
+            null!;
         private EditorDuplicateInitializer _duplicateInitializer = null!;
         private EditorComponentCustomizer _componentCustomizer = null!;
         private TransformControllerFactory _controllerFactory = null!;
@@ -48,7 +49,8 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             EditorComponentCustomizer componentCustomizer,
             TransformControllerFactory controllerFactory,
             SavedEnvironmentLoader savedEnvironmentLoader,
-            EnvironmentSceneSetupData sceneSetupData)
+            EnvironmentSceneSetupData sceneSetupData
+        )
         {
             _log = log;
             _tracks = tracks;
@@ -98,9 +100,10 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                 gradientBackground.SetActive(false);
             }
 
-            environmentData = CustomDataRepository.GetBeatmapData().customData
-                    .Get<List<object>>(v2 ? V2_ENVIRONMENT : ENVIRONMENT)?
-                    .Cast<CustomData>();
+            environmentData = CustomDataRepository
+                .GetBeatmapData()
+                .customData.Get<List<object>>(v2 ? V2_ENVIRONMENT : ENVIRONMENT)
+                ?.Cast<CustomData>();
 
             if (v2)
             {
@@ -139,57 +142,87 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             {
                 try
                 {
-                    int? dupeAmount = gameObjectData.Get<int?>(v2 ? V2_DUPLICATION_AMOUNT : DUPLICATION_AMOUNT);
+                    int? dupeAmount = gameObjectData.Get<int?>(
+                        v2 ? V2_DUPLICATION_AMOUNT : DUPLICATION_AMOUNT
+                    );
                     bool? active = gameObjectData.Get<bool?>(v2 ? V2_ACTIVE : ACTIVE);
                     TransformData spawnData = new(gameObjectData, v2);
                     int? lightID = gameObjectData.Get<int?>(V2_LIGHT_ID);
 
                     List<GameObjectInfo> foundObjects;
-                    CustomData? geometryData = gameObjectData.Get<CustomData?>(v2 ? V2_GEOMETRY : GEOMETRY);
+                    CustomData? geometryData = gameObjectData.Get<CustomData?>(
+                        v2 ? V2_GEOMETRY : GEOMETRY
+                    );
                     if (geometryData != null)
                     {
-                        GameObjectInfo newObjectInfo = new(_geometryFactory.Create(geometryData, v2));
+                        GameObjectInfo newObjectInfo = new(
+                            _geometryFactory.Create(geometryData, v2)
+                        );
                         allGameObjectInfos.Add(newObjectInfo);
                         foundObjects = new List<GameObjectInfo> { newObjectInfo };
 
                         // cause i know ppl are gonna fck it up
                         string? id = gameObjectData.Get<string>(GAMEOBJECT_ID);
-                        LookupMethod? lookupMethod = gameObjectData.GetStringToEnum<LookupMethod?>(LOOKUP_METHOD);
+                        LookupMethod? lookupMethod = gameObjectData.GetStringToEnum<LookupMethod?>(
+                            LOOKUP_METHOD
+                        );
                         if (id != null || lookupMethod != null)
                         {
-                            throw new InvalidOperationException("you cant have geometry and an id you goofball");
+                            throw new InvalidOperationException(
+                                "you cant have geometry and an id you goofball"
+                            );
                         }
                     }
                     else
                     {
-                        string id = gameObjectData.GetRequired<string>(v2 ? V2_GAMEOBJECT_ID : GAMEOBJECT_ID);
+                        string id = gameObjectData.GetRequired<string>(
+                            v2 ? V2_GAMEOBJECT_ID : GAMEOBJECT_ID
+                        );
                         LookupMethod lookupMethod =
-                            gameObjectData.GetStringToEnumRequired<LookupMethod>(v2 ? V2_LOOKUP_METHOD : LOOKUP_METHOD);
-                        foundObjects = LookupID.Get(allGameObjectInfos, gameObjectInfoIds, id, lookupMethod);
+                            gameObjectData.GetStringToEnumRequired<LookupMethod>(
+                                v2 ? V2_LOOKUP_METHOD : LOOKUP_METHOD
+                            );
+                        foundObjects = LookupID.Get(
+                            allGameObjectInfos,
+                            gameObjectInfoIds,
+                            id,
+                            lookupMethod
+                        );
 
                         if (foundObjects.Count == 0)
                         {
                             throw new InvalidOperationException(
-                                $"ID [\"{id}\"] using method [{lookupMethod:G}] found nothing.");
+                                $"ID [\"{id}\"] using method [{lookupMethod:G}] found nothing."
+                            );
                         }
                     }
 
                     CustomData? componentData = null;
                     if (!v2)
                     {
-                        componentData = gameObjectData.Get<CustomData>(ComponentConstants.COMPONENTS);
+                        componentData = gameObjectData.Get<CustomData>(
+                            ComponentConstants.COMPONENTS
+                        );
                     }
                     else if (lightID != null)
                     {
-                        componentData = new CustomData(new[]
-                        {
-                            new KeyValuePair<string, object?>(
-                                ComponentConstants.LIGHT_WITH_ID,
-                                new CustomData(new[]
-                                {
-                                    new KeyValuePair<string, object?>(LIGHT_ID, lightID.Value)
-                                }))
-                        });
+                        componentData = new CustomData(
+                            new[]
+                            {
+                                new KeyValuePair<string, object?>(
+                                    ComponentConstants.LIGHT_WITH_ID,
+                                    new CustomData(
+                                        new[]
+                                        {
+                                            new KeyValuePair<string, object?>(
+                                                LIGHT_ID,
+                                                lightID.Value
+                                            ),
+                                        }
+                                    )
+                                ),
+                            }
+                        );
                     }
 
                     List<GameObject> gameObjects;
@@ -201,7 +234,8 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                         if (foundObjects.Count > 100)
                         {
                             throw new InvalidOperationException(
-                                "Extreme value reached, you are attempting to duplicate over 100 objects! Environment enhancements stopped");
+                                "Extreme value reached, you are attempting to duplicate over 100 objects! Environment enhancements stopped"
+                            );
                         }
 
                         foreach (GameObjectInfo gameObjectInfo in foundObjects)
@@ -213,12 +247,16 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                             for (int i = 0; i < dupeAmount.Value; i++)
                             {
                                 List<IComponentData> componentDatas = new();
-                                EditorDuplicateInitializer.PrefillComponentsData(gameObject.transform, componentDatas);
+                                EditorDuplicateInitializer.PrefillComponentsData(
+                                    gameObject.transform,
+                                    componentDatas
+                                );
                                 GameObject newGameObject = Instantiate(gameObject);
                                 _duplicateInitializer.PostfillComponentsData(
                                     newGameObject.transform,
                                     gameObject.transform,
-                                    componentDatas);
+                                    componentDatas
+                                );
                                 SceneManager.MoveGameObjectToScene(newGameObject, scene);
 
                                 // ReSharper disable once Unity.InstantiateWithoutParent
@@ -228,10 +266,12 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                                     newGameObject.transform,
                                     gameObject.transform,
                                     allGameObjectInfos,
-                                    componentDatas);
+                                    componentDatas
+                                );
 
-                                List<GameObjectInfo> gameObjectInfos =
-                                    allGameObjectInfos.Where(n => n.GameObject == newGameObject).ToList();
+                                List<GameObjectInfo> gameObjectInfos = allGameObjectInfos
+                                    .Where(n => n.GameObject == newGameObject)
+                                    .ToList();
                                 gameObjects.AddRange(gameObjectInfos.Select(n => n.GameObject));
                             }
                         }
@@ -261,7 +301,8 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                         spawnData.Apply(transform, _leftHanded, v2);
 
                         // Handle TrackLaneRing
-                        TrackLaneRing? trackLaneRing = gameObject.GetComponentInChildren<TrackLaneRing>();
+                        TrackLaneRing? trackLaneRing =
+                            gameObject.GetComponentInChildren<TrackLaneRing>();
                         if (trackLaneRing != null)
                         {
                             _trackLaneRingOffset.SetTransform(trackLaneRing, spawnData);
@@ -272,7 +313,10 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                             gameObject.GetComponentInChildren<ParametricBoxController>();
                         if (parametricBoxController != null)
                         {
-                            _parametricBoxControllerTransformOverride.SetTransform(parametricBoxController, spawnData);
+                            _parametricBoxControllerTransformOverride.SetTransform(
+                                parametricBoxController,
+                                spawnData
+                            );
                         }
 
                         if (componentData != null)
@@ -280,24 +324,36 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                             _componentCustomizer.Customize(transform, componentData);
                         }
 
-                        List<Track>? track = gameObjectData.GetNullableTrackArray(_tracks, v2)?.ToList();
+                        List<Track>? track = gameObjectData
+                            .GetNullableTrackArray(_tracks, v2)
+                            ?.ToList();
                         if (track == null)
                         {
                             continue;
                         }
 
-                        TransformController controller = _controllerFactory.Create(gameObject, track, true);
+                        TransformController controller = _controllerFactory.Create(
+                            gameObject,
+                            track,
+                            true
+                        );
                         if (trackLaneRing != null)
                         {
-                            controller.RotationUpdated += () => _trackLaneRingOffset.UpdateRotation(trackLaneRing);
-                            controller.PositionUpdated += () => TrackLaneRingOffset.UpdatePosition(trackLaneRing);
+                            controller.RotationUpdated += () =>
+                                _trackLaneRingOffset.UpdateRotation(trackLaneRing);
+                            controller.PositionUpdated += () =>
+                                TrackLaneRingOffset.UpdatePosition(trackLaneRing);
                         }
                         else if (parametricBoxController != null)
                         {
                             controller.PositionUpdated += () =>
-                                _parametricBoxControllerTransformOverride.UpdatePosition(parametricBoxController);
+                                _parametricBoxControllerTransformOverride.UpdatePosition(
+                                    parametricBoxController
+                                );
                             controller.ScaleUpdated += () =>
-                                _parametricBoxControllerTransformOverride.UpdateScale(parametricBoxController);
+                                _parametricBoxControllerTransformOverride.UpdateScale(
+                                    parametricBoxController
+                                );
                         }
 
                         track.ForEach(n => n.AddGameObject(gameObject));
@@ -316,37 +372,43 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             List<GameObjectInfo> result = new();
 
             // I'll probably revist this formula for getting objects by only grabbing the root objects and adding all the children
-            List<GameObject> gameObjects = Resources.FindObjectsOfTypeAll<GameObject>().Where(n =>
-            {
-                if (n == null)
+            List<GameObject> gameObjects = Resources
+                .FindObjectsOfTypeAll<GameObject>()
+                .Where(n =>
                 {
-                    return false;
-                }
+                    if (n == null)
+                    {
+                        return false;
+                    }
 
-                string sceneName = n.scene.name;
-                if (sceneName == null)
-                {
-                    return false;
-                }
+                    string sceneName = n.scene.name;
+                    if (sceneName == null)
+                    {
+                        return false;
+                    }
 
-                return (sceneName.Contains("Environment") && !sceneName.Contains("Menu")) || n.GetComponent<TrackLaneRing>() != null;
-            }).ToList();
+                    return (sceneName.Contains("Environment") && !sceneName.Contains("Menu"))
+                        || n.GetComponent<TrackLaneRing>() != null;
+                })
+                .ToList();
 
             // Adds the children of whitelist GameObjects
             // Mainly for grabbing cone objects in KaleidoscopeEnvironment
-            gameObjects.ToList().ForEach(n =>
-            {
-                List<Transform> allChildren = new();
-                GetChildRecursive(n.transform, ref allChildren);
-
-                foreach (Transform transform in allChildren)
+            gameObjects
+                .ToList()
+                .ForEach(n =>
                 {
-                    if (!gameObjects.Contains(transform.gameObject))
+                    List<Transform> allChildren = new();
+                    GetChildRecursive(n.transform, ref allChildren);
+
+                    foreach (Transform transform in allChildren)
                     {
-                        gameObjects.Add(transform.gameObject);
+                        if (!gameObjects.Contains(transform.gameObject))
+                        {
+                            gameObjects.Add(transform.gameObject);
+                        }
                     }
-                }
-            });
+                });
 
             List<string> objectsToPrint = new();
 

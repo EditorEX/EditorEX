@@ -1,4 +1,6 @@
-﻿using BeatmapEditor3D;
+﻿using System;
+using System.Collections.Generic;
+using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Visuals;
@@ -8,8 +10,6 @@ using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
 using SiraUtil.Logging;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -61,7 +61,8 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             ColorManager colorManager,
             IAudioTimeSource audioTimeSyncController,
             AudioDataModel audioDataModel,
-            SiraLog siraLog)
+            SiraLog siraLog
+        )
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
@@ -76,7 +77,13 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
         {
             Quaternion worldRotation = Quaternion.Euler(0, @default, 0);
 
-            if (!_editorDeserializedData.Resolve(obstacleData, out EditorNoodleObstacleData? noodleData) || noodleData == null)
+            if (
+                !_editorDeserializedData.Resolve(
+                    obstacleData,
+                    out EditorNoodleObstacleData? noodleData
+                )
+                || noodleData == null
+            )
             {
                 return worldRotation;
             }
@@ -103,12 +110,20 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
         {
             EditorNoodleObstacleData? noodleData = null;
             _editorDeserializedData?.Resolve(obstacleData, out noodleData);
-            return noodleData?.Length * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance ?? @default;
+            return noodleData?.Length * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance
+                ?? @default;
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
+        public void Init(
+            BaseEditorData? editorData,
+            IVariableMovementDataProvider variableMovementDataProvider,
+            EditorBasicBeatmapObjectSpawnMovementData movementData,
+            Func<IObjectVisuals>? getVisualRoot
+        )
         {
-            _stretchableObstacle = transform.Find("GameWallRoot").GetComponent<StretchableObstacle>();
+            _stretchableObstacle = transform
+                .Find("GameWallRoot")
+                .GetComponent<StretchableObstacle>();
             _selection = GetComponent<ObstacleViewSelection>();
 
             _variableMovementDataProvider = variableMovementDataProvider;
@@ -121,7 +136,9 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 return;
             }
 
-            var obstacleSpawnData = _editorBeatmapObjectSpawnMovementData.GetObstacleSpawnData(_editorData);
+            var obstacleSpawnData = _editorBeatmapObjectSpawnMovementData.GetObstacleSpawnData(
+                _editorData
+            );
 
             float worldRotation = 0f;
 
@@ -131,22 +148,42 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             _height = obstacleSpawnData.obstacleHeight;
             _color = _colorManager.obstaclesColor;
             _width = GetCustomWidth(obstacleSpawnData.obstacleWidth, _editorData);
-            Vector3 vector = _variableMovementDataProvider.moveStartPosition + obstacleSpawnData.moveOffset;
-            Vector3 vector2 = _variableMovementDataProvider.moveEndPosition + obstacleSpawnData.moveOffset;
-            float num = (_variableMovementDataProvider.jumpEndPosition + obstacleSpawnData.moveOffset - vector2).magnitude / _variableMovementDataProvider.jumpDuration;
+            Vector3 vector =
+                _variableMovementDataProvider.moveStartPosition + obstacleSpawnData.moveOffset;
+            Vector3 vector2 =
+                _variableMovementDataProvider.moveEndPosition + obstacleSpawnData.moveOffset;
+            float num =
+                (
+                    _variableMovementDataProvider.jumpEndPosition
+                    + obstacleSpawnData.moveOffset
+                    - vector2
+                ).magnitude / _variableMovementDataProvider.jumpDuration;
             _length = GetCustomLength(num * _editorData.duration, _editorData);
-            _stretchableObstacle.SetAllProperties(_width * 0.98f, _height, _length, _color, _state.beat);
+            _stretchableObstacle.SetAllProperties(
+                _width * 0.98f,
+                _height,
+                _length,
+                _color,
+                _state.beat
+            );
             _selection.SetObstacleData(_width, _height, _length);
             _selection.UpdateState();
             _bounds = _stretchableObstacle.bounds;
             _passedThreeQuartersOfMove2Reported = false;
             _passedAvoidedMarkReported = false;
-            _passedAvoidedMarkTime = _move1Duration + _move2Duration * 0.5f + _obstacleDuration + 0.15f;
+            _passedAvoidedMarkTime =
+                _move1Duration + _move2Duration * 0.5f + _obstacleDuration + 0.15f;
             _finishMovementTime = _move1Duration + _move2Duration + _obstacleDuration;
             transform.localPosition = vector;
             transform.localRotation = _worldRotation;
 
-            if (!_editorDeserializedData.Resolve(editorData, out EditorNoodleObstacleData? noodleData) || noodleData == null)
+            if (
+                !_editorDeserializedData.Resolve(
+                    editorData,
+                    out EditorNoodleObstacleData? noodleData
+                )
+                || noodleData == null
+            )
             {
                 return;
             }
@@ -182,30 +219,37 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             noodleData.InternalNoteOffset = noteOffset;
         }
 
-        public void Enable()
-        {
+        public void Enable() { }
 
-        }
+        public void Disable() { }
 
-        public void Disable()
-        {
-
-        }
-
-        public void Setup(BaseEditorData? editorData)
-        {
-        }
+        public void Setup(BaseEditorData? editorData) { }
 
         private bool NoodleGetPosForTime(float time, out Vector3 __result)
         {
             __result = default;
-            if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleObstacleData? noodleData) || noodleData == null)
+            if (
+                !_editorDeserializedData.Resolve(
+                    _editorData,
+                    out EditorNoodleObstacleData? noodleData
+                )
+                || noodleData == null
+            )
             {
                 return false;
             }
 
-            float jumpTime = Mathf.Clamp((time - _move1Duration) / (_move2Duration + _obstacleDuration), 0, 1);
-            _animationHelper.GetDefinitePositionOffset(noodleData.AnimationObject, noodleData.Track, jumpTime, out Vector3? position);
+            float jumpTime = Mathf.Clamp(
+                (time - _move1Duration) / (_move2Duration + _obstacleDuration),
+                0,
+                1
+            );
+            _animationHelper.GetDefinitePositionOffset(
+                noodleData.AnimationObject,
+                noodleData.Track,
+                jumpTime,
+                out Vector3? position
+            );
 
             if (!position.HasValue)
             {
@@ -237,7 +281,11 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             Vector3 vector;
             if (time < _move1Duration)
             {
-                vector = Vector3.LerpUnclamped(_startPos, _midPos, (_move1Duration < Mathf.Epsilon) ? 0f : (time / _move1Duration));
+                vector = Vector3.LerpUnclamped(
+                    _startPos,
+                    _midPos,
+                    (_move1Duration < Mathf.Epsilon) ? 0f : (time / _move1Duration)
+                );
             }
             else
             {
@@ -247,7 +295,9 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 vector.z = Mathf.LerpUnclamped(_midPos.z, _endPos.z, num);
                 if (_passedAvoidedMarkReported)
                 {
-                    float num2 = (time - _passedAvoidedMarkTime) / (_finishMovementTime - _passedAvoidedMarkTime);
+                    float num2 =
+                        (time - _passedAvoidedMarkTime)
+                        / (_finishMovementTime - _passedAvoidedMarkTime);
                     num2 = num2 * num2 * num2;
                     vector.z -= Mathf.LerpUnclamped(0f, 500f, num2);
                 }
@@ -257,7 +307,13 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
         public void NoodleUpdate()
         {
-            if (!_editorDeserializedData.Resolve(_editorData, out EditorNoodleObstacleData? noodleData) || noodleData == null)
+            if (
+                !_editorDeserializedData.Resolve(
+                    _editorData,
+                    out EditorNoodleObstacleData? noodleData
+                )
+                || noodleData == null
+            )
             {
                 return;
             }
@@ -296,7 +352,8 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 out Quaternion? localRotationOffset,
                 out float? dissolve,
                 out _,
-                out float? cuttable);
+                out float? cuttable
+            );
 
             if (positionOffset.HasValue)
             {
@@ -351,7 +408,6 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             }
         }
 
-
         public void ManualUpdate()
         {
             NoodleUpdate();
@@ -359,7 +415,10 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             float num = _audioTimeSyncController.songTime - _startTimeOffset;
             Vector3 posForTime = GetPosForTime(num);
             transform.localPosition = _worldRotation * posForTime;
-            if (!_passedThreeQuartersOfMove2Reported && num > _move1Duration + _move2Duration * 0.75f)
+            if (
+                !_passedThreeQuartersOfMove2Reported
+                && num > _move1Duration + _move2Duration * 0.75f
+            )
             {
                 _passedThreeQuartersOfMove2Reported = true;
             }

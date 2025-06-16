@@ -1,6 +1,6 @@
-﻿using BeatmapEditor3D;
+﻿using System;
+using BeatmapEditor3D;
 using HMUI;
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -83,7 +83,11 @@ namespace EditorEX.SDK.Components
                 RectTransform rectTransform = (RectTransform)transform;
                 rectTransform.pivot = new Vector2(0.5f, 0.5f);
                 Vector2 center = ((RectTransform)modalRootTransform).rect.center;
-                rectTransform.localPosition = new Vector3(center.x, center.y, rectTransform.localPosition.z);
+                rectTransform.localPosition = new Vector3(
+                    center.x,
+                    center.y,
+                    rectTransform.localPosition.z
+                );
             }
             else
             {
@@ -134,7 +138,9 @@ namespace EditorEX.SDK.Components
                 EssentialHelpers.GetOrAddComponent<GraphicRaycaster>(gameObject);
             }
             gameObject.AddComponent<Touchable>();
-            gameObject.AddComponent<Button>().onClick.AddListener(new UnityAction(HandleBlockerButtonClicked));
+            gameObject
+                .AddComponent<Button>()
+                .onClick.AddListener(new UnityAction(HandleBlockerButtonClicked));
             return gameObject;
         }
 
@@ -150,9 +156,11 @@ namespace EditorEX.SDK.Components
 
         private static Transform GetModalRootTransform(Transform transform)
         {
-            BeatmapEditorScreen componentInParent = transform.GetComponentInParent<BeatmapEditorScreen>();
+            BeatmapEditorScreen componentInParent =
+                transform.GetComponentInParent<BeatmapEditorScreen>();
             var canvas = componentInParent.GetComponentInChildren<Canvas>();
-            var viewController = componentInParent.GetComponentInChildren<BeatmapEditorViewController>();
+            var viewController =
+                componentInParent.GetComponentInChildren<BeatmapEditorViewController>();
             if (viewController != null)
             {
                 return viewController.transform;

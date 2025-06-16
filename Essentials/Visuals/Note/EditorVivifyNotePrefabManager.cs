@@ -5,7 +5,10 @@ namespace EditorEX.Essentials.Visuals.Note;
 
 internal class EditorVivifyNotePrefabManager
 {
-    internal readonly EventInfo Changed = typeof(PrefabDictionary).GetEvent("Changed", BindingFlags.Instance)!;
+    internal readonly EventInfo Changed = typeof(PrefabDictionary).GetEvent(
+        "Changed",
+        BindingFlags.Instance
+    )!;
     internal PrefabDictionary AnyDirectionNotePrefabs { get; } = new();
 
     internal PrefabDictionary BombNotePrefabs { get; } = new();

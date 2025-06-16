@@ -1,7 +1,7 @@
-﻿using BeatmapEditor3D;
+﻿using System.Linq;
+using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Analyzer.Swings.SwingBaker;
-using System.Linq;
 using UnityEngine;
 using Zenject;
 
@@ -32,7 +32,8 @@ namespace EditorEX.Analyzer.Swings
             IReadonlyBeatmapState state,
             LevelUtils levelUtils,
             AudioDataModel audioDataModel,
-            BeatmapObjectsDataModel beatmapObjectsDataModel)
+            BeatmapObjectsDataModel beatmapObjectsDataModel
+        )
         {
             _saberManager = saberManager;
             _leftSaber = _saberManager.leftSaber;
@@ -47,14 +48,28 @@ namespace EditorEX.Analyzer.Swings
         {
             Resources.FindObjectsOfTypeAll<CuttingManager>().FirstOrDefault().enabled = false;
 
-            var notes = _beatmapObjectsDataModel.allBeatmapObjects.OfType<NoteEditorData>().ToList();
-            var obstacles = _beatmapObjectsDataModel.allBeatmapObjects.OfType<ObstacleEditorData>().ToList();
+            var notes = _beatmapObjectsDataModel
+                .allBeatmapObjects.OfType<NoteEditorData>()
+                .ToList();
+            var obstacles = _beatmapObjectsDataModel
+                .allBeatmapObjects.OfType<ObstacleEditorData>()
+                .ToList();
 
             var sliceMapRight = new SliceMap(notes, obstacles, true, _audioDataModel);
             var sliceMapLeft = new SliceMap(notes, obstacles, false, _audioDataModel);
 
-            _swingTrackGeneratorLeft = new SwingTrackGenerator(sliceMapLeft, false, _levelUtils, _audioDataModel);
-            _swingTrackGeneratorRight = new SwingTrackGenerator(sliceMapRight, true, _levelUtils, _audioDataModel);
+            _swingTrackGeneratorLeft = new SwingTrackGenerator(
+                sliceMapLeft,
+                false,
+                _levelUtils,
+                _audioDataModel
+            );
+            _swingTrackGeneratorRight = new SwingTrackGenerator(
+                sliceMapRight,
+                true,
+                _levelUtils,
+                _audioDataModel
+            );
         }
 
         float _prevBeat = 999f;
@@ -65,7 +80,7 @@ namespace EditorEX.Analyzer.Swings
             {
                 return;
             }
-            
+
             _saberManager.transform.parent.gameObject.SetActive(true);
             if (_swingTrackLeft == null || _swingTrackRight == null)
             {

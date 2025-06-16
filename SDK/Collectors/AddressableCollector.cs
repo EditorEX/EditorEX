@@ -1,8 +1,8 @@
-﻿using EditorEX.SDK.AddressableHelpers;
-using EditorEX.SDK.Signals;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using EditorEX.SDK.AddressableHelpers;
+using EditorEX.SDK.Signals;
 using UnityEngine;
 using Zenject;
 
@@ -15,9 +15,7 @@ namespace EditorEX.SDK.Collectors
         private SignalBus _signalBus = null!;
 
         [Inject]
-        private void Construct(
-            List<IAddressableCollectorItem> collectingItems,
-            SignalBus signalBus)
+        private void Construct(List<IAddressableCollectorItem> collectingItems, SignalBus signalBus)
         {
             _collectingItems = collectingItems;
             _signalBus = signalBus;
@@ -39,7 +37,8 @@ namespace EditorEX.SDK.Collectors
             return result;
         }
 
-        public T GetObject<T>(string label) where T : UnityEngine.Object
+        public T GetObject<T>(string label)
+            where T : UnityEngine.Object
         {
             T result = null;
 
@@ -71,18 +70,29 @@ namespace EditorEX.SDK.Collectors
         {
             foreach (var item in _collectingItems)
             {
-                var opHandle = UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<UnityEngine.Object>(item.Key);
+                var opHandle =
+                    UnityEngine.AddressableAssets.Addressables.LoadAssetAsync<UnityEngine.Object>(
+                        item.Key
+                    );
 
                 opHandle.Completed += (op) =>
                 {
                     if (op.OperationException != null)
                     {
-                        Debug.LogError($"Failed to load asset {item.Key} ({item.Label}): {op.OperationException.Message}");
+                        Debug.LogError(
+                            $"Failed to load asset {item.Key} ({item.Label}): {op.OperationException.Message}"
+                        );
                         return;
                     }
                     item.InternalValue = op.Result;
 
-                    var signal = Activator.CreateInstance(typeof(AddressableCollectorItemLoadedSignal<>).MakeGenericType(item.InternalValue.GetType()), item.Label, item.InternalValue);
+                    var signal = Activator.CreateInstance(
+                        typeof(AddressableCollectorItemLoadedSignal<>).MakeGenericType(
+                            item.InternalValue.GetType()
+                        ),
+                        item.Label,
+                        item.InternalValue
+                    );
                     _signals.Add(signal as IAddressableCollectorItemLoadedSignal);
                     _signalBus.Fire(signal);
                 };

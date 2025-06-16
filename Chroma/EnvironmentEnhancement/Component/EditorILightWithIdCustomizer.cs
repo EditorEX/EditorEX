@@ -1,9 +1,9 @@
-﻿using CustomJSONData.CustomBeatmap;
-using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
-using EditorEX.Chroma.Colorizer;
-using SiraUtil.Logging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using CustomJSONData.CustomBeatmap;
+using EditorEX.Chroma.Colorizer;
+using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
+using SiraUtil.Logging;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
 
 // Based from https://github.com/Aeroluna/Heck
@@ -20,7 +20,8 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
             SiraLog log,
             EditorLightColorizerManager lightColorizerManager,
             EditorLightWithIdRegisterer lightWithIdRegisterer,
-            LightWithIdManager lightWithIdManager)
+            LightWithIdManager lightWithIdManager
+        )
         {
             _log = log;
             _lightColorizerManager = lightColorizerManager;
@@ -28,7 +29,10 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
             _lightWithIdManager = lightWithIdManager;
         }
 
-        internal void ILightWithIdInit(List<UnityEngine.Component> allComponents, CustomData customData)
+        internal void ILightWithIdInit(
+            List<UnityEngine.Component> allComponents,
+            CustomData customData
+        )
         {
             ILightWithId[] lightWithIds = allComponents
                 .OfType<LightWithIds>()
@@ -82,7 +86,9 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
                         return;
                     }
 
-                    int lightId = _lightColorizerManager.GetColorizer((BasicBeatmapEventType)type.Value).ChromaLightSwitchEventEffect.LightsID;
+                    int lightId = _lightColorizerManager
+                        .GetColorizer((BasicBeatmapEventType)type.Value)
+                        .ChromaLightSwitchEventEffect.LightsID;
 
                     switch (lightWithId)
                     {

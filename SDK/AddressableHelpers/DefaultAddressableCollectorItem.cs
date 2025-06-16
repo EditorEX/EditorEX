@@ -2,7 +2,8 @@
 
 namespace EditorEX.SDK.AddressableHelpers
 {
-    public class DefaultAddressableCollectorItem<T> : IAddressableCollectorItem where T : UnityEngine.Object
+    public class DefaultAddressableCollectorItem<T> : IAddressableCollectorItem
+        where T : UnityEngine.Object
     {
         public string Label { get; }
 
@@ -10,10 +11,7 @@ namespace EditorEX.SDK.AddressableHelpers
 
         public UnityEngine.Object InternalValue
         {
-            get
-            {
-                return _value;
-            }
+            get { return _value; }
             set
             {
                 if (value is T valueT)

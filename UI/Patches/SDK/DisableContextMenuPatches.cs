@@ -10,26 +10,37 @@ namespace EditorEX.UI.Patches.SDK
     {
         private readonly ContextMenuComponent _contextMenuComponent;
 
-        private DisableContextMenuPatches(
-            ContextMenuComponent contextMenuComponent)
+        private DisableContextMenuPatches(ContextMenuComponent contextMenuComponent)
         {
             _contextMenuComponent = contextMenuComponent;
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(ExecuteEvents), nameof(ExecuteEvents.Execute), AffinityMethodType.Normal, null, typeof(IPointerClickHandler), typeof(BaseEventData))]
+        [AffinityPatch(
+            typeof(ExecuteEvents),
+            nameof(ExecuteEvents.Execute),
+            AffinityMethodType.Normal,
+            null,
+            typeof(IPointerClickHandler),
+            typeof(BaseEventData)
+        )]
         private void PatchExecute(IPointerClickHandler handler, BaseEventData eventData)
         {
-            if (_contextMenuComponent.modal.isShown &&
-                handler is Component component &&
-                !component.transform.IsChildOf(_contextMenuComponent.modal.transform))
+            if (
+                _contextMenuComponent.modal.isShown
+                && handler is Component component
+                && !component.transform.IsChildOf(_contextMenuComponent.modal.transform)
+            )
             {
                 _contextMenuComponent.modal.Hide();
             }
         }
 
         [AffinityPostfix]
-        [AffinityPatch(typeof(DevicelessVRHelper), nameof(DevicelessVRHelper.GetAnyJoystickMaxAxis))]
+        [AffinityPatch(
+            typeof(DevicelessVRHelper),
+            nameof(DevicelessVRHelper.GetAnyJoystickMaxAxis)
+        )]
         private void PatchScoll(Vector2 __result)
         {
             if (__result.magnitude > 0.001f)

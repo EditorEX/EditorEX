@@ -1,4 +1,8 @@
-﻿using Chroma;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Chroma;
 using Chroma.EnvironmentEnhancement.Component;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
@@ -7,10 +11,6 @@ using HarmonyLib;
 using Heck;
 using Heck.Animation;
 using Heck.Event;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Zenject;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
@@ -32,7 +32,8 @@ namespace EditorEX.Chroma.Events
             IBpmController bpmController,
             IAudioTimeSource audioTimeSource,
             CoroutineDummy coroutineDummy,
-            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData
+        )
         {
             _bpmController = bpmController;
             _audioTimeSource = audioTimeSource;
@@ -42,7 +43,12 @@ namespace EditorEX.Chroma.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_editorDeserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out ChromaAnimateComponentData? chromaData))
+            if (
+                !_editorDeserializedData.Resolve(
+                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    out ChromaAnimateComponentData? chromaData
+                )
+            )
             {
                 return;
             }
@@ -53,7 +59,12 @@ namespace EditorEX.Chroma.Events
             Functions easing = chromaData.Easing;
             IReadOnlyList<Track> tracks = chromaData.Track;
 
-            foreach ((string componentName, Dictionary<string, PointDefinition<float>?> properties) in chromaData.CoroutineInfos)
+            foreach (
+                (
+                    string componentName,
+                    Dictionary<string, PointDefinition<float>?> properties
+                ) in chromaData.CoroutineInfos
+            )
             {
                 foreach (Track track in tracks)
                 {
@@ -68,10 +79,22 @@ namespace EditorEX.Chroma.Events
                                 break;
                             }
 
-                            HandleProperty<BloomFogEnvironmentParams>(ATTENUATION, (a, b) => a.Do(n => n.attenuation = b));
-                            HandleProperty<BloomFogEnvironmentParams>(OFFSET, (a, b) => a.Do(n => n.offset = b));
-                            HandleProperty<BloomFogEnvironmentParams>(HEIGHT_FOG_HEIGHT, (a, b) => a.Do(n => n.heightFogHeight = b));
-                            HandleProperty<BloomFogEnvironmentParams>(HEIGHT_FOG_STARTY, (a, b) => a.Do(n => n.heightFogStartY = b));
+                            HandleProperty<BloomFogEnvironmentParams>(
+                                ATTENUATION,
+                                (a, b) => a.Do(n => n.attenuation = b)
+                            );
+                            HandleProperty<BloomFogEnvironmentParams>(
+                                OFFSET,
+                                (a, b) => a.Do(n => n.offset = b)
+                            );
+                            HandleProperty<BloomFogEnvironmentParams>(
+                                HEIGHT_FOG_HEIGHT,
+                                (a, b) => a.Do(n => n.heightFogHeight = b)
+                            );
+                            HandleProperty<BloomFogEnvironmentParams>(
+                                HEIGHT_FOG_STARTY,
+                                (a, b) => a.Do(n => n.heightFogStartY = b)
+                            );
                             break;
 
                         case TUBE_BLOOM_PRE_PASS_LIGHT:
@@ -81,8 +104,17 @@ namespace EditorEX.Chroma.Events
                                 break;
                             }
 
-                            HandleProperty<TubeBloomPrePassLight>(COLOR_ALPHA_MULTIPLIER, (a, b) => a.Do(n => TubeBloomLightCustomizer.SetColorAlphaMultiplier(n, b)));
-                            HandleProperty<TubeBloomPrePassLight>(BLOOM_FOG_INTENSITY_MULTIPLIER, (a, b) => a.Do(n => n.bloomFogIntensityMultiplier = b));
+                            HandleProperty<TubeBloomPrePassLight>(
+                                COLOR_ALPHA_MULTIPLIER,
+                                (a, b) =>
+                                    a.Do(n =>
+                                        TubeBloomLightCustomizer.SetColorAlphaMultiplier(n, b)
+                                    )
+                            );
+                            HandleProperty<TubeBloomPrePassLight>(
+                                BLOOM_FOG_INTENSITY_MULTIPLIER,
+                                (a, b) => a.Do(n => n.bloomFogIntensityMultiplier = b)
+                            );
                             break;
                     }
 
@@ -95,7 +127,12 @@ namespace EditorEX.Chroma.Events
                             return;
                         }
 
-                        if (!_allCoroutines.TryGetValue(key, out Dictionary<Track, Coroutine> coroutines))
+                        if (
+                            !_allCoroutines.TryGetValue(
+                                key,
+                                out Dictionary<Track, Coroutine> coroutines
+                            )
+                        )
                         {
                             coroutines = new Dictionary<Track, Coroutine>();
                             _allCoroutines[key] = coroutines;
@@ -114,15 +151,16 @@ namespace EditorEX.Chroma.Events
                             return;
                         }
 
-                        coroutines[track] = _coroutineDummy
-                            .StartCoroutine(
-                                AnimateCoroutine(
-                                    components.Cast<T>().ToArray(),
-                                    points,
-                                    duration,
-                                    customEventData.time,
-                                    easing,
-                                    action));
+                        coroutines[track] = _coroutineDummy.StartCoroutine(
+                            AnimateCoroutine(
+                                components.Cast<T>().ToArray(),
+                                points,
+                                duration,
+                                customEventData.time,
+                                easing,
+                                action
+                            )
+                        );
                     }
                 }
             }
@@ -134,7 +172,8 @@ namespace EditorEX.Chroma.Events
             float duration,
             float startTime,
             Functions easing,
-            Action<T[], float> action)
+            Action<T[], float> action
+        )
         {
             while (true)
             {

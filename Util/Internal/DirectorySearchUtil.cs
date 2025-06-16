@@ -1,8 +1,8 @@
-﻿using BeatmapEditor3D;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BeatmapEditor3D;
 
 namespace EditorEX.Util
 {
@@ -29,14 +29,23 @@ namespace EditorEX.Util
                 }
 
                 // Recursively search through subdirectories
-                foreach (var subDirectory in Directory.GetDirectories(directory).Where((string path) => !BeatmapFileUtils.GetDirectoryName(path).StartsWith("~")))
+                foreach (
+                    var subDirectory in Directory
+                        .GetDirectories(directory)
+                        .Where(
+                            (string path) =>
+                                !BeatmapFileUtils.GetDirectoryName(path).StartsWith("~")
+                        )
+                )
                 {
                     SearchDirectory(subDirectory, result);
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error accessing directory: {directory}. Exception: {ex.Message}");
+                Console.WriteLine(
+                    $"Error accessing directory: {directory}. Exception: {ex.Message}"
+                );
             }
         }
     }

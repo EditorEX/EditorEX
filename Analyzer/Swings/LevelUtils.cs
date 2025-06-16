@@ -7,8 +7,7 @@ public class LevelUtils
     private EditorBasicBeatmapObjectSpawnMovementData _spawnMovementData = null!;
 
     [Inject]
-    private void Construct(
-        EditorBasicBeatmapObjectSpawnMovementData spawnMovementData)
+    private void Construct(EditorBasicBeatmapObjectSpawnMovementData spawnMovementData)
     {
         _spawnMovementData = spawnMovementData;
     }
@@ -20,7 +19,10 @@ public class LevelUtils
 
     public Vector2 GetWorldXYFromBeatmapCoords(int x, int y)
     {
-        var _gravity = _spawnMovementData.NoteJumpGravityForLineLayer((NoteLineLayer)y, NoteLineLayer.Base);
+        var _gravity = _spawnMovementData.NoteJumpGravityForLineLayer(
+            (NoteLineLayer)y,
+            NoteLineLayer.Base
+        );
         var _startVerticalVelocity = _gravity * _spawnMovementData._jumpDuration * 0.5f;
         var yPos = _startVerticalVelocity * 0.75f - _gravity * 0.75f * 0.75f * 0.5f;
 
@@ -29,5 +31,4 @@ public class LevelUtils
 
         return new Vector2(num, yPos);
     }
-
 }

@@ -1,6 +1,6 @@
-﻿using EditorEX.SDK.Collectors;
+﻿using System;
+using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Signals;
-using System;
 using Zenject;
 
 namespace EditorEX.SDK.AddressableHelpers
@@ -12,30 +12,41 @@ namespace EditorEX.SDK.AddressableHelpers
         private AddressableCollector _addressableCollector = null!;
 
         [Inject]
-        private void Construct(
-            SignalBus signalBus,
-            AddressableCollector addressableCollector)
+        private void Construct(SignalBus signalBus, AddressableCollector addressableCollector)
         {
             SignalBus = signalBus;
             _addressableCollector = addressableCollector;
         }
 
-        public void Subscribe<T>(string label, object uniqueID, Action<AddressableCollectorItemLoadedSignal<T>> action) where T : UnityEngine.Object
+        public void Subscribe<T>(
+            string label,
+            object uniqueID,
+            Action<AddressableCollectorItemLoadedSignal<T>> action
+        )
+            where T : UnityEngine.Object
         {
-            Subscribe(label, uniqueID, x =>
-            {
-                if (x is AddressableCollectorItemLoadedSignal<T> signalT)
+            Subscribe(
+                label,
+                uniqueID,
+                x =>
                 {
-                    action.Invoke(signalT);
+                    if (x is AddressableCollectorItemLoadedSignal<T> signalT)
+                    {
+                        action.Invoke(signalT);
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Signal is not of type " + typeof(T).Name);
+                    }
                 }
-                else
-                {
-                    throw new ArgumentException("Signal is not of type " + typeof(T).Name);
-                }
-            });
+            );
         }
 
-        public void Subscribe(string label, object uniqueID, Action<IAddressableCollectorItemLoadedSignal> action)
+        public void Subscribe(
+            string label,
+            object uniqueID,
+            Action<IAddressableCollectorItemLoadedSignal> action
+        )
         {
             if (_addressableCollector.CheckAvailability(label))
             {

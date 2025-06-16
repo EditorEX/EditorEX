@@ -15,9 +15,7 @@ namespace EditorEX.SDK.Factories
         private DiContainer _container = null!;
 
         [Inject]
-        private void Construct(
-            PrefabCollector prefabCollector,
-            DiContainer container)
+        private void Construct(PrefabCollector prefabCollector, DiContainer container)
         {
             _prefabCollector = prefabCollector;
             _container = container;
@@ -43,7 +41,9 @@ namespace EditorEX.SDK.Factories
 
         private Button Create(Transform parent, UnityAction onClick)
         {
-            var button = _container.InstantiatePrefab(_prefabCollector.GetIconButtonPrefab()).GetComponent<Button>();
+            var button = _container
+                .InstantiatePrefab(_prefabCollector.GetIconButtonPrefab())
+                .GetComponent<Button>();
             button.transform.SetParent(parent, false);
 
             button.name = "ExIconButton";

@@ -24,7 +24,8 @@ namespace EditorEX.Vivify.Events
             SiraLog log,
             EditorSetCameraProperty setCameraProperty,
             CameraEffectApplier cameraEffectApplier,
-            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData
+        )
         {
             _log = log;
             _setCameraProperty = setCameraProperty;
@@ -34,7 +35,12 @@ namespace EditorEX.Vivify.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out CreateCameraData? data))
+            if (
+                !_deserializedData.Resolve(
+                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    out CreateCameraData? data
+                )
+            )
             {
                 return;
             }

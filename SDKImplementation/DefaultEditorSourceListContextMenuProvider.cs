@@ -1,14 +1,15 @@
-﻿using EditorEX.Config;
+﻿using System.Linq;
+using EditorEX.Config;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.ContextMenu;
 using EditorEX.SDK.ContextMenu.Objects;
 using EditorEX.UI.Patches;
-using System.Linq;
 using Zenject;
 
 namespace EditorEX.SDKImplementation
 {
-    public class DefaultEditorSourceListContextMenuProvider : ContextMenuProvider<SourceListContextMenuObject>
+    public class DefaultEditorSourceListContextMenuProvider
+        : ContextMenuProvider<SourceListContextMenuObject>
     {
         private SourcesConfig _sourcesConfig = null!;
         private BeatmapsListViewControllerPatches _beatmapsListViewControllerPatches = null!;
@@ -18,7 +19,8 @@ namespace EditorEX.SDKImplementation
         private void Construct(
             SourcesConfig sourcesConfig,
             BeatmapsListViewControllerPatches beatmapsListViewControllerPatches,
-            StringInputDialogModal stringInputDialogModal)
+            StringInputDialogModal stringInputDialogModal
+        )
         {
             _sourcesConfig = sourcesConfig;
             _beatmapsListViewControllerPatches = beatmapsListViewControllerPatches;
@@ -27,21 +29,22 @@ namespace EditorEX.SDKImplementation
 
         public override ContextOption<SourceListContextMenuObject>[] GetContextOptions()
         {
-            return
-            [
-                new ("Rename", Rename),
-                new ("Add Path", AddPath),
-                new ("Delete", Delete)
-            ];
+            return [new("Rename", Rename), new("Add Path", AddPath), new("Delete", Delete)];
         }
 
         private void Rename(SourceListContextMenuObject contextObject)
         {
-            _stringInputDialogModal.Prompt("Rename Source", "Name", contextObject.SourceName, x =>
-            {
-                _sourcesConfig.Sources[x] = _sourcesConfig.Sources[contextObject.SourceName];
-                _sourcesConfig.Sources.Remove(contextObject.SourceName);
-            }, null);
+            _stringInputDialogModal.Prompt(
+                "Rename Source",
+                "Name",
+                contextObject.SourceName,
+                x =>
+                {
+                    _sourcesConfig.Sources[x] = _sourcesConfig.Sources[contextObject.SourceName];
+                    _sourcesConfig.Sources.Remove(contextObject.SourceName);
+                },
+                null
+            );
 
             _beatmapsListViewControllerPatches.ReloadCells();
         }
@@ -55,7 +58,7 @@ namespace EditorEX.SDKImplementation
             }
             _sourcesConfig.Sources.Remove(contextObject.SourceName);
 
-        _beatmapsListViewControllerPatches.ReloadCells();
+            _beatmapsListViewControllerPatches.ReloadCells();
         }
 
         private void AddPath(SourceListContextMenuObject contextObject)

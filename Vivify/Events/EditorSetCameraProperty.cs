@@ -20,7 +20,8 @@ namespace EditorEX.Vivify.Events
 
         private EditorSetCameraProperty(
             CameraPropertyManager cameraPropertyManager,
-            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData
+        )
         {
             _cameraPropertyManager = cameraPropertyManager;
             _deserializedData = deserializedData;
@@ -28,7 +29,12 @@ namespace EditorEX.Vivify.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out SetCameraPropertyData? eventData))
+            if (
+                !_deserializedData.Resolve(
+                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    out SetCameraPropertyData? eventData
+                )
+            )
             {
                 return;
             }
@@ -38,11 +44,15 @@ namespace EditorEX.Vivify.Events
 
         public void SetCameraProperties(string id, CameraProperty property)
         {
-            if (!_cameraPropertyManager.Properties.TryGetValue(
+            if (
+                !_cameraPropertyManager.Properties.TryGetValue(
                     id,
-                    out CameraPropertyManager.CameraProperties properties))
+                    out CameraPropertyManager.CameraProperties properties
+                )
+            )
             {
-                _cameraPropertyManager.Properties[id] = properties = new CameraPropertyManager.CameraProperties();
+                _cameraPropertyManager.Properties[id] = properties =
+                    new CameraPropertyManager.CameraProperties();
             }
 
             if (property.HasDepthTextureMode)
@@ -63,9 +73,10 @@ namespace EditorEX.Vivify.Events
             if (property.HasCulling)
             {
                 CameraProperty.CullingData? cullingData = property.Culling;
-                properties.CullingTextureData = cullingData != null
-                    ? new CullingTextureTracker(cullingData.Tracks, cullingData.Whitelist)
-                    : null;
+                properties.CullingTextureData =
+                    cullingData != null
+                        ? new CullingTextureTracker(cullingData.Tracks, cullingData.Whitelist)
+                        : null;
             }
 
             if (property.HasBloomPrePass)

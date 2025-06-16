@@ -1,10 +1,10 @@
-﻿using Chroma;
+﻿using System.Collections.Generic;
+using Chroma;
 using Chroma.Lighting;
 using EditorEX.Chroma.Events;
 using EditorEX.CustomJSONData;
 using EditorEX.Heck.Deserialize;
 using SiraUtil.Affinity;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -13,21 +13,28 @@ namespace EditorEX.Chroma.Patches.Events
 {
     internal class EditorRingRotationChromafier : IAffinity
     {
-        private readonly Dictionary<TrackLaneRingsRotationEffect, ChromaRingsRotationEffect> _chromaRings = new();
+        private readonly Dictionary<
+            TrackLaneRingsRotationEffect,
+            ChromaRingsRotationEffect
+        > _chromaRings = new();
 
         private readonly ChromaRingsRotationEffect.Factory _factory;
         private readonly EditorDeserializedData _editorDeserializedData;
 
         private EditorRingRotationChromafier(
             ChromaRingsRotationEffect.Factory factory,
-            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData
+        )
         {
             _factory = factory;
             _editorDeserializedData = deserializedData;
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(TrackLaneRingsRotationEffectSpawner), nameof(TrackLaneRingsRotationEffectSpawner.Start))]
+        [AffinityPatch(
+            typeof(TrackLaneRingsRotationEffectSpawner),
+            nameof(TrackLaneRingsRotationEffectSpawner.Start)
+        )]
         private void CreateChromaRing(TrackLaneRingsRotationEffect ____trackLaneRingsRotationEffect)
         {
             // custom platforms (terrible acronym) causes this to run twice for some reason, so stop the second
@@ -36,20 +43,35 @@ namespace EditorEX.Chroma.Patches.Events
                 return;
             }
 
-            _chromaRings.Add(____trackLaneRingsRotationEffect, _factory.Create(____trackLaneRingsRotationEffect));
+            _chromaRings.Add(
+                ____trackLaneRingsRotationEffect,
+                _factory.Create(____trackLaneRingsRotationEffect)
+            );
             ____trackLaneRingsRotationEffect.enabled = false;
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(TrackLaneRingsRotationEffect), nameof(TrackLaneRingsRotationEffect.FixedUpdate))]
+        [AffinityPatch(
+            typeof(TrackLaneRingsRotationEffect),
+            nameof(TrackLaneRingsRotationEffect.FixedUpdate)
+        )]
         private bool DisableUpdate()
         {
             return false;
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(TrackLaneRingsRotationEffect), nameof(TrackLaneRingsRotationEffect.AddRingRotationEffect))]
-        private bool RerouteAddRingRotation(TrackLaneRingsRotationEffect __instance, float angle, float step, int propagationSpeed, float flexySpeed)
+        [AffinityPatch(
+            typeof(TrackLaneRingsRotationEffect),
+            nameof(TrackLaneRingsRotationEffect.AddRingRotationEffect)
+        )]
+        private bool RerouteAddRingRotation(
+            TrackLaneRingsRotationEffect __instance,
+            float angle,
+            float step,
+            int propagationSpeed,
+            float flexySpeed
+        )
         {
             if (_chromaRings.TryGetValue(__instance, out ChromaRingsRotationEffect chromaRing))
             {
@@ -60,7 +82,10 @@ namespace EditorEX.Chroma.Patches.Events
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(TrackLaneRingsRotationEffectSpawner), nameof(TrackLaneRingsRotationEffectSpawner.HandleBeatmapEvent))]
+        [AffinityPatch(
+            typeof(TrackLaneRingsRotationEffectSpawner),
+            nameof(TrackLaneRingsRotationEffectSpawner.HandleBeatmapEvent)
+        )]
         private bool ChromaRingHandleCallback(
             TrackLaneRingsRotationEffectSpawner __instance,
             BasicBeatmapEventData basicBeatmapEventData,
@@ -69,9 +94,15 @@ namespace EditorEX.Chroma.Patches.Events
             float ____rotationStep,
             int ____rotationPropagationSpeed,
             float ____rotationFlexySpeed,
-            TrackLaneRingsRotationEffectSpawner.RotationStepType ____rotationStepType)
+            TrackLaneRingsRotationEffectSpawner.RotationStepType ____rotationStepType
+        )
         {
-            if (!_editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(basicBeatmapEventData), out EditorChromaEventData? chromaData))
+            if (
+                !_editorDeserializedData.Resolve(
+                    CustomDataRepository.GetBasicEventConversion(basicBeatmapEventData),
+                    out EditorChromaEventData? chromaData
+                )
+            )
             {
                 return false;
             }
@@ -79,13 +110,18 @@ namespace EditorEX.Chroma.Patches.Events
             // Added in 1.8
             float rotationStep = ____rotationStepType switch
             {
-                TrackLaneRingsRotationEffectSpawner.RotationStepType.Range0ToMax =>
-                    Random.Range(0f, ____rotationStep),
-                TrackLaneRingsRotationEffectSpawner.RotationStepType.Range =>
-                    Random.Range(-____rotationStep, ____rotationStep),
-                TrackLaneRingsRotationEffectSpawner.RotationStepType.MaxOr0 =>
-                    (Random.value < 0.5f) ? ____rotationStep : 0f,
-                _ => 0f
+                TrackLaneRingsRotationEffectSpawner.RotationStepType.Range0ToMax => Random.Range(
+                    0f,
+                    ____rotationStep
+                ),
+                TrackLaneRingsRotationEffectSpawner.RotationStepType.Range => Random.Range(
+                    -____rotationStep,
+                    ____rotationStep
+                ),
+                TrackLaneRingsRotationEffectSpawner.RotationStepType.MaxOr0 => (Random.value < 0.5f)
+                    ? ____rotationStep
+                    : 0f,
+                _ => 0f,
             };
 
             string? nameFilter = chromaData.NameFilter;
@@ -121,7 +157,14 @@ namespace EditorEX.Chroma.Patches.Events
             bool? reset = chromaData.Reset;
             if (reset is true)
             {
-                TriggerRotation(____trackLaneRingsRotationEffect, rotRight, ____rotation, 0, 50, 50);
+                TriggerRotation(
+                    ____trackLaneRingsRotationEffect,
+                    rotRight,
+                    ____rotation,
+                    0,
+                    50,
+                    50
+                );
                 return false;
             }
 
@@ -134,7 +177,14 @@ namespace EditorEX.Chroma.Patches.Events
             float propMult = chromaData.PropMult;
             float speedMult = chromaData.SpeedMult;
 
-            TriggerRotation(____trackLaneRingsRotationEffect, rotRight, rotation, step * stepMult, prop * propMult, speed * speedMult);
+            TriggerRotation(
+                ____trackLaneRingsRotationEffect,
+                rotRight,
+                rotation,
+                step * stepMult,
+                prop * propMult,
+                speed * speedMult
+            );
             return false;
         }
 
@@ -144,13 +194,17 @@ namespace EditorEX.Chroma.Patches.Events
             float rotation,
             float rotationStep,
             float rotationPropagationSpeed,
-            float rotationFlexySpeed)
+            float rotationFlexySpeed
+        )
         {
-            _chromaRings[trackLaneRingsRotationEffect].AddRingRotationEffect(
-                trackLaneRingsRotationEffect.GetFirstRingDestinationRotationAngle() + (rotation * (rotRight ? -1 : 1)),
-                rotationStep,
-                rotationPropagationSpeed,
-                rotationFlexySpeed);
+            _chromaRings[trackLaneRingsRotationEffect]
+                .AddRingRotationEffect(
+                    trackLaneRingsRotationEffect.GetFirstRingDestinationRotationAngle()
+                        + (rotation * (rotRight ? -1 : 1)),
+                    rotationStep,
+                    rotationPropagationSpeed,
+                    rotationFlexySpeed
+                );
         }
     }
 }

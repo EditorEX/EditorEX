@@ -1,18 +1,20 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using BeatmapEditor3D.DataModels;
+using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
 using EditorEX.Heck.EventData;
 using EditorEX.Heck.ObjectData;
-using CustomJSONData.CustomBeatmap;
 using Heck.Animation;
-using System;
-using System.Collections.Generic;
 using Heck.Deserialize;
 using SiraUtil.Logging;
 
 namespace EditorEX.Heck.Deserialize
 {
-    internal class EditorHeckCustomDataDeserializer : IEditorObjectsDeserializer, IEditorCustomEventsDeserializer
+    internal class EditorHeckCustomDataDeserializer
+        : IEditorObjectsDeserializer,
+            IEditorCustomEventsDeserializer
     {
         private readonly SiraLog _siraLog;
         private readonly BeatmapObjectsDataModel _beatmapObjectsDataModel;
@@ -25,7 +27,8 @@ namespace EditorEX.Heck.Deserialize
             BeatmapObjectsDataModel beatmapObjectsDataModel,
             Dictionary<string, Track> beatmapTracks,
             Dictionary<string, List<object>> pointDefinitions,
-            bool v2)
+            bool v2
+        )
         {
             _siraLog = siraLog;
             _beatmapObjectsDataModel = beatmapObjectsDataModel;
@@ -36,10 +39,12 @@ namespace EditorEX.Heck.Deserialize
 
         public Dictionary<BaseEditorData?, IObjectCustomData> DeserializeObjects()
         {
-            Dictionary<BaseEditorData?, IObjectCustomData> dictionary = new Dictionary<BaseEditorData?, IObjectCustomData>();
+            Dictionary<BaseEditorData?, IObjectCustomData> dictionary =
+                new Dictionary<BaseEditorData?, IObjectCustomData>();
             foreach (BaseEditorData? baseEditorData in _beatmapObjectsDataModel.allBeatmapObjects)
             {
-                if (dictionary.ContainsKey(baseEditorData)) continue;
+                if (dictionary.ContainsKey(baseEditorData))
+                    continue;
                 CustomData customData = CustomDataRepository.GetCustomData(baseEditorData);
                 if (customData == null)
                 {
@@ -47,7 +52,10 @@ namespace EditorEX.Heck.Deserialize
                 }
                 else
                 {
-                    dictionary.Add(baseEditorData, new EditorHeckObjectData(customData, _tracks, _v2));
+                    dictionary.Add(
+                        baseEditorData,
+                        new EditorHeckObjectData(customData, _tracks, _v2)
+                    );
                 }
             }
             return dictionary;
@@ -55,8 +63,11 @@ namespace EditorEX.Heck.Deserialize
 
         public Dictionary<CustomEventEditorData, ICustomEventCustomData> DeserializeCustomEvents()
         {
-            Dictionary<CustomEventEditorData, ICustomEventCustomData> dictionary = new Dictionary<CustomEventEditorData, ICustomEventCustomData>();
-            foreach (CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents())
+            Dictionary<CustomEventEditorData, ICustomEventCustomData> dictionary =
+                new Dictionary<CustomEventEditorData, ICustomEventCustomData>();
+            foreach (
+                CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents()
+            )
             {
                 bool v2 = customEventData.version2_6_0AndEarlier;
                 try
@@ -68,13 +79,25 @@ namespace EditorEX.Heck.Deserialize
                         {
                             if (!v2)
                             {
-                                dictionary.Add(customEventData, new EditorInvokeEventData(customEventData));
+                                dictionary.Add(
+                                    customEventData,
+                                    new EditorInvokeEventData(customEventData)
+                                );
                             }
                         }
                     }
                     else
                     {
-                        dictionary.Add(customEventData, new EditorCoroutineEventData(_siraLog, customEventData, _pointDefinitions, _tracks, _v2));
+                        dictionary.Add(
+                            customEventData,
+                            new EditorCoroutineEventData(
+                                _siraLog,
+                                customEventData,
+                                _pointDefinitions,
+                                _tracks,
+                                _v2
+                            )
+                        );
                     }
                 }
                 catch (Exception e)

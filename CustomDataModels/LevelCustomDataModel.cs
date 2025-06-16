@@ -1,7 +1,7 @@
-﻿using CustomJSONData.CustomBeatmap;
-using EditorEX.MapData.Contexts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using CustomJSONData.CustomBeatmap;
+using EditorEX.MapData.Contexts;
 
 namespace EditorEX.CustomDataModels
 {
@@ -20,15 +20,27 @@ namespace EditorEX.CustomDataModels
         public List<ContributorData>? Contributors { get; set; }
         public CustomPlatformsListModel.CustomPlatformInfo? CustomPlatformInfo { get; set; }
 
-        public void UpdateWith(string? levelAuthorName = null, string? allDirectionsEnvironmentName = null, string? environmentName = null, float? shuffle = null, float? shufflePeriod = null, CustomData? levelCustomData = null, Dictionary<string, CustomData>? beatmapCustomDatasByFilename = null, List<ContributorData>? contributors = null, CustomPlatformsListModel.CustomPlatformInfo? customPlatformInfo = null)
+        public void UpdateWith(
+            string? levelAuthorName = null,
+            string? allDirectionsEnvironmentName = null,
+            string? environmentName = null,
+            float? shuffle = null,
+            float? shufflePeriod = null,
+            CustomData? levelCustomData = null,
+            Dictionary<string, CustomData>? beatmapCustomDatasByFilename = null,
+            List<ContributorData>? contributors = null,
+            CustomPlatformsListModel.CustomPlatformInfo? customPlatformInfo = null
+        )
         {
             LevelAuthorName = levelAuthorName ?? LevelAuthorName;
-            AllDirectionsEnvironmentName = allDirectionsEnvironmentName ?? AllDirectionsEnvironmentName;
+            AllDirectionsEnvironmentName =
+                allDirectionsEnvironmentName ?? AllDirectionsEnvironmentName;
             EnvironmentName = environmentName ?? EnvironmentName;
             Shuffle = shuffle ?? Shuffle;
             ShufflePeriod = shufflePeriod ?? ShufflePeriod;
             LevelCustomData = levelCustomData ?? LevelCustomData;
-            BeatmapCustomDatasByFilename = beatmapCustomDatasByFilename ?? BeatmapCustomDatasByFilename;
+            BeatmapCustomDatasByFilename =
+                beatmapCustomDatasByFilename ?? BeatmapCustomDatasByFilename;
             if (contributors != null)
             {
                 LevelCustomData ??= new CustomData();
@@ -44,7 +56,10 @@ namespace EditorEX.CustomDataModels
             }
             else
             {
-                Contributors = LevelContext.Version.Major == 2 ? ContributorData.DeserializeV2(LevelCustomData) : ContributorData.DeserializeV4(LevelCustomData);
+                Contributors =
+                    LevelContext.Version.Major == 2
+                        ? ContributorData.DeserializeV2(LevelCustomData)
+                        : ContributorData.DeserializeV4(LevelCustomData);
             }
             if (customPlatformInfo != null)
             {
@@ -52,16 +67,27 @@ namespace EditorEX.CustomDataModels
                 CustomPlatformInfo = customPlatformInfo;
                 if (LevelContext.Version.Major == 2)
                 {
-                    CustomPlatformsListModel.CustomPlatformInfo.SerializeV2(LevelCustomData, customPlatformInfo);
+                    CustomPlatformsListModel.CustomPlatformInfo.SerializeV2(
+                        LevelCustomData,
+                        customPlatformInfo
+                    );
                 }
                 else
                 {
-                    CustomPlatformsListModel.CustomPlatformInfo.SerializeV4(LevelCustomData, customPlatformInfo);
+                    CustomPlatformsListModel.CustomPlatformInfo.SerializeV4(
+                        LevelCustomData,
+                        customPlatformInfo
+                    );
                 }
             }
             else
             {
-                CustomPlatformInfo = LevelContext.Version.Major == 2 ? CustomPlatformsListModel.CustomPlatformInfo.DeserializeV2(LevelCustomData) : CustomPlatformsListModel.CustomPlatformInfo.DeserializeV4(LevelCustomData);
+                CustomPlatformInfo =
+                    LevelContext.Version.Major == 2
+                        ? CustomPlatformsListModel.CustomPlatformInfo.DeserializeV2(LevelCustomData)
+                        : CustomPlatformsListModel.CustomPlatformInfo.DeserializeV4(
+                            LevelCustomData
+                        );
             }
         }
     }
@@ -82,7 +108,10 @@ namespace EditorEX.CustomDataModels
         public static List<ContributorData> DeserializeV2(CustomData? customData)
         {
             var contributors = new List<ContributorData>();
-            var jsonContributors = customData?.Get<List<object>>("_contributors")?.Select(x => x as CustomData)?.ToList();
+            var jsonContributors = customData
+                ?.Get<List<object>>("_contributors")
+                ?.Select(x => x as CustomData)
+                ?.ToList();
             if (jsonContributors == null)
             {
                 return contributors;
@@ -103,7 +132,10 @@ namespace EditorEX.CustomDataModels
         public static List<ContributorData> DeserializeV4(CustomData? customData)
         {
             var contributors = new List<ContributorData>();
-            var jsonContributors = customData?.Get<List<object>>("contributors")?.Select(x => x as CustomData)?.ToList();
+            var jsonContributors = customData
+                ?.Get<List<object>>("contributors")
+                ?.Select(x => x as CustomData)
+                ?.ToList();
             if (jsonContributors == null)
             {
                 return contributors;

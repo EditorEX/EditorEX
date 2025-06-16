@@ -1,12 +1,12 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using BeatmapEditor3D.DataModels;
+using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.Essentials.Movement.Data;
-using EditorEX.Essentials.Visuals;
-using System;
 using EditorEX.Essentials.VariableMovement;
+using EditorEX.Essentials.Visuals;
+using SiraUtil.Logging;
 using UnityEngine;
 using Zenject;
-using EditorEX.Essentials.Features.ViewMode;
-using SiraUtil.Logging;
 
 namespace EditorEX.Essentials.Movement.Obstacle
 {
@@ -34,7 +34,8 @@ namespace EditorEX.Essentials.Movement.Obstacle
             VisualsTypeProvider visualsTypeProvider,
             VariableMovementTypeProvider variableMovementTypeProvider,
             EditorBasicBeatmapObjectSpawnMovementData movementData,
-            SiraLog siraLog)
+            SiraLog siraLog
+        )
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
@@ -59,44 +60,70 @@ namespace EditorEX.Essentials.Movement.Obstacle
                 RefreshObstacleMovementVisuals();
                 Init(_data);
             }
-            catch
-            {
-
-            }
+            catch { }
         }
 
         private void RefreshObstacleMovementVisuals()
         {
-            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _obstacleMovement, out IObjectMovement? newObstacleMovement))
+            if (
+                TypeProviderUtils.GetProvidedComponent(
+                    gameObject,
+                    _movementTypeProvider,
+                    _obstacleMovement,
+                    out IObjectMovement? newObstacleMovement
+                )
+            )
             {
                 if (newObstacleMovement == null)
                 {
-                    _siraLog.Error("EditorObstacleController: Failed to refresh, new movement provider is null!");
+                    _siraLog.Error(
+                        "EditorObstacleController: Failed to refresh, new movement provider is null!"
+                    );
                 }
                 else
                 {
                     _obstacleMovement = newObstacleMovement;
-                    _obstacleMovement.Enable();   
+                    _obstacleMovement.Enable();
                 }
             }
 
-            if (TypeProviderUtils.GetProvidedComponent(gameObject, _visualsTypeProvider, _obstacleVisuals, out IObjectVisuals? newObstacleVisuals))
+            if (
+                TypeProviderUtils.GetProvidedComponent(
+                    gameObject,
+                    _visualsTypeProvider,
+                    _obstacleVisuals,
+                    out IObjectVisuals? newObstacleVisuals
+                )
+            )
             {
                 if (newObstacleVisuals == null)
                 {
-                    _siraLog.Error("EditorObstacleController: Failed to refresh, new visuals provider is null!");
+                    _siraLog.Error(
+                        "EditorObstacleController: Failed to refresh, new visuals provider is null!"
+                    );
                 }
                 else
                 {
                     _obstacleVisuals = newObstacleVisuals;
-                    _obstacleVisuals.Enable();   
+                    _obstacleVisuals.Enable();
                 }
             }
 
-            if (TypeProviderUtils.GetProvidedVariableMovementDataProvider(gameObject, _variableMovementTypeProvider, _data, _variableMovementDataProvider, out var variableMovementDataProvider))
+            if (
+                TypeProviderUtils.GetProvidedVariableMovementDataProvider(
+                    gameObject,
+                    _variableMovementTypeProvider,
+                    _data,
+                    _variableMovementDataProvider,
+                    out var variableMovementDataProvider
+                )
+            )
             {
                 _variableMovementDataProvider = variableMovementDataProvider;
-                if (_variableMovementDataProvider is EditorNoodleMovementDataProvider noodleMovementDataProvider)
+                if (
+                    _variableMovementDataProvider
+                    is EditorNoodleMovementDataProvider noodleMovementDataProvider
+                )
                 {
                     noodleMovementDataProvider.InitObject(_data);
                 }
@@ -105,14 +132,24 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
         public void Init(ObstacleEditorData? obstacleData)
         {
-            if (obstacleData == null) return;
+            if (obstacleData == null)
+                return;
             _data = obstacleData;
 
             RefreshObstacleMovementVisuals();
 
-            if (_obstacleMovement != null && _obstacleVisuals != null && _variableMovementDataProvider != null)
+            if (
+                _obstacleMovement != null
+                && _obstacleVisuals != null
+                && _variableMovementDataProvider != null
+            )
             {
-                _obstacleMovement.Init(obstacleData, _variableMovementDataProvider, _movementData, null);
+                _obstacleMovement.Init(
+                    obstacleData,
+                    _variableMovementDataProvider,
+                    _movementData,
+                    null
+                );
                 _obstacleVisuals.Init(obstacleData);
             }
 
@@ -124,7 +161,8 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
         public void Update()
         {
-            if (!_state.isPlaying && _prevBeat == _state.beat) return; //Don't update if not playing for performance, but force an update if scrubbing manually.
+            if (!_state.isPlaying && _prevBeat == _state.beat)
+                return; //Don't update if not playing for performance, but force an update if scrubbing manually.
 
             // If we rewind we should reinit the note to stop issues
             if (_prevBeat > _state.beat)

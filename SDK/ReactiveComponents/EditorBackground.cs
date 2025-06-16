@@ -5,7 +5,10 @@ using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorBackground : ComponentLayout<EditorImage>, IColorSOAttachable, IComponentHolder<EditorImage>
+    public class EditorBackground
+        : ComponentLayout<EditorImage>,
+            IColorSOAttachable,
+            IComponentHolder<EditorImage>
     {
         public Sprite? Sprite
         {
@@ -94,12 +97,6 @@ namespace EditorEX.SDK.ReactiveComponents
         {
             get => Component.PixelsPerUnit;
             set => Component.PixelsPerUnit = value;
-        }
-
-        public float Skew
-        {
-            get => Component.Skew;
-            set => Component.Skew = value;
         }
 
         public bool RaycastTarget

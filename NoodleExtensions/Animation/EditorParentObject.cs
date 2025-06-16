@@ -26,7 +26,8 @@ namespace EditorEX.NoodleExtensions.Animation
         internal void Init(
             NoodleParentTrackEventData noodleData,
             bool leftHanded,
-            HashSet<EditorParentObject> parentObjects)
+            HashSet<EditorParentObject> parentObjects
+        )
         {
             IReadOnlyList<Track> tracks = noodleData.ChildrenTracks;
             Track parentTrack = noodleData.ParentTrack;
@@ -52,7 +53,8 @@ namespace EditorEX.NoodleExtensions.Animation
 
                 foreach (GameObject go in track.GameObjects)
                 {
-                    if (go == null) continue;
+                    if (go == null)
+                        continue;
                     ParentToObject(go.transform);
                 }
 
@@ -76,7 +78,8 @@ namespace EditorEX.NoodleExtensions.Animation
             if (startPos.HasValue)
             {
                 _startPos = startPos.Value;
-                transform1.localPosition = _startPos * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance;
+                transform1.localPosition =
+                    _startPos * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance;
             }
 
             if (startRot.HasValue)
@@ -127,21 +130,32 @@ namespace EditorEX.NoodleExtensions.Animation
 
         private void Update()
         {
-            Quaternion? rotation = _track.GetProperty<Quaternion>(OFFSET_ROTATION)?.Mirror(_leftHanded);
+            Quaternion? rotation = _track
+                .GetProperty<Quaternion>(OFFSET_ROTATION)
+                ?.Mirror(_leftHanded);
             Vector3? position = _track.GetProperty<Vector3>(OFFSET_POSITION)?.Mirror(_leftHanded);
 
             Quaternion worldRotationQuatnerion = _startRot;
-            Vector3 positionVector = worldRotationQuatnerion * (_startPos * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance);
+            Vector3 positionVector =
+                worldRotationQuatnerion
+                * (_startPos * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance);
             if (rotation.HasValue || position.HasValue)
             {
                 Quaternion rotationOffset = rotation ?? Quaternion.identity;
                 worldRotationQuatnerion *= rotationOffset;
                 Vector3 positionOffset = position ?? Vector3.zero;
-                positionVector = worldRotationQuatnerion * ((positionOffset + _startPos) * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance);
+                positionVector =
+                    worldRotationQuatnerion
+                    * (
+                        (positionOffset + _startPos)
+                        * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance
+                    );
             }
 
             worldRotationQuatnerion *= _startLocalRot;
-            Quaternion? localRotation = _track.GetProperty<Quaternion>(LOCAL_ROTATION)?.Mirror(_leftHanded);
+            Quaternion? localRotation = _track
+                .GetProperty<Quaternion>(LOCAL_ROTATION)
+                ?.Mirror(_leftHanded);
             if (localRotation.HasValue)
             {
                 worldRotationQuatnerion *= localRotation.Value;

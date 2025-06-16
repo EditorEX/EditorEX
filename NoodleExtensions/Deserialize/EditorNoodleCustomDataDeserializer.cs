@@ -1,4 +1,6 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
@@ -9,13 +11,14 @@ using Heck.Animation;
 using Heck.Deserialize;
 using NoodleExtensions;
 using SiraUtil.Logging;
-using System;
-using System.Collections.Generic;
 
 // Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.Deserialize
 {
-    internal class EditorNoodleCustomDataDeserializer : IEditorCustomEventsDeserializer, IEditorEarlyDeserializer, IEditorObjectsDeserializer
+    internal class EditorNoodleCustomDataDeserializer
+        : IEditorCustomEventsDeserializer,
+            IEditorEarlyDeserializer,
+            IEditorObjectsDeserializer
     {
         private readonly SiraLog _siraLog;
         private readonly BeatmapObjectsDataModel _beatmapObjectsDataModel;
@@ -30,7 +33,8 @@ namespace EditorEX.NoodleExtensions.Deserialize
             Dictionary<string, Track> beatmapTracks,
             Dictionary<string, List<object>> pointDefinitions,
             TrackBuilder trackBuilder,
-            bool v2)
+            bool v2
+        )
         {
             _siraLog = siraLog;
             _beatmapObjectsDataModel = beatmapObjectsDataModel;
@@ -42,7 +46,9 @@ namespace EditorEX.NoodleExtensions.Deserialize
 
         public void DeserializeEarly()
         {
-            foreach (CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents())
+            foreach (
+                CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents()
+            )
             {
                 bool v2 = customEventEditorData.version2_6_0AndEarlier;
                 try
@@ -52,7 +58,10 @@ namespace EditorEX.NoodleExtensions.Deserialize
                     {
                         if (eventType == "AssignTrackParent")
                         {
-                            _trackBuilder.AddFromCustomData(customEventEditorData.GetCustomData(), v2 ? "_parentTrack" : "parentTrack");
+                            _trackBuilder.AddFromCustomData(
+                                customEventEditorData.GetCustomData(),
+                                v2 ? "_parentTrack" : "parentTrack"
+                            );
                         }
                     }
                     else
@@ -69,10 +78,12 @@ namespace EditorEX.NoodleExtensions.Deserialize
 
         public Dictionary<BaseEditorData?, IObjectCustomData> DeserializeObjects()
         {
-            Dictionary<BaseEditorData?, IObjectCustomData> dictionary = new Dictionary<BaseEditorData?, IObjectCustomData>();
+            Dictionary<BaseEditorData?, IObjectCustomData> dictionary =
+                new Dictionary<BaseEditorData?, IObjectCustomData>();
             foreach (BaseEditorData? baseEditorData in _beatmapObjectsDataModel.allBeatmapObjects)
             {
-                if (dictionary.ContainsKey(baseEditorData)) continue;
+                if (dictionary.ContainsKey(baseEditorData))
+                    continue;
                 CustomData customData = baseEditorData.GetCustomData();
                 ObstacleEditorData? customObstacleData = baseEditorData as ObstacleEditorData;
                 if (customObstacleData == null)
@@ -86,26 +97,76 @@ namespace EditorEX.NoodleExtensions.Deserialize
                             ChainEditorData? customChainData = baseEditorData as ChainEditorData;
                             if (customChainData == null)
                             {
-                                dictionary.Add(baseEditorData, new EditorNoodleObjectData(baseEditorData, customData, _pointDefinitions, _tracks, _v2, false));
+                                dictionary.Add(
+                                    baseEditorData,
+                                    new EditorNoodleObjectData(
+                                        baseEditorData,
+                                        customData,
+                                        _pointDefinitions,
+                                        _tracks,
+                                        _v2,
+                                        false
+                                    )
+                                );
                             }
                             else
                             {
-                                dictionary.Add(baseEditorData, new EditorNoodleObjectData(customChainData, customData, _pointDefinitions, _tracks, _v2, false));
+                                dictionary.Add(
+                                    baseEditorData,
+                                    new EditorNoodleObjectData(
+                                        customChainData,
+                                        customData,
+                                        _pointDefinitions,
+                                        _tracks,
+                                        _v2,
+                                        false
+                                    )
+                                );
                             }
                         }
                         else
                         {
-                            dictionary.Add(baseEditorData, new EditorNoodleSliderData(customSliderData, customData, _pointDefinitions, _tracks, _v2, false));
+                            dictionary.Add(
+                                baseEditorData,
+                                new EditorNoodleSliderData(
+                                    customSliderData,
+                                    customData,
+                                    _pointDefinitions,
+                                    _tracks,
+                                    _v2,
+                                    false
+                                )
+                            );
                         }
                     }
                     else
                     {
-                        dictionary.Add(baseEditorData, new EditorNoodleNoteData(customNoteData, customData, _pointDefinitions, _tracks, _v2, false));
+                        dictionary.Add(
+                            baseEditorData,
+                            new EditorNoodleNoteData(
+                                customNoteData,
+                                customData,
+                                _pointDefinitions,
+                                _tracks,
+                                _v2,
+                                false
+                            )
+                        );
                     }
                 }
                 else
                 {
-                    dictionary.Add(baseEditorData, new EditorNoodleObstacleData(customObstacleData, customData, _pointDefinitions, _tracks, _v2, false));
+                    dictionary.Add(
+                        baseEditorData,
+                        new EditorNoodleObstacleData(
+                            customObstacleData,
+                            customData,
+                            _pointDefinitions,
+                            _tracks,
+                            _v2,
+                            false
+                        )
+                    );
                 }
             }
             return dictionary;
@@ -113,8 +174,11 @@ namespace EditorEX.NoodleExtensions.Deserialize
 
         public Dictionary<CustomEventEditorData, ICustomEventCustomData> DeserializeCustomEvents()
         {
-            Dictionary<CustomEventEditorData, ICustomEventCustomData> dictionary = new Dictionary<CustomEventEditorData, ICustomEventCustomData>();
-            foreach (CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents())
+            Dictionary<CustomEventEditorData, ICustomEventCustomData> dictionary =
+                new Dictionary<CustomEventEditorData, ICustomEventCustomData>();
+            foreach (
+                CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents()
+            )
             {
                 bool v2 = customEventEditorData.version2_6_0AndEarlier;
                 try
@@ -125,12 +189,18 @@ namespace EditorEX.NoodleExtensions.Deserialize
                     {
                         if (eventType == "AssignTrackParent")
                         {
-                            dictionary.Add(customEventEditorData, new NoodleParentTrackEventData(data, _tracks, v2));
+                            dictionary.Add(
+                                customEventEditorData,
+                                new NoodleParentTrackEventData(data, _tracks, v2)
+                            );
                         }
                     }
                     else
                     {
-                        dictionary.Add(customEventEditorData, new NoodlePlayerTrackEventData(data, _tracks, v2));
+                        dictionary.Add(
+                            customEventEditorData,
+                            new NoodlePlayerTrackEventData(data, _tracks, v2)
+                        );
                     }
                 }
                 catch (Exception e)

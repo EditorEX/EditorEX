@@ -8,12 +8,15 @@ namespace EditorEX.UI.Patches
     public class SelectableCellsCursorPatches : IAffinity
     {
         public static List<SelectableCell> SelectableCells { get; } = new List<SelectableCell>();
+
         [AffinityPatch(typeof(UIBehaviour), nameof(UIBehaviour.OnEnable))]
         [AffinityPostfix]
         private void OnEnable(UIBehaviour __instance)
         {
-            if (__instance is not SelectableCell selectableCell) return;
-            if (SelectableCells.Contains(selectableCell)) return;
+            if (__instance is not SelectableCell selectableCell)
+                return;
+            if (SelectableCells.Contains(selectableCell))
+                return;
             SelectableCells.Add(selectableCell);
         }
 
@@ -21,8 +24,10 @@ namespace EditorEX.UI.Patches
         [AffinityPostfix]
         private void OnDisable(UIBehaviour __instance)
         {
-            if (__instance is not SelectableCell selectableCell) return;
-            if (!SelectableCells.Contains(selectableCell)) return;
+            if (__instance is not SelectableCell selectableCell)
+                return;
+            if (!SelectableCells.Contains(selectableCell))
+                return;
             SelectableCells.Remove(selectableCell);
         }
     }

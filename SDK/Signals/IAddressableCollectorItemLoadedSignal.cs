@@ -4,6 +4,7 @@
     {
         public string Label { get; }
 
-        public T GetValue<T>() where T : UnityEngine.Object;
+        public T GetValue<T>()
+            where T : UnityEngine.Object;
     }
 }

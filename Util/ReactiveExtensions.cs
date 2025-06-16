@@ -14,7 +14,8 @@ namespace EditorEX.Util
 {
     public static class ReactiveExtensions
     {
-        public static T WithReactiveContainer<T>(this T component, ReactiveContainer container) where T : IReactiveComponent
+        public static T WithReactiveContainer<T>(this T component, ReactiveContainer container)
+            where T : IReactiveComponent
         {
             component.WithNativeComponent<T, ReactiveContainerHolder>(out var comp);
             comp.ReactiveContainer = container;
@@ -31,13 +32,21 @@ namespace EditorEX.Util
         /// <param name="observable">The observable value to watch</param>
         /// <param name="value">A function returning the value to check against</param>
         /// <returns>The component for chaining</returns>
-        public static T EnabledWithObservable<T, R>(this T component, ObservableValue<R> observable, Func<R> value) where T : ReactiveComponent
+        public static T EnabledWithObservable<T, R>(
+            this T component,
+            ObservableValue<R> observable,
+            Func<R> value
+        )
+            where T : ReactiveComponent
         {
             component.Enabled = observable.Value?.Equals(value()) ?? true;
-            component.Animate(observable, () =>
-            {
-                component.Enabled = observable.Value?.Equals(value()) ?? true;
-            });
+            component.Animate(
+                observable,
+                () =>
+                {
+                    component.Enabled = observable.Value?.Equals(value()) ?? true;
+                }
+            );
             return component;
         }
 
@@ -50,7 +59,11 @@ namespace EditorEX.Util
         /// <param name="observable">The observable value to watch</param>
         /// <param name="value">A function returning the value to check against</param>
         /// <returns>The GameObject for chaining</returns>
-        public static GameObject EnabledWithObservable<R>(this GameObject component, ObservableValue<R> observable, Func<R> value)
+        public static GameObject EnabledWithObservable<R>(
+            this GameObject component,
+            ObservableValue<R> observable,
+            Func<R> value
+        )
         {
             component.SetActive(observable.Value?.Equals(value()) ?? true);
             void Closure(R val)
@@ -65,7 +78,7 @@ namespace EditorEX.Util
             observable.ValueChangedEvent += Closure;
             return component;
         }
-        
+
         /// <summary>
         /// Makes a component's enabled state react inversely to an observable value.
         /// The component will be disabled when the observable's value equals the specified value.
@@ -76,13 +89,21 @@ namespace EditorEX.Util
         /// <param name="observable">The observable value to watch</param>
         /// <param name="value">A function returning the value to check against</param>
         /// <returns>The component for chaining</returns>
-        public static T DisabledWithObservable<T, R>(this T component, ObservableValue<R> observable, Func<R> value) where T : ReactiveComponent
+        public static T DisabledWithObservable<T, R>(
+            this T component,
+            ObservableValue<R> observable,
+            Func<R> value
+        )
+            where T : ReactiveComponent
         {
             component.Enabled = !observable.Value?.Equals(value()) ?? false;
-            component.Animate(observable, () =>
-            {
-                component.Enabled = !observable.Value?.Equals(value()) ?? false;
-            });
+            component.Animate(
+                observable,
+                () =>
+                {
+                    component.Enabled = !observable.Value?.Equals(value()) ?? false;
+                }
+            );
             return component;
         }
 
@@ -96,7 +117,12 @@ namespace EditorEX.Util
         /// <param name="observable">The observable value to watch</param>
         /// <param name="value">The value to check against</param>
         /// <returns>The component for chaining</returns>
-        public static T EnabledWithObservable<T, R>(this T component, ObservableValue<R> observable, R value) where T : ReactiveComponent
+        public static T EnabledWithObservable<T, R>(
+            this T component,
+            ObservableValue<R> observable,
+            R value
+        )
+            where T : ReactiveComponent
         {
             return component.EnabledWithObservable(observable, () => value);
         }
@@ -110,11 +136,15 @@ namespace EditorEX.Util
         /// <param name="observable">The observable value to watch</param>
         /// <param name="value">The value to check against</param>
         /// <returns>The GameObject for chaining</returns>
-        public static GameObject EnabledWithObservable<R>(this GameObject component, ObservableValue<R> observable, R value)
+        public static GameObject EnabledWithObservable<R>(
+            this GameObject component,
+            ObservableValue<R> observable,
+            R value
+        )
         {
             return component.EnabledWithObservable(observable, () => value);
         }
-        
+
         /// <summary>
         /// Makes a component's enabled state react inversely to an observable value.
         /// The component will be disabled when the observable's value equals the specified value.
@@ -125,7 +155,12 @@ namespace EditorEX.Util
         /// <param name="observable">The observable value to watch</param>
         /// <param name="value">The value to check against</param>
         /// <returns>The component for chaining</returns>
-        public static T DisabledWithObservable<T, R>(this T component, ObservableValue<R> observable, R value) where T : ReactiveComponent
+        public static T DisabledWithObservable<T, R>(
+            this T component,
+            ObservableValue<R> observable,
+            R value
+        )
+            where T : ReactiveComponent
         {
             return component.DisabledWithObservable(observable, () => value);
         }
@@ -138,7 +173,12 @@ namespace EditorEX.Util
         /// <param name="fontSize">The font size of the label</param>
         /// <param name="ratio">The ratio between label width and component width</param>
         /// <returns>The configured EditorNamedRail</returns>
-        public static EditorNamedRail InEditorNamedRail(this ILayoutItem comp, string text, float fontSize = 12f, float ratio = 70f)
+        public static EditorNamedRail InEditorNamedRail(
+            this ILayoutItem comp,
+            string text,
+            float fontSize = 12f,
+            float ratio = 70f
+        )
         {
             ILayoutItem comp2 = comp;
             EditorNamedRail namedRail = new EditorNamedRail();
@@ -146,13 +186,7 @@ namespace EditorEX.Util
             namedRail.Label.FontSize = fontSize;
             namedRail.Component = comp2;
             namedRail.Ratio = ratio;
-            return namedRail.With(delegate (EditorNamedRail x)
-            {
-                if (comp2 is ISkewedComponent skewedComponent)
-                {
-                    ((ISkewedComponent)x.Label).Skew = skewedComponent.Skew;
-                }
-            });
+            return namedRail;
         }
 
         /// <summary>
@@ -162,7 +196,10 @@ namespace EditorEX.Util
         /// <typeparam name="U">The type of value being validated</typeparam>
         /// <param name="namedRail">The named rail to link with a validator</param>
         /// <returns>The named rail for chaining</returns>
-        public static EditorNamedRail LinkNamedRailWithValidator<T, U>(this EditorNamedRail namedRail) where T : BaseInputFieldValidator<U>
+        public static EditorNamedRail LinkNamedRailWithValidator<T, U>(
+            this EditorNamedRail namedRail
+        )
+            where T : BaseInputFieldValidator<U>
         {
             var component = (namedRail.Component as ReactiveComponent)!.Content.GetComponent<T>();
             component._valueModifiedHintGo = namedRail.ModifiedHint;
@@ -178,7 +215,12 @@ namespace EditorEX.Util
         /// <param name="comp">The output validator component</param>
         /// <param name="onInputValidated">Optional callback for when input is validated</param>
         /// <returns>The input for chaining</returns>
-        public static EditorStringInput WithInputValidator<T, U>(this EditorStringInput input, out T comp, Action<U>? onInputValidated = null) where T : BaseInputFieldValidator<U>
+        public static EditorStringInput WithInputValidator<T, U>(
+            this EditorStringInput input,
+            out T comp,
+            Action<U>? onInputValidated = null
+        )
+            where T : BaseInputFieldValidator<U>
         {
             input.Content.SetActive(false);
             comp = input.Content.AddComponent<T>();
@@ -201,7 +243,13 @@ namespace EditorEX.Util
         /// <param name="comp">The output validator component</param>
         /// <param name="onInputValidated">Optional callback for when input is validated</param>
         /// <returns>The input for chaining</returns>
-        public static EditorStringInput WithInputValidatorCopy<T, U>(this EditorStringInput input, T orig, ref T comp, Action<U>? onInputValidated = null) where T : BaseInputFieldValidator<U>
+        public static EditorStringInput WithInputValidatorCopy<T, U>(
+            this EditorStringInput input,
+            T orig,
+            ref T comp,
+            Action<U>? onInputValidated = null
+        )
+            where T : BaseInputFieldValidator<U>
         {
             WithInputValidator(input, out comp, onInputValidated);
             switch (orig)
@@ -235,7 +283,11 @@ namespace EditorEX.Util
         public static void PresentEditor(this IModal comp, Transform child, bool animated = true)
         {
             Transform transform = child.GetComponentInParent<ReactiveContainerHolder>().transform;
-            ModalSystem<Reactive.Components.Basic.ModalSystem>.PresentModal(comp, transform, animated);
+            ModalSystem<Reactive.Components.Basic.ModalSystem>.PresentModal(
+                comp,
+                transform,
+                animated
+            );
         }
 
         /// <summary>
@@ -245,9 +297,15 @@ namespace EditorEX.Util
         /// <param name="component">The dropdown component</param>
         /// <param name="observable">The output observable containing the selected key and text</param>
         /// <returns>The dropdown for chaining</returns>
-        public static EditorTextDropdown<T> ExtractObservableFromDropdown<T>(this EditorTextDropdown<T> component, out ObservableValue<(T, string)> observable)
+        public static EditorTextDropdown<T> ExtractObservableFromDropdown<T>(
+            this EditorTextDropdown<T> component,
+            out ObservableValue<(T, string)> observable
+        )
         {
-            return component.ExtractObservable(out observable, (component.SelectedKey, component.Items[component.SelectedKey]));
+            return component.ExtractObservable(
+                out observable,
+                (component.SelectedKey, component.Items[component.SelectedKey])
+            );
         }
 
         /// <summary>
@@ -259,7 +317,12 @@ namespace EditorEX.Util
         /// <param name="observable">The output observable value</param>
         /// <param name="value">The initial value for the observable</param>
         /// <returns>The component for chaining</returns>
-        public static T ExtractObservable<T, R>(this T component, out ObservableValue<R> observable, R value) where T : ReactiveComponent
+        public static T ExtractObservable<T, R>(
+            this T component,
+            out ObservableValue<R> observable,
+            R value
+        )
+            where T : ReactiveComponent
         {
             observable = new ObservableValue<R>(value);
             return component;
@@ -273,16 +336,22 @@ namespace EditorEX.Util
         /// <param name="component">The dropdown component to bind</param>
         /// <param name="observable">The observable to bind to</param>
         /// <returns>The dropdown for chaining</returns>
-        public static EditorTextDropdown<T> DropdownWithObservable<T>(this EditorTextDropdown<T> component, ObservableValue<(T, string)> observable)
+        public static EditorTextDropdown<T> DropdownWithObservable<T>(
+            this EditorTextDropdown<T> component,
+            ObservableValue<(T, string)> observable
+        )
         {
-            component.WithListener("SelectedKey", (T x) =>
-            {
-                if (observable?.Value.Item1?.Equals(x) ?? false)
+            component.WithListener(
+                "SelectedKey",
+                (T x) =>
                 {
-                    return;
+                    if (observable?.Value.Item1?.Equals(x) ?? false)
+                    {
+                        return;
+                    }
+                    observable?.Value = (x, component.Items[x]);
                 }
-                observable?.Value = (x, component.Items[x]);
-            });
+            );
             observable.ValueChangedEvent += (value) =>
             {
                 if (component.Items.ContainsKey(value.Item1))

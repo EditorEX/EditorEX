@@ -1,12 +1,12 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
 using Heck.Deserialize;
 using NoodleExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using static NoodleExtensions.NoodleObjectData;
 
@@ -65,63 +65,122 @@ namespace EditorEX.NoodleExtensions.ObjectData
             Fake = original.Fake;
         }
 
-        internal EditorNoodleObjectData(BaseEditorData? noteEditorData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
+        internal EditorNoodleObjectData(
+            BaseEditorData? noteEditorData,
+            CustomData customData,
+            Dictionary<string, List<object>> pointDefinitions,
+            Dictionary<string, Track> beatmapTracks,
+            bool v2,
+            bool leftHanded
+        )
         {
             try
             {
-                object? rotation = customData.Get<object>(v2 ? HeckController.V2_ROTATION : NoodleController.WORLD_ROTATION);
+                object? rotation = customData.Get<object>(
+                    v2 ? HeckController.V2_ROTATION : NoodleController.WORLD_ROTATION
+                );
                 if (rotation != null)
                 {
                     if (rotation is List<object> list)
                     {
                         List<float> rot = list.Select(Convert.ToSingle).ToList();
-                        WorldRotationQuaternion = Quaternion.Euler(rot[0], rot[1], rot[2]).Mirror(leftHanded);
+                        WorldRotationQuaternion = Quaternion
+                            .Euler(rot[0], rot[1], rot[2])
+                            .Mirror(leftHanded);
                     }
                     else
                     {
-                        WorldRotationQuaternion = Quaternion.Euler(0, Convert.ToSingle(rotation), 0).Mirror(leftHanded);
+                        WorldRotationQuaternion = Quaternion
+                            .Euler(0, Convert.ToSingle(rotation), 0)
+                            .Mirror(leftHanded);
                     }
                 }
 
-                Fake = customData.Get<bool?>(v2 ? NoodleController.V2_FAKE_NOTE : NoodleController.INTERNAL_FAKE_NOTE);
+                Fake = customData.Get<bool?>(
+                    v2 ? NoodleController.V2_FAKE_NOTE : NoodleController.INTERNAL_FAKE_NOTE
+                );
 
-                LocalRotationQuaternion =
-                    customData.GetQuaternion(v2 ? HeckController.V2_LOCAL_ROTATION : HeckController.LOCAL_ROTATION)?.Mirror(leftHanded);
+                LocalRotationQuaternion = customData
+                    .GetQuaternion(
+                        v2 ? HeckController.V2_LOCAL_ROTATION : HeckController.LOCAL_ROTATION
+                    )
+                    ?.Mirror(leftHanded);
 
                 Track = customData.GetNullableTrackArray(beatmapTracks, v2)?.ToList();
 
-                CustomData? animationData = customData.Get<CustomData>(v2 ? HeckController.V2_ANIMATION : HeckController.ANIMATION);
+                CustomData? animationData = customData.Get<CustomData>(
+                    v2 ? HeckController.V2_ANIMATION : HeckController.ANIMATION
+                );
                 if (animationData != null)
                 {
                     AnimationObject = new AnimationObjectData(
-                        animationData.GetPointData<Vector3>(v2 ? HeckController.V2_POSITION : NoodleController.OFFSET_POSITION, pointDefinitions),
-                        animationData.GetPointData<Quaternion>(v2 ? HeckController.V2_ROTATION : NoodleController.OFFSET_ROTATION, pointDefinitions),
-                        animationData.GetPointData<Vector3>(v2 ? HeckController.V2_SCALE : HeckController.SCALE, pointDefinitions),
-                        animationData.GetPointData<Quaternion>(v2 ? HeckController.V2_LOCAL_ROTATION : HeckController.LOCAL_ROTATION, pointDefinitions),
-                        animationData.GetPointData<float>(v2 ? NoodleController.V2_DISSOLVE : NoodleController.DISSOLVE, pointDefinitions),
-                        animationData.GetPointData<float>(v2 ? NoodleController.V2_DISSOLVE_ARROW : NoodleController.DISSOLVE_ARROW, pointDefinitions),
-                        animationData.GetPointData<float>(v2 ? NoodleController.V2_CUTTABLE : NoodleController.INTERACTABLE, pointDefinitions),
                         animationData.GetPointData<Vector3>(
-                            v2 ? NoodleController.V2_DEFINITE_POSITION : NoodleController.DEFINITE_POSITION,
-                    pointDefinitions));
+                            v2 ? HeckController.V2_POSITION : NoodleController.OFFSET_POSITION,
+                            pointDefinitions
+                        ),
+                        animationData.GetPointData<Quaternion>(
+                            v2 ? HeckController.V2_ROTATION : NoodleController.OFFSET_ROTATION,
+                            pointDefinitions
+                        ),
+                        animationData.GetPointData<Vector3>(
+                            v2 ? HeckController.V2_SCALE : HeckController.SCALE,
+                            pointDefinitions
+                        ),
+                        animationData.GetPointData<Quaternion>(
+                            v2 ? HeckController.V2_LOCAL_ROTATION : HeckController.LOCAL_ROTATION,
+                            pointDefinitions
+                        ),
+                        animationData.GetPointData<float>(
+                            v2 ? NoodleController.V2_DISSOLVE : NoodleController.DISSOLVE,
+                            pointDefinitions
+                        ),
+                        animationData.GetPointData<float>(
+                            v2
+                                ? NoodleController.V2_DISSOLVE_ARROW
+                                : NoodleController.DISSOLVE_ARROW,
+                            pointDefinitions
+                        ),
+                        animationData.GetPointData<float>(
+                            v2 ? NoodleController.V2_CUTTABLE : NoodleController.INTERACTABLE,
+                            pointDefinitions
+                        ),
+                        animationData.GetPointData<Vector3>(
+                            v2
+                                ? NoodleController.V2_DEFINITE_POSITION
+                                : NoodleController.DEFINITE_POSITION,
+                            pointDefinitions
+                        )
+                    );
                 }
 
-                Uninteractable = v2 ? !customData.Get<bool?>(NoodleController.V2_CUTTABLE) : customData.Get<bool?>(NoodleController.UNINTERACTABLE);
+                Uninteractable = v2
+                    ? !customData.Get<bool?>(NoodleController.V2_CUTTABLE)
+                    : customData.Get<bool?>(NoodleController.UNINTERACTABLE);
 
-                IEnumerable<float?>? position = customData.GetNullableFloats(v2 ? HeckController.V2_POSITION : NoodleController.NOTE_OFFSET)?.ToList();
+                IEnumerable<float?>? position = customData
+                    .GetNullableFloats(
+                        v2 ? HeckController.V2_POSITION : NoodleController.NOTE_OFFSET
+                    )
+                    ?.ToList();
                 StartX = position?.ElementAtOrDefault(0);
                 StartY = position?.ElementAtOrDefault(1);
 
                 if (!v2)
                 {
-                    IEnumerable<float?>? scale = customData.GetNullableFloats(HeckController.SCALE)?.ToList();
+                    IEnumerable<float?>? scale = customData
+                        .GetNullableFloats(HeckController.SCALE)
+                        ?.ToList();
                     ScaleX = scale?.ElementAtOrDefault(0);
                     ScaleY = scale?.ElementAtOrDefault(1);
                     ScaleZ = scale?.ElementAtOrDefault(2);
                 }
 
-                Njs = customData.Get<float?>(v2 ? NoodleController.V2_NOTE_JUMP_SPEED : NoodleController.NOTE_JUMP_SPEED);
-                SpawnOffset = customData.Get<float?>(v2 ? NoodleController.V2_NOTE_SPAWN_OFFSET : NoodleController.NOTE_SPAWN_OFFSET);
+                Njs = customData.Get<float?>(
+                    v2 ? NoodleController.V2_NOTE_JUMP_SPEED : NoodleController.NOTE_JUMP_SPEED
+                );
+                SpawnOffset = customData.Get<float?>(
+                    v2 ? NoodleController.V2_NOTE_SPAWN_OFFSET : NoodleController.NOTE_SPAWN_OFFSET
+                );
             }
             catch (Exception e)
             {

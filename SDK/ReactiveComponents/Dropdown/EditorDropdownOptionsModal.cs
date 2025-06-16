@@ -1,8 +1,9 @@
+using System.Windows.Forms;
 using EditorEX.SDK.ReactiveComponents.Attachable;
 using EditorEX.SDK.ReactiveComponents.Table;
 using Reactive;
-using Reactive.BeatSaber.Components;
 using Reactive.Components;
+using Reactive.Components.Basic;
 using Reactive.Yoga;
 using UnityEngine;
 
@@ -66,48 +67,47 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 }
             }
 
-            public EditorTable<DropdownOption, EditorDropdownCellWrapper> Table => _table;
+            public Table<DropdownOption, EditorDropdownCellWrapper> Table => _table;
 
-            private EditorTable<DropdownOption, EditorDropdownCellWrapper> _table = null!;
+            private Table<DropdownOption, EditorDropdownCellWrapper> _table = null!;
 
             protected override GameObject Construct()
             {
                 return new Layout
                 {
-                    Children = {
-                        new EditorBackground() {
-                                Source = "#Background4px",
-                                ImageType = UnityEngine.UI.Image.Type.Sliced,
-                                Children = {
-                                    new EditorTable<DropdownOption, EditorDropdownCellWrapper>()
-                                        .WithListener(
-                                            x => x.SelectedIndexes,
-                                            _ => CloseInternal()
-                                        )
-                                        .AsFlexItem(flexGrow: 0.98f)
-                                        .Bind(ref _table),
-                                        // Scrollbar
-                                    new EditorScrollbar()
-                                        .AsFlexItem(
-                                            size: new() { x = 7f, y = 100.pct() },
-                                            position: new() { right = 2f }
-                                        )
-                                        .With(x => Table.Scrollbar = x)
+                    Children =
+                    {
+                        new EditorBackground()
+                        {
+                            Source = "#Background4px",
+                            ImageType = UnityEngine.UI.Image.Type.Sliced,
+                            Children =
+                            {
+                                new Table<DropdownOption, EditorDropdownCellWrapper>()
+                                {
+                                    ScrollbarScrollSize = -4,
                                 }
-                            }
-                            .With(x => x.WrappedImage.Attach<ColorSOAttachable>("Button/Background/Normal"))
+                                    .WithListener(x => x.SelectedIndexes, _ => CloseInternal())
+                                    .AsFlexItem(flexGrow: 0.98f)
+                                    .Bind(ref _table),
+                                // Scrollbar
+                                new EditorScrollbar()
+                                    .AsFlexItem(
+                                        size: new() { x = 7f, y = 100.pct() },
+                                        position: new() { right = 2f }
+                                    )
+                                    .With(x => Table.Scrollbar = x),
+                            },
+                        }
+                            .With(x =>
+                                x.WrappedImage.Attach<ColorSOAttachable>("Button/Background/Normal")
+                            )
                             .AsFlexGroup(padding: 2f)
                             .AsFlexItem(flexGrow: 1f),
-                    }
-                }.AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false).Use();
-            }
-        }
-
-        private class SharedDropdownOptionsModal : SharedModal<EditorDropdownOptionsModal>
-        {
-            protected override void OnSpawn()
-            {
-                Modal.WithJumpAnimation();
+                    },
+                }
+                    .AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false)
+                    .Use();
             }
         }
     }

@@ -8,7 +8,8 @@ namespace EditorEX.Util
         public static void ClearEventInvocations(this object obj, string eventName)
         {
             var fi = obj.GetType().GetEventField(eventName);
-            if (fi == null) return;
+            if (fi == null)
+                return;
             fi.SetValue(obj, null);
         }
 
@@ -18,12 +19,24 @@ namespace EditorEX.Util
             while (type != null)
             {
                 /* Find events defined as field */
-                field = type.GetField(eventName, BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
-                if (field != null && (field.FieldType == typeof(MulticastDelegate) || field.FieldType.IsSubclassOf(typeof(MulticastDelegate))))
+                field = type.GetField(
+                    eventName,
+                    BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic
+                );
+                if (
+                    field != null
+                    && (
+                        field.FieldType == typeof(MulticastDelegate)
+                        || field.FieldType.IsSubclassOf(typeof(MulticastDelegate))
+                    )
+                )
                     break;
 
                 /* Find events defined as property { add; remove; } */
-                field = type.GetField("EVENT_" + eventName.ToUpper(), BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
+                field = type.GetField(
+                    "EVENT_" + eventName.ToUpper(),
+                    BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic
+                );
                 if (field != null)
                     break;
                 type = type.BaseType;

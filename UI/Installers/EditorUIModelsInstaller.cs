@@ -15,7 +15,8 @@ namespace EditorEX.UI.Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<IAddressableCollectorItem>()
+            Container
+                .Bind<IAddressableCollectorItem>()
                 .To<DefaultAddressableCollectorItem<Material>>()
                 .FromInstance(new("rounded-corners", "Visuals/Materials/UI/UINoGlowRoundEdge.mat"));
         }

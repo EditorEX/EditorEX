@@ -53,7 +53,8 @@ namespace EditorEX.Vivify.Events
             IAudioTimeSource audioTimeSource,
             PopulateBeatmap populateBeatmap,
             TransformControllerFactory transformControllerFactory,
-            [InjectOptional] ReLoader? reLoader)
+            [InjectOptional] ReLoader? reLoader
+        )
         {
             _log = log;
             _instantiator = instantiator;
@@ -82,10 +83,17 @@ namespace EditorEX.Vivify.Events
 
         public void Initialize()
         {
-            foreach (CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents())
+            foreach (
+                CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents()
+            )
             {
-                if (customEventEditorData.eventType != INSTANTIATE_PREFAB ||
-                    !_deserializedData.Resolve(customEventEditorData, out InstantiatePrefabData? data))
+                if (
+                    customEventEditorData.eventType != INSTANTIATE_PREFAB
+                    || !_deserializedData.Resolve(
+                        customEventEditorData,
+                        out InstantiatePrefabData? data
+                    )
+                )
                 {
                     continue;
                 }
@@ -111,7 +119,12 @@ namespace EditorEX.Vivify.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out InstantiatePrefabData? data))
+            if (
+                !_deserializedData.Resolve(
+                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    out InstantiatePrefabData? data
+                )
+            )
             {
                 return;
             }
@@ -170,19 +183,38 @@ namespace EditorEX.Vivify.Events
         private void CreatePreviousPrefabs()
         {
             float currentBeat = _audioDataModel.bpmData.SecondsToBeat(_audioTimeSource.songTime);
-            foreach (CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents())
+            foreach (
+                CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents()
+            )
             {
-                if (customEventEditorData.eventType != INSTANTIATE_PREFAB ||
-                    !_deserializedData.Resolve(customEventEditorData, out InstantiatePrefabData? data))
+                if (
+                    customEventEditorData.eventType != INSTANTIATE_PREFAB
+                    || !_deserializedData.Resolve(
+                        customEventEditorData,
+                        out InstantiatePrefabData? data
+                    )
+                )
                 {
                     continue;
                 }
                 bool isDestroyed = false;
-                foreach (CustomEventEditorData customEventEditorData2 in CustomDataRepository.GetCustomEvents())
+                foreach (
+                    CustomEventEditorData customEventEditorData2 in CustomDataRepository.GetCustomEvents()
+                )
                 {
-                    if (customEventEditorData2.beat < customEventEditorData.beat || customEventEditorData2.beat > currentBeat) continue;
+                    if (
+                        customEventEditorData2.beat < customEventEditorData.beat
+                        || customEventEditorData2.beat > currentBeat
+                    )
+                        continue;
 
-                    if (customEventEditorData2.eventType == DESTROY_PREFAB && _deserializedData.Resolve<DestroyObjectData>(customEventEditorData2, out DestroyObjectData? data2))
+                    if (
+                        customEventEditorData2.eventType == DESTROY_PREFAB
+                        && _deserializedData.Resolve<DestroyObjectData>(
+                            customEventEditorData2,
+                            out DestroyObjectData? data2
+                        )
+                    )
                     {
                         if (data2.Id.Contains(data.Id))
                         {
@@ -196,7 +228,10 @@ namespace EditorEX.Vivify.Events
                     continue;
                 }
 
-                if (currentBeat > customEventEditorData.beat && !_prefabManager._prefabs.ContainsKey(data.Id))
+                if (
+                    currentBeat > customEventEditorData.beat
+                    && !_prefabManager._prefabs.ContainsKey(data.Id)
+                )
                 {
                     Callback(CustomDataRepository.GetCustomEventConversion(customEventEditorData));
                 }
@@ -204,6 +239,7 @@ namespace EditorEX.Vivify.Events
         }
 
         private float _lastBeat = 0f;
+
         public void Tick()
         {
             if (_lastBeat > _audioTimeSource.songTime)

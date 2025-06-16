@@ -1,12 +1,12 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using BeatmapEditor3D.DataModels;
 using EditorEX.Config;
 using EditorEX.Util;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace EditorEX.UI.Patches
 {
@@ -15,9 +15,7 @@ namespace EditorEX.UI.Patches
         private readonly SiraLog _siraLog;
         private readonly SourcesConfig _sourcesConfig;
 
-        private BeatmapsCollectionDataModelPatches(
-            SiraLog siraLog,
-            SourcesConfig sourcesConfig)
+        private BeatmapsCollectionDataModelPatches(SiraLog siraLog, SourcesConfig sourcesConfig)
         {
             _siraLog = siraLog;
             _sourcesConfig = sourcesConfig;
@@ -36,8 +34,14 @@ namespace EditorEX.UI.Patches
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(BeatmapsCollectionDataModel), nameof(BeatmapsCollectionDataModel.GenerateRelativePath))]
-        private bool GenerateRelativePathWithCustomSource(string projectDirectoryPath, ref string __result)
+        [AffinityPatch(
+            typeof(BeatmapsCollectionDataModel),
+            nameof(BeatmapsCollectionDataModel.GenerateRelativePath)
+        )]
+        private bool GenerateRelativePathWithCustomSource(
+            string projectDirectoryPath,
+            ref string __result
+        )
         {
             var projectDirectory = new DirectoryInfo(projectDirectoryPath);
 
@@ -66,7 +70,10 @@ namespace EditorEX.UI.Patches
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(BeatmapsCollectionDataModel), nameof(BeatmapsCollectionDataModel.RefreshCollection))]
+        [AffinityPatch(
+            typeof(BeatmapsCollectionDataModel),
+            nameof(BeatmapsCollectionDataModel.RefreshCollection)
+        )]
         private bool UseCustomLevelSources(BeatmapsCollectionDataModel __instance)
         {
             if (_sourcesConfig.Sources == null || _sourcesConfig.Sources.Count == 0)
@@ -74,7 +81,7 @@ namespace EditorEX.UI.Patches
                 _sourcesConfig.Sources = new Dictionary<string, string>
                 {
                     { "Custom Levels", GenerateDefaultSources("CustomLevels") },
-                    { "Custom WIP Levels", GenerateDefaultSources("CustomWIPLevels") }
+                    { "Custom WIP Levels", GenerateDefaultSources("CustomWIPLevels") },
                 };
             }
 
@@ -82,7 +89,9 @@ namespace EditorEX.UI.Patches
             if (!_sourcesConfig.Sources.TryGetValue(_sourcesConfig.SelectedSource, out pathToLoad))
             {
                 var defaultSource = _sourcesConfig.Sources.First();
-                _siraLog.Error($"Failed to get paths from source: {_sourcesConfig.SelectedSource}, defaulting to {defaultSource.Key}");
+                _siraLog.Error(
+                    $"Failed to get paths from source: {_sourcesConfig.SelectedSource}, defaulting to {defaultSource.Key}"
+                );
                 pathToLoad = defaultSource.Value;
             }
 
@@ -91,7 +100,15 @@ namespace EditorEX.UI.Patches
             if (Directory.Exists(pathToLoad))
             {
                 var projectDirectories = DirectorySearchUtil.GetDirectoriesWithInfoDat(pathToLoad);
-                __instance._beatmapInfos.AddRange(projectDirectories.Select(new Func<string, BeatmapsCollectionDataModel.BeatmapInfoData>(__instance.CreateBeatmapLevelInfoData)).ToList());
+                __instance._beatmapInfos.AddRange(
+                    projectDirectories
+                        .Select(
+                            new Func<string, BeatmapsCollectionDataModel.BeatmapInfoData>(
+                                __instance.CreateBeatmapLevelInfoData
+                            )
+                        )
+                        .ToList()
+                );
             }
             else
             {

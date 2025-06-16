@@ -6,12 +6,16 @@ using EditorEX.Util;
 using Reactive;
 using Reactive.BeatSaber.Components;
 using Reactive.Components;
+using Reactive.Components.Basic;
 using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents.Dropdown
 {
-    public partial class EditorDropdown<TKey, TParam, TCell> : ReactiveComponent, ISkewedComponent, IKeyedControl<TKey, TParam>
-        where TCell : IReactiveComponent, ILayoutItem, ISkewedComponent, IPreviewableCell, IKeyedControlCell<TKey, TParam>, new()
+    public partial class EditorDropdown<TKey, TParam, TCell>
+        : ReactiveComponent,
+            IComponentHolder<IModal>,
+            IKeyedControl<TKey, TParam>
+        where TCell : IReactiveComponent, IPreviewableCell, IKeyedControlCell<TKey, TParam>, new()
     {
         private struct DropdownOption : IEquatable<DropdownOption>
         {
@@ -38,7 +42,11 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
         public TKey SelectedKey
         {
-            get => _selectedKey.Value ?? throw new InvalidOperationException("Key cannot be acquired when Items is empty");
+            get =>
+                _selectedKey.Value
+                ?? throw new InvalidOperationException(
+                    "Key cannot be acquired when Items is empty"
+                );
             private set
             {
                 _selectedKey = value;
@@ -77,17 +85,6 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             Select(Items.Keys.First());
         }
 
-        public float Skew
-        {
-            get => _skew;
-            set
-            {
-                _skew = value;
-                _button.Skew = value;
-                _previewCell.Skew = value;
-            }
-        }
-
         public bool Interactable
         {
             get => _interactable;
@@ -99,13 +96,14 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             }
         }
 
-        private float _skew;
         private bool _interactable = true;
 
-        private EditorTable<DropdownOption, EditorDropdownCellWrapper> Table => _modal.Modal.Table;
+        private Reactive.Components.Basic.Table<DropdownOption, EditorDropdownCellWrapper> Table =>
+            _modal.Modal.Table;
+        IModal IComponentHolder<IModal>.Component => _modal;
 
         private bool _modalOpened;
-        private SharedDropdownOptionsModal _modal = null!;
+        private SharedModal<EditorDropdownOptionsModal> _modal = null!;
 
         private EditorBackgroundButton _button = null!;
         private TCell _previewCell = default!;
@@ -113,12 +111,13 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
         protected override GameObject Construct()
         {
-            new SharedDropdownOptionsModal()
+            new SharedModal<EditorDropdownOptionsModal>()
                 .With(x => x.BuildImmediate())
-                .Bind(ref _modal)
+                .WithJumpAnimation()
                 .WithOpenListener(HandleModalOpened)
                 .WithCloseListener(HandleModalClosed)
-                .WithBeforeOpenListener(HandleBeforeModalOpened);
+                .WithBeforeOpenListener(HandleBeforeModalOpened)
+                .Bind(ref _modal);
 
             return new EditorBackgroundButton
             {
@@ -132,20 +131,19 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                     _modal.PresentEditor(ContentTransform);
                 },
 
-                Children = {
-                        new TCell {
-                                UsedAsPreview = true
-                            }
-                            .AsFlexItem(flexGrow: 1f)
-                            .Bind(ref _previewCell),
-
-                        // Icon
-                        new EditorImage {
-                            Source = "#IconDropdown",
-                            Color = new Color(0.55f, 0.6f, 0.6f, 1f), //Use a color collector later, its annoying to use in Construct atm
-                            PreserveAspect = true
-                        }.AsFlexItem(size: 20f, aspectRatio: 1f)
-                    }
+                Children =
+                {
+                    new TCell { UsedAsPreview = true }
+                        .AsFlexItem(flexGrow: 1f)
+                        .Bind(ref _previewCell),
+                    // Icon
+                    new EditorImage
+                    {
+                        Source = "#IconDropdown",
+                        Color = new Color(0.55f, 0.6f, 0.6f, 1f), //Use a color collector later, its annoying to use in Construct atm
+                        PreserveAspect = true,
+                    }.AsFlexItem(size: 20f, aspectRatio: 1f),
+                },
             }
                 .WithNativeComponent(out _canvasGroup)
                 .AsFlexGroup(alignContent: Reactive.Yoga.Align.Center)

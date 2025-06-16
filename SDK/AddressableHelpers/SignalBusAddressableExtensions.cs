@@ -1,15 +1,23 @@
-﻿using EditorEX.SDK.Signals;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using EditorEX.SDK.Signals;
 using Zenject;
 
 namespace EditorEX.SDK.AddressableHelpers
 {
     public static class SignalBusAddressableExtensions
     {
-        private static Dictionary<Tuple<string, object>, Action<IAddressableCollectorItemLoadedSignal>> _callbacks = new();
+        private static Dictionary<
+            Tuple<string, object>,
+            Action<IAddressableCollectorItemLoadedSignal>
+        > _callbacks = new();
 
-        public static void SubscribeToAddressable(this SignalBus signalBus, string label, object uniqueID, Action<IAddressableCollectorItemLoadedSignal> action)
+        public static void SubscribeToAddressable(
+            this SignalBus signalBus,
+            string label,
+            object uniqueID,
+            Action<IAddressableCollectorItemLoadedSignal> action
+        )
         {
             Action<IAddressableCollectorItemLoadedSignal> callback = x =>
             {
@@ -51,7 +59,10 @@ namespace EditorEX.SDK.AddressableHelpers
             }
         }
 
-        public static void UniqueUnsubscribeFromAddressable(this SignalBus signalBus, object uniqueID)
+        public static void UniqueUnsubscribeFromAddressable(
+            this SignalBus signalBus,
+            object uniqueID
+        )
         {
             foreach (var callback in _callbacks)
             {
@@ -62,7 +73,10 @@ namespace EditorEX.SDK.AddressableHelpers
             }
         }
 
-        public static void UniqueTryUnsubscribeFromAddressable(this SignalBus signalBus, object uniqueID)
+        public static void UniqueTryUnsubscribeFromAddressable(
+            this SignalBus signalBus,
+            object uniqueID
+        )
         {
             foreach (var callback in _callbacks)
             {

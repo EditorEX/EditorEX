@@ -1,6 +1,4 @@
 ﻿namespace EditorEX.SDK.NavBar
 {
-    public class NavBarViewData
-    {
-    }
+    public class NavBarViewData { }
 }

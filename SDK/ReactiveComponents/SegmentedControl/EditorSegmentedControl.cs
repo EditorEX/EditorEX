@@ -18,12 +18,17 @@ namespace EditorEX.SDK.ReactiveComponents
             {
                 _values = value;
                 _layout.Children.Clear();
-                _layout.Children.AddRange(_values.Select((value, index) => new EditorSegmentedControlButton(GetPosition(index, _values.Length))
-                {
-                    Text = value,
-                    Position = index,
-                    SelectedIndex = _selectedIndex,
-                }.AsFlexItem(size: "max-content", minSize: "max-content", flex: 1)));
+                _layout.Children.AddRange(
+                    _values.Select(
+                        (value, index) =>
+                            new EditorSegmentedControlButton(GetPosition(index, _values.Length))
+                            {
+                                Text = value,
+                                Position = index,
+                                SelectedIndex = _selectedIndex,
+                            }.AsFlexItem(size: "max-content", minSize: "max-content", flex: 1)
+                    )
+                );
                 TabbingType = TabbingType;
                 NotifyPropertyChanged();
             }
@@ -76,10 +81,14 @@ namespace EditorEX.SDK.ReactiveComponents
         private ObservableValue<int> _selectedIndex = new ObservableValue<int>(0);
         private Layout _layout = null!;
         private KeyboardBinder _keyboardBinder = new KeyboardBinder();
+
         protected override GameObject Construct()
         {
             return new Layout()
-                .AsFlexGroup(Reactive.Yoga.FlexDirection.Row, justifyContent: Reactive.Yoga.Justify.SpaceAround)
+                .AsFlexGroup(
+                    Reactive.Yoga.FlexDirection.Row,
+                    justifyContent: Reactive.Yoga.Justify.SpaceAround
+                )
                 .AsFlexItem(size: "max-content")
                 .Export(out _layout)
                 .Use();
@@ -94,13 +103,23 @@ namespace EditorEX.SDK.ReactiveComponents
         private void AddBindings()
         {
             bool qwerty = TabbingType == TabbingType.Qwerty;
-            for (int i = 0; i < _layout.Children.OfType<EditorSegmentedControlButton>().Count(); i++)
+            for (
+                int i = 0;
+                i < _layout.Children.OfType<EditorSegmentedControlButton>().Count();
+                i++
+            )
             {
                 int b = i;
-                _keyboardBinder.AddBinding(qwerty ? TabbingSegmentedControlController._qwertyKeyBinds[i] : KeyCode.Alpha1 + i, KeyboardBinder.KeyBindingType.KeyDown, x =>
-                {
-                    ClickCell(b);
-                });
+                _keyboardBinder.AddBinding(
+                    qwerty
+                        ? TabbingSegmentedControlController._qwertyKeyBinds[i]
+                        : KeyCode.Alpha1 + i,
+                    KeyboardBinder.KeyBindingType.KeyDown,
+                    x =>
+                    {
+                        ClickCell(b);
+                    }
+                );
             }
         }
 
@@ -108,7 +127,7 @@ namespace EditorEX.SDK.ReactiveComponents
         {
             if (InputUtils.IsInputFieldActive())
                 return;
-                
+
             foreach (var child in _layout.Children.OfType<EditorSegmentedControlButton>())
             {
                 if (child.Position == number)

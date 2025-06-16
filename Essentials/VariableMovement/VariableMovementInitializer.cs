@@ -13,9 +13,16 @@ namespace EditorEX.Essentials.VariableMovement
         public void Construct(
             IVariableMovementDataProvider originalVariableMovementDataProvider,
             PopulateBeatmap populateBeatmap,
-            EditorBasicBeatmapObjectSpawnMovementData editorBasicBeatmapObjectSpawnMovementData)
+            EditorBasicBeatmapObjectSpawnMovementData editorBasicBeatmapObjectSpawnMovementData
+        )
         {
-            var num = populateBeatmap._beatmapObjectsDataModel.noteJumpSpeedEvents.Cast<NoteJumpSpeedEditorData>().Aggregate(0f, (current, noteJumpSpeedEventData) => Mathf.Min(current, noteJumpSpeedEventData.noteJumpSpeedDelta));
+            var num = populateBeatmap
+                ._beatmapObjectsDataModel.noteJumpSpeedEvents.Cast<NoteJumpSpeedEditorData>()
+                .Aggregate(
+                    0f,
+                    (current, noteJumpSpeedEventData) =>
+                        Mathf.Min(current, noteJumpSpeedEventData.noteJumpSpeedDelta)
+                );
             originalVariableMovementDataProvider.Init(
                 editorBasicBeatmapObjectSpawnMovementData._startHalfJumpDurationInBeats,
                 editorBasicBeatmapObjectSpawnMovementData._maxHalfJumpDistance,
@@ -25,7 +32,8 @@ namespace EditorEX.Essentials.VariableMovement
                 editorBasicBeatmapObjectSpawnMovementData._noteJumpValueType,
                 editorBasicBeatmapObjectSpawnMovementData._noteJumpValue,
                 editorBasicBeatmapObjectSpawnMovementData.centerPos,
-                Vector3.forward);
+                Vector3.forward
+            );
         }
     }
 }

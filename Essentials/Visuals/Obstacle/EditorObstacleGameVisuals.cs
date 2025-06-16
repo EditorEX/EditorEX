@@ -1,11 +1,11 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System.Collections.Generic;
+using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Visuals.Universal;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -29,7 +29,7 @@ namespace EditorEX.Essentials.Visuals.Obstacle
         private CutoutEffect _wallCutout;
         private CutoutEffect _frameCutout;
 
-        // *sigh* 
+        // *sigh*
         private GameObject _basicFrame;
 
         private bool _active;
@@ -40,7 +40,8 @@ namespace EditorEX.Essentials.Visuals.Obstacle
             AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
             ColorManager colorManager,
-            IReadonlyBeatmapState state)
+            IReadonlyBeatmapState state
+        )
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
@@ -68,8 +69,16 @@ namespace EditorEX.Essentials.Visuals.Obstacle
         {
             _gameRoot = new GameObject("GameWallRoot");
             _gameRoot.transform.SetParent(transform, false);
-            var core = Instantiate(_visualAssetProvider.obstaclePrefab.transform.Find("ObstacleCore"), _gameRoot.transform, false).gameObject;
-            var hideWrapper = Instantiate(_visualAssetProvider.obstaclePrefab.transform.Find("HideWrapper"), _gameRoot.transform, false).gameObject;
+            var core = Instantiate(
+                _visualAssetProvider.obstaclePrefab.transform.Find("ObstacleCore"),
+                _gameRoot.transform,
+                false
+            ).gameObject;
+            var hideWrapper = Instantiate(
+                _visualAssetProvider.obstaclePrefab.transform.Find("HideWrapper"),
+                _gameRoot.transform,
+                false
+            ).gameObject;
 
             Destroy(core.transform.Find("Collider").gameObject);
             Destroy(core.transform.Find("DepthWrite").gameObject);
@@ -81,13 +90,16 @@ namespace EditorEX.Essentials.Visuals.Obstacle
             _wallCutout = core.GetComponent<CutoutEffect>();
             _frameCutout = hideWrapper.transform.Find("ObstacleFrame").GetComponent<CutoutEffect>();
 
-            _stretchableObstacle._obstacleFrame = _frameCutout.GetComponent<ParametricBoxFrameController>();
+            _stretchableObstacle._obstacleFrame =
+                _frameCutout.GetComponent<ParametricBoxFrameController>();
             _stretchableObstacle._obstacleCore = core.transform;
 
             _stretchableObstacle._materialPropertyBlockControllers = new[]
             {
                 core.GetComponent<MaterialPropertyBlockController>(),
-                hideWrapper.transform.Find("ObstacleFrame").GetComponent<MaterialPropertyBlockController>()
+                hideWrapper
+                    .transform.Find("ObstacleFrame")
+                    .GetComponent<MaterialPropertyBlockController>(),
             };
 
             _basicFrame = gameObject.transform.Find("ObstacleFrame").gameObject;
@@ -110,7 +122,13 @@ namespace EditorEX.Essentials.Visuals.Obstacle
 
             var obstacleColor = _colorManager.obstaclesColor;
 
-            _stretchableObstacle.SetAllProperties(_stretchableObstacle._obstacleFrame.width, _stretchableObstacle._obstacleFrame.height, _stretchableObstacle._obstacleFrame.length, obstacleColor, _state.beat);
+            _stretchableObstacle.SetAllProperties(
+                _stretchableObstacle._obstacleFrame.width,
+                _stretchableObstacle._obstacleFrame.height,
+                _stretchableObstacle._obstacleFrame.length,
+                obstacleColor,
+                _state.beat
+            );
 
             _wallCutout.SetCutout(0f);
             _frameCutout.SetCutout(0f);
@@ -132,7 +150,15 @@ namespace EditorEX.Essentials.Visuals.Obstacle
 
         public void ManualUpdate()
         {
-            if (!(_editorDeserializedData?.Resolve(_editorData, out EditorNoodleObstacleData? noodleData) ?? false) || noodleData == null)
+            if (
+                !(
+                    _editorDeserializedData?.Resolve(
+                        _editorData,
+                        out EditorNoodleObstacleData? noodleData
+                    ) ?? false
+                )
+                || noodleData == null
+            )
             {
                 return;
             }
@@ -156,7 +182,8 @@ namespace EditorEX.Essentials.Visuals.Obstacle
                 out Quaternion? _,
                 out float? dissolve,
                 out float? _,
-                out float? _);
+                out float? _
+            );
 
             _wallCutout.SetCutout(1f - dissolve.GetValueOrDefault(1f));
 

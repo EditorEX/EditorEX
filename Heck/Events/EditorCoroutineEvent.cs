@@ -1,4 +1,6 @@
-﻿using BeatmapEditor3D;
+﻿using System;
+using System.Collections;
+using BeatmapEditor3D;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.Essentials.Patches;
@@ -7,8 +9,6 @@ using EditorEX.Heck.EventData;
 using Heck;
 using Heck.Animation;
 using Heck.Event;
-using System;
-using System.Collections;
 using UnityEngine;
 using Zenject;
 using EventType = Heck.Animation.Events.EventType;
@@ -29,7 +29,8 @@ namespace EditorEX.Heck.Events
             IAudioTimeSource audioTimeSource,
             PopulateBeatmap populateBeatmap,
             CoroutineDummy coroutineDummy,
-            [InjectOptional(Id = "Heck")] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = "Heck")] EditorDeserializedData deserializedData
+        )
         {
             _bpmController = bpmController;
             _audioTimeSource = audioTimeSource;
@@ -57,7 +58,14 @@ namespace EditorEX.Heck.Events
 
         internal void StartEventCoroutine(CustomEventData customEventData, EventType eventType)
         {
-            if (!(_editorDeserializedData?.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out EditorCoroutineEventData? heckData) ?? false))
+            if (
+                !(
+                    _editorDeserializedData?.Resolve(
+                        CustomDataRepository.GetCustomEventConversion(customEventData),
+                        out EditorCoroutineEventData? heckData
+                    ) ?? false
+                )
+            )
             {
                 return;
             }
@@ -65,8 +73,14 @@ namespace EditorEX.Heck.Events
             float duration = 60f * heckData.Duration / _bpmController.currentBpm; // Convert to real time;
             Functions easing = heckData.Easing;
             int repeat = heckData.Repeat;
-            bool noDuration = duration == 0 || _audioDataModel.bpmData.BeatToSeconds(customEventData.time) + (duration * (repeat + 1)) < _audioTimeSource.songTime;
-            foreach (EditorCoroutineEventData.CoroutineInfo coroutineInfo in heckData.CoroutineInfos)
+            bool noDuration =
+                duration == 0
+                || _audioDataModel.bpmData.BeatToSeconds(customEventData.time)
+                    + (duration * (repeat + 1))
+                    < _audioTimeSource.songTime;
+            foreach (
+                EditorCoroutineEventData.CoroutineInfo coroutineInfo in heckData.CoroutineInfos
+            )
             {
                 BaseProperty property = coroutineInfo.Property;
                 IPointDefinition pointData = coroutineInfo.PointDefinition;
@@ -89,25 +103,36 @@ namespace EditorEX.Heck.Events
                         case EventType.AnimateTrack:
                             if (noDuration || (pointData.Count <= 1 && !hasBase))
                             {
-                                SetPropertyValue(pointData, property, coroutineInfo.Track, 1, out _);
-                            }
-                            else
-                            {
-                                property.Coroutine = _coroutineDummy.StartCoroutine(AnimateTrackCoroutine(
+                                SetPropertyValue(
                                     pointData,
                                     property,
                                     coroutineInfo.Track,
-                                    duration,
-                                    _audioDataModel.bpmData.BeatToSeconds(customEventData.time),
-                                    easing,
-                                    repeat,
-                                    hasBase));
+                                    1,
+                                    out _
+                                );
+                            }
+                            else
+                            {
+                                property.Coroutine = _coroutineDummy.StartCoroutine(
+                                    AnimateTrackCoroutine(
+                                        pointData,
+                                        property,
+                                        coroutineInfo.Track,
+                                        duration,
+                                        _audioDataModel.bpmData.BeatToSeconds(customEventData.time),
+                                        easing,
+                                        repeat,
+                                        hasBase
+                                    )
+                                );
                             }
 
                             break;
 
                         case EventType.AssignPathAnimation:
-                            IPointDefinitionInterpolation interpolation = ((BasePathProperty)property).IInterpolation;
+                            IPointDefinitionInterpolation interpolation = (
+                                (BasePathProperty)property
+                            ).IInterpolation;
                             interpolation.Init(pointData);
                             if (noDuration)
                             {
@@ -115,11 +140,14 @@ namespace EditorEX.Heck.Events
                             }
                             else
                             {
-                                property.Coroutine = _coroutineDummy.StartCoroutine(AssignPathAnimationCoroutine(
-                                    interpolation,
-                                    duration,
-                                    _audioDataModel.bpmData.BeatToSeconds(customEventData.time),
-                                    easing));
+                                property.Coroutine = _coroutineDummy.StartCoroutine(
+                                    AssignPathAnimationCoroutine(
+                                        interpolation,
+                                        duration,
+                                        _audioDataModel.bpmData.BeatToSeconds(customEventData.time),
+                                        easing
+                                    )
+                                );
                             }
 
                             break;
@@ -133,7 +161,8 @@ namespace EditorEX.Heck.Events
             BaseProperty property,
             Track track,
             float time,
-            out bool onLast)
+            out bool onLast
+        )
         {
             switch (points)
             {
@@ -171,7 +200,8 @@ namespace EditorEX.Heck.Events
             Property<float> property,
             Track track,
             float time,
-            out bool onLast)
+            out bool onLast
+        )
         {
             float value = points.Interpolate(time, out onLast);
             if (property.Value.HasValue && property.Value.Value.EqualsTo(value))
@@ -188,7 +218,8 @@ namespace EditorEX.Heck.Events
             Property<Vector3> property,
             Track track,
             float time,
-            out bool onLast)
+            out bool onLast
+        )
         {
             Vector3 value = points.Interpolate(time, out onLast);
             if (property.Value.HasValue && property.Value.Value.EqualsTo(value))
@@ -205,7 +236,8 @@ namespace EditorEX.Heck.Events
             Property<Vector4> property,
             Track track,
             float time,
-            out bool onLast)
+            out bool onLast
+        )
         {
             Vector4 value = points.Interpolate(time, out onLast);
             if (property.Value.HasValue && property.Value.Value.EqualsTo(value))
@@ -222,11 +254,11 @@ namespace EditorEX.Heck.Events
             Property<Quaternion> property,
             Track track,
             float time,
-            out bool onLast)
+            out bool onLast
+        )
         {
             Quaternion value = points.Interpolate(time, out onLast);
-            if (property.Value.HasValue &&
-                property.Value.Value.EqualsTo(value))
+            if (property.Value.HasValue && property.Value.Value.EqualsTo(value))
             {
                 return;
             }
@@ -243,7 +275,8 @@ namespace EditorEX.Heck.Events
             float startTime,
             Functions easing,
             int repeat,
-            bool nonLazy)
+            bool nonLazy
+        )
         {
             bool skip = false;
             while (repeat >= 0)
@@ -279,7 +312,8 @@ namespace EditorEX.Heck.Events
             IPointDefinitionInterpolation interpolation,
             float duration,
             float startTime,
-            Functions easing)
+            Functions easing
+        )
         {
             float elapsedTime;
             do
@@ -288,8 +322,7 @@ namespace EditorEX.Heck.Events
                 float normalizedTime = Mathf.Min(elapsedTime / duration, 1);
                 interpolation.Time = Easings.Interpolate(normalizedTime, easing);
                 yield return null;
-            }
-            while (elapsedTime < duration);
+            } while (elapsedTime < duration);
 
             interpolation.Finish();
         }

@@ -7,7 +7,9 @@ namespace EditorEX.Util
 {
     public static class KeybindsExtensions
     {
-        public static CustomInputBuilder.GroupBuilding AddViewModeBindings(this CustomInputBuilder.GroupBuilding group)
+        public static CustomInputBuilder.GroupBuilding AddViewModeBindings(
+            this CustomInputBuilder.GroupBuilding group
+        )
         {
             for (int i = 0; i < ViewModeRepository.GetViewModes().Count; i++)
             {

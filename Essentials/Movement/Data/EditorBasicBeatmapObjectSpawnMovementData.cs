@@ -25,24 +25,54 @@ namespace EditorEX.Essentials.Movement.Data
         private void Construct(
             EditorSpawnDataManager editorSpawnDataManager,
             PlayerDataModel playerDataModel,
-            PopulateBeatmap populateBeatmap)
+            PopulateBeatmap populateBeatmap
+        )
         {
             _editorSpawnDataManager = editorSpawnDataManager;
 
-            var difficultyBeatmap = populateBeatmap._beatmapLevelDataModel.difficultyBeatmaps[(populateBeatmap._beatmapDataModel.beatmapCharacteristic, populateBeatmap._beatmapDataModel.beatmapDifficulty)];
+            var difficultyBeatmap = populateBeatmap._beatmapLevelDataModel.difficultyBeatmaps[
+                (
+                    populateBeatmap._beatmapDataModel.beatmapCharacteristic,
+                    populateBeatmap._beatmapDataModel.beatmapDifficulty
+                )
+            ];
 
             var offsetProvider = new StaticJumpOffsetYProvider();
             offsetProvider.SetField("_initData", new StaticJumpOffsetYProvider.InitData(0));
 
-            BeatmapObjectSpawnMovementData.NoteJumpValueType jumpValueType = BeatmapObjectSpawnMovementData.NoteJumpValueType.JumpDuration;
+            BeatmapObjectSpawnMovementData.NoteJumpValueType jumpValueType =
+                BeatmapObjectSpawnMovementData.NoteJumpValueType.JumpDuration;
             float jumpValue = 0f;
 
-            BeatmapObjectSpawnControllerHelpers.GetNoteJumpValues(playerDataModel.playerData.playerSpecificSettings, difficultyBeatmap.noteJumpStartBeatOffset, out jumpValueType, out jumpValue);
+            BeatmapObjectSpawnControllerHelpers.GetNoteJumpValues(
+                playerDataModel.playerData.playerSpecificSettings,
+                difficultyBeatmap.noteJumpStartBeatOffset,
+                out jumpValueType,
+                out jumpValue
+            );
 
-            Init(4, difficultyBeatmap.noteJumpMovementSpeed, populateBeatmap._beatmapLevelDataModel.beatsPerMinute, jumpValueType, jumpValue, offsetProvider, Vector3.right, Vector3.forward);
+            Init(
+                4,
+                difficultyBeatmap.noteJumpMovementSpeed,
+                populateBeatmap._beatmapLevelDataModel.beatsPerMinute,
+                jumpValueType,
+                jumpValue,
+                offsetProvider,
+                Vector3.right,
+                Vector3.forward
+            );
         }
 
-        public void Init(int noteLinesCount, float startNoteJumpMovementSpeed, float startBpm, BeatmapObjectSpawnMovementData.NoteJumpValueType noteJumpValueType, float noteJumpValue, IJumpOffsetYProvider jumpOffsetYProvider, Vector3 rightVec, Vector3 forwardVec)
+        public void Init(
+            int noteLinesCount,
+            float startNoteJumpMovementSpeed,
+            float startBpm,
+            BeatmapObjectSpawnMovementData.NoteJumpValueType noteJumpValueType,
+            float noteJumpValue,
+            IJumpOffsetYProvider jumpOffsetYProvider,
+            Vector3 rightVec,
+            Vector3 forwardVec
+        )
         {
             _noteJumpValueType = noteJumpValueType;
             _noteJumpValue = noteJumpValue;
@@ -50,7 +80,10 @@ namespace EditorEX.Essentials.Movement.Data
             _noteJumpMovementSpeed = startNoteJumpMovementSpeed;
             if (noteJumpValueType != BeatmapObjectSpawnMovementData.NoteJumpValueType.BeatOffset)
             {
-                if (noteJumpValueType == BeatmapObjectSpawnMovementData.NoteJumpValueType.JumpDuration)
+                if (
+                    noteJumpValueType
+                    == BeatmapObjectSpawnMovementData.NoteJumpValueType.JumpDuration
+                )
                 {
                     _jumpDuration = noteJumpValue * 2f;
                 }
@@ -59,7 +92,14 @@ namespace EditorEX.Essentials.Movement.Data
             {
                 _noteJumpStartBeatOffset = noteJumpValue;
                 float num = 60f / startBpm;
-                float num2 = CoreMathUtils.CalculateHalfJumpDurationInBeats(_startHalfJumpDurationInBeats, _maxHalfJumpDistance, noteJumpMovementSpeed, num, _noteJumpStartBeatOffset) * 2f;
+                float num2 =
+                    CoreMathUtils.CalculateHalfJumpDurationInBeats(
+                        _startHalfJumpDurationInBeats,
+                        _maxHalfJumpDistance,
+                        noteJumpMovementSpeed,
+                        num,
+                        _noteJumpStartBeatOffset
+                    ) * 2f;
                 _jumpDuration = num * num2;
             }
             _rightVec = rightVec;
@@ -75,7 +115,8 @@ namespace EditorEX.Essentials.Movement.Data
 
         private float GetGravityBase(NoteLineLayer noteLineLayer, NoteLineLayer beforeJumpLineLayer)
         {
-            return HighestJumpPosYForLineLayer(noteLineLayer) - StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(beforeJumpLineLayer);
+            return HighestJumpPosYForLineLayer(noteLineLayer)
+                - StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(beforeJumpLineLayer);
         }
 
         public ObstacleSpawnData GetObstacleSpawnData(ObstacleEditorData? obstacleData)
@@ -86,10 +127,16 @@ namespace EditorEX.Essentials.Movement.Data
                     return spawnData.Value;
             }
 
-            Vector3 obstacleOffset = GetObstacleOffset(obstacleData.column, (NoteLineLayer)obstacleData.row);
+            Vector3 obstacleOffset = GetObstacleOffset(
+                obstacleData.column,
+                (NoteLineLayer)obstacleData.row
+            );
             obstacleOffset.y += _jumpOffsetYProvider.jumpOffsetY;
             obstacleOffset.y = Mathf.Max(obstacleOffset.y, _verticalObstaclePosY);
-            float height = Mathf.Min((float)obstacleData.height * StaticBeatmapObjectSpawnMovementData.layerHeight, _obstacleTopPosY - obstacleOffset.y);
+            float height = Mathf.Min(
+                (float)obstacleData.height * StaticBeatmapObjectSpawnMovementData.layerHeight,
+                _obstacleTopPosY - obstacleOffset.y
+            );
             float width = (float)obstacleData.width * 0.6f;
             obstacleOffset.x += (width - 0.6f) * 0.5f;
             return new ObstacleSpawnData(obstacleOffset, width, height);
@@ -105,8 +152,17 @@ namespace EditorEX.Essentials.Movement.Data
 
             var spawnData = EditorSpawnDataRepository.GetSpawnData(noteData);
             Vector3 noteOffset = GetNoteOffset(noteData.column, spawnData.beforeJumpNoteLineLayer);
-            Vector3 flipOffset = ((noteData.type != ColorType.None) ? GetNoteOffset(spawnData.flipLineIndex, spawnData.beforeJumpNoteLineLayer) : noteOffset);
-            return new NoteSpawnData(flipOffset, flipOffset, noteOffset, GetGravityBase((NoteLineLayer)noteData.row, spawnData.beforeJumpNoteLineLayer));
+            Vector3 flipOffset = (
+                (noteData.type != ColorType.None)
+                    ? GetNoteOffset(spawnData.flipLineIndex, spawnData.beforeJumpNoteLineLayer)
+                    : noteOffset
+            );
+            return new NoteSpawnData(
+                flipOffset,
+                flipOffset,
+                noteOffset,
+                GetGravityBase((NoteLineLayer)noteData.row, spawnData.beforeJumpNoteLineLayer)
+            );
         }
 
         public SliderSpawnData GetSliderSpawnData(BaseSliderEditorData? sliderData)
@@ -118,32 +174,65 @@ namespace EditorEX.Essentials.Movement.Data
             }
 
             var spawnData = EditorSpawnDataRepository.GetSpawnData(sliderData);
-            Vector3 noteOffset = GetNoteOffset(sliderData.column, spawnData.headBeforeJumpLineLayer);
-            float num = NoteJumpGravityForLineLayer((NoteLineLayer)sliderData.row, spawnData.headBeforeJumpLineLayer);
-            Vector3 noteOffset2 = GetNoteOffset(sliderData.tailColumn, spawnData.tailBeforeJumpLineLayer);
-            return new SliderSpawnData(noteOffset, GetGravityBase((NoteLineLayer)sliderData.row, spawnData.headBeforeJumpLineLayer), noteOffset2, GetGravityBase((NoteLineLayer)sliderData.tailRow, spawnData.tailBeforeJumpLineLayer));
+            Vector3 noteOffset = GetNoteOffset(
+                sliderData.column,
+                spawnData.headBeforeJumpLineLayer
+            );
+            float num = NoteJumpGravityForLineLayer(
+                (NoteLineLayer)sliderData.row,
+                spawnData.headBeforeJumpLineLayer
+            );
+            Vector3 noteOffset2 = GetNoteOffset(
+                sliderData.tailColumn,
+                spawnData.tailBeforeJumpLineLayer
+            );
+            return new SliderSpawnData(
+                noteOffset,
+                GetGravityBase((NoteLineLayer)sliderData.row, spawnData.headBeforeJumpLineLayer),
+                noteOffset2,
+                GetGravityBase((NoteLineLayer)sliderData.tailRow, spawnData.tailBeforeJumpLineLayer)
+            );
         }
 
         public Vector3 GetNoteOffset(int noteLineIndex, NoteLineLayer noteLineLayer)
         {
             float num = (float)(-(float)(_noteLinesCount - 1)) * 0.5f;
             num = (num + (float)noteLineIndex) * 0.8f;
-            return _rightVec * num + new Vector3(0f, StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(noteLineLayer), 0f);
+            return _rightVec * num
+                + new Vector3(
+                    0f,
+                    StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(noteLineLayer),
+                    0f
+                );
         }
 
         public Vector3 GetObstacleOffset(int noteLineIndex, NoteLineLayer noteLineLayer)
         {
             float num = (float)(-(float)(_noteLinesCount - 1)) * 0.5f;
             num = (num + (float)noteLineIndex) * 0.6f;
-            return _rightVec * num + new Vector3(0f, StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(noteLineLayer) + -0.15f, 0f);
+            return _rightVec * num
+                + new Vector3(
+                    0f,
+                    StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(noteLineLayer)
+                        + -0.15f,
+                    0f
+                );
         }
 
-        public float JumpPosYForLineLayerAtDistanceFromPlayerWithoutJumpOffset(NoteLineLayer lineLayer, float distanceFromPlayer)
+        public float JumpPosYForLineLayerAtDistanceFromPlayerWithoutJumpOffset(
+            NoteLineLayer lineLayer,
+            float distanceFromPlayer
+        )
         {
             float num = (_jumpDistance * 0.5f - distanceFromPlayer) / _noteJumpMovementSpeed;
-            float num2 = NoteJumpGravityForLineLayerWithoutJumpOffset(lineLayer, NoteLineLayer.Base);
+            float num2 = NoteJumpGravityForLineLayerWithoutJumpOffset(
+                lineLayer,
+                NoteLineLayer.Base
+            );
             float num3 = num2 * _jumpDuration * 0.5f;
-            return StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(NoteLineLayer.Base) + num3 * num - num2 * num * num * 0.5f;
+            return StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(NoteLineLayer.Base)
+                + num3 * num
+                - num2 * num * num * 0.5f;
         }
 
         public float HighestJumpPosYForLineLayer(NoteLineLayer lineLayer)
@@ -172,16 +261,32 @@ namespace EditorEX.Essentials.Movement.Data
             return _topLinesHighestJumpPosY;
         }
 
-        public float NoteJumpGravityForLineLayer(NoteLineLayer lineLayer, NoteLineLayer beforeJumpLineLayer)
+        public float NoteJumpGravityForLineLayer(
+            NoteLineLayer lineLayer,
+            NoteLineLayer beforeJumpLineLayer
+        )
         {
             float num = _jumpDistance / _noteJumpMovementSpeed * 0.5f;
-            return 2f * (HighestJumpPosYForLineLayer(lineLayer) - StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(beforeJumpLineLayer)) / (num * num);
+            return 2f
+                * (
+                    HighestJumpPosYForLineLayer(lineLayer)
+                    - StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(beforeJumpLineLayer)
+                )
+                / (num * num);
         }
 
-        public float NoteJumpGravityForLineLayerWithoutJumpOffset(NoteLineLayer lineLayer, NoteLineLayer beforeJumpLineLayer)
+        public float NoteJumpGravityForLineLayerWithoutJumpOffset(
+            NoteLineLayer lineLayer,
+            NoteLineLayer beforeJumpLineLayer
+        )
         {
             float num = _jumpDistance / _noteJumpMovementSpeed * 0.5f;
-            return 2f * (HighestJumpPosYForLineLayerWithoutJumpOffset(lineLayer) - StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(beforeJumpLineLayer)) / (num * num);
+            return 2f
+                * (
+                    HighestJumpPosYForLineLayerWithoutJumpOffset(lineLayer)
+                    - StaticBeatmapObjectSpawnMovementData.LineYPosForLineLayer(beforeJumpLineLayer)
+                )
+                / (num * num);
         }
 
         private EditorSpawnDataManager _editorSpawnDataManager = null!;

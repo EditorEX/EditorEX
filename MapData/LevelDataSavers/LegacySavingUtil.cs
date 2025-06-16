@@ -1,9 +1,9 @@
-using V3 = BeatmapSaveDataVersion3;
-using V2 = BeatmapSaveDataVersion2_6_0AndEarlier;
-using BeatmapSaveDataCommon;
-using BeatmapEditor3D;
-using System.IO;
 using System;
+using System.IO;
+using BeatmapEditor3D;
+using BeatmapSaveDataCommon;
+using V2 = BeatmapSaveDataVersion2_6_0AndEarlier;
+using V3 = BeatmapSaveDataVersion3;
 
 public static class LegacySavingUtil
 {
@@ -32,7 +32,10 @@ public static class LegacySavingUtil
         return itemA.type.CompareTo(itemB.type);
     }
 
-    public static int SortByRotationTypeAndBeat(V3.RotationEventData itemA, V3.RotationEventData itemB)
+    public static int SortByRotationTypeAndBeat(
+        V3.RotationEventData itemA,
+        V3.RotationEventData itemB
+    )
     {
         int num = itemA.beat.CompareTo(itemB.beat);
         if (num != 0)

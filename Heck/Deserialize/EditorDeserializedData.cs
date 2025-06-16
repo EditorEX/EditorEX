@@ -1,9 +1,9 @@
-﻿using BeatmapEditor3D.DataModels;
-using EditorEX.CustomJSONData.CustomEvents;
-using Heck.Deserialize;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BeatmapEditor3D.DataModels;
+using EditorEX.CustomJSONData.CustomEvents;
+using Heck.Deserialize;
 
 namespace EditorEX.Heck.Deserialize
 {
@@ -12,14 +12,16 @@ namespace EditorEX.Heck.Deserialize
         internal EditorDeserializedData(
             Dictionary<CustomEventEditorData, ICustomEventCustomData> customEventCustomDatas,
             Dictionary<BasicEventEditorData, IEventCustomData> eventCustomDatas,
-            Dictionary<BaseEditorData, IObjectCustomData> objectCustomDatas)
+            Dictionary<BaseEditorData, IObjectCustomData> objectCustomDatas
+        )
         {
             CustomEventCustomDatas = customEventCustomDatas;
             _eventCustomDatas = eventCustomDatas;
             _objectCustomDatas = objectCustomDatas;
         }
 
-        public bool Resolve<T>(CustomEventEditorData customEventData, out T? result) where T : ICustomEventCustomData?
+        public bool Resolve<T>(CustomEventEditorData customEventData, out T? result)
+            where T : ICustomEventCustomData?
         {
             if (customEventData == null)
             {
@@ -29,7 +31,8 @@ namespace EditorEX.Heck.Deserialize
             return Resolve(CustomEventCustomDatas, customEventData, out result);
         }
 
-        public bool Resolve<T>(BasicEventEditorData beatmapEventData, out T? result) where T : IEventCustomData
+        public bool Resolve<T>(BasicEventEditorData beatmapEventData, out T? result)
+            where T : IEventCustomData
         {
             if (beatmapEventData == null)
             {
@@ -39,7 +42,8 @@ namespace EditorEX.Heck.Deserialize
             return Resolve(_eventCustomDatas, beatmapEventData, out result);
         }
 
-        public bool Resolve<T>(BaseEditorData? beatmapObjectData, out T? result) where T : IObjectCustomData?
+        public bool Resolve<T>(BaseEditorData? beatmapObjectData, out T? result)
+            where T : IObjectCustomData?
         {
             if (beatmapObjectData == null)
             {
@@ -49,7 +53,10 @@ namespace EditorEX.Heck.Deserialize
             return Resolve(_objectCustomDatas, beatmapObjectData, out result);
         }
 
-        internal void RegisterNewObject(BaseEditorData beatmapObjectData, IObjectCustomData objectCustomData)
+        internal void RegisterNewObject(
+            BaseEditorData beatmapObjectData,
+            IObjectCustomData objectCustomData
+        )
         {
             _objectCustomDatas.Add(beatmapObjectData, objectCustomData);
         }
@@ -60,9 +67,18 @@ namespace EditorEX.Heck.Deserialize
             _objectCustomDatas = source._objectCustomDatas;
         }
 
-        private static bool Resolve<TBaseData, TResultType, TResultData>(Dictionary<TBaseData, TResultType> dictionary, TBaseData? baseData, out TResultData? result) where TResultData : TResultType?
+        private static bool Resolve<TBaseData, TResultType, TResultData>(
+            Dictionary<TBaseData, TResultType> dictionary,
+            TBaseData? baseData,
+            out TResultData? result
+        )
+            where TResultData : TResultType?
         {
-            if (baseData == null || !dictionary.TryGetValue(baseData, out TResultType customData) || customData == null)
+            if (
+                baseData == null
+                || !dictionary.TryGetValue(baseData, out TResultType customData)
+                || customData == null
+            )
             {
                 result = default;
                 return false;
@@ -72,7 +88,15 @@ namespace EditorEX.Heck.Deserialize
                 result = t;
                 return true;
             }
-            throw new InvalidOperationException(string.Concat("Custom data was not of correct type. Expected: [", typeof(TResultType).Name, "], was: [", customData.GetType().Name, "]."));
+            throw new InvalidOperationException(
+                string.Concat(
+                    "Custom data was not of correct type. Expected: [",
+                    typeof(TResultType).Name,
+                    "], was: [",
+                    customData.GetType().Name,
+                    "]."
+                )
+            );
         }
 
         internal Dictionary<CustomEventEditorData, ICustomEventCustomData> CustomEventCustomDatas;

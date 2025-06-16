@@ -1,9 +1,9 @@
-﻿using EditorEX.Chroma.Lighting;
-using Chroma.Lighting;
-using IPA.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Chroma.Lighting;
+using EditorEX.Chroma.Lighting;
+using IPA.Utilities;
 using UnityEngine;
 using Zenject;
 using Object = UnityEngine.Object;
@@ -17,7 +17,9 @@ namespace EditorEX.Chroma.Colorizer
 
         private readonly EditorLightColorizer.Factory _factory;
 
-        private readonly List<Tuple<BasicBeatmapEventType, Action<EditorLightColorizer>>> _contracts = new();
+        private readonly List<
+            Tuple<BasicBeatmapEventType, Action<EditorLightColorizer>>
+        > _contracts = new();
         private readonly List<Tuple<int, Action<EditorLightColorizer>>> _contractsByLightID = new();
 
         internal EditorLightColorizerManager(EditorLightColorizer.Factory factory)
@@ -31,11 +33,20 @@ namespace EditorEX.Chroma.Colorizer
 
         public Color?[] GlobalColor { get; } = new Color?[COLOR_FIELDS];
 
-        public EditorLightColorizer GetColorizer(BasicBeatmapEventType eventType) => Colorizers[eventType];
+        public EditorLightColorizer GetColorizer(BasicBeatmapEventType eventType) =>
+            Colorizers[eventType];
 
-        public void Colorize(BasicBeatmapEventType eventType, bool refresh, params Color?[] colors) => GetColorizer(eventType).Colorize(refresh, colors);
+        public void Colorize(
+            BasicBeatmapEventType eventType,
+            bool refresh,
+            params Color?[] colors
+        ) => GetColorizer(eventType).Colorize(refresh, colors);
 
-        public void Colorize(BasicBeatmapEventType eventType, IEnumerable<ILightWithId> selectLights, params Color?[] colors) => GetColorizer(eventType).Colorize(selectLights, colors);
+        public void Colorize(
+            BasicBeatmapEventType eventType,
+            IEnumerable<ILightWithId> selectLights,
+            params Color?[] colors
+        ) => GetColorizer(eventType).Colorize(selectLights, colors);
 
         public void GlobalColorize(IEnumerable<ILightWithId>? selectLights, params Color?[] colors)
         {
@@ -47,14 +58,19 @@ namespace EditorEX.Chroma.Colorizer
             GlobalColorize(refresh, null, colors);
         }
 
-        public void GlobalColorize(bool refresh, IEnumerable<ILightWithId>? selectLights, Color?[] colors)
+        public void GlobalColorize(
+            bool refresh,
+            IEnumerable<ILightWithId>? selectLights,
+            Color?[] colors
+        )
         {
             for (int i = 0; i < colors.Length; i++)
             {
                 GlobalColor[i] = colors[i];
             }
 
-            IEnumerable<ILightWithId>? lightWithIds = selectLights as ILightWithId[] ?? selectLights?.ToArray();
+            IEnumerable<ILightWithId>? lightWithIds =
+                selectLights as ILightWithId[] ?? selectLights?.ToArray();
             foreach ((_, EditorLightColorizer lightColorizer) in Colorizers)
             {
                 // Allow light colorizer to not force color
@@ -67,7 +83,9 @@ namespace EditorEX.Chroma.Colorizer
             }
         }
 
-        internal EditorLightColorizer Create(EditorChromaLightSwitchEventEffect chromaLightSwitchEventEffect)
+        internal EditorLightColorizer Create(
+            EditorChromaLightSwitchEventEffect chromaLightSwitchEventEffect
+        )
         {
             EditorLightColorizer colorizer = _factory.Create(chromaLightSwitchEventEffect);
             Colorizers.Add(chromaLightSwitchEventEffect.EventType, colorizer);
@@ -75,11 +93,16 @@ namespace EditorEX.Chroma.Colorizer
             return colorizer;
         }
 
-        internal void CompleteContracts(EditorChromaLightSwitchEventEffect chromaLightSwitchEventEffect)
+        internal void CompleteContracts(
+            EditorChromaLightSwitchEventEffect chromaLightSwitchEventEffect
+        )
         {
             // complete open contracts
-            Tuple<BasicBeatmapEventType, Action<EditorLightColorizer>>[] contracts = _contracts.ToArray();
-            foreach (Tuple<BasicBeatmapEventType, Action<EditorLightColorizer>> contract in contracts)
+            Tuple<BasicBeatmapEventType, Action<EditorLightColorizer>>[] contracts =
+                _contracts.ToArray();
+            foreach (
+                Tuple<BasicBeatmapEventType, Action<EditorLightColorizer>> contract in contracts
+            )
             {
                 if (chromaLightSwitchEventEffect.EventType != contract.Item1)
                 {
@@ -90,7 +113,8 @@ namespace EditorEX.Chroma.Colorizer
                 _contracts.Remove(contract);
             }
 
-            Tuple<int, Action<EditorLightColorizer>>[] contractsByLightID = _contractsByLightID.ToArray();
+            Tuple<int, Action<EditorLightColorizer>>[] contractsByLightID =
+                _contractsByLightID.ToArray();
             foreach (Tuple<int, Action<EditorLightColorizer>> contract in contractsByLightID)
             {
                 if (chromaLightSwitchEventEffect.LightsID != contract.Item1)
@@ -103,7 +127,10 @@ namespace EditorEX.Chroma.Colorizer
             }
         }
 
-        internal void CreateLightColorizerContractByLightID(int lightId, Action<EditorLightColorizer> callback)
+        internal void CreateLightColorizerContractByLightID(
+            int lightId,
+            Action<EditorLightColorizer> callback
+        )
         {
             if (ColorizersByLightID.TryGetValue(lightId, out EditorLightColorizer colorizer))
             {
@@ -115,7 +142,10 @@ namespace EditorEX.Chroma.Colorizer
             }
         }
 
-        internal void CreateLightColorizerContract(BasicBeatmapEventType type, Action<EditorLightColorizer> callback)
+        internal void CreateLightColorizerContract(
+            BasicBeatmapEventType type,
+            Action<EditorLightColorizer> callback
+        )
         {
             if (Colorizers.TryGetValue(type, out EditorLightColorizer colorizer))
             {
@@ -146,7 +176,8 @@ namespace EditorEX.Chroma.Colorizer
             EditorChromaLightSwitchEventEffect chromaLightSwitchEventEffect,
             EditorLightColorizerManager colorizerManager,
             LightWithIdManager lightManager,
-            LightIDTableManager tableManager)
+            LightIDTableManager tableManager
+        )
         {
             ChromaLightSwitchEventEffect = chromaLightSwitchEventEffect;
             _colorizerManager = colorizerManager;
@@ -154,7 +185,8 @@ namespace EditorEX.Chroma.Colorizer
 
             _lightId = chromaLightSwitchEventEffect.LightsID;
 
-            LightSwitchEventEffect lightSwitchEventEffect = chromaLightSwitchEventEffect.LightSwitchEventEffect;
+            LightSwitchEventEffect lightSwitchEventEffect =
+                chromaLightSwitchEventEffect.LightSwitchEventEffect;
             Initialize(lightSwitchEventEffect._lightColor0, 0);
             Initialize(lightSwitchEventEffect._lightColor1, 1);
             Initialize(lightSwitchEventEffect._lightColor0Boost, 2);
@@ -178,7 +210,9 @@ namespace EditorEX.Chroma.Colorizer
                 {
                     MultipliedColorSO lightMultSO => lightMultSO._baseColor,
                     SimpleColorSO simpleColorSO => simpleColorSO,
-                    _ => throw new InvalidOperationException($"Unhandled ColorSO type: [{colorSO.GetType().Name}].")
+                    _ => throw new InvalidOperationException(
+                        $"Unhandled ColorSO type: [{colorSO.GetType().Name}]."
+                    ),
                 };
             }
         }
@@ -198,7 +232,8 @@ namespace EditorEX.Chroma.Colorizer
 
                 // AAAAAA PROPAGATION STUFFF
                 Dictionary<int, List<ILightWithId>> lightsPreGroup = new();
-                TrackLaneRingsManager[] managers = Object.FindObjectsOfType<TrackLaneRingsManager>();
+                TrackLaneRingsManager[] managers =
+                    Object.FindObjectsOfType<TrackLaneRingsManager>();
                 foreach (ILightWithId light in Lights)
                 {
                     if (light is not MonoBehaviour monoBehaviour)
@@ -211,7 +246,9 @@ namespace EditorEX.Chroma.Colorizer
                     TrackLaneRing? ring = monoBehaviour.GetComponentInParent<TrackLaneRing>();
                     if (ring != null)
                     {
-                        TrackLaneRingsManager? mngr = managers.FirstOrDefault(it => it.Rings.IndexOf(ring) >= 0);
+                        TrackLaneRingsManager? mngr = managers.FirstOrDefault(it =>
+                            it.Rings.IndexOf(ring) >= 0
+                        );
                         if (mngr != null)
                         {
                             z = 1000 + mngr.Rings.IndexOf(ring);
@@ -253,7 +290,8 @@ namespace EditorEX.Chroma.Colorizer
                 Color[] colors = new Color[COLOR_FIELDS];
                 for (int i = 0; i < COLOR_FIELDS; i++)
                 {
-                    colors[i] = _colors[i] ?? _colorizerManager.GlobalColor[i] ?? _originalColors[i];
+                    colors[i] =
+                        _colors[i] ?? _colorizerManager.GlobalColor[i] ?? _originalColors[i];
                 }
 
                 return colors;
@@ -293,9 +331,14 @@ namespace EditorEX.Chroma.Colorizer
 
         public IEnumerable<ILightWithId> GetLightWithIds(IEnumerable<int> ids)
         {
-            IEnumerable<int> newIds = ids.Select(n => _tableManager.GetActiveTableValue(_lightId, n) ?? n);
+            IEnumerable<int> newIds = ids.Select(n =>
+                _tableManager.GetActiveTableValue(_lightId, n) ?? n
+            );
 
-            return newIds.Select(id => Lights.ElementAtOrDefault(id)).Where(lightWithId => lightWithId != null).ToList();
+            return newIds
+                .Select(id => Lights.ElementAtOrDefault(id))
+                .Where(lightWithId => lightWithId != null)
+                .ToList();
         }
 
         // dont use this please
@@ -315,8 +358,7 @@ namespace EditorEX.Chroma.Colorizer
             return result;
         }
 
-        internal class Factory : PlaceholderFactory<EditorChromaLightSwitchEventEffect, EditorLightColorizer>
-        {
-        }
+        internal class Factory
+            : PlaceholderFactory<EditorChromaLightSwitchEventEffect, EditorLightColorizer> { }
     }
 }

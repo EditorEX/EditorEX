@@ -1,6 +1,6 @@
-﻿using Zenject;
-using EditorEX.Essentials.Features.HideUI;
+﻿using EditorEX.Essentials.Features.HideUI;
 using EditorEX.Essentials.Features.ViewMode;
+using Zenject;
 
 namespace EditorEX.Essentials.Installers
 {

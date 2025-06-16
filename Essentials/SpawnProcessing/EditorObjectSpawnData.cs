@@ -16,7 +16,6 @@
 
         public float tailCutDirectionAngleOffset { get; set; }
 
-
         // Notes
 
         public NoteData.GameplayType gameplayType { get; set; }

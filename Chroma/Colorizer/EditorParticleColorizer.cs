@@ -15,7 +15,10 @@ namespace EditorEX.Chroma.Colorizer
             _factory = factory;
         }
 
-        public Dictionary<BasicBeatmapEventType, List<EditorParticleColorizer>> Colorizers { get; } = new();
+        public Dictionary<
+            BasicBeatmapEventType,
+            List<EditorParticleColorizer>
+        > Colorizers { get; } = new();
 
         internal void Create(ParticleSystemEventEffect particleSystemEventEffect)
         {
@@ -45,7 +48,8 @@ namespace EditorEX.Chroma.Colorizer
 
         private EditorParticleColorizer(
             ParticleSystemEventEffect particleSystemEventEffect,
-            EditorLightColorizerManager lightColorizerManager)
+            EditorLightColorizerManager lightColorizerManager
+        )
         {
             _particleSystemEventEffect = particleSystemEventEffect;
             _lightColor0 = (MultipliedColorSO)particleSystemEventEffect._lightColor0;
@@ -54,10 +58,15 @@ namespace EditorEX.Chroma.Colorizer
             _highlightColor1 = (MultipliedColorSO)particleSystemEventEffect._highlightColor1;
 
             // not sure when the light colorizer will be made...
-            lightColorizerManager.CreateLightColorizerContract(particleSystemEventEffect._colorEvent, AssignLightColorizer);
+            lightColorizerManager.CreateLightColorizerContract(
+                particleSystemEventEffect._colorEvent,
+                AssignLightColorizer
+            );
         }
 
-        private EditorLightColorizer FollowedColorizer => _lightColorizer ?? throw new InvalidOperationException($"{nameof(_lightColorizer)} was null.");
+        private EditorLightColorizer FollowedColorizer =>
+            _lightColorizer
+            ?? throw new InvalidOperationException($"{nameof(_lightColorizer)} was null.");
 
         public void Dispose()
         {
@@ -78,7 +87,8 @@ namespace EditorEX.Chroma.Colorizer
             switch (_previousValue)
             {
                 case 0:
-                    _particleSystemEventEffect._particleColor = _particleSystemEventEffect._offColor;
+                    _particleSystemEventEffect._particleColor =
+                        _particleSystemEventEffect._offColor;
                     _particleSystemEventEffect.RefreshParticles();
                     break;
 
@@ -98,7 +108,11 @@ namespace EditorEX.Chroma.Colorizer
                     afterHighlightColor = GetNormalColor(_previousValue);
                     _particleSystemEventEffect._afterHighlightColor = afterHighlightColor;
 
-                    _particleSystemEventEffect._particleColor = Color.Lerp(afterHighlightColor, color, _particleSystemEventEffect._highlightValue);
+                    _particleSystemEventEffect._particleColor = Color.Lerp(
+                        afterHighlightColor,
+                        color,
+                        _particleSystemEventEffect._highlightValue
+                    );
                     _particleSystemEventEffect.RefreshParticles();
                     break;
 
@@ -112,7 +126,11 @@ namespace EditorEX.Chroma.Colorizer
                     afterHighlightColor = _particleSystemEventEffect._offColor;
                     _particleSystemEventEffect._afterHighlightColor = afterHighlightColor;
 
-                    _particleSystemEventEffect._particleColor = Color.Lerp(afterHighlightColor, color, _particleSystemEventEffect._highlightValue);
+                    _particleSystemEventEffect._particleColor = Color.Lerp(
+                        afterHighlightColor,
+                        color,
+                        _particleSystemEventEffect._highlightValue
+                    );
                     _particleSystemEventEffect.RefreshParticles();
                     break;
             }
@@ -155,8 +173,7 @@ namespace EditorEX.Chroma.Colorizer
             _previousValue = beatmapEventData.value;
         }
 
-        internal class Factory : PlaceholderFactory<ParticleSystemEventEffect, EditorParticleColorizer>
-        {
-        }
+        internal class Factory
+            : PlaceholderFactory<ParticleSystemEventEffect, EditorParticleColorizer> { }
     }
 }

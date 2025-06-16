@@ -1,7 +1,7 @@
-﻿using BeatmapLevelSaveDataVersion4;
+﻿using System;
+using BeatmapLevelSaveDataVersion4;
 using CustomJSONData.CustomBeatmap;
 using Newtonsoft.Json;
-using System;
 
 namespace EditorEX.MapData.SerializedSaveData
 {

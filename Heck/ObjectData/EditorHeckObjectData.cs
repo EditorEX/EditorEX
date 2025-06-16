@@ -1,9 +1,9 @@
-﻿using CustomJSONData.CustomBeatmap;
-using Heck.Animation;
-using Heck.Deserialize;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CustomJSONData.CustomBeatmap;
+using Heck.Animation;
+using Heck.Deserialize;
 
 namespace EditorEX.Heck.ObjectData
 {
@@ -11,11 +11,18 @@ namespace EditorEX.Heck.ObjectData
     {
         internal List<Track> Track { get; }
 
-        internal EditorHeckObjectData(CustomData customData, Dictionary<string, Track> beatmapTracks, bool v2)
+        internal EditorHeckObjectData(
+            CustomData customData,
+            Dictionary<string, Track> beatmapTracks,
+            bool v2
+        )
         {
             try
             {
-                IEnumerable<Track> nullableTrackArray = customData.GetNullableTrackArray(beatmapTracks, v2);
+                IEnumerable<Track> nullableTrackArray = customData.GetNullableTrackArray(
+                    beatmapTracks,
+                    v2
+                );
                 Track = nullableTrackArray?.ToList();
             }
             catch (Exception e)

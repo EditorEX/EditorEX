@@ -1,12 +1,12 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BeatmapEditor3D.DataModels;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.Contexts;
 using EditorEX.MapData.SaveDataLoaders;
 using EditorEX.MapData.SaveDataSavers;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace EditorEX.CustomJSONData.Patches.Saving
 {
@@ -21,7 +21,8 @@ namespace EditorEX.CustomJSONData.Patches.Saving
             SiraLog siraLog,
             List<ICustomSaveDataSaver> saveDataSavers,
             List<ICustomLevelDataSaver> levelDataSavers,
-            LevelCustomDataModel levelCustomDataModel)
+            LevelCustomDataModel levelCustomDataModel
+        )
         {
             _siraLog = siraLog;
             _saveDataSavers = saveDataSavers;
@@ -30,7 +31,10 @@ namespace EditorEX.CustomJSONData.Patches.Saving
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(BeatmapProjectManager), nameof(BeatmapProjectManager.SaveBeatmapProject))]
+        [AffinityPatch(
+            typeof(BeatmapProjectManager),
+            nameof(BeatmapProjectManager.SaveBeatmapProject)
+        )]
         private bool UniversalSaveDataSavingPatch(BeatmapProjectManager __instance, bool clearDirty)
         {
             var version = LevelContext.Version;
@@ -47,8 +51,14 @@ namespace EditorEX.CustomJSONData.Patches.Saving
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(BeatmapProjectManager), nameof(BeatmapProjectManager.SaveBeatmapLevel))]
-        private bool UniversalLevelDataSavingPatch(BeatmapProjectManager __instance, bool clearDirty)
+        [AffinityPatch(
+            typeof(BeatmapProjectManager),
+            nameof(BeatmapProjectManager.SaveBeatmapLevel)
+        )]
+        private bool UniversalLevelDataSavingPatch(
+            BeatmapProjectManager __instance,
+            bool clearDirty
+        )
         {
             var version = MapContext.Version;
 

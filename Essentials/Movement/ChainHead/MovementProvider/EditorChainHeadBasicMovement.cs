@@ -20,7 +20,12 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
+        public void Init(
+            BaseEditorData? editorData,
+            IVariableMovementDataProvider variableMovementDataProvider,
+            EditorBasicBeatmapObjectSpawnMovementData movementData,
+            Func<IObjectVisuals>? getVisualRoot
+        )
         {
             if (editorData == null || editorData is not ChainEditorData)
             {
@@ -32,19 +37,11 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
             transform.localPosition = localPosition;
         }
 
-        public void Enable()
-        {
+        public void Enable() { }
 
-        }
+        public void Disable() { }
 
-        public void Disable()
-        {
-
-        }
-
-        public void Setup(BaseEditorData? editorData)
-        {
-        }
+        public void Setup(BaseEditorData? editorData) { }
 
         public void ManualUpdate()
         {

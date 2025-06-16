@@ -5,7 +5,12 @@ namespace EditorEX.SDK.ReactiveComponents
 {
     public class ReactiveContainer
     {
-        public ReactiveContainer(ColorCollector colorCollector, FontCollector fontCollector, TransitionCollector transitionCollector, IInstantiator instantiator)
+        public ReactiveContainer(
+            ColorCollector colorCollector,
+            FontCollector fontCollector,
+            TransitionCollector transitionCollector,
+            IInstantiator instantiator
+        )
         {
             ColorCollector = colorCollector;
             FontCollector = fontCollector;

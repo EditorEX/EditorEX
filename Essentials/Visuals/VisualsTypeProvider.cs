@@ -1,8 +1,8 @@
-﻿using EditorEX.Essentials.Features.ViewMode;
-using SiraUtil.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using EditorEX.Essentials.Features.ViewMode;
+using SiraUtil.Logging;
 using Zenject;
 
 namespace EditorEX.Essentials.Visuals
@@ -17,7 +17,8 @@ namespace EditorEX.Essentials.Visuals
         private VisualsTypeProvider(
             SiraLog siraLog,
             ActiveViewMode activeViewMode,
-            [Inject(Id = "Visuals")] List<ValueTuple<string[], Type>> providers)
+            [Inject(Id = "Visuals")] List<ValueTuple<string[], Type>> providers
+        )
         {
             _siraLog = siraLog;
             _activeViewMode = activeViewMode;
@@ -29,13 +30,19 @@ namespace EditorEX.Essentials.Visuals
             var viewingMode = _activeViewMode.Mode?.ID;
 
             // Provider name to use, fallback if none exist.
-            var provider = _providers.Any(x => x.Item1.Contains(viewingMode)) ? viewingMode : "normal";
+            var provider = _providers.Any(x => x.Item1.Contains(viewingMode))
+                ? viewingMode
+                : "normal";
 
-            var pickedProvider = _providers.FirstOrDefault(x => x.Item1.Contains(provider) && availableTypes.Contains(x.Item2)).Item2;
+            var pickedProvider = _providers
+                .FirstOrDefault(x => x.Item1.Contains(provider) && availableTypes.Contains(x.Item2))
+                .Item2;
 
             if (pickedProvider == null)
             {
-                _siraLog.Error($"Something has gone horribly wrong! No Visuals Provider could be found for the present conditions. Viewing Mode {viewingMode} types: {string.Join(",", availableTypes.Select(x => x.Name))}");
+                _siraLog.Error(
+                    $"Something has gone horribly wrong! No Visuals Provider could be found for the present conditions. Viewing Mode {viewingMode} types: {string.Join(",", availableTypes.Select(x => x.Name))}"
+                );
             }
 
             return pickedProvider!;

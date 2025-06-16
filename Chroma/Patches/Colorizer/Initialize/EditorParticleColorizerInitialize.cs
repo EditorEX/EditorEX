@@ -21,7 +21,10 @@ namespace EditorEX.Chroma.Patches.Colorizer.Initialize
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(ParticleSystemEventEffect), nameof(ParticleSystemEventEffect.HandleBeatmapEvent))]
+        [AffinityPatch(
+            typeof(ParticleSystemEventEffect),
+            nameof(ParticleSystemEventEffect.HandleBeatmapEvent)
+        )]
         private bool SkipCallback()
         {
             return false;

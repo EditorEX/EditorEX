@@ -25,7 +25,8 @@ namespace EditorEX.Essentials.Visuals.Note
             AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
             ColorManager colorManager,
-            IReadonlyBeatmapState state)
+            IReadonlyBeatmapState state
+        )
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
@@ -63,9 +64,7 @@ namespace EditorEX.Essentials.Visuals.Note
             _active = false;
         }
 
-        public void ManualUpdate()
-        {
-        }
+        public void ManualUpdate() { }
 
         public GameObject GetVisualRoot()
         {

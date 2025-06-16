@@ -7,7 +7,8 @@ namespace EditorEX.HierarchyTraverser.Modifiers
         public void Apply(ITraversable node)
         {
             var rectTransform = node.GetRectTransform();
-            if (rectTransform == null) return;
+            if (rectTransform == null)
+                return;
             rectTransform.sizeDelta = new Vector2(
                 width ?? rectTransform.sizeDelta.x,
                 height ?? rectTransform.sizeDelta.y

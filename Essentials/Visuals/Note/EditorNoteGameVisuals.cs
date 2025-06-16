@@ -1,19 +1,19 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System.Collections.Generic;
+using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
+using Chroma;
 using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Visuals.Universal;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
+using EditorEX.Vivify.ObjectPrefab.Managers;
 using HarmonyLib;
 using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
-using System.Collections.Generic;
-using BeatmapEditor3D;
-using Chroma;
 using UnityEngine;
-using Zenject;
-using EditorEX.Vivify.ObjectPrefab.Managers;
 using Vivify;
+using Zenject;
 
 namespace EditorEX.Essentials.Visuals.Note
 {
@@ -46,7 +46,8 @@ namespace EditorEX.Essentials.Visuals.Note
         [Inject]
         private void Construct(
             [InjectOptional(Id = "Vivify")] EditorDeserializedData vivifyEditorDeserializedData,
-            [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData noodleEditorDeserializedData,
+            [InjectOptional(Id = "NoodleExtensions")]
+                EditorDeserializedData noodleEditorDeserializedData,
             [InjectOptional(Id = "Chroma")] EditorDeserializedData chromeEditorDeserializedData,
             AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
@@ -54,7 +55,8 @@ namespace EditorEX.Essentials.Visuals.Note
             IReadonlyBeatmapState state,
             AudioDataModel audioDataModel,
             EditorBeatmapObjectPrefabManager prefabManager,
-            EditorVivifyNotePrefabManager vivifyNotePrefabManager)
+            EditorVivifyNotePrefabManager vivifyNotePrefabManager
+        )
         {
             _vivifyEditorDeserializedData = vivifyEditorDeserializedData;
             _noodleEditorDeserializedData = noodleEditorDeserializedData;
@@ -85,17 +87,25 @@ namespace EditorEX.Essentials.Visuals.Note
 
         private void SetupObject()
         {
-            _gameRoot = Instantiate(_visualAssetProvider.gameNotePrefab.transform.Find("NoteCube"), transform, false).gameObject;
+            _gameRoot = Instantiate(
+                _visualAssetProvider.gameNotePrefab.transform.Find("NoteCube"),
+                transform,
+                false
+            ).gameObject;
             _gameRoot.name = "GamerNoterCuber";
 
-            _arrowObjects = [_gameRoot.transform.Find("NoteArrow").gameObject, _gameRoot.transform.Find("NoteArrowGlow").gameObject];
+            _arrowObjects =
+            [
+                _gameRoot.transform.Find("NoteArrow").gameObject,
+                _gameRoot.transform.Find("NoteArrowGlow").gameObject,
+            ];
             _circleObject = _gameRoot.transform.Find("NoteCircleGlow").gameObject;
 
             _colorPropertyBlockControllers =
             [
                 _gameRoot.GetComponent<MaterialPropertyBlockController>(),
                 _circleObject.GetComponent<MaterialPropertyBlockController>(),
-                _arrowObjects[1].GetComponent<MaterialPropertyBlockController>()
+                _arrowObjects[1].GetComponent<MaterialPropertyBlockController>(),
             ];
 
             _noteCutout = _gameRoot.GetComponent<CutoutEffect>();
@@ -121,7 +131,10 @@ namespace EditorEX.Essentials.Visuals.Note
 
             _colorPropertyBlockControllers.Do(x =>
             {
-                x.materialPropertyBlock.SetColor(ColorNoteVisuals._colorId, noteColor.ColorWithAlpha(1f));
+                x.materialPropertyBlock.SetColor(
+                    ColorNoteVisuals._colorId,
+                    noteColor.ColorWithAlpha(1f)
+                );
                 x.ApplyChanges();
             });
 
@@ -141,17 +154,25 @@ namespace EditorEX.Essentials.Visuals.Note
 
             _prefabManager.Despawn(_gameRoot.transform);
 
-            if (!_vivifyEditorDeserializedData.Resolve(_editorData, out VivifyObjectData? data) ||
-            data?.Track == null)
+            if (
+                !_vivifyEditorDeserializedData.Resolve(_editorData, out VivifyObjectData? data)
+                || data?.Track == null
+            )
             {
                 return;
             }
 
-            var prefabDictionary = _editorData.cutDirection == NoteCutDirection.Any ?
-                _vivifyNotePrefabManager.AnyDirectionNotePrefabs :
-                _vivifyNotePrefabManager.ColorNotePrefabs;
+            var prefabDictionary =
+                _editorData.cutDirection == NoteCutDirection.Any
+                    ? _vivifyNotePrefabManager.AnyDirectionNotePrefabs
+                    : _vivifyNotePrefabManager.ColorNotePrefabs;
 
-            _prefabManager.Spawn(data.Track, prefabDictionary, _gameRoot.transform, _editorData.beat);
+            _prefabManager.Spawn(
+                data.Track,
+                prefabDictionary,
+                _gameRoot.transform,
+                _editorData.beat
+            );
         }
 
         public void Disable()
@@ -165,7 +186,10 @@ namespace EditorEX.Essentials.Visuals.Note
         public void ManualUpdate()
         {
             EditorNoodleBaseNoteData? noodleData = null;
-            if (!(_noodleEditorDeserializedData?.Resolve(_editorData, out noodleData) ?? false) || noodleData == null)
+            if (
+                !(_noodleEditorDeserializedData?.Resolve(_editorData, out noodleData) ?? false)
+                || noodleData == null
+            )
             {
                 return;
             }
@@ -186,7 +210,12 @@ namespace EditorEX.Essentials.Visuals.Note
             else
             {
                 float jumpDuration = GetComponent<EditorNoteJump>().jumpDuration;
-                float elapsedTime = _audioDataModel.bpmData.BeatToSeconds(_state.beat) - (_audioDataModel.bpmData.BeatToSeconds(_editorData.beat) - (jumpDuration * 0.5f));
+                float elapsedTime =
+                    _audioDataModel.bpmData.BeatToSeconds(_state.beat)
+                    - (
+                        _audioDataModel.bpmData.BeatToSeconds(_editorData.beat)
+                        - (jumpDuration * 0.5f)
+                    );
                 normalTime = elapsedTime / jumpDuration;
             }
 
@@ -200,15 +229,27 @@ namespace EditorEX.Essentials.Visuals.Note
                 out _,
                 out float? dissolveNote,
                 out float? dissolveArrow,
-                out _);
+                out _
+            );
 
             _noteCutout.SetCutout(1f - dissolveNote.GetValueOrDefault(1f));
 
             _arrowCutout.SetCutout(1f - dissolveArrow.GetValueOrDefault(1f));
 
-            _arrowObjects[1].SetActive(_editorData?.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f);
+            _arrowObjects[1]
+                .SetActive(
+                    _editorData?.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f
+                );
 
-            if (!(_chromeEditorDeserializedData?.Resolve(_editorData, out ChromaObjectData? chromaData) ?? false) || chromaData == null)
+            if (
+                !(
+                    _chromeEditorDeserializedData?.Resolve(
+                        _editorData,
+                        out ChromaObjectData? chromaData
+                    ) ?? false
+                )
+                || chromaData == null
+            )
             {
                 return;
             }
@@ -220,7 +261,12 @@ namespace EditorEX.Essentials.Visuals.Note
                 return;
             }
 
-            global::Chroma.Animation.AnimationHelper.GetColorOffset(pathPointDefinition, chromaTracks, normalTime, out Color? colorOffset);
+            global::Chroma.Animation.AnimationHelper.GetColorOffset(
+                pathPointDefinition,
+                chromaTracks,
+                normalTime,
+                out Color? colorOffset
+            );
 
             if (colorOffset == null)
             {
@@ -229,7 +275,10 @@ namespace EditorEX.Essentials.Visuals.Note
 
             _colorPropertyBlockControllers.Do(x =>
             {
-                x.materialPropertyBlock.SetColor(ColorNoteVisuals._colorId, colorOffset.Value.ColorWithAlpha(1f));
+                x.materialPropertyBlock.SetColor(
+                    ColorNoteVisuals._colorId,
+                    colorOffset.Value.ColorWithAlpha(1f)
+                );
                 x.ApplyChanges();
             });
         }

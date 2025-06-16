@@ -2,7 +2,6 @@ using System;
 using EditorEX.SDK.ReactiveComponents.Attachable;
 using HMUI;
 using Reactive;
-using Reactive.BeatSaber.Components;
 using Reactive.Components;
 using Reactive.Yoga;
 using TMPro;
@@ -10,7 +9,12 @@ using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorLabel : AttachableReactiveComponent<EditorLabel>, ISkewedComponent, IGraphic, ILeafLayoutItem, IFontAttachable, IColorSOAttachable
+    public class EditorLabel
+        : AttachableReactiveComponent<EditorLabel>,
+            IGraphic,
+            ILeafLayoutItem,
+            IFontAttachable,
+            IColorSOAttachable
     {
         public virtual string Text
         {
@@ -174,22 +178,6 @@ namespace EditorEX.SDK.ReactiveComponents
             }
         }
 
-        float ISkewedComponent.Skew
-        {
-            get => FontStyle.HasFlag(FontStyles.Italic) ? 1f : 0f;
-            set
-            {
-                if (value > 0f)
-                {
-                    FontStyle |= FontStyles.Italic;
-                }
-                else
-                {
-                    FontStyle &= ~FontStyles.Italic;
-                }
-            }
-        }
-
         public CurvedTextMeshPro TextMesh => _text;
 
         protected CurvedTextMeshPro _text = null!;
@@ -217,7 +205,12 @@ namespace EditorEX.SDK.ReactiveComponents
 
         public event Action<ILeafLayoutItem>? LeafLayoutUpdatedEvent;
 
-        public Vector2 Measure(float width, MeasureMode widthMode, float height, MeasureMode heightMode)
+        public Vector2 Measure(
+            float width,
+            MeasureMode widthMode,
+            float height,
+            MeasureMode heightMode
+        )
         {
             var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
             var measuredHeight = heightMode == MeasureMode.Undefined ? Mathf.Infinity : height;
@@ -227,7 +220,10 @@ namespace EditorEX.SDK.ReactiveComponents
             return new()
             {
                 x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(textSize.x, measuredWidth),
-                y = heightMode == MeasureMode.Exactly ? height : Mathf.Min(textSize.y, measuredHeight)
+                y =
+                    heightMode == MeasureMode.Exactly
+                        ? height
+                        : Mathf.Min(textSize.y, measuredHeight),
             };
         }
 

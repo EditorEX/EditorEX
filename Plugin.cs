@@ -32,13 +32,22 @@ namespace EditorEX
             zenjector.UseMetadataBinder<Plugin>();
 
             zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();
-            zenjector.Install<EditorCustomJSONDataModelsInstaller, BeatmapEditorDataModelsInstaller>();
+            zenjector.Install<
+                EditorCustomJSONDataModelsInstaller,
+                BeatmapEditorDataModelsInstaller
+            >();
             zenjector.Install<EditorHeckModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorSDKModelsInstaller, BeatmapEditorDataModelsInstaller>();
             zenjector.Install<EditorUIModelsInstaller, BeatmapEditorDataModelsInstaller>();
 
-            zenjector.Install<EditorUIViewControllersInstaller, BeatmapEditorViewControllersInstaller>();
-            zenjector.Install<EditorSDKViewControllersInstaller, BeatmapEditorViewControllersInstaller>();
+            zenjector.Install<
+                EditorUIViewControllersInstaller,
+                BeatmapEditorViewControllersInstaller
+            >();
+            zenjector.Install<
+                EditorSDKViewControllersInstaller,
+                BeatmapEditorViewControllersInstaller
+            >();
 
             zenjector.Install<EditorHeckSceneInstaller, BeatmapLevelEditorSceneSetup>();
             zenjector.Install<EditorNoodleSceneInstaller, BeatmapLevelEditorSceneSetup>();
@@ -59,14 +68,27 @@ namespace EditorEX
             zenjector.Install<EditorEssentialsAppInstaller>(Location.App);
             zenjector.Install<EditorConfigAppInstaller>(Location.App, config);
 
-            EditorDeserializerManager.Register<EditorNoodleCustomDataDeserializer>("NoodleExtensions").Enabled = true;
-            EditorDeserializerManager.Register<EditorHeckCustomDataDeserializer>("Heck").Enabled = true;
-            EditorDeserializerManager.Register<EditorChromaCustomDataDeserializer>("Chroma").Enabled = true;
-            EditorDeserializerManager.Register<EditorVivifyCustomDataDeserializer>("Vivify").Enabled = true;
+            EditorDeserializerManager
+                .Register<EditorNoodleCustomDataDeserializer>("NoodleExtensions")
+                .Enabled = true;
+            EditorDeserializerManager.Register<EditorHeckCustomDataDeserializer>("Heck").Enabled =
+                true;
+            EditorDeserializerManager
+                .Register<EditorChromaCustomDataDeserializer>("Chroma")
+                .Enabled = true;
+            EditorDeserializerManager
+                .Register<EditorVivifyCustomDataDeserializer>("Vivify")
+                .Enabled = true;
 
-            ViewModeRepository.RegisterViewMode(new ViewMode("Normal", "normal", false, true, false));
-            ViewModeRepository.RegisterViewMode(new ViewMode("Preview", "preview", true, false, false));
-            ViewModeRepository.RegisterViewMode(new ViewMode("Preview w/ Camlock", "preview-lock-cam", true, false, true));
+            ViewModeRepository.RegisterViewMode(
+                new ViewMode("Normal", "normal", false, true, false)
+            );
+            ViewModeRepository.RegisterViewMode(
+                new ViewMode("Preview", "preview", true, false, false)
+            );
+            ViewModeRepository.RegisterViewMode(
+                new ViewMode("Preview w/ Camlock", "preview-lock-cam", true, false, true)
+            );
         }
     }
 }

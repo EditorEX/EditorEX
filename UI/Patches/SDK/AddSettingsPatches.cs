@@ -1,4 +1,6 @@
-﻿using BeatmapEditor3D;
+﻿using System.Collections.Generic;
+using System.Linq;
+using BeatmapEditor3D;
 using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.Settings;
 using EditorEX.SDK.ViewContent;
@@ -6,8 +8,6 @@ using EditorEX.Util;
 using Reactive;
 using Reactive.Yoga;
 using SiraUtil.Affinity;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,11 +19,10 @@ namespace EditorEX.UI.Patches.SDK
         private readonly List<string> _viewNames;
         private readonly ReactiveContainer _reactiveContainer;
 
-        private int currentSelected = 0;
-
         private AddSettingsPatches(
             List<IViewContent<SettingsViewData>> viewContents,
-            ReactiveContainer reactiveContainer)
+            ReactiveContainer reactiveContainer
+        )
         {
             _viewContents = viewContents;
             _reactiveContainer = reactiveContainer;
@@ -31,7 +30,10 @@ namespace EditorEX.UI.Patches.SDK
             _viewNames.Insert(0, "Official");
         }
 
-        [AffinityPatch(typeof(BeatmapEditorSettingsViewController), nameof(BeatmapEditorSettingsViewController.DidActivate))]
+        [AffinityPatch(
+            typeof(BeatmapEditorSettingsViewController),
+            nameof(BeatmapEditorSettingsViewController.DidActivate)
+        )]
         [AffinityPostfix]
         private void AddUI(BeatmapEditorSettingsViewController __instance, bool firstActivation)
         {
@@ -41,22 +43,35 @@ namespace EditorEX.UI.Patches.SDK
 
                 new Layout()
                 {
-                    Children = {
-                        new EditorSegmentedControl() {
+                    Children =
+                    {
+                        new EditorSegmentedControl()
+                        {
                             Values = _viewNames.ToArray(),
-                            SelectedIndex = tab
-                        }
-                    }
-                }.AsFlexGroup(FlexDirection.Column, gap: 20f, padding: 30)
-                .Export(out var layout)
-                .WithReactiveContainer(_reactiveContainer)
-                .Use(__instance.transform);
+                            SelectedIndex = tab,
+                        },
+                    },
+                }
+                    .AsFlexGroup(FlexDirection.Column, gap: 20f, padding: 30)
+                    .Export(out var layout)
+                    .WithReactiveContainer(_reactiveContainer)
+                    .Use(__instance.transform);
 
-                var vanillaContainer = __instance.transform.Find("Container").gameObject.AddComponent<LayoutElement>();
+                var vanillaContainer = __instance
+                    .transform.Find("Container")
+                    .gameObject.AddComponent<LayoutElement>();
                 vanillaContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(0f, 0f);
 
-                layout.Children.Add(new LayoutElementComponent(vanillaContainer).AsFlexItem().EnabledWithObservable(tab, 0));
-                layout.Children.AddRange(_viewContents.Select((x, index) => x.Create().EnabledWithObservable(tab, index + 1)));
+                layout.Children.Add(
+                    new LayoutElementComponent(vanillaContainer)
+                        .AsFlexItem()
+                        .EnabledWithObservable(tab, 0)
+                );
+                layout.Children.AddRange(
+                    _viewContents.Select(
+                        (x, index) => x.Create().EnabledWithObservable(tab, index + 1)
+                    )
+                );
             }
         }
     }

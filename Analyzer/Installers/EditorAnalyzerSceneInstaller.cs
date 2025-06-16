@@ -8,7 +8,11 @@ namespace EditorEX.Analyzer.Installers
         public override void InstallBindings()
         {
             Container.Bind<LevelUtils>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<AnalyzerSaberManager>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+            Container
+                .BindInterfacesAndSelfTo<AnalyzerSaberManager>()
+                .FromNewComponentOnNewGameObject()
+                .AsSingle()
+                .NonLazy();
         }
     }
 }

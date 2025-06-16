@@ -14,8 +14,7 @@ namespace EditorEX.UI.Components.ContextMenu
         private BeatmapInfoData _beatmapInfoData;
 
         [Inject]
-        private void Construct(
-            ContextMenuComponent contextMenu)
+        private void Construct(ContextMenuComponent contextMenu)
         {
             _contextMenu = contextMenu;
         }
@@ -30,7 +29,11 @@ namespace EditorEX.UI.Components.ContextMenu
         {
             if (eventData.button == PointerEventData.InputButton.Right)
             {
-                _contextMenu.ShowContextMenu(new BeatmapListContextMenuObject(_beatmapInfoData), eventData.position, gameObject);
+                _contextMenu.ShowContextMenu(
+                    new BeatmapListContextMenuObject(_beatmapInfoData),
+                    eventData.position,
+                    gameObject
+                );
             }
         }
 

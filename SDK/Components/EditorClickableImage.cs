@@ -1,10 +1,16 @@
-﻿using Reactive.BeatSaber.Components;
-using System;
+﻿using System;
+using Reactive.BeatSaber.Components;
 using UnityEngine.EventSystems;
 
 namespace EditorEX.SDK.Components
 {
-    public class EditorNativeClickableImage : FixedImageView, IPointerDownHandler, IPointerClickHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
+    public class EditorNativeClickableImage
+        : FixedImageView,
+            IPointerDownHandler,
+            IPointerClickHandler,
+            IPointerUpHandler,
+            IPointerEnterHandler,
+            IPointerExitHandler
     {
         public SelectionState state { get; private set; } = SelectionState.Normal;
 
@@ -54,7 +60,7 @@ namespace EditorEX.SDK.Components
             Normal,
             Highlighted,
             Pressed,
-            Disabled
+            Disabled,
         }
     }
 }

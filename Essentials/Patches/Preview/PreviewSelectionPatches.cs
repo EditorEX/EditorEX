@@ -15,7 +15,10 @@ namespace EditorEX.Essentials.Patches.Preview
             _activeViewMode = activeViewMode;
         }
 
-        [AffinityPatch(typeof(BeatmapObjectViewSelection), nameof(BeatmapObjectViewSelection.UpdateHighlight))]
+        [AffinityPatch(
+            typeof(BeatmapObjectViewSelection),
+            nameof(BeatmapObjectViewSelection.UpdateHighlight)
+        )]
         [AffinityPrefix]
         private bool UpdateHighlight()
         {
@@ -24,9 +27,18 @@ namespace EditorEX.Essentials.Patches.Preview
             return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
-        [AffinityPatch(typeof(BeatmapObjectViewSelection), nameof(BeatmapObjectViewSelection.SetInitialState))]
+        [AffinityPatch(
+            typeof(BeatmapObjectViewSelection),
+            nameof(BeatmapObjectViewSelection.SetInitialState)
+        )]
         [AffinityPrefix]
-        private void SetInitialState(ref bool onBeat, ref bool pastBeat, ref bool selected, ref bool highlighted, ref bool isDeleting)
+        private void SetInitialState(
+            ref bool onBeat,
+            ref bool pastBeat,
+            ref bool selected,
+            ref bool highlighted,
+            ref bool isDeleting
+        )
         {
             if (_activeViewMode?.Mode == null)
                 return;
@@ -37,7 +49,15 @@ namespace EditorEX.Essentials.Patches.Preview
             isDeleting &= _activeViewMode.Mode.ShowGridAndSelection;
         }
 
-        [AffinityPatch(typeof(BeatmapObjectViewSelection), nameof(BeatmapObjectViewSelection.UpdateState), AffinityMethodType.Normal, null, typeof(bool), typeof(bool), typeof(bool))]
+        [AffinityPatch(
+            typeof(BeatmapObjectViewSelection),
+            nameof(BeatmapObjectViewSelection.UpdateState),
+            AffinityMethodType.Normal,
+            null,
+            typeof(bool),
+            typeof(bool),
+            typeof(bool)
+        )]
         [AffinityPrefix]
         private bool UpdateState()
         {
@@ -46,7 +66,10 @@ namespace EditorEX.Essentials.Patches.Preview
             return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
-        [AffinityPatch(typeof(ObstacleViewSelection), nameof(ObstacleViewSelection.SetObstacleData))]
+        [AffinityPatch(
+            typeof(ObstacleViewSelection),
+            nameof(ObstacleViewSelection.SetObstacleData)
+        )]
         [AffinityPrefix]
         private bool SetObstacleData(ObstacleViewSelection __instance)
         {
@@ -62,6 +85,5 @@ namespace EditorEX.Essentials.Patches.Preview
             }
             return _activeViewMode.Mode.ShowGridAndSelection;
         }
-
     }
 }

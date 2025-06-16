@@ -1,4 +1,7 @@
-﻿using Chroma.EnvironmentEnhancement;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Chroma.EnvironmentEnhancement;
 using Chroma.EnvironmentEnhancement.Component;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
@@ -6,9 +9,6 @@ using HarmonyLib;
 using Heck.Animation.Transform;
 using IPA.Utilities;
 using SiraUtil.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -17,12 +17,48 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
 {
     internal class EditorDuplicateInitializer
     {
-        private static readonly FieldAccessor<Spectrogram, BasicSpectrogramData>.Accessor _spectrogramDataAccessor = FieldAccessor<Spectrogram, BasicSpectrogramData>.GetAccessor(nameof(Spectrogram._spectrogramData));
-        private static readonly FieldAccessor<LightRotationEventEffect, BeatmapCallbacksController>.Accessor _lightCallbackControllerAccessor = FieldAccessor<LightRotationEventEffect, BeatmapCallbacksController>.GetAccessor(nameof(LightRotationEventEffect._beatmapCallbacksController));
-        private static readonly FieldAccessor<LightPairRotationEventEffect, BeatmapCallbacksController>.Accessor _lightPairCallbackControllerAccessor = FieldAccessor<LightPairRotationEventEffect, BeatmapCallbacksController>.GetAccessor(nameof(LightPairRotationEventEffect._beatmapCallbacksController));
-        private static readonly FieldAccessor<LightPairRotationEventEffect, IAudioTimeSource>.Accessor _audioTimeSourceAccessor = FieldAccessor<LightPairRotationEventEffect, IAudioTimeSource>.GetAccessor(nameof(LightPairRotationEventEffect._audioTimeSource));
-        private static readonly FieldAccessor<ParticleSystemEventEffect, BeatmapCallbacksController>.Accessor _particleCallbackControllerAccessor = FieldAccessor<ParticleSystemEventEffect, BeatmapCallbacksController>.GetAccessor(nameof(ParticleSystemEventEffect._beatmapCallbacksController));
-        private static readonly FieldAccessor<TrackLaneRingsRotationEffectSpawner, BeatmapCallbacksController>.Accessor _rotationEffectSpawnerCallbackControllerAccessor = FieldAccessor<TrackLaneRingsRotationEffectSpawner, BeatmapCallbacksController>.GetAccessor(nameof(TrackLaneRingsRotationEffectSpawner._beatmapCallbacksController));
+        private static readonly FieldAccessor<
+            Spectrogram,
+            BasicSpectrogramData
+        >.Accessor _spectrogramDataAccessor = FieldAccessor<
+            Spectrogram,
+            BasicSpectrogramData
+        >.GetAccessor(nameof(Spectrogram._spectrogramData));
+        private static readonly FieldAccessor<
+            LightRotationEventEffect,
+            BeatmapCallbacksController
+        >.Accessor _lightCallbackControllerAccessor = FieldAccessor<
+            LightRotationEventEffect,
+            BeatmapCallbacksController
+        >.GetAccessor(nameof(LightRotationEventEffect._beatmapCallbacksController));
+        private static readonly FieldAccessor<
+            LightPairRotationEventEffect,
+            BeatmapCallbacksController
+        >.Accessor _lightPairCallbackControllerAccessor = FieldAccessor<
+            LightPairRotationEventEffect,
+            BeatmapCallbacksController
+        >.GetAccessor(nameof(LightPairRotationEventEffect._beatmapCallbacksController));
+        private static readonly FieldAccessor<
+            LightPairRotationEventEffect,
+            IAudioTimeSource
+        >.Accessor _audioTimeSourceAccessor = FieldAccessor<
+            LightPairRotationEventEffect,
+            IAudioTimeSource
+        >.GetAccessor(nameof(LightPairRotationEventEffect._audioTimeSource));
+        private static readonly FieldAccessor<
+            ParticleSystemEventEffect,
+            BeatmapCallbacksController
+        >.Accessor _particleCallbackControllerAccessor = FieldAccessor<
+            ParticleSystemEventEffect,
+            BeatmapCallbacksController
+        >.GetAccessor(nameof(ParticleSystemEventEffect._beatmapCallbacksController));
+        private static readonly FieldAccessor<
+            TrackLaneRingsRotationEffectSpawner,
+            BeatmapCallbacksController
+        >.Accessor _rotationEffectSpawnerCallbackControllerAccessor = FieldAccessor<
+            TrackLaneRingsRotationEffectSpawner,
+            BeatmapCallbacksController
+        >.GetAccessor(nameof(TrackLaneRingsRotationEffectSpawner._beatmapCallbacksController));
 
         private readonly SiraLog _log;
         private readonly TrackLaneRingOffset _trackLaneRingOffset;
@@ -35,24 +71,33 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
             SiraLog log,
             TrackLaneRingOffset trackLaneRingOffset,
             EditorLightWithIdRegisterer lightWithIdRegisterer,
-            global::Chroma.Settings.Config config)
+            global::Chroma.Settings.Config config
+        )
         {
             _log = log;
             _trackLaneRingOffset = trackLaneRingOffset;
             _lightWithIdRegisterer = lightWithIdRegisterer;
             _config = config;
-            _trackLaneRingsManagers = Resources.FindObjectsOfTypeAll<TrackLaneRingsManager>().ToHashSet();
+            _trackLaneRingsManagers = Resources
+                .FindObjectsOfTypeAll<TrackLaneRingsManager>()
+                .ToHashSet();
         }
 
-        internal static void PrefillComponentsData(Transform root, List<IComponentData> componentDatas)
+        internal static void PrefillComponentsData(
+            Transform root,
+            List<IComponentData> componentDatas
+        )
         {
-            TrackLaneRingsManager trackLaneRingsManager = root.GetComponent<TrackLaneRingsManager>();
+            TrackLaneRingsManager trackLaneRingsManager =
+                root.GetComponent<TrackLaneRingsManager>();
             if (trackLaneRingsManager != null)
             {
-                componentDatas.Add(new TrackLaneRingsManagerComponentData
-                {
-                    OldTrackLaneRingsManager = trackLaneRingsManager
-                });
+                componentDatas.Add(
+                    new TrackLaneRingsManagerComponentData
+                    {
+                        OldTrackLaneRingsManager = trackLaneRingsManager,
+                    }
+                );
             }
 
             foreach (Transform transform in root)
@@ -61,20 +106,31 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
             }
         }
 
-        internal void PostfillComponentsData(Transform root, Transform original, List<IComponentData> componentDatas)
+        internal void PostfillComponentsData(
+            Transform root,
+            Transform original,
+            List<IComponentData> componentDatas
+        )
         {
-            TrackLaneRingsManager trackLaneRingsManager = root.GetComponent<TrackLaneRingsManager>();
+            TrackLaneRingsManager trackLaneRingsManager =
+                root.GetComponent<TrackLaneRingsManager>();
             if (trackLaneRingsManager != null)
             {
                 _trackLaneRingsManagers.Add(trackLaneRingsManager);
-                TrackLaneRingsManager originalManager = original.GetComponent<TrackLaneRingsManager>();
-                foreach (TrackLaneRingsManagerComponentData componentData in componentDatas.OfType<TrackLaneRingsManagerComponentData>().Where(n => n.OldTrackLaneRingsManager == originalManager))
+                TrackLaneRingsManager originalManager =
+                    original.GetComponent<TrackLaneRingsManager>();
+                foreach (
+                    TrackLaneRingsManagerComponentData componentData in componentDatas
+                        .OfType<TrackLaneRingsManagerComponentData>()
+                        .Where(n => n.OldTrackLaneRingsManager == originalManager)
+                )
                 {
                     componentData.NewTrackLaneRingsManager = trackLaneRingsManager;
                 }
             }
 
-            TrackLaneRingsRotationEffect rotationEffect = root.GetComponent<TrackLaneRingsRotationEffect>();
+            TrackLaneRingsRotationEffect rotationEffect =
+                root.GetComponent<TrackLaneRingsRotationEffect>();
             if (rotationEffect != null)
             {
                 Object.Destroy(rotationEffect);
@@ -87,7 +143,12 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
             }
         }
 
-        internal void InitializeComponents(Transform root, Transform original, List<GameObjectInfo> gameObjectInfos, List<IComponentData> componentDatas)
+        internal void InitializeComponents(
+            Transform root,
+            Transform original,
+            List<GameObjectInfo> gameObjectInfos,
+            List<IComponentData> componentDatas
+        )
         {
             TransformController transformController = root.GetComponent<TransformController>();
             if (transformController != null)
@@ -95,133 +156,167 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
                 Object.DestroyImmediate(transformController);
             }
 
-            GetComponentAndOriginal<LightWithIdMonoBehaviour>((rootComponent, originalComponent) =>
-            {
-                rootComponent._lightManager = originalComponent._lightManager;
-                _lightWithIdRegisterer.MarkForTableRegister(rootComponent);
-            });
-
-            GetComponentAndOriginal<LightWithIds>((rootComponent, originalComponent) =>
-            {
-                rootComponent._lightManager = originalComponent._lightManager;
-                IEnumerable<ILightWithId> lightsWithId = rootComponent._lightWithIds;
-                foreach (ILightWithId light in lightsWithId)
+            GetComponentAndOriginal<LightWithIdMonoBehaviour>(
+                (rootComponent, originalComponent) =>
                 {
-                    _lightWithIdRegisterer.MarkForTableRegister(light);
+                    rootComponent._lightManager = originalComponent._lightManager;
+                    _lightWithIdRegisterer.MarkForTableRegister(rootComponent);
                 }
-            });
+            );
 
-            GetComponentAndOriginal<TrackLaneRing>((rootComponent, originalComponent) =>
-            {
-                _trackLaneRingOffset.CopyRing(originalComponent, rootComponent);
-
-                rootComponent._transform = root;
-                rootComponent._positionOffset = originalComponent._positionOffset;
-                rootComponent._posZ = originalComponent._posZ;
-
-                TrackLaneRingsManager? managerToAdd = null;
-                foreach (TrackLaneRingsManager manager in _trackLaneRingsManagers)
+            GetComponentAndOriginal<LightWithIds>(
+                (rootComponent, originalComponent) =>
                 {
-                    TrackLaneRingsManagerComponentData? componentData = componentDatas
-                        .OfType<TrackLaneRingsManagerComponentData>()
-                        .FirstOrDefault(n => n.OldTrackLaneRingsManager == manager);
-                    if (componentData != null)
+                    rootComponent._lightManager = originalComponent._lightManager;
+                    IEnumerable<ILightWithId> lightsWithId = rootComponent._lightWithIds;
+                    foreach (ILightWithId light in lightsWithId)
                     {
-                        managerToAdd = componentData.NewTrackLaneRingsManager;
+                        _lightWithIdRegisterer.MarkForTableRegister(light);
                     }
-                    else
+                }
+            );
+
+            GetComponentAndOriginal<TrackLaneRing>(
+                (rootComponent, originalComponent) =>
+                {
+                    _trackLaneRingOffset.CopyRing(originalComponent, rootComponent);
+
+                    rootComponent._transform = root;
+                    rootComponent._positionOffset = originalComponent._positionOffset;
+                    rootComponent._posZ = originalComponent._posZ;
+
+                    TrackLaneRingsManager? managerToAdd = null;
+                    foreach (TrackLaneRingsManager manager in _trackLaneRingsManagers)
                     {
-                        TrackLaneRing[] rings = manager._rings;
-                        if (rings.Contains(originalComponent))
+                        TrackLaneRingsManagerComponentData? componentData = componentDatas
+                            .OfType<TrackLaneRingsManagerComponentData>()
+                            .FirstOrDefault(n => n.OldTrackLaneRingsManager == manager);
+                        if (componentData != null)
                         {
-                            managerToAdd = manager;
+                            managerToAdd = componentData.NewTrackLaneRingsManager;
+                        }
+                        else
+                        {
+                            TrackLaneRing[] rings = manager._rings;
+                            if (rings.Contains(originalComponent))
+                            {
+                                managerToAdd = manager;
+                            }
+                        }
+
+                        // ReSharper disable once InvertIf
+                        if (managerToAdd != null)
+                        {
+                            managerToAdd._rings = managerToAdd._rings.AddToArray(rootComponent);
+
+                            break;
                         }
                     }
+                }
+            );
 
-                    // ReSharper disable once InvertIf
-                    if (managerToAdd != null)
+            GetComponentAndOriginal<TrackLaneRingsPositionStepEffectSpawner>(
+                (rootComponent, _) =>
+                {
+                    foreach (TrackLaneRingsManager manager in _trackLaneRingsManagers)
                     {
-                        managerToAdd._rings = managerToAdd._rings.AddToArray(rootComponent);
+                        TrackLaneRingsManagerComponentData? componentData = componentDatas
+                            .OfType<TrackLaneRingsManagerComponentData>()
+                            .FirstOrDefault(n => n.OldTrackLaneRingsManager == manager);
+                        if (componentData == null)
+                        {
+                            continue;
+                        }
+
+                        rootComponent._trackLaneRingsManager =
+                            componentData.NewTrackLaneRingsManager!;
 
                         break;
                     }
                 }
-            });
+            );
 
-            GetComponentAndOriginal<TrackLaneRingsPositionStepEffectSpawner>((rootComponent, _) =>
-            {
-                foreach (TrackLaneRingsManager manager in _trackLaneRingsManagers)
+            GetComponentAndOriginal<TrackLaneRingsRotationEffectSpawner>(
+                (rootComponent, originalComponent) =>
                 {
-                    TrackLaneRingsManagerComponentData? componentData = componentDatas
-                        .OfType<TrackLaneRingsManagerComponentData>()
-                        .FirstOrDefault(n => n.OldTrackLaneRingsManager == manager);
-                    if (componentData == null)
-                    {
-                        continue;
-                    }
-
-                    rootComponent._trackLaneRingsManager = componentData.NewTrackLaneRingsManager!;
-
-                    break;
+                    _rotationEffectSpawnerCallbackControllerAccessor(ref rootComponent) =
+                        originalComponent._beatmapCallbacksController;
+                    rootComponent._trackLaneRingsRotationEffect =
+                        rootComponent.GetComponent<TrackLaneRingsRotationEffect>();
                 }
-            });
+            );
 
-            GetComponentAndOriginal<TrackLaneRingsRotationEffectSpawner>((rootComponent, originalComponent) =>
-            {
-                _rotationEffectSpawnerCallbackControllerAccessor(ref rootComponent) = originalComponent._beatmapCallbacksController;
-                rootComponent._trackLaneRingsRotationEffect = rootComponent.GetComponent<TrackLaneRingsRotationEffect>();
-            });
+            GetComponentAndOriginal<Spectrogram>(
+                (rootComponent, originalComponent) =>
+                    _spectrogramDataAccessor(ref rootComponent) = originalComponent._spectrogramData
+            );
 
-            GetComponentAndOriginal<Spectrogram>((rootComponent, originalComponent) => _spectrogramDataAccessor(ref rootComponent) = originalComponent._spectrogramData);
+            GetComponentAndOriginal<LightRotationEventEffect>(
+                (rootComponent, originalComponent) =>
+                    _lightCallbackControllerAccessor(ref rootComponent) =
+                        originalComponent._beatmapCallbacksController
+            );
 
-            GetComponentAndOriginal<LightRotationEventEffect>((rootComponent, originalComponent) => _lightCallbackControllerAccessor(ref rootComponent) = originalComponent._beatmapCallbacksController);
+            GetComponentAndOriginal<LightPairRotationEventEffect>(
+                (rootComponent, originalComponent) =>
+                {
+                    _lightPairCallbackControllerAccessor(ref rootComponent) =
+                        originalComponent._beatmapCallbacksController;
+                    _audioTimeSourceAccessor(ref rootComponent) =
+                        originalComponent._audioTimeSource;
 
-            GetComponentAndOriginal<LightPairRotationEventEffect>((rootComponent, originalComponent) =>
-            {
-                _lightPairCallbackControllerAccessor(ref rootComponent) = originalComponent._beatmapCallbacksController;
-                _audioTimeSourceAccessor(ref rootComponent) = originalComponent._audioTimeSource;
+                    Transform transformL = originalComponent._transformL;
+                    Transform transformR = originalComponent._transformR;
 
-                Transform transformL = originalComponent._transformL;
-                Transform transformR = originalComponent._transformR;
+                    rootComponent._transformL = root.GetChild(transformL.GetSiblingIndex());
+                    rootComponent._transformR = root.GetChild(transformR.GetSiblingIndex());
 
-                rootComponent._transformL = root.GetChild(transformL.GetSiblingIndex());
-                rootComponent._transformR = root.GetChild(transformR.GetSiblingIndex());
+                    // We have to enable the object to tell unity to run Start
+                    rootComponent.enabled = true;
+                }
+            );
 
-                // We have to enable the object to tell unity to run Start
-                rootComponent.enabled = true;
-            });
+            GetComponentAndOriginal<ParticleSystemEventEffect>(
+                (rootComponent, originalComponent) =>
+                {
+                    _particleCallbackControllerAccessor(ref rootComponent) =
+                        originalComponent._beatmapCallbacksController;
+                    rootComponent._particleSystem = root.GetComponent<ParticleSystem>();
 
-            GetComponentAndOriginal<ParticleSystemEventEffect>((rootComponent, originalComponent) =>
-            {
-                _particleCallbackControllerAccessor(ref rootComponent) = originalComponent._beatmapCallbacksController;
-                rootComponent._particleSystem = root.GetComponent<ParticleSystem>();
+                    rootComponent.enabled = true;
+                }
+            );
 
-                rootComponent.enabled = true;
-            });
-
-            GetComponentAndOriginal<Mirror>((rootComponent, originalComponent) =>
-            {
-                rootComponent._mirrorRenderer = originalComponent._mirrorRenderer;
-                rootComponent._mirrorMaterial = originalComponent._mirrorMaterial;
-            });
+            GetComponentAndOriginal<Mirror>(
+                (rootComponent, originalComponent) =>
+                {
+                    rootComponent._mirrorRenderer = originalComponent._mirrorRenderer;
+                    rootComponent._mirrorMaterial = originalComponent._mirrorMaterial;
+                }
+            );
 
             SaberBurnMarkArea? saberBurnMarkArea = root.GetComponent<SaberBurnMarkArea>();
             if (saberBurnMarkArea != null)
             {
                 if (_config.PrintEnvironmentEnhancementDebug)
                 {
-                    _log.Debug("SaberBurnMarkArea yeeted, complain to me if you would rather it not");
+                    _log.Debug(
+                        "SaberBurnMarkArea yeeted, complain to me if you would rather it not"
+                    );
                 }
 
                 Object.DestroyImmediate(saberBurnMarkArea);
             }
 
-            SaberBurnMarkSparkles? saberBurnMarkSparkles = root.GetComponent<SaberBurnMarkSparkles>();
+            SaberBurnMarkSparkles? saberBurnMarkSparkles =
+                root.GetComponent<SaberBurnMarkSparkles>();
             if (saberBurnMarkSparkles != null)
             {
                 if (_config.PrintEnvironmentEnhancementDebug)
                 {
-                    _log.Debug("SaberBurnMarkSparkles yeeted, complain to me if you would rather it not");
+                    _log.Debug(
+                        "SaberBurnMarkSparkles yeeted, complain to me if you would rather it not"
+                    );
                 }
 
                 Object.DestroyImmediate(saberBurnMarkSparkles);
@@ -233,7 +328,12 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
             foreach (Transform transform in root)
             {
                 int index = transform.GetSiblingIndex();
-                InitializeComponents(transform, original.GetChild(index), gameObjectInfos, componentDatas);
+                InitializeComponents(
+                    transform,
+                    original.GetChild(index),
+                    gameObjectInfos,
+                    componentDatas
+                );
             }
 
             return;

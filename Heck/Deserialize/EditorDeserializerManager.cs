@@ -1,4 +1,7 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
@@ -7,9 +10,6 @@ using Heck.Animation;
 using Heck.Deserialize;
 using IPA.Utilities;
 using SiraUtil.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace EditorEX.Heck.Deserialize
 {
@@ -25,7 +25,8 @@ namespace EditorEX.Heck.Deserialize
             SiraLog log,
             BeatmapObjectsDataModel objectDataModel,
             BeatmapBasicEventsDataModel eventsDataModel,
-            PopulateBeatmap populateBeatmap)
+            PopulateBeatmap populateBeatmap
+        )
         {
             _log = log;
             _objectDataModel = objectDataModel;
@@ -52,10 +53,16 @@ namespace EditorEX.Heck.Deserialize
             HashSet<(object? Id, EditorDeserializedData DeserializedData)> result = new();
             foreach (EditorDataDeserializer dataDeserializer in _customDataDeserializers)
             {
-                result.Add((dataDeserializer.Id, new EditorDeserializedData(
-                    new Dictionary<CustomEventEditorData, ICustomEventCustomData>(),
-                    new Dictionary<BasicEventEditorData, IEventCustomData>(),
-                    new Dictionary<BaseEditorData, IObjectCustomData>())));
+                result.Add(
+                    (
+                        dataDeserializer.Id,
+                        new EditorDeserializedData(
+                            new Dictionary<CustomEventEditorData, ICustomEventCustomData>(),
+                            new Dictionary<BasicEventEditorData, IEventCustomData>(),
+                            new Dictionary<BaseEditorData, IObjectCustomData>()
+                        )
+                    )
+                );
             }
 
             return result;
@@ -65,7 +72,8 @@ namespace EditorEX.Heck.Deserialize
             bool v2,
             bool leftHanded,
             out Dictionary<string, Track> beatmapTracks,
-            out HashSet<(object Id, EditorDeserializedData DeserializedData)> deserializedDatas)
+            out HashSet<(object Id, EditorDeserializedData DeserializedData)> deserializedDatas
+        )
         {
             _log.Trace("Deserializing BeatmapData");
 
@@ -74,17 +82,26 @@ namespace EditorEX.Heck.Deserialize
                 _log.Trace("BeatmapData is v2, converting...");
             }
 
-            IEnumerable<BaseEditorData?> baseObjectDatas = _objectDataModel.allBeatmapObjects.Cast<BaseEditorData>();
-            IEnumerable<BaseEditorData?> basicEventDatas = _eventsDataModel.GetAllEventsAsList().Cast<BaseEditorData>();
+            IEnumerable<BaseEditorData?> baseObjectDatas =
+                _objectDataModel.allBeatmapObjects.Cast<BaseEditorData>();
+            IEnumerable<BaseEditorData?> basicEventDatas = _eventsDataModel
+                .GetAllEventsAsList()
+                .Cast<BaseEditorData>();
 
             // tracks are built based off the untransformed beatmapdata so modifiers like "no walls" do not prevent track creation
             TrackBuilder trackManager = new();
-            foreach (BaseEditorData? baseEditorData in baseObjectDatas.Concat(basicEventDatas).Concat(CustomDataRepository.GetCustomEvents()))
+            foreach (
+                BaseEditorData? baseEditorData in baseObjectDatas
+                    .Concat(basicEventDatas)
+                    .Concat(CustomDataRepository.GetCustomEvents())
+            )
             {
                 CustomData customData = CustomDataRepository.GetCustomData(baseEditorData);
 
                 // for epic tracks thing
-                object? trackNameRaw = customData.Get<object>(v2 ? Constants.V2_TRACK : Constants.TRACK);
+                object? trackNameRaw = customData.Get<object>(
+                    v2 ? Constants.V2_TRACK : Constants.TRACK
+                );
                 if (trackNameRaw == null)
                 {
                     continue;
@@ -111,20 +128,27 @@ namespace EditorEX.Heck.Deserialize
 
             if (v2)
             {
-                IEnumerable<CustomData>? pointDefinitionsRaw =
-                    CustomDataRepository.GetCustomBeatmapSaveData().customData.Get<List<object>>(Constants.V2_POINT_DEFINITIONS)?.Cast<CustomData>();
+                IEnumerable<CustomData>? pointDefinitionsRaw = CustomDataRepository
+                    .GetCustomBeatmapSaveData()
+                    .customData.Get<List<object>>(Constants.V2_POINT_DEFINITIONS)
+                    ?.Cast<CustomData>();
                 if (pointDefinitionsRaw != null)
                 {
                     foreach (CustomData pointDefintionRaw in pointDefinitionsRaw)
                     {
                         string pointName = pointDefintionRaw.GetRequired<string>(Constants.V2_NAME);
-                        AddPoint(pointName, pointDefintionRaw.GetRequired<List<object>>(Constants.V2_POINTS));
+                        AddPoint(
+                            pointName,
+                            pointDefintionRaw.GetRequired<List<object>>(Constants.V2_POINTS)
+                        );
                     }
                 }
             }
             else
             {
-                CustomData? pointDefinitionsRaw = CustomDataRepository.GetCustomBeatmapSaveData().customData.Get<CustomData>(Constants.POINT_DEFINITIONS);
+                CustomData? pointDefinitionsRaw = CustomDataRepository
+                    .GetCustomBeatmapSaveData()
+                    .customData.Get<CustomData>(Constants.POINT_DEFINITIONS);
                 if (pointDefinitionsRaw != null)
                 {
                     foreach ((string key, object? value) in pointDefinitionsRaw)
@@ -144,8 +168,10 @@ namespace EditorEX.Heck.Deserialize
 
             if (!v2)
             {
-                IEnumerable<CustomData>? eventDefinitionsRaw =
-                    CustomDataRepository.GetCustomBeatmapSaveData().customData.Get<List<object>>(Constants.EVENT_DEFINITIONS)?.Cast<CustomData>();
+                IEnumerable<CustomData>? eventDefinitionsRaw = CustomDataRepository
+                    .GetCustomBeatmapSaveData()
+                    .customData.Get<List<object>>(Constants.EVENT_DEFINITIONS)
+                    ?.Cast<CustomData>();
                 if (eventDefinitionsRaw != null)
                 {
                     foreach (CustomData eventDefinitionRaw in eventDefinitionsRaw)
@@ -156,11 +182,16 @@ namespace EditorEX.Heck.Deserialize
 
                         if (!eventDefinitions.ContainsKey(eventName))
                         {
-                            eventDefinitions.Add(eventName, new CustomEventData(-1, type, data, null));
+                            eventDefinitions.Add(
+                                eventName,
+                                new CustomEventData(-1, type, data, null)
+                            );
                         }
                         else
                         {
-                            _log.Error($"Duplicate event defintion name, {eventName} could not be registered");
+                            _log.Error(
+                                $"Duplicate event defintion name, {eventName} could not be registered"
+                            );
                         }
                     }
                 }
@@ -186,17 +217,21 @@ namespace EditorEX.Heck.Deserialize
                 pointDefinitions,
                 trackManager.Tracks,
                 v2,
-                bpm
+                bpm,
             };
 
-            EditorDataDeserializer[] deserializers = _customDataDeserializers.Where(n => n.Enabled).ToArray();
+            EditorDataDeserializer[] deserializers = _customDataDeserializers
+                .Where(n => n.Enabled)
+                .ToArray();
 
             foreach (EditorDataDeserializer deserializer in deserializers)
             {
                 deserializer.Create(inputs);
             }
 
-            deserializedDatas = new HashSet<(object? Id, EditorDeserializedData DeserializedData)>(deserializers.Length);
+            deserializedDatas = new HashSet<(object? Id, EditorDeserializedData DeserializedData)>(
+                deserializers.Length
+            );
             foreach (EditorDataDeserializer deserializer in deserializers)
             {
                 _log.Trace($"Binding [{deserializer.Id}]");
@@ -214,7 +249,9 @@ namespace EditorEX.Heck.Deserialize
                 }
                 else
                 {
-                    _log.Error($"Duplicate point defintion name, {pointDataName} could not be registered");
+                    _log.Error(
+                        $"Duplicate point defintion name, {pointDataName} could not be registered"
+                    );
                 }
             }
         }

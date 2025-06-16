@@ -10,12 +10,6 @@ namespace EditorEX.SDK.ReactiveComponents
             set => Component.Button.onClick.AddListener(() => value?.Invoke());
         }
 
-        public float Skew
-        {
-            get => Component.Skew;
-            set => Component.Skew = value;
-        }
-
         public bool Interactable
         {
             get => Component.Interactable;

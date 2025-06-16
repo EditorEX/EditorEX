@@ -14,7 +14,10 @@ namespace EditorEX.Essentials.Patches
         internal AudioDataModel _audioDataModel;
         internal DiContainer _Container;
 
-        [AffinityPatch(typeof(BeatmapEditorDataModelsInstaller), nameof(BeatmapEditorDataModelsInstaller.Install))]
+        [AffinityPatch(
+            typeof(BeatmapEditorDataModelsInstaller),
+            nameof(BeatmapEditorDataModelsInstaller.Install)
+        )]
         [AffinityPostfix]
         private void Postfix(DiContainer Container)
         {

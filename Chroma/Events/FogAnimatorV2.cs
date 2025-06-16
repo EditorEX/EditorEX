@@ -1,11 +1,11 @@
-﻿using Chroma;
+﻿using System;
+using Chroma;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.Heck.Deserialize;
 using Heck;
 using Heck.Animation;
 using Heck.Event;
-using System;
 using UnityEngine;
 using Zenject;
 using static Chroma.ChromaController;
@@ -24,7 +24,8 @@ namespace EditorEX.Chroma.Events
 
         private EditorFogAnimatorV2(
             BloomFogSO bloomFog,
-            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData)
+            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData
+        )
         {
             _bloomFog = bloomFog;
             _editorDeserializedData = deserializedData;
@@ -40,7 +41,12 @@ namespace EditorEX.Chroma.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (_editorDeserializedData?.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out ChromaAssignFogEventData? chromaData) ?? false)
+            if (
+                _editorDeserializedData?.Resolve(
+                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    out ChromaAssignFogEventData? chromaData
+                ) ?? false
+            )
             {
                 _track = chromaData.Track;
             }

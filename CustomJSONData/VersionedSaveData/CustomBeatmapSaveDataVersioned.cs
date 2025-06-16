@@ -1,8 +1,8 @@
-﻿using BeatmapSaveDataVersion3;
-using V3 = BeatmapSaveDataVersion3;
-using CustomJSONData.CustomBeatmap;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using BeatmapSaveDataCommon;
+using BeatmapSaveDataVersion3;
+using CustomJSONData.CustomBeatmap;
+using V3 = BeatmapSaveDataVersion3;
 
 namespace EditorEX.CustomJSONData.VersionedSaveData
 {
@@ -28,7 +28,27 @@ namespace EditorEX.CustomJSONData.VersionedSaveData
         public bool useNormalEventsAsCompatibleEvents;
         public CustomData customData;
 
-        public CustomBeatmapSaveDataVersioned(string version, List<BpmChangeEventData> bpmEvents, List<RotationEventData> rotationEvents, List<ColorNoteData> colorNotes, List<BombNoteData> bombNotes, List<V3.ObstacleData> obstacles, List<V3.SliderData> sliders, List<BurstSliderData> burstSliders, List<V3.WaypointData> waypoints, List<BasicEventData> basicBeatmapEvents, List<ColorBoostEventData> colorBoostBeatmapEvents, List<LightColorEventBoxGroup> lightColorEventBoxGroups, List<LightRotationEventBoxGroup> lightRotationEventBoxGroups, List<LightTranslationEventBoxGroup> lightTranslationEventBoxGroups, List<FxEventBoxGroup> vfxEventBoxGroups, FxEventsCollection fxEventsCollection, BasicEventTypesWithKeywords basicEventTypesWithKeywords, bool useNormalEventsAsCompatibleEvents, CustomData customData)
+        public CustomBeatmapSaveDataVersioned(
+            string version,
+            List<BpmChangeEventData> bpmEvents,
+            List<RotationEventData> rotationEvents,
+            List<ColorNoteData> colorNotes,
+            List<BombNoteData> bombNotes,
+            List<V3.ObstacleData> obstacles,
+            List<V3.SliderData> sliders,
+            List<BurstSliderData> burstSliders,
+            List<V3.WaypointData> waypoints,
+            List<BasicEventData> basicBeatmapEvents,
+            List<ColorBoostEventData> colorBoostBeatmapEvents,
+            List<LightColorEventBoxGroup> lightColorEventBoxGroups,
+            List<LightRotationEventBoxGroup> lightRotationEventBoxGroups,
+            List<LightTranslationEventBoxGroup> lightTranslationEventBoxGroups,
+            List<FxEventBoxGroup> vfxEventBoxGroups,
+            FxEventsCollection fxEventsCollection,
+            BasicEventTypesWithKeywords basicEventTypesWithKeywords,
+            bool useNormalEventsAsCompatibleEvents,
+            CustomData customData
+        )
         {
             this.version = version;
             this.customData = customData;

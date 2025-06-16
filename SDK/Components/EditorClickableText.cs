@@ -1,10 +1,16 @@
-﻿using HMUI;
-using System;
+﻿using System;
+using HMUI;
 using UnityEngine.EventSystems;
 
 namespace EditorEX.SDK.Components
 {
-    public class EditorClickableText : CurvedTextMeshPro, IPointerDownHandler, IPointerClickHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
+    public class EditorClickableText
+        : CurvedTextMeshPro,
+            IPointerDownHandler,
+            IPointerClickHandler,
+            IPointerUpHandler,
+            IPointerEnterHandler,
+            IPointerExitHandler
     {
         public SelectionState state { get; private set; } = SelectionState.Normal;
 
@@ -54,7 +60,7 @@ namespace EditorEX.SDK.Components
             Normal,
             Highlighted,
             Pressed,
-            Disabled
+            Disabled,
         }
     }
 }

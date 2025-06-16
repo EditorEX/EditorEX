@@ -14,8 +14,10 @@ namespace EditorEX.UI.Patches
         private IconButtonFactory _iconButtonFactory;
         private LazyInject<BeatmapProjectManager> _beatmapProjectManager;
 
-        public EditDifficultyBeatmapPatches(IconButtonFactory iconButtonFactory,
-            LazyInject<BeatmapProjectManager> beatmapProjectManager)
+        public EditDifficultyBeatmapPatches(
+            IconButtonFactory iconButtonFactory,
+            LazyInject<BeatmapProjectManager> beatmapProjectManager
+        )
         {
             _beatmapProjectManager = beatmapProjectManager;
             _iconButtonFactory = iconButtonFactory;
@@ -25,9 +27,13 @@ namespace EditorEX.UI.Patches
         [AffinityPostfix]
         private void Modify(DifficultyBeatmapView __instance, DifficultyBeatmapData beatmapData)
         {
-            if (beatmapData == null) return;
+            if (beatmapData == null)
+                return;
             var v4 = LevelContext.Version >= BeatmapProjectFileHelper.version400;
-            var beatmapVersion = BeatmapProjectFileHelper.GetVersionedJSONVersion(_beatmapProjectManager.Value._workingBeatmapProject, beatmapData.beatmapFilename);
+            var beatmapVersion = BeatmapProjectFileHelper.GetVersionedJSONVersion(
+                _beatmapProjectManager.Value._workingBeatmapProject,
+                beatmapData.beatmapFilename
+            );
             var v4Map = beatmapVersion >= BeatmapProjectFileHelper.version400;
 
             __instance._colorSchemeDropdown.transform.parent.gameObject.SetActive(v4);
@@ -37,11 +43,16 @@ namespace EditorEX.UI.Patches
             __instance._mappersInputValidator.transform.parent.gameObject.SetActive(v4 && v4Map);
 
             var difficultyLabel = __instance.transform.Find("DifficultyLabel");
-            var button = __instance.transform?.Find("LabelWrapper")?.Find("ExIconButton")?.GetComponent<Button>();
+            var button = __instance
+                .transform?.Find("LabelWrapper")
+                ?.Find("ExIconButton")
+                ?.GetComponent<Button>();
 
             if (difficultyLabel == null)
             {
-                difficultyLabel = __instance.transform!.Find("LabelWrapper").Find("DifficultyLabel");
+                difficultyLabel = __instance
+                    .transform!.Find("LabelWrapper")
+                    .Find("DifficultyLabel");
             }
             else
             {
@@ -66,9 +77,7 @@ namespace EditorEX.UI.Patches
                 var labelFitter = difficultyLabel.gameObject.AddComponent<ContentSizeFitter>();
                 labelFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-                button = _iconButtonFactory.Create(wrapper.transform, "#IconOpen", () =>
-                {
-                });
+                button = _iconButtonFactory.Create(wrapper.transform, "#IconOpen", () => { });
             }
 
             button!.interactable = __instance._beatmapData != null;

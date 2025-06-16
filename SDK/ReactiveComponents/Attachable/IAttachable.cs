@@ -6,6 +6,7 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
     {
         void SetValue(T value);
     }
+
     public interface IAttachable
     {
         void Attach(ReactiveComponent component);

@@ -18,7 +18,8 @@ namespace EditorEX.SDK.Factories
         private void Construct(
             ImageFactory imageFactory,
             PrefabCollector prefabCollector,
-            DiContainer container)
+            DiContainer container
+        )
         {
             _imageFactory = imageFactory;
             _prefabCollector = prefabCollector;
@@ -27,7 +28,9 @@ namespace EditorEX.SDK.Factories
 
         public Button Create(Transform parent, string text, UnityAction onClick)
         {
-            var button = _container.InstantiatePrefab(_prefabCollector.GetButtonPrefab()).GetComponent<Button>();
+            var button = _container
+                .InstantiatePrefab(_prefabCollector.GetButtonPrefab())
+                .GetComponent<Button>();
             button.transform.SetParent(parent, false);
 
             button.name = "ExButton";
@@ -41,7 +44,9 @@ namespace EditorEX.SDK.Factories
             var content = new GameObject("Content");
             content.transform.SetParent(gameObject.transform, false);
 
-            var textObj = gameObject.transform.Find("BeatmapEditorLabel").GetComponent<CurvedTextMeshPro>();
+            var textObj = gameObject
+                .transform.Find("BeatmapEditorLabel")
+                .GetComponent<CurvedTextMeshPro>();
             textObj.text = text;
             textObj.richText = true;
 

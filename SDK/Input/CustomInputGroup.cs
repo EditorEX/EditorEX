@@ -17,7 +17,9 @@ namespace EditorEX.SDK.Input
         {
             if (GroupIndex != -1)
             {
-                throw new InvalidOperationException($"Group {ID} has already been assigned an index of {GroupIndex}.");
+                throw new InvalidOperationException(
+                    $"Group {ID} has already been assigned an index of {GroupIndex}."
+                );
             }
             GroupIndex = index;
         }

@@ -4,6 +4,6 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
     {
         None,
         Alpha,
-        Qwerty
+        Qwerty,
     }
 }

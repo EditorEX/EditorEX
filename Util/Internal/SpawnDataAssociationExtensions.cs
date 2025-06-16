@@ -18,54 +18,82 @@ namespace EditorEX.Util
             EditorSpawnDataRepository.GetSpawnData(editorData).hasTailNote = hasTailNote;
         }
 
-        public static void SetHeadBeforeJumpLineLayer(this BaseSliderEditorData? editorData, NoteLineLayer lineLayer)
+        public static void SetHeadBeforeJumpLineLayer(
+            this BaseSliderEditorData? editorData,
+            NoteLineLayer lineLayer
+        )
         {
             EditorSpawnDataRepository.GetSpawnData(editorData).headBeforeJumpLineLayer = lineLayer;
         }
 
-        public static void SetTailBeforeJumpLineLayer(this BaseSliderEditorData? editorData, NoteLineLayer lineLayer)
+        public static void SetTailBeforeJumpLineLayer(
+            this BaseSliderEditorData? editorData,
+            NoteLineLayer lineLayer
+        )
         {
             EditorSpawnDataRepository.GetSpawnData(editorData).tailBeforeJumpLineLayer = lineLayer;
         }
 
-        public static void SetCutDirectionAngleOffset(this BaseSliderEditorData? editorData, float headCutDirectionAngleOffset, float tailCutDirectionAngleOffset)
+        public static void SetCutDirectionAngleOffset(
+            this BaseSliderEditorData? editorData,
+            float headCutDirectionAngleOffset,
+            float tailCutDirectionAngleOffset
+        )
         {
-            EditorSpawnDataRepository.GetSpawnData(editorData).headCutDirectionAngleOffset = headCutDirectionAngleOffset;
-            EditorSpawnDataRepository.GetSpawnData(editorData).tailCutDirectionAngleOffset = tailCutDirectionAngleOffset;
+            EditorSpawnDataRepository.GetSpawnData(editorData).headCutDirectionAngleOffset =
+                headCutDirectionAngleOffset;
+            EditorSpawnDataRepository.GetSpawnData(editorData).tailCutDirectionAngleOffset =
+                tailCutDirectionAngleOffset;
         }
-
 
         // Notes
 
-        public static void SetBeforeJumpNoteLineLayer(this NoteEditorData? editorData, NoteLineLayer lineLayer)
+        public static void SetBeforeJumpNoteLineLayer(
+            this NoteEditorData? editorData,
+            NoteLineLayer lineLayer
+        )
         {
             EditorSpawnDataRepository.GetSpawnData(editorData).beforeJumpNoteLineLayer = lineLayer;
         }
 
         public static void ChangeToBurstSliderHead(this NoteEditorData? editorData)
         {
-            EditorSpawnDataRepository.GetSpawnData(editorData).gameplayType = NoteData.GameplayType.BurstSliderHead;
+            EditorSpawnDataRepository.GetSpawnData(editorData).gameplayType = NoteData
+                .GameplayType
+                .BurstSliderHead;
         }
 
         public static void ChangeToGameNote(this NoteEditorData? editorData)
         {
-            EditorSpawnDataRepository.GetSpawnData(editorData).gameplayType = NoteData.GameplayType.Normal;
+            EditorSpawnDataRepository.GetSpawnData(editorData).gameplayType = NoteData
+                .GameplayType
+                .Normal;
         }
 
-        public static void SetNoteFlipToNote(this NoteEditorData? editorData, NoteEditorData? targetNote)
+        public static void SetNoteFlipToNote(
+            this NoteEditorData? editorData,
+            NoteEditorData? targetNote
+        )
         {
             var baseSpawn = EditorSpawnDataRepository.GetSpawnData(editorData);
             baseSpawn.flipLineIndex = targetNote.column;
             baseSpawn.flipYSide = (float)((editorData.column > targetNote.column) ? 1 : (-1));
-            if ((editorData.column > targetNote.column && editorData.row < targetNote.row) || (editorData.column < targetNote.column && editorData.column > targetNote.row))
+            if (
+                (editorData.column > targetNote.column && editorData.row < targetNote.row)
+                || (editorData.column < targetNote.column && editorData.column > targetNote.row)
+            )
             {
                 baseSpawn.flipYSide *= -1f;
             }
         }
 
-        public static void SetCutDirectionAngleOffset(this NoteEditorData? editorData, float cutDirectionAngleOffset)
+        public static void SetCutDirectionAngleOffset(
+            this NoteEditorData? editorData,
+            float cutDirectionAngleOffset
+        )
         {
-            EditorSpawnDataRepository.GetSpawnData(editorData).cutDirectionAngleOffset = cutDirectionAngleOffset;
+            EditorSpawnDataRepository.GetSpawnData(editorData).cutDirectionAngleOffset =
+                cutDirectionAngleOffset;
         }
 
         public static void ResetNoteFlip(this NoteEditorData? editorData)
@@ -79,7 +107,10 @@ namespace EditorEX.Util
             editorData.SetField("cutDirection", NoteCutDirection.Any);
         }
 
-        public static void ChangeNoteCutDirection(this NoteEditorData editorData, NoteCutDirection newCutDirection)
+        public static void ChangeNoteCutDirection(
+            this NoteEditorData editorData,
+            NoteCutDirection newCutDirection
+        )
         {
             editorData.SetField("cutDirection", newCutDirection);
         }

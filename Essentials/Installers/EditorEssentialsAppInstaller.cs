@@ -16,7 +16,8 @@ namespace EditorEX.Essentials.Installers
 
             Container.BindInterfacesAndSelfTo<CustomInputActionRegistry>().AsSingle().NonLazy();
 
-            CustomInputBuilder.StartGroup("EditorEX", "Essentials")
+            CustomInputBuilder
+                .StartGroup("EditorEX", "Essentials")
                 .AddKeybinding("Toggle Editor GUI", [InputKey.l], ref InputRef.ToggleEditorGUI)
                 .AddViewModeBindings()
                 .Build(ref InputRef.EssentialsGroup, Container);

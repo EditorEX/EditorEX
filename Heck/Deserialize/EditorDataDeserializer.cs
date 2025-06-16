@@ -1,10 +1,10 @@
-﻿using BeatmapEditor3D.DataModels;
-using EditorEX.CustomJSONData.CustomEvents;
-using CustomJSONData;
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using BeatmapEditor3D.DataModels;
+using CustomJSONData;
+using EditorEX.CustomJSONData.CustomEvents;
+using HarmonyLib;
 using Heck.Deserialize;
 
 namespace EditorEX.Heck.Deserialize

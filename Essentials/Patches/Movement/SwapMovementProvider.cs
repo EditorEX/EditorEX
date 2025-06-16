@@ -18,9 +18,14 @@ namespace EditorEX.Essentials.Patches.Movement
             .Method(typeof(Zenject.DiContainer), "BindInterfacesAndSelfTo")
             .MakeGenericMethod(typeof(VariableMovementDataProvider));
 
-        [AffinityPatch(typeof(BeatmapLevelEditorSceneSetup), nameof(BeatmapLevelEditorSceneSetup.InstallBindings))]
+        [AffinityPatch(
+            typeof(BeatmapLevelEditorSceneSetup),
+            nameof(BeatmapLevelEditorSceneSetup.InstallBindings)
+        )]
         [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerNote(IEnumerable<CodeInstruction> instructions)
+        private IEnumerable<CodeInstruction> TranspilerNote(
+            IEnumerable<CodeInstruction> instructions
+        )
         {
             var result = new CodeMatcher(instructions)
                 .MatchForward(false, new CodeMatch(OpCodes.Callvirt, _installOld))

@@ -20,8 +20,7 @@ namespace EditorEX.SDK.Collectors
         private DropdownEditorView? _textDropdownPrefab;
 
         [Inject]
-        private void Construct(
-            DiContainer container)
+        private void Construct(DiContainer container)
         {
             _container = container;
         }
@@ -32,22 +31,28 @@ namespace EditorEX.SDK.Collectors
             _buttonPrefab = newBeatmapViewController._saveAndOpenBeatmapButton;
             _iconButtonPrefab = newBeatmapViewController._openSongView._openFileButton;
 
-
-            var beatmapEditorSettingsViewController = _container.Resolve<BeatmapEditorSettingsViewController>();
+            var beatmapEditorSettingsViewController =
+                _container.Resolve<BeatmapEditorSettingsViewController>();
             _togglePrefab = beatmapEditorSettingsViewController._fullscreenToggle;
             _textDropdownPrefab = beatmapEditorSettingsViewController._screenResolutionDropdown;
 
-
             var editBeatmapViewController = _container.Resolve<EditBeatmapViewController>();
-            _segmentedControlPrefab = editBeatmapViewController.transform.Find("StatusBarView").Find("PaginationView").Find("Wrapper").Find("BasicEventsPagination").Find("BeatmapEditorTextSegmentedView").GetComponent<TextSegmentedControl>();
+            _segmentedControlPrefab = editBeatmapViewController
+                .transform.Find("StatusBarView")
+                .Find("PaginationView")
+                .Find("Wrapper")
+                .Find("BasicEventsPagination")
+                .Find("BeatmapEditorTextSegmentedView")
+                .GetComponent<TextSegmentedControl>();
 
-
-            var editBeatmapLevelViewController = _container.Resolve<EditBeatmapLevelViewController>();
-            _inputFieldPrefab = editBeatmapLevelViewController._songNameInputValidator.GetComponent<TMP_InputField>();
-
+            var editBeatmapLevelViewController =
+                _container.Resolve<EditBeatmapLevelViewController>();
+            _inputFieldPrefab =
+                editBeatmapLevelViewController._songNameInputValidator.GetComponent<TMP_InputField>();
 
             var beatmapsListViewController = _container.Resolve<BeatmapsListViewController>();
-            _scrollViewPrefab = beatmapsListViewController._beatmapsListTableView._tableView.GetComponent<ScrollView>();
+            _scrollViewPrefab =
+                beatmapsListViewController._beatmapsListTableView._tableView.GetComponent<ScrollView>();
         }
 
         public Button GetButtonPrefab()

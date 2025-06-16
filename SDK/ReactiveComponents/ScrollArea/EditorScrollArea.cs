@@ -61,7 +61,8 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         protected override void OnUpdate()
         {
-            if (_contentTransform == null) return;
+            if (_contentTransform == null)
+                return;
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (_lastScrollDeltaTime != -1f && _lastScrollDeltaTime != Time.deltaTime)
             {
@@ -88,7 +89,8 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         public void ScrollToEnd(bool immediately = false)
         {
-            if (_contentTransform == null) return;
+            if (_contentTransform == null)
+                return;
             SetDestinationPos(_contentTransform.rect.height, immediately);
         }
 
@@ -164,7 +166,8 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         private void ReloadContent()
         {
-            if (_contentTransform == null) return;
+            if (_contentTransform == null)
+                return;
             //
             if (ScrollOrientation is ScrollOrientation.Vertical)
             {
@@ -184,11 +187,13 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         private void SetDestinationPos(float pos, bool immediately = false)
         {
-            if (_contentTransform == null || Math.Abs(_destinationPos - pos) < 0.01f) return;
+            if (_contentTransform == null || Math.Abs(_destinationPos - pos) < 0.01f)
+                return;
             _destinationPos = ScrollMaxSize <= 0f ? 0f : Mathf.Clamp(pos, 0f, ScrollMaxSize);
             ScrollDestinationPosChangedEvent?.Invoke(_destinationPos);
             //applying immediately if needed
-            if (immediately) RefreshContentPos(true);
+            if (immediately)
+                RefreshContentPos(true);
         }
 
         private void RefreshContentPos(bool immediately)
@@ -198,10 +203,11 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
             var destinationPos = immediately switch
             {
                 false => Vector2.Lerp(sourcePos, DestinationPos, Time.deltaTime * 4f),
-                _ => DestinationPos
+                _ => DestinationPos,
             };
             //returning if equal
-            if (sourcePos == destinationPos) return;
+            if (sourcePos == destinationPos)
+                return;
             _contentTransform!.localPosition = destinationPos;
             //notifying listeners
             ScrollPosChangedEvent?.Invoke(Translate(destinationPos));
@@ -217,7 +223,7 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
             {
                 ScrollOrientation.Vertical => new Vector2(0f, value),
                 ScrollOrientation.Horizontal => new Vector2(value, 0f),
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(),
             };
         }
 
@@ -244,18 +250,22 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
             return new Background
             {
                 Sprite = ReactiveResources.TransparentPixel,
-                Children = {
+                Children =
+                {
                     //viewport
-                    new ReactiveComponent {
+                    new ReactiveComponent
+                    {
                         Name = "Viewport",
-                        ContentTransform = {
-                            pivot = new(1f, 1f)
-                        }
-                    }.WithNativeComponent(out RectMask2D _).WithRectExpand().Bind(ref _viewport)
-                }
-            }.WithNativeComponent(out _pointerEventsHandler).With(
-                _ => _pointerEventsHandler.PointerScrollEvent += HandlePointerScroll
-            ).Use();
+                        ContentTransform = { pivot = new(1f, 1f) },
+                    }
+                        .WithNativeComponent(out RectMask2D _)
+                        .WithRectExpand()
+                        .Bind(ref _viewport),
+                },
+            }
+                .WithNativeComponent(out _pointerEventsHandler)
+                .With(_ => _pointerEventsHandler.PointerScrollEvent += HandlePointerScroll)
+                .Use();
         }
 
         protected override void OnInitialize()
@@ -265,7 +275,8 @@ namespace EditorEX.SDK.ReactiveComponents.ScrollArea
 
         protected override void OnRectDimensionsChanged()
         {
-            if (_scrollContent == null) return;
+            if (_scrollContent == null)
+                return;
             RefreshContentPos(true);
         }
 

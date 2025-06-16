@@ -1,7 +1,7 @@
-﻿using BeatmapEditor3D;
+﻿using System.IO;
+using BeatmapEditor3D;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
-using System.IO;
 
 namespace EditorEX.CustomJSONData.Patches
 {
@@ -10,8 +10,7 @@ namespace EditorEX.CustomJSONData.Patches
     {
         private readonly SiraLog _siraLog;
 
-        private BeatmapFileUtilsPatch(
-            SiraLog siraLog)
+        private BeatmapFileUtilsPatch(SiraLog siraLog)
         {
             _siraLog = siraLog;
         }
@@ -19,13 +18,21 @@ namespace EditorEX.CustomJSONData.Patches
         private static void CopyFilesRecursively(string sourcePath, string targetPath)
         {
             //Now Create all of the directories
-            foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+            foreach (
+                string dirPath in Directory.GetDirectories(
+                    sourcePath,
+                    "*",
+                    SearchOption.AllDirectories
+                )
+            )
             {
                 Directory.CreateDirectory(dirPath.Replace(sourcePath, targetPath));
             }
 
             //Copy all the files & Replaces any files with the same name
-            foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+            foreach (
+                string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories)
+            )
             {
                 File.Copy(newPath, newPath.Replace(sourcePath, targetPath), true);
             }
@@ -33,11 +40,19 @@ namespace EditorEX.CustomJSONData.Patches
 
         [AffinityPrefix]
         [AffinityPatch(typeof(BeatmapFileUtils), nameof(BeatmapFileUtils.CopyBeatmapProject))]
-        private bool CopyBeatmapProject(string sourceDirectoryPath, string destinationDirectoryPath, string songFilename, string coverImageFilename, string[] difficultyFilenames)
+        private bool CopyBeatmapProject(
+            string sourceDirectoryPath,
+            string destinationDirectoryPath,
+            string songFilename,
+            string coverImageFilename,
+            string[] difficultyFilenames
+        )
         {
             if (!new DirectoryInfo(sourceDirectoryPath).Exists)
             {
-                _siraLog.Error("Source directory does not exist or could not be found: " + sourceDirectoryPath);
+                _siraLog.Error(
+                    "Source directory does not exist or could not be found: " + sourceDirectoryPath
+                );
                 return false;
             }
             if (Directory.Exists(destinationDirectoryPath))

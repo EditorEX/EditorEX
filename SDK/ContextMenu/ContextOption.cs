@@ -2,7 +2,8 @@
 
 namespace EditorEX.SDK.ContextMenu
 {
-    public struct ContextOption<T> : IContextOption where T : IContextMenuObject
+    public struct ContextOption<T> : IContextOption
+        where T : IContextMenuObject
     {
         public ContextOption(string text, Action<T> onClick)
         {

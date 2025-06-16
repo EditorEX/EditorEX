@@ -1,10 +1,11 @@
-﻿using IPA.Config.Stores;
+﻿using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using IPA.Config.Stores;
 using IPA.Config.Stores.Attributes;
 using IPA.Config.Stores.Converters;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
+
 namespace EditorEX.Config
 {
     internal class SourcesConfig

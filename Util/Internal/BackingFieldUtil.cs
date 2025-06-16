@@ -12,7 +12,10 @@ namespace EditorEX.Util
 
         public static FieldInfo GetBackingField<T>(string propertyName)
         {
-            return typeof(T).GetField(GetBackingFieldName(propertyName), BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(T).GetField(
+                GetBackingFieldName(propertyName),
+                BindingFlags.Instance | BindingFlags.NonPublic
+            );
         }
     }
 }

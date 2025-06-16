@@ -1,4 +1,6 @@
-﻿using BeatmapEditor3D;
+﻿using System;
+using System.Collections.Generic;
+using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.SpawnProcessing;
@@ -8,8 +10,6 @@ using EditorEX.NoodleExtensions.ObjectData;
 using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -59,7 +59,8 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
             AnimationHelper animationHelper,
             IReadonlyBeatmapState state,
-            AudioDataModel audioDataModel)
+            AudioDataModel audioDataModel
+        )
         {
             _editorDeserializedData = editorDeserializedData;
             _animationHelper = animationHelper;
@@ -67,7 +68,12 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             _audioDataModel = audioDataModel;
         }
 
-        public void Init(BaseEditorData? editorData, IVariableMovementDataProvider variableMovementDataProvider, EditorBasicBeatmapObjectSpawnMovementData movementData, Func<IObjectVisuals>? getVisualRoot)
+        public void Init(
+            BaseEditorData? editorData,
+            IVariableMovementDataProvider variableMovementDataProvider,
+            EditorBasicBeatmapObjectSpawnMovementData movementData,
+            Func<IObjectVisuals>? getVisualRoot
+        )
         {
             EditorNoodleNoteData? noodleData = null;
             _editorDeserializedData?.Resolve(editorData, out noodleData);
@@ -77,12 +83,16 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             _editorBeatmapObjectSpawnMovementData = movementData;
             var noteEditorData = editorData as NoteEditorData;
             var spawnDataAssociation = EditorSpawnDataRepository.GetSpawnData(editorData);
-            var noteSpawnData = _editorBeatmapObjectSpawnMovementData.GetJumpingNoteSpawnData(noteEditorData);
+            var noteSpawnData = _editorBeatmapObjectSpawnMovementData.GetJumpingNoteSpawnData(
+                noteEditorData
+            );
 
             float noteTime = _audioDataModel.bpmData.BeatToSeconds(editorData.beat);
             float worldRotation = 0f;
             float flipYSide = noodleData?.InternalFlipYSide ?? spawnDataAssociation.flipYSide;
-            float endRotation = noteEditorData.cutDirection.RotationAngle() + spawnDataAssociation.cutDirectionAngleOffset;
+            float endRotation =
+                noteEditorData.cutDirection.RotationAngle()
+                + spawnDataAssociation.cutDirectionAngleOffset;
 
             Vector3 moveStartOffset = noteSpawnData.moveStartOffset;
             moveStartOffset.z += _zOffset;
@@ -91,12 +101,31 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             Vector3 jumpEndOffset = noteSpawnData.jumpEndOffset;
             jumpEndOffset.z += _zOffset;
 
-            _floorMovement.Init(editorData as NoteEditorData, _variableMovementDataProvider, worldRotation, noteTime, moveStartOffset, moveEndOffset, getVisualRoot);
+            _floorMovement.Init(
+                editorData as NoteEditorData,
+                _variableMovementDataProvider,
+                worldRotation,
+                noteTime,
+                moveStartOffset,
+                moveEndOffset,
+                getVisualRoot
+            );
             _position = _floorMovement.SetToStart();
             _prevPosition = _position;
             _localPosition = (_prevLocalPosition = _floorMovement.localPosition);
             _distanceToPlayer = _floorMovement.distanceToPlayer;
-            _jump.Init(editorData as NoteEditorData, _variableMovementDataProvider, noteTime, worldRotation, moveEndOffset, jumpEndOffset, noteSpawnData.gravityBase, flipYSide, endRotation, getVisualRoot);
+            _jump.Init(
+                editorData as NoteEditorData,
+                _variableMovementDataProvider,
+                noteTime,
+                worldRotation,
+                moveEndOffset,
+                jumpEndOffset,
+                noteSpawnData.gravityBase,
+                flipYSide,
+                endRotation,
+                getVisualRoot
+            );
 
             movementPhase = MovementPhase.MovingOnTheFloor;
 
@@ -137,16 +166,26 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
                     }
                 }
 
-                Vector3 scale = (noodleData.ScaleX != null || noodleData.ScaleY != null || noodleData.ScaleZ != null)
-                    ? new Vector3(noodleData.ScaleX ?? 1, noodleData.ScaleY ?? 1, noodleData.ScaleZ ?? 1)
-                    : Vector3.one;
+                Vector3 scale =
+                    (
+                        noodleData.ScaleX != null
+                        || noodleData.ScaleY != null
+                        || noodleData.ScaleZ != null
+                    )
+                        ? new Vector3(
+                            noodleData.ScaleX ?? 1,
+                            noodleData.ScaleY ?? 1,
+                            noodleData.ScaleZ ?? 1
+                        )
+                        : Vector3.one;
                 transform.localScale = scale;
 
                 Vector3 moveStartPos = noteSpawnData.moveStartOffset;
                 Vector3 moveEndPos = noteSpawnData.moveEndOffset;
                 Vector3 jumpEndPos = noteSpawnData.jumpEndOffset;
-                float jumpGravity =
-                    _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(noteSpawnData.gravityBase);
+                float jumpGravity = _variableMovementDataProvider.CalculateCurrentNoteJumpGravity(
+                    noteSpawnData.gravityBase
+                );
                 float halfJumpDuration = _variableMovementDataProvider.halfJumpDuration;
 
                 float zOffset = _zOffset;
@@ -162,20 +201,20 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
                 noodleData.InternalLocalRotation = localRotation;
 
                 float startVerticalVelocity = jumpGravity * halfJumpDuration;
-                float yOffset = (startVerticalVelocity * halfJumpDuration) - (jumpGravity * halfJumpDuration * halfJumpDuration * 0.5f);
-                noodleData.InternalNoteOffset = new Vector3(jumpEndPos.x, moveEndPos.y + yOffset, 0);
+                float yOffset =
+                    (startVerticalVelocity * halfJumpDuration)
+                    - (jumpGravity * halfJumpDuration * halfJumpDuration * 0.5f);
+                noodleData.InternalNoteOffset = new Vector3(
+                    jumpEndPos.x,
+                    moveEndPos.y + yOffset,
+                    0
+                );
             }
         }
 
-        public void Enable()
-        {
+        public void Enable() { }
 
-        }
-
-        public void Disable()
-        {
-
-        }
+        public void Disable() { }
 
         protected void Awake()
         {
@@ -235,7 +274,12 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             else
             {
                 float jumpDuration = _jump.jumpDuration;
-                float elapsedTime = _audioDataModel.bpmData.BeatToSeconds(_state.beat) - (_audioDataModel.bpmData.BeatToSeconds(editorData.beat) - (jumpDuration * 0.5f));
+                float elapsedTime =
+                    _audioDataModel.bpmData.BeatToSeconds(_state.beat)
+                    - (
+                        _audioDataModel.bpmData.BeatToSeconds(editorData.beat)
+                        - (jumpDuration * 0.5f)
+                    );
                 normalTime = elapsedTime / jumpDuration;
             }
 
@@ -249,7 +293,8 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
                 out Quaternion? localRotationOffset,
                 out float? dissolve,
                 out float? dissolveArrow,
-                out float? cuttable);
+                out float? cuttable
+            );
 
             if (positionOffset.HasValue)
             {
@@ -263,7 +308,8 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
                 _floorMovement._moveEndOffset = moveEndPos + offset;
                 _jump._startOffset = moveEndPos + offset;
                 _jump._endOffset = jumpEndPos + offset;
-                _jump._startPos = _variableMovementDataProvider.moveEndPosition + _jump._startOffset;
+                _jump._startPos =
+                    _variableMovementDataProvider.moveEndPosition + _jump._startOffset;
                 _jump._endPos = _variableMovementDataProvider.jumpEndPosition + _jump._endOffset;
             }
 
@@ -317,7 +363,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
         {
             None,
             MovingOnTheFloor,
-            Jumping
+            Jumping,
         }
     }
 }

@@ -1,21 +1,33 @@
-﻿using BeatmapEditor3D.Controller;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using BeatmapEditor3D.Controller;
 using EditorEX.Essentials.Features.ViewMode;
 using HarmonyLib;
 using SiraUtil.Affinity;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
 using UnityEngine;
 
 namespace EditorEX.Essentials.Patches
 {
     internal class CameraLock : IAffinity
     {
-        private static readonly MethodInfo _oldPosition = AccessTools.PropertyGetter(typeof(Transform), "position");
-        private static readonly MethodInfo _newLocalPosition = AccessTools.PropertyGetter(typeof(Transform), "localPosition");
+        private static readonly MethodInfo _oldPosition = AccessTools.PropertyGetter(
+            typeof(Transform),
+            "position"
+        );
+        private static readonly MethodInfo _newLocalPosition = AccessTools.PropertyGetter(
+            typeof(Transform),
+            "localPosition"
+        );
 
-        private static readonly MethodInfo _oldSetPosition = AccessTools.PropertySetter(typeof(Transform), "position");
-        private static readonly MethodInfo _newSetLocalPosition = AccessTools.PropertySetter(typeof(Transform), "localPosition");
+        private static readonly MethodInfo _oldSetPosition = AccessTools.PropertySetter(
+            typeof(Transform),
+            "position"
+        );
+        private static readonly MethodInfo _newSetLocalPosition = AccessTools.PropertySetter(
+            typeof(Transform),
+            "localPosition"
+        );
 
         private readonly ActiveViewMode _activeViewMode;
 
@@ -27,9 +39,7 @@ namespace EditorEX.Essentials.Patches
         private Vector3? movementPreviousPosition;
         private Quaternion? movementPreviousRotation;
 
-        private CameraLock(
-            ActiveViewMode activeViewMode)
-
+        private CameraLock(ActiveViewMode activeViewMode)
         {
             _activeViewMode = activeViewMode;
             _activeViewMode.ModeChanged += ModeChanged;
@@ -37,7 +47,8 @@ namespace EditorEX.Essentials.Patches
 
         private void ModeChanged()
         {
-            if (_activeViewMode.Mode.LockCamera == _activeViewMode.LastMode.LockCamera) return;
+            if (_activeViewMode.Mode.LockCamera == _activeViewMode.LastMode.LockCamera)
+                return;
             if (_activeViewMode.Mode.LockCamera)
             {
                 toSetPosition = new Vector3(0f, 1.8f, 0f);
@@ -52,7 +63,10 @@ namespace EditorEX.Essentials.Patches
             }
         }
 
-        [AffinityPatch(typeof(BeatmapEditor360CameraController), nameof(BeatmapEditor360CameraController.Update))]
+        [AffinityPatch(
+            typeof(BeatmapEditor360CameraController),
+            nameof(BeatmapEditor360CameraController.Update)
+        )]
         [AffinityPrefix]
         private bool CameraControllerUpdate(BeatmapEditor360CameraController __instance)
         {
@@ -81,7 +95,10 @@ namespace EditorEX.Essentials.Patches
                 {
                     return false;
                 }
-                __instance._mouseLook.LookRotation(__instance._uiCameraMovementTransform, __instance._uiCameraTransform);
+                __instance._mouseLook.LookRotation(
+                    __instance._uiCameraMovementTransform,
+                    __instance._uiCameraTransform
+                );
                 Vector3 vector = __instance._uiCameraMovementTransform.localPosition;
                 Vector3 vector2 = Vector3.zero;
                 if (Input.GetKey(KeyCode.W))
@@ -124,18 +141,28 @@ namespace EditorEX.Essentials.Patches
                 {
                     __instance._currentMoveIntensity = __instance._slowMoveIntensity;
                 }
-                if (Input.GetKeyUp(KeyCode.LeftShift) || Input.GetKeyUp(KeyCode.RightShift) || Input.GetKeyUp(KeyCode.LeftAlt) || Input.GetKeyUp(KeyCode.RightAlt))
+                if (
+                    Input.GetKeyUp(KeyCode.LeftShift)
+                    || Input.GetKeyUp(KeyCode.RightShift)
+                    || Input.GetKeyUp(KeyCode.LeftAlt)
+                    || Input.GetKeyUp(KeyCode.RightAlt)
+                )
                 {
                     __instance._currentMoveIntensity = __instance._defaultMoveIntensity;
                 }
-                vector += (vector2 + vector3 + vector4) * (__instance._currentMoveIntensity * Time.deltaTime);
+                vector +=
+                    (vector2 + vector3 + vector4)
+                    * (__instance._currentMoveIntensity * Time.deltaTime);
                 __instance._uiCameraMovementTransform.localPosition = vector;
             }
 
             return false;
         }
 
-        [AffinityPatch(typeof(BeatmapEditor360CameraController), nameof(BeatmapEditor360CameraController.Update))]
+        [AffinityPatch(
+            typeof(BeatmapEditor360CameraController),
+            nameof(BeatmapEditor360CameraController.Update)
+        )]
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {

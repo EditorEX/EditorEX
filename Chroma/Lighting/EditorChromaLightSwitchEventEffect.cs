@@ -1,4 +1,7 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BeatmapEditor3D.DataModels;
 using Chroma;
 using Chroma.Extras;
 using Chroma.Lighting;
@@ -8,9 +11,6 @@ using EditorEX.CustomJSONData;
 using EditorEX.Heck.Deserialize;
 using Heck.Animation;
 using SiraUtil.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Tweening;
 using UnityEngine;
 using Zenject;
@@ -56,7 +56,8 @@ namespace EditorEX.Chroma.Lighting
             BeatmapCallbacksController callbacksController,
             ColorManager colorManager,
             [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData,
-            [InjectOptional] EditorChromaGradientController? gradientController)
+            [InjectOptional] EditorChromaGradientController? gradientController
+        )
         {
             LightSwitchEventEffect = lightSwitchEventEffect;
             _log = log;
@@ -85,8 +86,12 @@ namespace EditorEX.Chroma.Lighting
             Colorizer = lightColorizerManager.Create(this);
             lightColorizerManager.CompleteContracts(this);
 
-            _basicCallbackWrapper = callbacksController.AddBeatmapCallback<BasicBeatmapEventData>(BasicCallback, BasicBeatmapEventData.SubtypeIdentifier(EventType));
-            _boostCallbackWrapper = callbacksController.AddBeatmapCallback<ColorBoostBeatmapEventData>(BoostCallback);
+            _basicCallbackWrapper = callbacksController.AddBeatmapCallback<BasicBeatmapEventData>(
+                BasicCallback,
+                BasicBeatmapEventData.SubtypeIdentifier(EventType)
+            );
+            _boostCallbackWrapper =
+                callbacksController.AddBeatmapCallback<ColorBoostBeatmapEventData>(BoostCallback);
             return;
 
             void Initialize(ColorSO colorSO, ref Color color)
@@ -95,7 +100,9 @@ namespace EditorEX.Chroma.Lighting
                 {
                     MultipliedColorSO lightMultSO => lightMultSO._multiplierColor,
                     SimpleColorSO => Color.white,
-                    _ => throw new InvalidOperationException($"Unhandled ColorSO type: [{colorSO.GetType().Name}].")
+                    _ => throw new InvalidOperationException(
+                        $"Unhandled ColorSO type: [{colorSO.GetType().Name}]."
+                    ),
                 };
             }
         }
@@ -122,7 +129,11 @@ namespace EditorEX.Chroma.Lighting
 
         public Color GetNormalColor(int beatmapEventValue)
         {
-            switch (BeatmapEventDataLightsExtensions.GetLightColorTypeFromEventDataValue(beatmapEventValue))
+            switch (
+                BeatmapEventDataLightsExtensions.GetLightColorTypeFromEventDataValue(
+                    beatmapEventValue
+                )
+            )
             {
                 ////case EnvironmentColorType.Color0:
                 default:
@@ -142,13 +153,20 @@ namespace EditorEX.Chroma.Lighting
                     return Colorizer.Color[1] * _lightColor1Mult;
 
                 case EnvironmentColorType.ColorW:
-                    return _colorManager.ColorForType(EnvironmentColorType.ColorW, _usingBoostColors);
+                    return _colorManager.ColorForType(
+                        EnvironmentColorType.ColorW,
+                        _usingBoostColors
+                    );
             }
         }
 
         public Color GetHighlightColor(int beatmapEventValue)
         {
-            switch (BeatmapEventDataLightsExtensions.GetLightColorTypeFromEventDataValue(beatmapEventValue))
+            switch (
+                BeatmapEventDataLightsExtensions.GetLightColorTypeFromEventDataValue(
+                    beatmapEventValue
+                )
+            )
             {
                 ////case EnvironmentColorType.Color0:
                 default:
@@ -168,31 +186,55 @@ namespace EditorEX.Chroma.Lighting
                     return Colorizer.Color[1] * _highlightColor1Mult;
 
                 case EnvironmentColorType.ColorW:
-                    return _colorManager.ColorForType(EnvironmentColorType.ColorW, _usingBoostColors);
+                    return _colorManager.ColorForType(
+                        EnvironmentColorType.ColorW,
+                        _usingBoostColors
+                    );
             }
         }
 
         private bool HasLightFadeEventDataValue(BasicEventEditorData basicEventEditorData)
         {
-            return basicEventEditorData?.value == 4 || basicEventEditorData?.value == 8 || basicEventEditorData?.value == 12;
+            return basicEventEditorData?.value == 4
+                || basicEventEditorData?.value == 8
+                || basicEventEditorData?.value == 12;
         }
 
-        private bool HasFixedDurationLightSwitchEventDataValue(BasicEventEditorData basicBeatmapEventData)
+        private bool HasFixedDurationLightSwitchEventDataValue(
+            BasicEventEditorData basicBeatmapEventData
+        )
         {
-            return BeatmapEventDataLightsExtensions.HasFixedDurationLightSwitchEventDataValue(basicBeatmapEventData.value);
+            return BeatmapEventDataLightsExtensions.HasFixedDurationLightSwitchEventDataValue(
+                basicBeatmapEventData.value
+            );
         }
 
-        public void Refresh(bool hard, IEnumerable<ILightWithId>? selectLights, BasicBeatmapEventData? beatmapEventData = null, Functions? easing = null, LerpType? lerpType = null)
+        public void Refresh(
+            bool hard,
+            IEnumerable<ILightWithId>? selectLights,
+            BasicBeatmapEventData? beatmapEventData = null,
+            Functions? easing = null,
+            LerpType? lerpType = null
+        )
         {
-            IEnumerable<ChromaIDColorTween> selectTweens = selectLights == null ? ColorTweens.Values
-                : selectLights.Where(n => ColorTweens.ContainsKey(n)).Select(n => ColorTweens[n]);
+            IEnumerable<ChromaIDColorTween> selectTweens =
+                selectLights == null
+                    ? ColorTweens.Values
+                    : selectLights
+                        .Where(n => ColorTweens.ContainsKey(n))
+                        .Select(n => ColorTweens[n]);
 
             foreach (ChromaIDColorTween tween in selectTweens)
             {
                 BasicBeatmapEventData previousEvent;
                 if (hard)
                 {
-                    tween.PreviousEvent = beatmapEventData ?? throw new ArgumentNullException(nameof(beatmapEventData), "Argument must not be null for hard refresh.");
+                    tween.PreviousEvent =
+                        beatmapEventData
+                        ?? throw new ArgumentNullException(
+                            nameof(beatmapEventData),
+                            "Argument must not be null for hard refresh."
+                        );
                     previousEvent = beatmapEventData;
                 }
                 else
@@ -240,7 +282,8 @@ namespace EditorEX.Chroma.Lighting
                             {
                                 tween.Kill();
                             }
-                            Color color = GetNormalColor(previousValue).MultAlpha(previousFloatValue);
+                            Color color = GetNormalColor(previousValue)
+                                .MultAlpha(previousFloatValue);
                             tween.fromValue = color;
                             tween.toValue = color;
                             tween.SetColor(color);
@@ -253,8 +296,10 @@ namespace EditorEX.Chroma.Lighting
                     case 6:
                     case 10:
                         {
-                            Color colorFrom = GetHighlightColor(previousValue).MultAlpha(previousFloatValue);
-                            Color colorTo = GetNormalColor(previousValue).MultAlpha(previousFloatValue);
+                            Color colorFrom = GetHighlightColor(previousValue)
+                                .MultAlpha(previousFloatValue);
+                            Color colorTo = GetNormalColor(previousValue)
+                                .MultAlpha(previousFloatValue);
                             tween.fromValue = colorFrom;
                             tween.toValue = colorTo;
                             tween.ForceOnUpdate();
@@ -275,8 +320,10 @@ namespace EditorEX.Chroma.Lighting
                     case 11:
                     case -1:
                         {
-                            Color colorFrom = GetHighlightColor(previousValue).MultAlpha(previousFloatValue);
-                            Color colorTo = GetNormalColor(previousValue).ColorWithAlpha(_offColorIntensity * previousFloatValue);
+                            Color colorFrom = GetHighlightColor(previousValue)
+                                .MultAlpha(previousFloatValue);
+                            Color colorTo = GetNormalColor(previousValue)
+                                .ColorWithAlpha(_offColorIntensity * previousFloatValue);
                             tween.fromValue = colorFrom;
                             tween.toValue = colorTo;
                             tween.ForceOnUpdate();
@@ -298,53 +345,82 @@ namespace EditorEX.Chroma.Lighting
                 // this code is UGLY
                 void CheckNextEventForFadeBetter()
                 {
-                    _editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(previousEvent), out EditorChromaEventData? eventData);
-                    Dictionary<int, BasicEventEditorData>? nextSameTypesDict = eventData?.NextSameTypeEvent;
+                    _editorDeserializedData.Resolve(
+                        CustomDataRepository.GetBasicEventConversion(previousEvent),
+                        out EditorChromaEventData? eventData
+                    );
+                    Dictionary<int, BasicEventEditorData>? nextSameTypesDict =
+                        eventData?.NextSameTypeEvent;
                     BasicBeatmapEventData? nextSameTypeEvent = null;
                     return;
                     if (nextSameTypesDict == null)
                     {
                         nextSameTypeEvent = previousEvent.nextSameTypeEventData; //clean up
                     }
-                    else if (nextSameTypesDict.TryGetValue(tween.Id, out BasicEventEditorData? value))
+                    else if (
+                        nextSameTypesDict.TryGetValue(tween.Id, out BasicEventEditorData? value)
+                    )
                     {
-                        nextSameTypeEvent = CustomDataRepository.GetBasicEventConversion(value) as BasicBeatmapEventData;
+                        nextSameTypeEvent =
+                            CustomDataRepository.GetBasicEventConversion(value)
+                            as BasicBeatmapEventData;
                     }
                     else if (nextSameTypesDict.TryGetValue(-1, out BasicEventEditorData? nullVal))
                     {
-                        nextSameTypeEvent = CustomDataRepository.GetBasicEventConversion(nullVal) as BasicBeatmapEventData;
+                        nextSameTypeEvent =
+                            CustomDataRepository.GetBasicEventConversion(nullVal)
+                            as BasicBeatmapEventData;
                     }
 
-                    if (nextSameTypeEvent == null || !HasLightFadeEventDataValue(CustomDataRepository.GetBasicEventConversion(nextSameTypeEvent)))
+                    if (
+                        nextSameTypeEvent == null
+                        || !HasLightFadeEventDataValue(
+                            CustomDataRepository.GetBasicEventConversion(nextSameTypeEvent)
+                        )
+                    )
                     {
                         return;
                     }
 
                     float nextFloatValue = nextSameTypeEvent.floatValue;
                     int nextValue = nextSameTypeEvent.value;
-                    EnvironmentColorType nextColorType = BeatmapEventDataLightsExtensions.GetLightColorTypeFromEventDataValue(nextSameTypeEvent.value);
+                    EnvironmentColorType nextColorType =
+                        BeatmapEventDataLightsExtensions.GetLightColorTypeFromEventDataValue(
+                            nextSameTypeEvent.value
+                        );
                     Color nextColor;
 
-                    _editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(nextSameTypeEvent), out EditorChromaEventData? nextEventData);
+                    _editorDeserializedData.Resolve(
+                        CustomDataRepository.GetBasicEventConversion(nextSameTypeEvent),
+                        out EditorChromaEventData? nextEventData
+                    );
                     Color? nextColorData = nextEventData?.ColorData;
-                    if (nextColorType != EnvironmentColorType.ColorW &&
-                        nextColorData.HasValue)
+                    if (nextColorType != EnvironmentColorType.ColorW && nextColorData.HasValue)
                     {
                         Color multiplierColor;
                         if (_usingBoostColors)
                         {
-                            multiplierColor = nextColorType == EnvironmentColorType.Color1 ? _lightColor1BoostMult : _lightColor0BoostMult;
+                            multiplierColor =
+                                nextColorType == EnvironmentColorType.Color1
+                                    ? _lightColor1BoostMult
+                                    : _lightColor0BoostMult;
                         }
                         else
                         {
-                            multiplierColor = nextColorType == EnvironmentColorType.Color1 ? _lightColor1Mult : _lightColor0Mult;
+                            multiplierColor =
+                                nextColorType == EnvironmentColorType.Color1
+                                    ? _lightColor1Mult
+                                    : _lightColor0Mult;
                         }
 
                         nextColor = nextColorData.Value * multiplierColor;
                     }
                     else
                     {
-                        nextColor = LightSwitchEventEffect.GetNormalColor(nextValue, _usingBoostColors);
+                        nextColor = LightSwitchEventEffect.GetNormalColor(
+                            nextValue,
+                            _usingBoostColors
+                        );
                     }
 
                     nextColor = nextColor.MultAlpha(nextFloatValue);
@@ -353,7 +429,11 @@ namespace EditorEX.Chroma.Lighting
                     {
                         prevColor = nextColor.ColorWithAlpha(0f);
                     }
-                    else if (!HasFixedDurationLightSwitchEventDataValue(CustomDataRepository.GetBasicEventConversion(previousEvent)))
+                    else if (
+                        !HasFixedDurationLightSwitchEventDataValue(
+                            CustomDataRepository.GetBasicEventConversion(previousEvent)
+                        )
+                    )
                     {
                         prevColor = GetNormalColor(previousValue).MultAlpha(previousFloatValue);
                     }
@@ -392,7 +472,8 @@ namespace EditorEX.Chroma.Lighting
                     color,
                     lightWithId,
                     _lightManager,
-                    _tableManager.GetActiveTableValueReverse(LightsID, id) ?? 0);
+                    _tableManager.GetActiveTableValueReverse(LightsID, id) ?? 0
+                );
 
                 ColorTweens[lightWithId] = tween;
                 tween.ForceOnUpdate();
@@ -423,10 +504,17 @@ namespace EditorEX.Chroma.Lighting
             // fun fun chroma stuff
             if (_gradientController == null)
             {
-                throw new InvalidOperationException("Chroma Features requires the gradient controller.");
+                throw new InvalidOperationException(
+                    "Chroma Features requires the gradient controller."
+                );
             }
 
-            if (_editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(beatmapEventData), out EditorChromaEventData? chromaData))
+            if (
+                _editorDeserializedData.Resolve(
+                    CustomDataRepository.GetBasicEventConversion(beatmapEventData),
+                    out EditorChromaEventData? chromaData
+                )
+            )
             {
                 Color? color = null;
 
@@ -442,9 +530,12 @@ namespace EditorEX.Chroma.Lighting
                     selectLights = propID switch
                     {
                         List<object> propIDobjects => Colorizer.GetPropagationLightWithIds(
-                            propIDobjects.Select(Convert.ToInt32)),
-                        long propIDlong => Colorizer.GetPropagationLightWithIds(new[] { (int)propIDlong }),
-                        _ => selectLights
+                            propIDobjects.Select(Convert.ToInt32)
+                        ),
+                        long propIDlong => Colorizer.GetPropagationLightWithIds(
+                            new[] { (int)propIDlong }
+                        ),
+                        _ => selectLights,
                     };
                 }
 
@@ -452,7 +543,11 @@ namespace EditorEX.Chroma.Lighting
                 ChromaEventData.GradientObjectData? gradientObject = chromaData.GradientObject;
                 if (gradientObject != null)
                 {
-                    color = _gradientController.AddGradient(gradientObject, beatmapEventData.basicBeatmapEventType, beatmapEventData.time);
+                    color = _gradientController.AddGradient(
+                        gradientObject,
+                        beatmapEventData.basicBeatmapEventType,
+                        beatmapEventData.time
+                    );
                 }
 
                 Color? colorData = chromaData.ColorData;
@@ -467,7 +562,9 @@ namespace EditorEX.Chroma.Lighting
                     Color finalColor = color.Value;
                     Colorizer.Colorize(false, finalColor, finalColor, finalColor, finalColor);
                 }
-                else if (!_gradientController.IsGradientActive(beatmapEventData.basicBeatmapEventType))
+                else if (
+                    !_gradientController.IsGradientActive(beatmapEventData.basicBeatmapEventType)
+                )
                 {
                     Colorizer.Colorize(false, null, null, null, null);
                 }
@@ -494,8 +591,7 @@ namespace EditorEX.Chroma.Lighting
             Refresh(false, null);
         }
 
-        internal class Factory : PlaceholderFactory<LightSwitchEventEffect, EditorChromaLightSwitchEventEffect>
-        {
-        }
+        internal class Factory
+            : PlaceholderFactory<LightSwitchEventEffect, EditorChromaLightSwitchEventEffect> { }
     }
 }

@@ -41,33 +41,38 @@ namespace EditorEX.SDK.ReactiveComponents
             {
                 Source = "#Background8px",
                 ImageType = Image.Type.Sliced,
-                Children = {
-                    new EditorLabel()
-                    .AsFlexItem(size: "auto")
-                    .Bind(ref _label)
-                }
+                Children = { new EditorLabel().AsFlexItem(size: "auto").Bind(ref _label) },
             }
-            .AsFlexGroup(padding: 8f)
-            .AsFlexItem(size: new Reactive.Yoga.YogaVector("fit-content", "fit-content"))
-            .Bind(ref _background)
-            .WithNativeComponent(out _button)
-            .Use();
+                .AsFlexGroup(padding: 8f)
+                .AsFlexItem(size: new Reactive.Yoga.YogaVector("fit-content", "fit-content"))
+                .Bind(ref _background)
+                .WithNativeComponent(out _button)
+                .Use();
         }
 
         protected override void OnStart()
         {
-            var container = Content.transform.GetComponentInParent<ReactiveContainerHolder>().ReactiveContainer;
+            var container = Content
+                .transform.GetComponentInParent<ReactiveContainerHolder>()
+                .ReactiveContainer;
             Content.SetActive(false);
-            _selectableStateController = container.Instantiator.InstantiateComponent<NoTransitionButtonSelectableStateController>(Content);
+            _selectableStateController =
+                container.Instantiator.InstantiateComponent<NoTransitionButtonSelectableStateController>(
+                    Content
+                );
             _selectableStateController._component = _button;
 
-            var stateTransition = _background.Content.gameObject.AddComponent<ColorGraphicStateTransition>();
-            stateTransition._transition = container.TransitionCollector.GetTransition<ColorTransitionSO>("Button/Background");
+            var stateTransition =
+                _background.Content.gameObject.AddComponent<ColorGraphicStateTransition>();
+            stateTransition._transition =
+                container.TransitionCollector.GetTransition<ColorTransitionSO>("Button/Background");
             stateTransition._selectableStateController = _selectableStateController;
             stateTransition._component = _background.WrappedImage.ImageView;
 
-            var textStateTransition = _label.Content.gameObject.AddComponent<ColorTMPTextStateTransition>();
-            textStateTransition._transition = container.TransitionCollector.GetTransition<ColorTransitionSO>("Button/Text");
+            var textStateTransition =
+                _label.Content.gameObject.AddComponent<ColorTMPTextStateTransition>();
+            textStateTransition._transition =
+                container.TransitionCollector.GetTransition<ColorTransitionSO>("Button/Text");
             textStateTransition._selectableStateController = _selectableStateController;
             textStateTransition._component = _label.TextMesh;
             Content.SetActive(true);

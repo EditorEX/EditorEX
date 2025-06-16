@@ -6,8 +6,10 @@
         {
             path = path.Replace("/", "\\").Replace("\\\\", "\\");
 
-            if (!path.StartsWith("\"")) path = "\"" + path;
-            if (!path.EndsWith("\"")) path += "\"";
+            if (!path.StartsWith("\""))
+                path = "\"" + path;
+            if (!path.EndsWith("\""))
+                path += "\"";
 
             System.Diagnostics.Process.Start("explorer.exe", $"{path}");
         }

@@ -9,16 +9,24 @@ namespace EditorEX.Essentials.Features.HideUI
     {
         private readonly SingleDisposable _singleDisposable = new();
 
-        private HideUIInputBinder(SignalBus signalBus, InputActionsStreamContainer inputActionsStreamContainer)
+        private HideUIInputBinder(
+            SignalBus signalBus,
+            InputActionsStreamContainer inputActionsStreamContainer
+        )
         {
             var streamForBindingGroup = inputActionsStreamContainer.GetStreamForBindingGroup(
-                InputRef.EssentialsGroup.GetKeyBindingGroupType());
+                InputRef.EssentialsGroup.GetKeyBindingGroupType()
+            );
 
             var compositeDisposable = new CompositeDisposable();
             _singleDisposable.disposable = compositeDisposable;
 
-            streamForBindingGroup.Subscribe(
-                InputRef.ToggleEditorGUI.GetInputAction(), InputEventType.KeyDown, new Action(signalBus.Fire<HideUIFeatureToggledSignal>))
+            streamForBindingGroup
+                .Subscribe(
+                    InputRef.ToggleEditorGUI.GetInputAction(),
+                    InputEventType.KeyDown,
+                    new Action(signalBus.Fire<HideUIFeatureToggledSignal>)
+                )
                 .AddTo(compositeDisposable);
         }
 

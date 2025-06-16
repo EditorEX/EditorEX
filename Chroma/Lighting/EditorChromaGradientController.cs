@@ -1,8 +1,8 @@
-﻿using Chroma;
+﻿using System.Collections.Generic;
+using Chroma;
 using EditorEX.Chroma.Colorizer;
 using Heck.Animation;
 using IPA.Utilities;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -18,7 +18,8 @@ namespace EditorEX.Chroma.Lighting
         private EditorChromaGradientController(
             IAudioTimeSource timeSource,
             EditorLightColorizerManager manager,
-            IBpmController bpmController)
+            IBpmController bpmController
+        )
         {
             _timeSource = timeSource;
             _manager = manager;
@@ -29,7 +30,12 @@ namespace EditorEX.Chroma.Lighting
 
         public void Tick()
         {
-            foreach ((BasicBeatmapEventType eventType, ChromaGradientEvent value) in new Dictionary<BasicBeatmapEventType, ChromaGradientEvent>(Gradients))
+            foreach (
+                (BasicBeatmapEventType eventType, ChromaGradientEvent value) in new Dictionary<
+                    BasicBeatmapEventType,
+                    ChromaGradientEvent
+                >(Gradients)
+            )
             {
                 Color color = value.Interpolate();
                 _manager.Colorize(eventType, true, color, color, color, color);
@@ -46,7 +52,11 @@ namespace EditorEX.Chroma.Lighting
             Gradients.Remove(eventType);
         }
 
-        internal Color AddGradient(ChromaEventData.GradientObjectData gradientObject, BasicBeatmapEventType id, float time)
+        internal Color AddGradient(
+            ChromaEventData.GradientObjectData gradientObject,
+            BasicBeatmapEventType id,
+            float time
+        )
         {
             CancelGradient(id);
 
@@ -55,7 +65,16 @@ namespace EditorEX.Chroma.Lighting
             Color endcolor = gradientObject.EndColor;
             Functions easing = gradientObject.Easing;
 
-            ChromaGradientEvent gradientEvent = new(_timeSource, this, initcolor, endcolor, time, 60 * duration / _bpmController.currentBpm, id, easing);
+            ChromaGradientEvent gradientEvent = new(
+                _timeSource,
+                this,
+                initcolor,
+                endcolor,
+                time,
+                60 * duration / _bpmController.currentBpm,
+                id,
+                easing
+            );
             Gradients[id] = gradientEvent;
             return gradientEvent.Interpolate();
         }
@@ -79,7 +98,8 @@ namespace EditorEX.Chroma.Lighting
                 float start,
                 float duration,
                 BasicBeatmapEventType eventType,
-                Functions easing = Functions.easeLinear)
+                Functions easing = Functions.easeLinear
+            )
             {
                 _timeSource = timeSource;
                 _gradientController = gradientController;
@@ -101,7 +121,11 @@ namespace EditorEX.Chroma.Lighting
 
                 if (normalTime <= _duration)
                 {
-                    return Color.LerpUnclamped(_initcolor, _endcolor, Easings.Interpolate(normalTime / _duration, _easing));
+                    return Color.LerpUnclamped(
+                        _initcolor,
+                        _endcolor,
+                        Easings.Interpolate(normalTime / _duration, _easing)
+                    );
                 }
 
                 _gradientController.Gradients.Remove(_event);

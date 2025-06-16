@@ -32,28 +32,76 @@ namespace EditorEX.Util
                     if (!string.IsNullOrWhiteSpace(term))
                     {
                         float pointsToGo = 0f;
-                        if (beatmapInfo.songSubName != null && beatmapInfo.songSubName.IndexOf(term, 0, StringComparison.CurrentCultureIgnoreCase) != -1)
+                        if (
+                            beatmapInfo.songSubName != null
+                            && beatmapInfo.songSubName.IndexOf(
+                                term,
+                                0,
+                                StringComparison.CurrentCultureIgnoreCase
+                            ) != -1
+                        )
                             pointsToGo += 4f;
 
-                        if (beatmapInfo.songAuthorName != null && beatmapInfo.songAuthorName.IndexOf(term, 0, StringComparison.CurrentCultureIgnoreCase) != -1)
+                        if (
+                            beatmapInfo.songAuthorName != null
+                            && beatmapInfo.songAuthorName.IndexOf(
+                                term,
+                                0,
+                                StringComparison.CurrentCultureIgnoreCase
+                            ) != -1
+                        )
                             pointsToGo += 12f;
 
-                        if (beatmapInfo.levelAuthorName != null && beatmapInfo.levelAuthorName.IndexOf(term, 0, StringComparison.CurrentCultureIgnoreCase) != -1)
+                        if (
+                            beatmapInfo.levelAuthorName != null
+                            && beatmapInfo.levelAuthorName.IndexOf(
+                                term,
+                                0,
+                                StringComparison.CurrentCultureIgnoreCase
+                            ) != -1
+                        )
                             pointsToGo += 16f;
 
-                        if (beatmapInfo.songName != null && beatmapInfo.songName.IndexOf(term, 0, StringComparison.CurrentCultureIgnoreCase) != -1)
+                        if (
+                            beatmapInfo.songName != null
+                            && beatmapInfo.songName.IndexOf(
+                                term,
+                                0,
+                                StringComparison.CurrentCultureIgnoreCase
+                            ) != -1
+                        )
                             pointsToGo += 20f;
 
-                        if (beatmapInfo.songSubName?.Equals(term, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                        if (
+                            beatmapInfo.songSubName?.Equals(
+                                term,
+                                StringComparison.CurrentCultureIgnoreCase
+                            ) ?? false
+                        )
                             pointsToGo *= 3f;
 
-                        if (beatmapInfo.songAuthorName?.Equals(term, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                        if (
+                            beatmapInfo.songAuthorName?.Equals(
+                                term,
+                                StringComparison.CurrentCultureIgnoreCase
+                            ) ?? false
+                        )
                             pointsToGo *= 3f;
 
-                        if (beatmapInfo.levelAuthorName?.Equals(term, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                        if (
+                            beatmapInfo.levelAuthorName?.Equals(
+                                term,
+                                StringComparison.CurrentCultureIgnoreCase
+                            ) ?? false
+                        )
                             pointsToGo *= 3f;
 
-                        if (beatmapInfo.songName?.Equals(term, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                        if (
+                            beatmapInfo.songName?.Equals(
+                                term,
+                                StringComparison.CurrentCultureIgnoreCase
+                            ) ?? false
+                        )
                             pointsToGo *= 3f;
 
                         pointsToGo *= termMultiplier;

@@ -37,7 +37,8 @@ namespace EditorEX.Vivify.Events
             IAudioTimeSource audioTimeSource,
             IBpmController bpmController,
             CoroutineDummy coroutineDummy,
-            PopulateBeatmap populateBeatmap)
+            PopulateBeatmap populateBeatmap
+        )
         {
             _log = log;
             _prefabManager = prefabManager;
@@ -50,7 +51,12 @@ namespace EditorEX.Vivify.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out SetAnimatorPropertyData? data))
+            if (
+                !_deserializedData.Resolve(
+                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    out SetAnimatorPropertyData? data
+                )
+            )
             {
                 return;
             }
@@ -64,8 +70,13 @@ namespace EditorEX.Vivify.Events
             }
 
             List<AnimatorProperty> properties = data.Properties;
-            SetAnimatorProperties(instantiatedPrefab.Animators, properties, duration, data.Easing,
-                _audioDataModel.bpmData.BeatToSeconds(customEventData.time));
+            SetAnimatorProperties(
+                instantiatedPrefab.Animators,
+                properties,
+                duration,
+                data.Easing,
+                _audioDataModel.bpmData.BeatToSeconds(customEventData.time)
+            );
         }
 
         internal void SetAnimatorProperties(
@@ -73,7 +84,8 @@ namespace EditorEX.Vivify.Events
             List<AnimatorProperty> properties,
             float duration,
             Functions easing,
-            float startTime)
+            float startTime
+        )
         {
             foreach (AnimatorProperty property in properties)
             {
@@ -91,7 +103,10 @@ namespace EditorEX.Vivify.Events
                             {
                                 foreach (Animator animator in animators)
                                 {
-                                    animator.SetBool(name, animated.PointDefinition.Interpolate(1) >= 1);
+                                    animator.SetBool(
+                                        name,
+                                        animated.PointDefinition.Interpolate(1) >= 1
+                                    );
                                 }
                             }
                             else
@@ -103,7 +118,8 @@ namespace EditorEX.Vivify.Events
                                     AnimatorPropertyType.Bool,
                                     duration,
                                     startTime,
-                                    easing);
+                                    easing
+                                );
                             }
                         }
                         else
@@ -123,7 +139,10 @@ namespace EditorEX.Vivify.Events
                             {
                                 foreach (Animator animator in animators)
                                 {
-                                    animator.SetFloat(name, animated.PointDefinition.Interpolate(1));
+                                    animator.SetFloat(
+                                        name,
+                                        animated.PointDefinition.Interpolate(1)
+                                    );
                                 }
                             }
                             else
@@ -135,7 +154,8 @@ namespace EditorEX.Vivify.Events
                                     AnimatorPropertyType.Float,
                                     duration,
                                     startTime,
-                                    easing);
+                                    easing
+                                );
                             }
                         }
                         else
@@ -155,7 +175,10 @@ namespace EditorEX.Vivify.Events
                             {
                                 foreach (Animator animator in animators)
                                 {
-                                    animator.SetFloat(name, animated.PointDefinition.Interpolate(1));
+                                    animator.SetFloat(
+                                        name,
+                                        animated.PointDefinition.Interpolate(1)
+                                    );
                                 }
                             }
                             else
@@ -167,7 +190,8 @@ namespace EditorEX.Vivify.Events
                                     AnimatorPropertyType.Float,
                                     duration,
                                     startTime,
-                                    easing);
+                                    easing
+                                );
                             }
                         }
                         else
@@ -210,7 +234,8 @@ namespace EditorEX.Vivify.Events
             AnimatorPropertyType type,
             float duration,
             float startTime,
-            Functions easing)
+            Functions easing
+        )
         {
             while (true)
             {
@@ -222,37 +247,37 @@ namespace EditorEX.Vivify.Events
                     switch (type)
                     {
                         case AnimatorPropertyType.Bool:
+                        {
+                            bool value = points.Interpolate(time) >= 1;
+                            foreach (Animator animator in animators)
                             {
-                                bool value = points.Interpolate(time) >= 1;
-                                foreach (Animator animator in animators)
-                                {
-                                    animator.SetBool(name, value);
-                                }
-
-                                break;
+                                animator.SetBool(name, value);
                             }
+
+                            break;
+                        }
 
                         case AnimatorPropertyType.Float:
+                        {
+                            float value = points.Interpolate(time);
+                            foreach (Animator animator in animators)
                             {
-                                float value = points.Interpolate(time);
-                                foreach (Animator animator in animators)
-                                {
-                                    animator.SetFloat(name, value);
-                                }
-
-                                break;
+                                animator.SetFloat(name, value);
                             }
+
+                            break;
+                        }
 
                         case AnimatorPropertyType.Integer:
+                        {
+                            float value = points.Interpolate(time);
+                            foreach (Animator animator in animators)
                             {
-                                float value = points.Interpolate(time);
-                                foreach (Animator animator in animators)
-                                {
-                                    animator.SetInteger(name, (int)value);
-                                }
-
-                                break;
+                                animator.SetInteger(name, (int)value);
                             }
+
+                            break;
+                        }
 
                         default:
                             yield break;
@@ -274,10 +299,12 @@ namespace EditorEX.Vivify.Events
             AnimatorPropertyType type,
             float duration,
             float startTime,
-            Functions easing)
+            Functions easing
+        )
         {
             _coroutineDummy.StartCoroutine(
-                AnimatePropertyCoroutine(points, animators, name, type, duration, startTime, easing));
+                AnimatePropertyCoroutine(points, animators, name, type, duration, startTime, easing)
+            );
         }
     }
 }

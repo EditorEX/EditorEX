@@ -17,7 +17,10 @@ namespace EditorEX.Essentials.Patches.Movement
     [AffinityPatch]
     public class InstallMovement : IAffinity
     {
-        [AffinityPatch(typeof(BeatmapLevelEditorInstaller), nameof(BeatmapLevelEditorInstaller.InstallBindings))]
+        [AffinityPatch(
+            typeof(BeatmapLevelEditorInstaller),
+            nameof(BeatmapLevelEditorInstaller.InstallBindings)
+        )]
         [AffinityPrefix]
         public void Prefix(BeatmapLevelEditorInstaller __instance)
         {

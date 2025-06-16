@@ -38,7 +38,8 @@ namespace EditorEX.Vivify.Events
             IAudioTimeSource audioTimeSource,
             IBpmController bpmController,
             CoroutineDummy coroutineDummy,
-            PopulateBeatmap populateBeatmap)
+            PopulateBeatmap populateBeatmap
+        )
         {
             _assetBundleManager = assetBundleManager;
             _deserializedData = deserializedData;
@@ -50,7 +51,11 @@ namespace EditorEX.Vivify.Events
 
         public void Initialize()
         {
-            foreach (ICustomEventCustomData customEventCustomData in _deserializedData.CustomEventCustomDatas.Values)
+            foreach (
+                ICustomEventCustomData customEventCustomData in _deserializedData
+                    .CustomEventCustomDatas
+                    .Values
+            )
             {
                 if (customEventCustomData is not SetGlobalPropertyData setGlobalPropertyData)
                 {
@@ -63,22 +68,33 @@ namespace EditorEX.Vivify.Events
                     {
                         int propertyId => materialProperty.Type switch
                         {
-                            global::Vivify.MaterialPropertyType.Texture => Shader.GetGlobalTexture(propertyId),
-                            global::Vivify.MaterialPropertyType.Color => Shader.GetGlobalColor(propertyId),
-                            global::Vivify.MaterialPropertyType.Float => Shader.GetGlobalFloat(propertyId),
-                            global::Vivify.MaterialPropertyType.Vector => Shader.GetGlobalVector(propertyId),
-                            _ => new ArgumentOutOfRangeException()
+                            global::Vivify.MaterialPropertyType.Texture => Shader.GetGlobalTexture(
+                                propertyId
+                            ),
+                            global::Vivify.MaterialPropertyType.Color => Shader.GetGlobalColor(
+                                propertyId
+                            ),
+                            global::Vivify.MaterialPropertyType.Float => Shader.GetGlobalFloat(
+                                propertyId
+                            ),
+                            global::Vivify.MaterialPropertyType.Vector => Shader.GetGlobalVector(
+                                propertyId
+                            ),
+                            _ => new ArgumentOutOfRangeException(),
                         },
                         string name => materialProperty.Type switch
                         {
-                            global::Vivify.MaterialPropertyType.Keyword => Shader.IsKeywordEnabled(name),
-                            _ => new ArgumentOutOfRangeException()
+                            global::Vivify.MaterialPropertyType.Keyword => Shader.IsKeywordEnabled(
+                                name
+                            ),
+                            _ => new ArgumentOutOfRangeException(),
                         },
-                        _ => throw new ArgumentOutOfRangeException()
+                        _ => throw new ArgumentOutOfRangeException(),
                     };
 
                     _resettableProperties.Add(
-                        new ResettableProperty(materialProperty.Id, materialProperty.Type, original));
+                        new ResettableProperty(materialProperty.Id, materialProperty.Type, original)
+                    );
                 }
             }
         }
@@ -136,7 +152,12 @@ namespace EditorEX.Vivify.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out SetGlobalPropertyData? data))
+            if (
+                !_deserializedData.Resolve(
+                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    out SetGlobalPropertyData? data
+                )
+            )
             {
                 return;
             }
@@ -172,7 +193,10 @@ namespace EditorEX.Vivify.Events
                                 {
                                     if (noDuration)
                                     {
-                                        Shader.SetGlobalColor(propertyId, colorAnimated.PointDefinition.Interpolate(1));
+                                        Shader.SetGlobalColor(
+                                            propertyId,
+                                            colorAnimated.PointDefinition.Interpolate(1)
+                                        );
                                     }
                                     else
                                     {
@@ -182,15 +206,24 @@ namespace EditorEX.Vivify.Events
                                             global::Vivify.MaterialPropertyType.Color,
                                             duration,
                                             startTime,
-                                            easing);
+                                            easing
+                                        );
                                     }
                                 }
                                 else
                                 {
-                                    List<float> color = ((List<object>)value).Select(Convert.ToSingle).ToList();
+                                    List<float> color = ((List<object>)value)
+                                        .Select(Convert.ToSingle)
+                                        .ToList();
                                     Shader.SetGlobalColor(
                                         propertyId,
-                                        new Color(color[0], color[1], color[2], color.Count > 3 ? color[3] : 1));
+                                        new Color(
+                                            color[0],
+                                            color[1],
+                                            color[2],
+                                            color.Count > 3 ? color[3] : 1
+                                        )
+                                    );
                                 }
 
                                 continue;
@@ -200,7 +233,10 @@ namespace EditorEX.Vivify.Events
                                 {
                                     if (noDuration)
                                     {
-                                        Shader.SetGlobalFloat(propertyId, floatAnimated.PointDefinition.Interpolate(1));
+                                        Shader.SetGlobalFloat(
+                                            propertyId,
+                                            floatAnimated.PointDefinition.Interpolate(1)
+                                        );
                                     }
                                     else
                                     {
@@ -210,7 +246,8 @@ namespace EditorEX.Vivify.Events
                                             global::Vivify.MaterialPropertyType.Float,
                                             duration,
                                             startTime,
-                                            easing);
+                                            easing
+                                        );
                                     }
                                 }
                                 else
@@ -225,8 +262,10 @@ namespace EditorEX.Vivify.Events
                                 {
                                     if (noDuration)
                                     {
-                                        Shader.SetGlobalVector(propertyId,
-                                            vectorAnimated.PointDefinition.Interpolate(1));
+                                        Shader.SetGlobalVector(
+                                            propertyId,
+                                            vectorAnimated.PointDefinition.Interpolate(1)
+                                        );
                                     }
                                     else
                                     {
@@ -236,14 +275,19 @@ namespace EditorEX.Vivify.Events
                                             global::Vivify.MaterialPropertyType.Vector,
                                             duration,
                                             startTime,
-                                            easing);
+                                            easing
+                                        );
                                     }
                                 }
                                 else
                                 {
-                                    List<float> vector = ((List<object>)value).Select(Convert.ToSingle).ToList();
-                                    Shader.SetGlobalVector(propertyId,
-                                        new Vector4(vector[0], vector[1], vector[2], vector[3]));
+                                    List<float> vector = ((List<object>)value)
+                                        .Select(Convert.ToSingle)
+                                        .ToList();
+                                    Shader.SetGlobalVector(
+                                        propertyId,
+                                        new Vector4(vector[0], vector[1], vector[2], vector[3])
+                                    );
                                 }
 
                                 continue;
@@ -259,7 +303,10 @@ namespace EditorEX.Vivify.Events
                                 {
                                     if (noDuration)
                                     {
-                                        SetGlobalKeyword(name, keywordAnimated.PointDefinition.Interpolate(1) >= 1);
+                                        SetGlobalKeyword(
+                                            name,
+                                            keywordAnimated.PointDefinition.Interpolate(1) >= 1
+                                        );
                                     }
                                     else
                                     {
@@ -269,7 +316,8 @@ namespace EditorEX.Vivify.Events
                                             global::Vivify.MaterialPropertyType.Float,
                                             duration,
                                             startTime,
-                                            easing);
+                                            easing
+                                        );
                                     }
                                 }
                                 else
@@ -283,7 +331,11 @@ namespace EditorEX.Vivify.Events
                         break;
                 }
 
-                throw new ArgumentOutOfRangeException(nameof(type), type, "Type not currently supported.");
+                throw new ArgumentOutOfRangeException(
+                    nameof(type),
+                    type,
+                    "Type not currently supported."
+                );
             }
         }
 
@@ -305,7 +357,8 @@ namespace EditorEX.Vivify.Events
             global::Vivify.MaterialPropertyType type,
             float duration,
             float startTime,
-            Functions easing)
+            Functions easing
+        )
             where T : struct
         {
             while (true)
@@ -321,18 +374,24 @@ namespace EditorEX.Vivify.Events
                             switch (type)
                             {
                                 case global::Vivify.MaterialPropertyType.Color:
-                                    Shader.SetGlobalColor(propertyId,
-                                        (points as PointDefinition<Vector4>)!.Interpolate(time));
+                                    Shader.SetGlobalColor(
+                                        propertyId,
+                                        (points as PointDefinition<Vector4>)!.Interpolate(time)
+                                    );
                                     break;
 
                                 case global::Vivify.MaterialPropertyType.Float:
-                                    Shader.SetGlobalFloat(propertyId,
-                                        (points as PointDefinition<float>)!.Interpolate(time));
+                                    Shader.SetGlobalFloat(
+                                        propertyId,
+                                        (points as PointDefinition<float>)!.Interpolate(time)
+                                    );
                                     break;
 
                                 case global::Vivify.MaterialPropertyType.Vector:
-                                    Shader.SetGlobalVector(propertyId,
-                                        (points as PointDefinition<Vector4>)!.Interpolate(time));
+                                    Shader.SetGlobalVector(
+                                        propertyId,
+                                        (points as PointDefinition<Vector4>)!.Interpolate(time)
+                                    );
                                     break;
                             }
 
@@ -342,7 +401,10 @@ namespace EditorEX.Vivify.Events
                             switch (type)
                             {
                                 case global::Vivify.MaterialPropertyType.Keyword:
-                                    SetGlobalKeyword(name, (points as PointDefinition<float>)!.Interpolate(time) >= 1);
+                                    SetGlobalKeyword(
+                                        name,
+                                        (points as PointDefinition<float>)!.Interpolate(time) >= 1
+                                    );
                                     break;
                             }
 
@@ -364,16 +426,22 @@ namespace EditorEX.Vivify.Events
             global::Vivify.MaterialPropertyType type,
             float duration,
             float startTime,
-            Functions easing)
+            Functions easing
+        )
             where T : struct
         {
             _coroutineDummy.StartCoroutine(
-                AnimateGlobalPropertyCoroutine(points, id, type, duration, startTime, easing));
+                AnimateGlobalPropertyCoroutine(points, id, type, duration, startTime, easing)
+            );
         }
 
         private readonly struct ResettableProperty
         {
-            internal ResettableProperty(object id, global::Vivify.MaterialPropertyType type, object value)
+            internal ResettableProperty(
+                object id,
+                global::Vivify.MaterialPropertyType type,
+                object value
+            )
             {
                 Id = id;
                 Type = type;

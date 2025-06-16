@@ -26,7 +26,8 @@ namespace EditorEX.Essentials.Movement.ChainHead
             ActiveViewMode activeViewMode,
             MovementTypeProvider movementTypeProvider,
             VariableMovementTypeProvider variableMovementTypeProvider,
-            EditorBasicBeatmapObjectSpawnMovementData movementData)
+            EditorBasicBeatmapObjectSpawnMovementData movementData
+        )
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
@@ -49,24 +50,39 @@ namespace EditorEX.Essentials.Movement.ChainHead
                 RefreshHeadMovement();
                 Init(_data);
             }
-            catch
-            {
-
-            }
+            catch { }
         }
 
         private void RefreshHeadMovement()
         {
-            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _arcMovement, out var newNoteMovement))
+            if (
+                TypeProviderUtils.GetProvidedComponent(
+                    gameObject,
+                    _movementTypeProvider,
+                    _arcMovement,
+                    out var newNoteMovement
+                )
+            )
             {
                 _arcMovement = newNoteMovement;
                 _arcMovement?.Enable();
             }
 
-            if (TypeProviderUtils.GetProvidedVariableMovementDataProvider(gameObject, _variableMovementTypeProvider, _data, _variableMovementDataProvider, out var variableMovementDataProvider))
+            if (
+                TypeProviderUtils.GetProvidedVariableMovementDataProvider(
+                    gameObject,
+                    _variableMovementTypeProvider,
+                    _data,
+                    _variableMovementDataProvider,
+                    out var variableMovementDataProvider
+                )
+            )
             {
                 _variableMovementDataProvider = variableMovementDataProvider;
-                if (_variableMovementDataProvider is EditorNoodleMovementDataProvider noodleMovementDataProvider)
+                if (
+                    _variableMovementDataProvider
+                    is EditorNoodleMovementDataProvider noodleMovementDataProvider
+                )
                 {
                     noodleMovementDataProvider.InitObject(_data);
                 }
@@ -75,7 +91,8 @@ namespace EditorEX.Essentials.Movement.ChainHead
 
         public void Init(ArcEditorData? editorData)
         {
-            if (editorData == null) return;
+            if (editorData == null)
+                return;
             _data = editorData;
 
             RefreshHeadMovement();
@@ -89,7 +106,8 @@ namespace EditorEX.Essentials.Movement.ChainHead
 
         public void Update()
         {
-            if (!_state.isPlaying && Mathf.Approximately(_prevBeat, _state.beat)) return;
+            if (!_state.isPlaying && Mathf.Approximately(_prevBeat, _state.beat))
+                return;
             if (_prevBeat > _state.beat)
             {
                 Init(_data);

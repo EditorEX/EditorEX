@@ -1,9 +1,9 @@
-﻿using BeatmapEditor3D;
+﻿using System;
+using BeatmapEditor3D;
 using BeatmapEditor3D.Views;
 using BeatmapEditor3D.Visuals;
 using EditorEX.Essentials.Features.ViewMode;
 using SiraUtil.Affinity;
-using System;
 using UnityEngine;
 
 namespace EditorEX.Essentials.Patches.Preview
@@ -30,7 +30,9 @@ namespace EditorEX.Essentials.Patches.Preview
         private void Patch(BeatmapObjectsContainer __instance)
         {
             grid = __instance.transform.Find("BeatmapObjectSelectionGridView").gameObject;
-            hover = __instance.transform.Find("BeatmapObjectGridHoverView").GetComponent<BeatmapObjectGridHoverView>();
+            hover = __instance
+                .transform.Find("BeatmapObjectGridHoverView")
+                .GetComponent<BeatmapObjectGridHoverView>();
             selection = __instance.transform.Find("BeatmapObjectSelectionView").gameObject;
             container = __instance.GetComponentInChildren<BeatGridContainer>();
             currentLine = container._currentBeatLineTransform;

@@ -13,8 +13,7 @@ namespace EditorEX.SDK.Collectors
         private ColorCollector _colorCollector = null!;
 
         [Inject]
-        private void Construct(
-            ColorCollector colorCollector)
+        private void Construct(ColorCollector colorCollector)
         {
             _colorCollector = colorCollector;
         }
@@ -36,18 +35,56 @@ namespace EditorEX.SDK.Collectors
 
         private void InjectTransitions()
         {
-            AddColorTransition("EditorDropdown/CellBackground", "Dropdown/Background/Normal", "Button/Background/Highlighted", "Button/Background/Pressed", "Button/Background/Disabled", "Button/Background/Selected", "Button/Background/SelectedAndHighlighted");
-            AddColorTransition("ClickableImage/Image", "ClickableImage/Default", "ClickableImage/Hover", "ClickableImage/Hover", "ClickableImage/Disabled", "ClickableImage/Hover", "ClickableImage/Hover");
+            AddColorTransition(
+                "EditorDropdown/CellBackground",
+                "Dropdown/Background/Normal",
+                "Button/Background/Highlighted",
+                "Button/Background/Pressed",
+                "Button/Background/Disabled",
+                "Button/Background/Selected",
+                "Button/Background/SelectedAndHighlighted"
+            );
+            AddColorTransition(
+                "ClickableImage/Image",
+                "ClickableImage/Default",
+                "ClickableImage/Hover",
+                "ClickableImage/Hover",
+                "ClickableImage/Disabled",
+                "ClickableImage/Hover",
+                "ClickableImage/Hover"
+            );
         }
 
-        private void AddColorTransition(string transitionName, string normalColor, string highlightedColor, string pressedColor, string disabledColor, string selectedColor, string selectedAndHighlightedColor)
+        private void AddColorTransition(
+            string transitionName,
+            string normalColor,
+            string highlightedColor,
+            string pressedColor,
+            string disabledColor,
+            string selectedColor,
+            string selectedAndHighlightedColor
+        )
         {
-            var transition = NewColorTransition(_colorCollector.GetColor(normalColor), _colorCollector.GetColor(highlightedColor), _colorCollector.GetColor(pressedColor), _colorCollector.GetColor(disabledColor), _colorCollector.GetColor(selectedColor), _colorCollector.GetColor(selectedAndHighlightedColor));
+            var transition = NewColorTransition(
+                _colorCollector.GetColor(normalColor),
+                _colorCollector.GetColor(highlightedColor),
+                _colorCollector.GetColor(pressedColor),
+                _colorCollector.GetColor(disabledColor),
+                _colorCollector.GetColor(selectedColor),
+                _colorCollector.GetColor(selectedAndHighlightedColor)
+            );
             transition.name = transitionName;
             _transitions[transitionName] = transition;
         }
 
-        private ColorTransitionSO NewColorTransition(ColorSO normalColor, ColorSO highlightedColor, ColorSO pressedColor, ColorSO disabledColor, ColorSO selectedColor, ColorSO selectedAndHighlightedColor)
+        private ColorTransitionSO NewColorTransition(
+            ColorSO normalColor,
+            ColorSO highlightedColor,
+            ColorSO pressedColor,
+            ColorSO disabledColor,
+            ColorSO selectedColor,
+            ColorSO selectedAndHighlightedColor
+        )
         {
             var transition = ScriptableObject.CreateInstance<ColorTransitionSO>();
             transition._normalColor = normalColor;
@@ -60,11 +97,14 @@ namespace EditorEX.SDK.Collectors
             return transition;
         }
 
-        public T GetTransition<T>(string name) where T : BaseTransitionSO
+        public T GetTransition<T>(string name)
+            where T : BaseTransitionSO
         {
             if (!_transitions.ContainsKey(name))
             {
-                throw new ArgumentException($"Transition {name} does not exist! Did you mispell something?");
+                throw new ArgumentException(
+                    $"Transition {name} does not exist! Did you mispell something?"
+                );
             }
             return (T)_transitions[name];
         }

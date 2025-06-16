@@ -4,14 +4,15 @@ using EditorEX.Util;
 
 namespace EditorEX.SDKImplementation
 {
-    public class DefaultEditorBeatmapListContextMenuProvider : ContextMenuProvider<BeatmapListContextMenuObject>
+    public class DefaultEditorBeatmapListContextMenuProvider
+        : ContextMenuProvider<BeatmapListContextMenuObject>
     {
         public override ContextOption<BeatmapListContextMenuObject>[] GetContextOptions()
         {
             return new ContextOption<BeatmapListContextMenuObject>[]
             {
-                new ("Open Folder", OpenFolder),
-                new ("Delete", Delete),
+                new("Open Folder", OpenFolder),
+                new("Delete", Delete),
             };
         }
 
@@ -20,8 +21,6 @@ namespace EditorEX.SDKImplementation
             FileUtil.OpenFileBrowser(contextObject.BeatmapInfoData.beatmapFolderPath);
         }
 
-        private void Delete(BeatmapListContextMenuObject contextObject)
-        {
-        }
+        private void Delete(BeatmapListContextMenuObject contextObject) { }
     }
 }

@@ -1,7 +1,7 @@
-﻿using Chroma.Lighting;
+﻿using System.Collections.Generic;
+using Chroma.Lighting;
 using EditorEX.Chroma.Colorizer;
 using SiraUtil.Affinity;
-using System.Collections.Generic;
 using UnityEngine;
 
 // Based from https://github.com/Aeroluna/Heck
@@ -18,7 +18,8 @@ namespace EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize
         private EditorLightWithIdRegisterer(
             EditorLightColorizerManager colorizerManager,
             LightWithIdManager lightWithIdManager,
-            LightIDTableManager tableManager)
+            LightIDTableManager tableManager
+        )
         {
             _colorizerManager = colorizerManager;
             _lightWithIdManager = lightWithIdManager;
@@ -42,7 +43,10 @@ namespace EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize
             int index = lights.FindIndex(n => n == lightWithId);
             lights[index] = null!; // TODO: handle null
             _tableManager.UnregisterIndex(lightId, index);
-            _colorizerManager.CreateLightColorizerContractByLightID(lightId, n => n.ChromaLightSwitchEventEffect.UnregisterLight(lightWithId));
+            _colorizerManager.CreateLightColorizerContractByLightID(
+                lightId,
+                n => n.ChromaLightSwitchEventEffect.UnregisterLight(lightWithId)
+            );
             lightWithId.__SetIsUnRegistered();
         }
 
@@ -52,7 +56,8 @@ namespace EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize
             LightWithIdManager __instance,
             ILightWithId lightWithId,
             List<ILightWithId>?[] ____lights,
-            List<ILightWithId> ____lightsToUnregister)
+            List<ILightWithId> ____lightsToUnregister
+        )
         {
             // TODO: figure this shit out
             // for some reason, despite being an affinity patch bound to player, this still runs in the menu scene
@@ -96,7 +101,10 @@ namespace EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize
             }
 
             // this also colors the light
-            _colorizerManager.CreateLightColorizerContractByLightID(lightId, n => n.ChromaLightSwitchEventEffect.RegisterLight(lightWithId, index));
+            _colorizerManager.CreateLightColorizerContractByLightID(
+                lightId,
+                n => n.ChromaLightSwitchEventEffect.RegisterLight(lightWithId, index)
+            );
 
             lights.Add(lightWithId);
 
@@ -119,17 +127,19 @@ namespace EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize
             Color color,
             List<ILightWithId?>?[] ____lights,
             Color?[] ____colors,
-            bool ____didChangeSomeColorsThisFrame)
+            bool ____didChangeSomeColorsThisFrame
+        )
         {
             ____colors[lightId] = color;
             ____didChangeSomeColorsThisFrame = true;
-            ____lights[lightId]?.ForEach(n =>
-            {
-                if (n is { isRegistered: true })
+            ____lights[lightId]
+                ?.ForEach(n =>
                 {
-                    n.ColorWasSet(color);
-                }
-            });
+                    if (n is { isRegistered: true })
+                    {
+                        n.ColorWasSet(color);
+                    }
+                });
             return false;
         }
     }

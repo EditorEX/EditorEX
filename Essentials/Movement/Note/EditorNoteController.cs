@@ -1,11 +1,11 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using BeatmapEditor3D.DataModels;
+using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.Essentials.Movement.Data;
-using EditorEX.Essentials.Visuals;
-using System;
 using EditorEX.Essentials.VariableMovement;
+using EditorEX.Essentials.Visuals;
 using UnityEngine;
 using Zenject;
-using EditorEX.Essentials.Features.ViewMode;
 
 namespace EditorEX.Essentials.Movement.Note
 {
@@ -30,7 +30,8 @@ namespace EditorEX.Essentials.Movement.Note
             MovementTypeProvider movementTypeProvider,
             VisualsTypeProvider visualsTypeProvider,
             VariableMovementTypeProvider variableMovementTypeProvider,
-            EditorBasicBeatmapObjectSpawnMovementData movementData)
+            EditorBasicBeatmapObjectSpawnMovementData movementData
+        )
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
@@ -54,30 +55,52 @@ namespace EditorEX.Essentials.Movement.Note
                 RefreshNoteMovementVisuals();
                 Init(_data);
             }
-            catch
-            {
-
-            }
+            catch { }
         }
 
         private void RefreshNoteMovementVisuals()
         {
-            if (TypeProviderUtils.GetProvidedComponent(gameObject, _movementTypeProvider, _noteMovement, out var newNoteMovement))
+            if (
+                TypeProviderUtils.GetProvidedComponent(
+                    gameObject,
+                    _movementTypeProvider,
+                    _noteMovement,
+                    out var newNoteMovement
+                )
+            )
             {
                 _noteMovement = newNoteMovement;
                 _noteMovement.Enable();
             }
 
-            if (TypeProviderUtils.GetProvidedComponent(gameObject, _visualsTypeProvider, _noteVisuals, out var newNoteVisuals))
+            if (
+                TypeProviderUtils.GetProvidedComponent(
+                    gameObject,
+                    _visualsTypeProvider,
+                    _noteVisuals,
+                    out var newNoteVisuals
+                )
+            )
             {
                 _noteVisuals = newNoteVisuals;
                 _noteVisuals.Enable();
             }
 
-            if (TypeProviderUtils.GetProvidedVariableMovementDataProvider(gameObject, _variableMovementTypeProvider, _data, _variableMovementDataProvider, out var variableMovementDataProvider))
+            if (
+                TypeProviderUtils.GetProvidedVariableMovementDataProvider(
+                    gameObject,
+                    _variableMovementTypeProvider,
+                    _data,
+                    _variableMovementDataProvider,
+                    out var variableMovementDataProvider
+                )
+            )
             {
                 _variableMovementDataProvider = variableMovementDataProvider;
-                if (_variableMovementDataProvider is EditorNoodleMovementDataProvider noodleMovementDataProvider)
+                if (
+                    _variableMovementDataProvider
+                    is EditorNoodleMovementDataProvider noodleMovementDataProvider
+                )
                 {
                     noodleMovementDataProvider.InitObject(_data);
                 }
@@ -86,12 +109,18 @@ namespace EditorEX.Essentials.Movement.Note
 
         public void Init(NoteEditorData? noteData)
         {
-            if (noteData == null) return;
+            if (noteData == null)
+                return;
             _data = noteData;
 
             RefreshNoteMovementVisuals();
 
-            _noteMovement.Init(noteData, _variableMovementDataProvider, _movementData, () => _noteVisuals);
+            _noteMovement.Init(
+                noteData,
+                _variableMovementDataProvider,
+                _movementData,
+                () => _noteVisuals
+            );
             _noteVisuals.Init(noteData);
 
             ManualUpdate();
@@ -102,7 +131,8 @@ namespace EditorEX.Essentials.Movement.Note
 
         public void Update()
         {
-            if (!_state.isPlaying && _prevBeat == _state.beat) return; //Don't update if not playing for performance, but force an update if scrubbing manually.
+            if (!_state.isPlaying && _prevBeat == _state.beat)
+                return; //Don't update if not playing for performance, but force an update if scrubbing manually.
 
             // If we rewind we should reinit the note to stop issues
             if (_prevBeat > _state.beat)

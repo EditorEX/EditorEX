@@ -29,9 +29,17 @@ namespace EditorEX.SDK.Installers
             Container.BindInterfacesAndSelfTo<ModalFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<TextSegmentedControlFactory>().AsSingle();
 
-            Container.BindInterfacesAndSelfTo<ContextMenuComponent>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+            Container
+                .BindInterfacesAndSelfTo<ContextMenuComponent>()
+                .FromNewComponentOnNewGameObject()
+                .AsSingle()
+                .NonLazy();
 
-            Container.BindInterfacesAndSelfTo<StringInputDialogModal>().FromNewComponentOnNewGameObject().AsSingle().NonLazy();
+            Container
+                .BindInterfacesAndSelfTo<StringInputDialogModal>()
+                .FromNewComponentOnNewGameObject()
+                .AsSingle()
+                .NonLazy();
         }
     }
 }

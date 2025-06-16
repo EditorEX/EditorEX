@@ -43,7 +43,8 @@ namespace EditorEX.Vivify.Events
             EditorSetMaterialProperty setMaterialProperty,
             CameraEffectApplier cameraEffectApplier,
             CoroutineDummy coroutineDummy,
-            PopulateBeatmap populateBeatmap)
+            PopulateBeatmap populateBeatmap
+        )
         {
             _log = log;
             _assetBundleManager = assetBundleManager;
@@ -58,7 +59,12 @@ namespace EditorEX.Vivify.Events
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out ApplyPostProcessingData? data))
+            if (
+                !_deserializedData.Resolve(
+                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    out ApplyPostProcessingData? data
+                )
+            )
             {
                 return;
             }
@@ -81,7 +87,8 @@ namespace EditorEX.Vivify.Events
                         properties,
                         duration,
                         data.Easing,
-                        _audioDataModel.bpmData.BeatToSeconds(customEventData.time));
+                        _audioDataModel.bpmData.BeatToSeconds(customEventData.time)
+                    );
                 }
             }
 
@@ -89,34 +96,61 @@ namespace EditorEX.Vivify.Events
             {
                 PostProcessingOrder.BeforeMainEffect => _cameraEffectApplier.PreEffects,
                 PostProcessingOrder.AfterMainEffect => _cameraEffectApplier.PostEffects,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(),
             };
 
             if (duration == 0)
             {
                 effects.InsertIntoSortedList(
-                    new MaterialData(material, data.Priority, data.Source, data.Target, data.Pass, Time.frameCount));
+                    new MaterialData(
+                        material,
+                        data.Priority,
+                        data.Source,
+                        data.Target,
+                        data.Pass,
+                        Time.frameCount
+                    )
+                );
                 _log.Debug($"Applied material [{assetName}] for single frame");
                 return;
             }
 
-            if (duration <= 0 || _audioTimeSource.songTime > _audioDataModel.bpmData.BeatToSeconds(customEventData.time) + duration)
+            if (
+                duration <= 0
+                || _audioTimeSource.songTime
+                    > _audioDataModel.bpmData.BeatToSeconds(customEventData.time) + duration
+            )
             {
                 return;
             }
 
-            MaterialData materialData = new(material, data.Priority, data.Source, data.Target, data.Pass);
+            MaterialData materialData = new(
+                material,
+                data.Priority,
+                data.Source,
+                data.Target,
+                data.Pass
+            );
             effects.InsertIntoSortedList(materialData);
-            _log.Debug($"Applied material [{assetName}] for [{duration}] seconds for event time [{_audioDataModel.bpmData.BeatToSeconds(customEventData.time)}] at song time [{_audioTimeSource.songTime}]");
+            _log.Debug(
+                $"Applied material [{assetName}] for [{duration}] seconds for event time [{_audioDataModel.bpmData.BeatToSeconds(customEventData.time)}] at song time [{_audioTimeSource.songTime}]"
+            );
             _coroutineDummy.StartCoroutine(
-                KillPostProcessingCoroutine(effects, materialData, duration, _audioDataModel.bpmData.BeatToSeconds(customEventData.time)));
+                KillPostProcessingCoroutine(
+                    effects,
+                    materialData,
+                    duration,
+                    _audioDataModel.bpmData.BeatToSeconds(customEventData.time)
+                )
+            );
         }
 
         internal IEnumerator KillPostProcessingCoroutine(
             List<MaterialData> effects,
             MaterialData data,
             float duration,
-            float startTime)
+            float startTime
+        )
         {
             while (true)
             {
@@ -139,6 +173,7 @@ namespace EditorEX.Vivify.Events
         }
 
         private float _lastBeat = 0f;
+
         public void Tick()
         {
             var time = _audioTimeSource.songTime;

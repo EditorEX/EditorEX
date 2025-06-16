@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using EditorEX.SDK.ReactiveComponents.ScrollArea;
@@ -8,7 +9,36 @@ using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents.Table
 {
-    public class EditorTable<TItem, TCell> : ReactiveComponent, IModifiableTableComponent<TItem> where TCell : ITableCell<TItem>, IReactiveComponent, new()
+    /// <summary>
+    /// A <see cref="Table{TItem,TCell}"/> overload with an ability to make cells in-place.
+    /// </summary>
+    public class EditorTable<TItem> : EditorTable<TItem, TableCell<TItem>>
+    {
+        /// <summary>
+        /// Defines a cell constructor. Must be specified.
+        /// </summary>
+        public TableCell<TItem>.Constructor? ConstructCell { get; set; }
+
+        protected override void OnInstantiate()
+        {
+            cellsPool.Construct = CreateCell;
+        }
+
+        private TableCell<TItem> CreateCell()
+        {
+            if (ConstructCell == null)
+            {
+                throw new UninitializedComponentException(
+                    "The ConstructCell property must be specified"
+                );
+            }
+
+            return new TableCell<TItem>(ConstructCell);
+        }
+    }
+
+    public class EditorTable<TItem, TCell> : ReactiveComponent, IModifiableTableComponent<TItem>
+        where TCell : ITableCell<TItem>, IReactiveComponent, new()
     {
         public ScrollOrientation ScrollOrientation
         {
@@ -91,7 +121,8 @@ namespace EditorEX.SDK.ReactiveComponents.Table
             }
             foreach (var item in Items)
             {
-                if (!_filter.Matches(item)) continue;
+                if (!_filter.Matches(item))
+                    continue;
                 _filteredItems.Add(item);
             }
             NotifyPropertyChanged(nameof(FilteredItems));
@@ -153,13 +184,23 @@ namespace EditorEX.SDK.ReactiveComponents.Table
         public void Refresh(bool clearSelection = true)
         {
             OnEarlyRefresh();
+            WhenEarlyRefreshed?.Invoke(this);
+
             RefreshFilter();
             RefreshContentSize();
             RefreshVisibleCells(0f);
             ScrollContentIfNeeded();
             RefreshVisibility();
-            if (clearSelection) ClearSelection();
+            if (clearSelection)
+                ClearSelection();
             OnRefresh();
+
+            WhenRefreshed?.Invoke(this);
+        }
+
+        public void QueueRefreshCellSize()
+        {
+            _cellSizeRefreshNeeded = true;
         }
 
         public void ScrollTo(int idx, bool animated = true)
@@ -169,7 +210,8 @@ namespace EditorEX.SDK.ReactiveComponents.Table
 
         public void Select(int idx)
         {
-            if (SelectionMode is SelectionMode.None) return;
+            if (SelectionMode is SelectionMode.None)
+                return;
             //
             if (SelectionMode is SelectionMode.Single && _selectedIndexes.Count > 0)
             {
@@ -217,10 +259,12 @@ namespace EditorEX.SDK.ReactiveComponents.Table
             return _filteredItems.FindIndex(x => x!.Equals(item));
         }
 
-        protected virtual float CellSize => ScrollOrientation is ScrollOrientation.Vertical ? _cellSize.y : _cellSize.x;
+        protected virtual float CellSize =>
+            ScrollOrientation is ScrollOrientation.Vertical ? _cellSize.y : _cellSize.x;
 
-        private readonly ReactivePool<TCell> _cellsPool = new() { DetachOnDespawn = false };
+        internal readonly ReactivePool<TCell> cellsPool = new() { DetachOnDespawn = false };
         private readonly Dictionary<ITableCell<TItem>, int> _cachedIndexes = new();
+        private bool _cellSizeRefreshNeeded;
         private bool _selectionRefreshNeeded;
         private Vector2 _cellSize;
         private float _contentPos;
@@ -281,15 +325,26 @@ namespace EditorEX.SDK.ReactiveComponents.Table
 
         private void RefreshVisibleCells(float pos)
         {
+            if (_cellSizeRefreshNeeded && FilteredItems.Count > 0)
+            {
+                var probeItem = _filteredItems[0];
+                var cell = GetOrSpawnCell(0, probeItem);
+
+                RefreshCellSize(cell);
+                _cellSizeRefreshNeeded = false;
+            }
+
             CalculateVisibleCellsRange(pos);
             int i;
             for (i = _visibleCellsStartIndex; i < _visibleCellsEndIndex; i++)
             {
                 //spawning and initializing
                 var item = _filteredItems[i];
-                var cell = GetOrSpawnCell(i - _visibleCellsStartIndex);
-                cell.Init(item);
+                var cell = GetOrSpawnCell(i - _visibleCellsStartIndex, item);
+
                 OnCellConstruct(cell);
+                WhenCellConstructed?.Invoke(cell);
+
                 //updating state
                 if (_selectionRefreshNeeded)
                 {
@@ -301,13 +356,14 @@ namespace EditorEX.SDK.ReactiveComponents.Table
                 _cachedIndexes[cell] = i;
             }
             _selectionRefreshNeeded = false;
+
             //despawning redundant cells
             i -= _visibleCellsStartIndex;
-            while (_cellsPool.SpawnedComponents.Count > i)
+            while (cellsPool.SpawnedComponents.Count > i)
             {
-                var cell = _cellsPool.SpawnedComponents.Last();
+                var cell = cellsPool.SpawnedComponents.Last();
                 cell.CellAskedToChangeSelectionEvent -= HandleCellWantsToChangeSelection;
-                _cellsPool.Despawn(cell);
+                cellsPool.Despawn(cell);
             }
         }
 
@@ -322,28 +378,53 @@ namespace EditorEX.SDK.ReactiveComponents.Table
             RefreshVisibleCells(_contentPos);
         }
 
-        private TCell GetOrSpawnCell(int index)
+        private TCell GetOrSpawnCell(int index, TItem item)
         {
-            if (_cellsPool.SpawnedComponents.Count - 1 < index)
+            TCell cell;
+            if (cellsPool.SpawnedComponents.Count - 1 < index)
             {
-                var cell = _cellsPool.Spawn();
+                cell = cellsPool.Spawn(false);
+
+                cell.Init(item);
                 cell.Use(_scrollContent);
+                cell.Enabled = true;
                 cell.CellAskedToChangeSelectionEvent += HandleCellWantsToChangeSelection;
+
                 AlignCell(cell.ContentTransform);
-                return cell;
             }
-            return _cellsPool.SpawnedComponents[index];
+            else
+            {
+                cell = cellsPool.SpawnedComponents[index];
+                cell.Init(item);
+            }
+
+            return cell;
         }
 
-        protected IEnumerable<KeyValuePair<TCell, TItem>> SpawnedCells => _cachedIndexes
-            .Select(pair => new KeyValuePair<TCell, TItem>((TCell)pair.Key, _filteredItems[pair.Value]));
+        public Action<EditorTable<TItem, TCell>>? WhenEarlyRefreshed;
+        public Action<EditorTable<TItem, TCell>>? WhenRefreshed;
+        public Action<TCell>? WhenCellConstructed;
+
+        protected IEnumerable<KeyValuePair<TCell, TItem>> SpawnedCells =>
+            _cachedIndexes.Select(pair => new KeyValuePair<TCell, TItem>(
+                (TCell)pair.Key,
+                _filteredItems[pair.Value]
+            ));
 
         protected virtual void OnEarlyRefresh() { }
+
         protected virtual void OnRefresh() { }
+
         protected virtual void OnCellConstruct(TCell cell) { }
 
-        private float ContentSize => ScrollOrientation is ScrollOrientation.Vertical ? _scrollContent.rect.height : _scrollContent.rect.width;
-        private float ViewportSize => ScrollOrientation is ScrollOrientation.Vertical ? _viewport.rect.height : _viewport.rect.width;
+        private float ContentSize =>
+            ScrollOrientation is ScrollOrientation.Vertical
+                ? _scrollContent.rect.height
+                : _scrollContent.rect.width;
+        private float ViewportSize =>
+            ScrollOrientation is ScrollOrientation.Vertical
+                ? _viewport.rect.height
+                : _viewport.rect.width;
 
         private void RefreshContentSize()
         {
@@ -357,10 +438,30 @@ namespace EditorEX.SDK.ReactiveComponents.Table
             }
         }
 
+        private void RefreshCellSize(TCell cell)
+        {
+            // To get the actual size
+            cell.RecalculateLayoutImmediate();
+
+            _cellSize = cell.ContentTransform.rect.size;
+            _scrollArea.ScrollSize = CellSize;
+
+            RefreshVisibleCellsCount();
+        }
+
+        private void RefreshVisibleCellsCount()
+        {
+            var averageCellsCount = CellSize != 0 ? ViewportSize / CellSize : 0;
+            var cellCount = Mathf.CeilToInt(averageCellsCount);
+            //adding because we need two more cells to fill the free space when scrolling
+            _visibleCellsCount = cellCount + 1;
+        }
+
         private void ScrollContentIfNeeded()
         {
             var needScrollToEnd = ContentSize - _contentPos <= ViewportSize;
-            var needScrollToStart = _contentPos < 0f || _filteredItems.Count <= (int)(ViewportSize / CellSize);
+            var needScrollToStart =
+                _contentPos < 0f || _filteredItems.Count <= (int)(ViewportSize / CellSize);
             if (needScrollToEnd)
             {
                 _scrollArea.ScrollToEnd(true);
@@ -373,12 +474,8 @@ namespace EditorEX.SDK.ReactiveComponents.Table
 
         protected override void OnRectDimensionsChanged()
         {
-            var averageCellsCount = ViewportSize / CellSize;
-            var cellCount = Mathf.CeilToInt(averageCellsCount);
-            //adding because we need two more cells to fill the free space when scrolling
-            _visibleCellsCount = cellCount + 1;
-            CalculateVisibleCellsRange(_contentPos);
-            RefreshVisibleCells(_contentPos);
+            RefreshVisibleCellsCount();
+            RefreshVisibleCells();
         }
 
         protected RectTransform ScrollContent => _scrollContent;
@@ -397,38 +494,36 @@ namespace EditorEX.SDK.ReactiveComponents.Table
             //constructing
             var content = new Layout
             {
-                Children = {
+                Children =
+                {
                     //area
                     ConstructScrollArea()
                         .WithRectExpand()
                         .Bind(ref _viewport)
                         .Bind(ref _scrollArea),
                     //empty label
-                    new EditorLabel {
+                    new EditorLabel
+                    {
                         Text = "The monkey left you on your own!",
                         FontSize = 3.2f,
                         FontSizeMin = 1f,
                         FontSizeMax = 5f,
                         EnableAutoSizing = true,
-                        EnableWrapping = true
-                    }.WithRectExpand().Export(out var label)
-                }
+                        EnableWrapping = true,
+                    }
+                        .WithRectExpand()
+                        .Export(out var label),
+                },
             };
             //initializing here instead of OnInitialize to leave it for inheritors
             EmptyLabel = label;
             RefreshEmptyText();
 
-            var cell = _cellsPool.Spawn();
-            // To get the actual size
-            cell.RecalculateLayoutImmediate();
-            _cellSize = cell.ContentTransform.rect.size;
-            _scrollArea.ScrollSize = CellSize;
-
+            QueueRefreshCellSize();
             ScrollbarScrollSize = 4;
-            _cellsPool.Despawn(cell);
 
             _scrollArea.ScrollContent = new ReactiveComponent().Bind(ref _scrollContent);
-            _scrollContent.name = "content";
+            _scrollContent.name = "Content";
 
             _scrollArea.ScrollPosChangedEvent += HandlePosChanged;
             _scrollArea.ScrollDestinationPosChangedEvent += HandleDestinationPosChanged;

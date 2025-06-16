@@ -15,7 +15,9 @@ namespace EditorEX.UI.Installers
     {
         public override void InstallBindings()
         {
-            Container.Bind<IViewContent<SettingsViewData>>().FromInstance(new EditorEXSettingsViewContent());
+            Container
+                .Bind<IViewContent<SettingsViewData>>()
+                .FromInstance(new EditorEXSettingsViewContent());
 
             Container.BindInterfacesAndSelfTo<DisableContextMenuPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<AddSourceListContextMenu>().AsSingle();
@@ -24,7 +26,6 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<BeatmapsListViewControllerPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditDifficultyBeatmapPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditBeatmapLevelPatches>().AsSingle();
-            //Container.BindInterfacesAndSelfTo<MapFilteringPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<AddSettingsPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapsCollectionDataModelPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<SaveCustomDataPatch>().AsSingle();
@@ -32,8 +33,14 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<BetterKeybindViewingPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<SelectableCellsCursorPatches>().AsSingle();
 
-            Container.Bind<IContextMenuProvider>().To<DefaultEditorBeatmapListContextMenuProvider>().AsSingle();
-            Container.Bind<IContextMenuProvider>().To<DefaultEditorSourceListContextMenuProvider>().AsSingle();
+            Container
+                .Bind<IContextMenuProvider>()
+                .To<DefaultEditorBeatmapListContextMenuProvider>()
+                .AsSingle();
+            Container
+                .Bind<IContextMenuProvider>()
+                .To<DefaultEditorSourceListContextMenuProvider>()
+                .AsSingle();
         }
     }
 }

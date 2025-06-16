@@ -1,6 +1,6 @@
-﻿using SiraUtil.Affinity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using SiraUtil.Affinity;
 using Zenject;
 
 namespace EditorEX.SDKImplementation.Patches
@@ -11,15 +11,35 @@ namespace EditorEX.SDKImplementation.Patches
         [AffinityPrefix]
         private bool EqualityPatch(BindingId left, BindingId right, ref bool __result)
         {
-            __result = (left.Type == right.Type || left.Type.IsAssignableFrom(right.Type) || right.Type.IsAssignableFrom(left.Type)) && Equals(left.Identifier, right.Identifier);
+            __result =
+                (
+                    left.Type == right.Type
+                    || left.Type.IsAssignableFrom(right.Type)
+                    || right.Type.IsAssignableFrom(left.Type)
+                ) && Equals(left.Identifier, right.Identifier);
             return false;
         }
 
-        [AffinityPatch(typeof(SignalBus), nameof(SignalBus.GetDeclaration), AffinityMethodType.Normal, null, typeof(BindingId), typeof(bool))]
+        [AffinityPatch(
+            typeof(SignalBus),
+            nameof(SignalBus.GetDeclaration),
+            AffinityMethodType.Normal,
+            null,
+            typeof(BindingId),
+            typeof(bool)
+        )]
         [AffinityPrefix]
-        private bool GetDeclarationType(SignalBus __instance, BindingId signalId, bool requireDeclaration, ref SignalDeclaration __result)
+        private bool GetDeclarationType(
+            SignalBus __instance,
+            BindingId signalId,
+            bool requireDeclaration,
+            ref SignalDeclaration __result
+        )
         {
-            KeyValuePair<BindingId, SignalDeclaration> result = __instance._localDeclarationMap.FirstOrDefault((KeyValuePair<BindingId, SignalDeclaration> x) => x.Key == signalId);
+            KeyValuePair<BindingId, SignalDeclaration> result =
+                __instance._localDeclarationMap.FirstOrDefault(
+                    (KeyValuePair<BindingId, SignalDeclaration> x) => x.Key == signalId
+                );
 
             if (__instance._localDeclarationMap.TryGetValue(signalId, out var signalDeclaration))
             {

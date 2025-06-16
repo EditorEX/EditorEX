@@ -41,10 +41,7 @@ namespace EditorEX.Essentials.Visuals.Note
             active = false;
         }
 
-        public void ManualUpdate()
-        {
-
-        }
+        public void ManualUpdate() { }
 
         public GameObject GetVisualRoot()
         {

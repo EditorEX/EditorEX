@@ -1,14 +1,14 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.SerializedSaveData;
 using IPA.Loader;
 using Newtonsoft.Json;
 using SiraUtil.Zenject;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 using Zenject;
 using static EditorEX.MapData.SerializedSaveData.SerializedCustomLevelInfoSaveData;
@@ -25,7 +25,8 @@ namespace EditorEX.MapData.SaveDataSavers
         private void Construct(
             BeatmapLevelDataModel beatmapLevelDataModel,
             UBinder<Plugin, PluginMetadata> metadata,
-            LevelCustomDataModel levelCustomDataModel)
+            LevelCustomDataModel levelCustomDataModel
+        )
         {
             _beatmapLevelDataModel = beatmapLevelDataModel;
             _metadata = metadata.Value;
@@ -39,44 +40,72 @@ namespace EditorEX.MapData.SaveDataSavers
 
         public void Save(BeatmapProjectManager beatmapProjectManager, bool clearDirty)
         {
-            BeatmapLevelColorSchemeSaveData[] beatmapLevelColorSchemes = new BeatmapLevelColorSchemeSaveData[_beatmapLevelDataModel.colorSchemes.Count];
+            BeatmapLevelColorSchemeSaveData[] beatmapLevelColorSchemes =
+                new BeatmapLevelColorSchemeSaveData[_beatmapLevelDataModel.colorSchemes.Count];
             for (int i = 0; i < _beatmapLevelDataModel.colorSchemes.Count; i++)
             {
-                BeatmapLevelColorSchemeEditorData beatmapLevelColorSchemeEditorData = _beatmapLevelDataModel.colorSchemes[i];
+                BeatmapLevelColorSchemeEditorData beatmapLevelColorSchemeEditorData =
+                    _beatmapLevelDataModel.colorSchemes[i];
                 beatmapLevelColorSchemes[i] = new BeatmapLevelColorSchemeSaveData
                 {
                     useOverride = false,
-                    colorScheme = new PlayerSaveData.ColorScheme(beatmapLevelColorSchemeEditorData.colorSchemeName, beatmapLevelColorSchemeEditorData.saberAColor, beatmapLevelColorSchemeEditorData.saberBColor, beatmapLevelColorSchemeEditorData.environmentColor0, beatmapLevelColorSchemeEditorData.environmentColor1, beatmapLevelColorSchemeEditorData.obstaclesColor, beatmapLevelColorSchemeEditorData.environmentColor0Boost, beatmapLevelColorSchemeEditorData.environmentColor1Boost)
+                    colorScheme = new PlayerSaveData.ColorScheme(
+                        beatmapLevelColorSchemeEditorData.colorSchemeName,
+                        beatmapLevelColorSchemeEditorData.saberAColor,
+                        beatmapLevelColorSchemeEditorData.saberBColor,
+                        beatmapLevelColorSchemeEditorData.environmentColor0,
+                        beatmapLevelColorSchemeEditorData.environmentColor1,
+                        beatmapLevelColorSchemeEditorData.obstaclesColor,
+                        beatmapLevelColorSchemeEditorData.environmentColor0Boost,
+                        beatmapLevelColorSchemeEditorData.environmentColor1Boost
+                    ),
                 };
             }
 
             var v4beatmaps = _beatmapLevelDataModel.difficultyBeatmaps;
 
-            string[] envNames = v4beatmaps.Select(x => x.Value.environmentName._environmentName).Distinct().ToArray();
+            string[] envNames = v4beatmaps
+                .Select(x => x.Value.environmentName._environmentName)
+                .Distinct()
+                .ToArray();
 
             var newSets = new List<SerializedDifficultyBeatmapSet>();
             foreach (var beatmap in v4beatmaps)
             {
                 var k = beatmap.Key;
                 var v = beatmap.Value;
-                var existing = newSets.FirstOrDefault(x => x._beatmapCharacteristicName == k.Item1.serializedName || x._beatmapCharacteristicName == k.Item1.name);
+                var existing = newSets.FirstOrDefault(x =>
+                    x._beatmapCharacteristicName == k.Item1.serializedName
+                    || x._beatmapCharacteristicName == k.Item1.name
+                );
                 if (existing == null)
                 {
-                    int count = v4beatmaps.Count(x => x.Key.Item1.serializedName == k.Item1.serializedName || x.Key.Item1.name == k.Item1.name);
-                    existing = new SerializedDifficultyBeatmapSet(k.Item1.serializedName, new SerializedDifficultyBeatmap[0]);
+                    int count = v4beatmaps.Count(x =>
+                        x.Key.Item1.serializedName == k.Item1.serializedName
+                        || x.Key.Item1.name == k.Item1.name
+                    );
+                    existing = new SerializedDifficultyBeatmapSet(
+                        k.Item1.serializedName,
+                        new SerializedDifficultyBeatmap[0]
+                    );
                     newSets.Add(existing);
                 }
 
-                var list = existing._difficultyBeatmaps.Cast<SerializedDifficultyBeatmap>().ToList();
-                list.Add(new SerializedDifficultyBeatmap(
-                    k.Item2.SerializedName(),
-                    k.Item2.DefaultRating(),
-                    v.beatmapFilename,
-                    v.noteJumpMovementSpeed,
-                    v.noteJumpStartBeatOffset,
-                    _beatmapLevelDataModel.colorSchemes.IndexOf(v.colorScheme),
-                    envNames.IndexOf(v.environmentName.ToString()),
-                    _levelCustomDataModel.BeatmapCustomDatasByFilename[v.beatmapFilename]));
+                var list = existing
+                    ._difficultyBeatmaps.Cast<SerializedDifficultyBeatmap>()
+                    .ToList();
+                list.Add(
+                    new SerializedDifficultyBeatmap(
+                        k.Item2.SerializedName(),
+                        k.Item2.DefaultRating(),
+                        v.beatmapFilename,
+                        v.noteJumpMovementSpeed,
+                        v.noteJumpStartBeatOffset,
+                        _beatmapLevelDataModel.colorSchemes.IndexOf(v.colorScheme),
+                        envNames.IndexOf(v.environmentName.ToString()),
+                        _levelCustomDataModel.BeatmapCustomDatasByFilename[v.beatmapFilename]
+                    )
+                );
                 existing._difficultyBeatmaps = list.ToArray();
             }
 
@@ -122,8 +151,8 @@ namespace EditorEX.MapData.SaveDataSavers
                 envNames,
                 beatmapLevelColorSchemes,
                 newSets.ToArray(),
-                levelCustomData);
-
+                levelCustomData
+            );
 
             if (!beatmapProjectManager._projectOpened)
             {
@@ -145,7 +174,9 @@ namespace EditorEX.MapData.SaveDataSavers
 
             Directory.SetLastWriteTime(beatmapProjectManager._workingBeatmapProject, DateTime.Now);
 
-            beatmapProjectManager._logger.Log("BeatmapProjectManager - SaveBeatmapProject (EditorEX)");
+            beatmapProjectManager._logger.Log(
+                "BeatmapProjectManager - SaveBeatmapProject (EditorEX)"
+            );
             if (clearDirty)
             {
                 _beatmapLevelDataModel.ClearDirty();

@@ -21,7 +21,8 @@ namespace EditorEX.Essentials.Visuals.Obstacle
         [Inject]
         private void Construct(
             ColorManager colorManager,
-            BeatmapObjectPlacementHelper beatmapObjectPlacementHelper)
+            BeatmapObjectPlacementHelper beatmapObjectPlacementHelper
+        )
         {
             _colorManager = colorManager;
             _beatmapObjectPlacementHelper = beatmapObjectPlacementHelper;
@@ -68,10 +69,7 @@ namespace EditorEX.Essentials.Visuals.Obstacle
             _active = false;
         }
 
-        public void ManualUpdate()
-        {
-
-        }
+        public void ManualUpdate() { }
 
         public GameObject GetVisualRoot()
         {

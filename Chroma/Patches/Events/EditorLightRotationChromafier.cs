@@ -13,22 +13,33 @@ namespace EditorEX.Chroma.Patches.Events
     {
         private readonly EditorDeserializedData _editorDeserializedData;
 
-        private EditorLightRotationChromafier([InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData)
+        private EditorLightRotationChromafier(
+            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData
+        )
         {
             _editorDeserializedData = deserializedData;
         }
 
         [AffinityPrefix]
-        [AffinityPatch(typeof(LightRotationEventEffect), nameof(LightRotationEventEffect.HandleBeatmapEvent))]
+        [AffinityPatch(
+            typeof(LightRotationEventEffect),
+            nameof(LightRotationEventEffect.HandleBeatmapEvent)
+        )]
         private bool Prefix(
             BasicBeatmapEventData basicBeatmapEventData,
             LightRotationEventEffect __instance,
             BasicBeatmapEventType ____event,
             Quaternion ____startRotation,
             ref float ____rotationSpeed,
-            Vector3 ____rotationVector)
+            Vector3 ____rotationVector
+        )
         {
-            if (!_editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(basicBeatmapEventData), out EditorChromaEventData? chromaData))
+            if (
+                !_editorDeserializedData.Resolve(
+                    CustomDataRepository.GetBasicEventConversion(basicBeatmapEventData),
+                    out EditorChromaEventData? chromaData
+                )
+            )
             {
                 return true;
             }
@@ -43,35 +54,39 @@ namespace EditorEX.Chroma.Patches.Events
             {
                 0 => isLeftEvent ? -1 : 1,
                 1 => isLeftEvent ? 1 : -1,
-                _ => (Random.value > 0.5f) ? 1f : -1f
+                _ => (Random.value > 0.5f) ? 1f : -1f,
             };
 
             switch (basicBeatmapEventData.value)
             {
                 // Actual lasering
                 case 0:
+                {
+                    __instance.enabled = false;
+                    if (!lockPosition)
                     {
-                        __instance.enabled = false;
-                        if (!lockPosition)
-                        {
-                            __instance.transform.localRotation = ____startRotation;
-                        }
-
-                        break;
+                        __instance.transform.localRotation = ____startRotation;
                     }
+
+                    break;
+                }
 
                 case > 0:
+                {
+                    __instance.enabled = true;
+                    ____rotationSpeed = precisionSpeed * 20f * direction;
+                    if (!lockPosition)
                     {
-                        __instance.enabled = true;
-                        ____rotationSpeed = precisionSpeed * 20f * direction;
-                        if (!lockPosition)
-                        {
-                            __instance.transform.localRotation = ____startRotation;
-                            __instance.transform.Rotate(____rotationVector, Random.Range(0f, 180f), Space.Self);
-                        }
-
-                        break;
+                        __instance.transform.localRotation = ____startRotation;
+                        __instance.transform.Rotate(
+                            ____rotationVector,
+                            Random.Range(0f, 180f),
+                            Space.Self
+                        );
                     }
+
+                    break;
+                }
             }
 
             return false;

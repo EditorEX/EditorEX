@@ -1,4 +1,7 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BeatmapEditor3D.DataModels;
 using Chroma;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.Chroma.Events;
@@ -11,15 +14,16 @@ using Heck.Animation;
 using Heck.Deserialize;
 using IPA.Utilities;
 using SiraUtil.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using static EditorEX.Chroma.Constants;
 
 // Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Deserializer
 {
-    internal class EditorChromaCustomDataDeserializer : IEditorEarlyDeserializer, IEditorObjectsDeserializer, IEditorCustomEventsDeserializer, IEditorEventsDeserializer
+    internal class EditorChromaCustomDataDeserializer
+        : IEditorEarlyDeserializer,
+            IEditorObjectsDeserializer,
+            IEditorCustomEventsDeserializer,
+            IEditorEventsDeserializer
     {
         private readonly SiraLog _siraLog;
         private readonly BeatmapBasicEventsDataModel _beatmapBasicEventsDataModel;
@@ -36,7 +40,8 @@ namespace EditorEX.Chroma.Deserializer
             Dictionary<string, Track> beatmapTracks,
             Dictionary<string, List<object>> pointDefinitions,
             TrackBuilder trackBuilder,
-            bool v2)
+            bool v2
+        )
         {
             _siraLog = siraLog;
             _beatmapBasicEventsDataModel = beatmapBasicEventsDataModel;
@@ -50,14 +55,18 @@ namespace EditorEX.Chroma.Deserializer
         public void DeserializeEarly()
         {
             var beatmapData = CustomDataRepository.GetBeatmapData().customData;
-            IEnumerable<CustomData>? environmentData = beatmapData.Get<List<object>>(_v2 ? V2_ENVIRONMENT : ENVIRONMENT)?.Cast<CustomData>();
+            IEnumerable<CustomData>? environmentData = beatmapData
+                .Get<List<object>>(_v2 ? V2_ENVIRONMENT : ENVIRONMENT)
+                ?.Cast<CustomData>();
             if (environmentData != null)
             {
                 foreach (CustomData gameObjectData in environmentData)
                 {
                     _trackBuilder.AddManyFromCustomData(gameObjectData, _v2, false);
 
-                    CustomData? geometryData = gameObjectData.Get<CustomData?>(_v2 ? V2_GEOMETRY : GEOMETRY);
+                    CustomData? geometryData = gameObjectData.Get<CustomData?>(
+                        _v2 ? V2_GEOMETRY : GEOMETRY
+                    );
                     object? materialData = geometryData?.Get<object?>(_v2 ? V2_MATERIAL : MATERIAL);
                     if (materialData is CustomData materialCustomData)
                     {
@@ -85,7 +94,9 @@ namespace EditorEX.Chroma.Deserializer
                 return;
             }
 
-            foreach (CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents())
+            foreach (
+                CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents()
+            )
             {
                 try
                 {
@@ -109,7 +120,9 @@ namespace EditorEX.Chroma.Deserializer
         public Dictionary<CustomEventEditorData, ICustomEventCustomData> DeserializeCustomEvents()
         {
             var dictionary = new Dictionary<CustomEventEditorData, ICustomEventCustomData>();
-            foreach (CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents())
+            foreach (
+                CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents()
+            )
             {
                 bool v2 = customEventData.version2_6_0AndEarlier;
                 try
@@ -124,7 +137,9 @@ namespace EditorEX.Chroma.Deserializer
                                 continue;
                             }
 
-                            chromaCustomEventData = new ChromaAssignFogEventData(customEventData.customData.GetTrack(_tracks, v2));
+                            chromaCustomEventData = new ChromaAssignFogEventData(
+                                customEventData.customData.GetTrack(_tracks, v2)
+                            );
                             break;
 
                         case ANIMATE_COMPONENT:
@@ -133,7 +148,11 @@ namespace EditorEX.Chroma.Deserializer
                                 continue;
                             }
 
-                            chromaCustomEventData = new ChromaAnimateComponentData(customEventData.customData, _tracks, _pointDefinitions);
+                            chromaCustomEventData = new ChromaAnimateComponentData(
+                                customEventData.customData,
+                                _tracks,
+                                _pointDefinitions
+                            );
                             break;
 
                         default:
@@ -156,9 +175,12 @@ namespace EditorEX.Chroma.Deserializer
         {
             var dictionary = new Dictionary<BaseEditorData?, IObjectCustomData>();
 
-            foreach (BaseBeatmapObjectEditorData beatmapObjectData in _beatmapObjectsDataModel.allBeatmapObjects)
+            foreach (
+                BaseBeatmapObjectEditorData beatmapObjectData in _beatmapObjectsDataModel.allBeatmapObjects
+            )
             {
-                if (dictionary.ContainsKey(beatmapObjectData)) continue;
+                if (dictionary.ContainsKey(beatmapObjectData))
+                    continue;
                 try
                 {
                     CustomData customData = beatmapObjectData.GetCustomData();
@@ -170,19 +192,31 @@ namespace EditorEX.Chroma.Deserializer
                     switch (beatmapObjectData)
                     {
                         case NoteEditorData noteData:
-                            dictionary.Add(beatmapObjectData, new ChromaNoteData(customData, _tracks, _pointDefinitions, _v2));
+                            dictionary.Add(
+                                beatmapObjectData,
+                                new ChromaNoteData(customData, _tracks, _pointDefinitions, _v2)
+                            );
                             break;
 
                         case ChainEditorData sliderData:
-                            dictionary.Add(beatmapObjectData, new ChromaNoteData(customData, _tracks, _pointDefinitions, _v2));
+                            dictionary.Add(
+                                beatmapObjectData,
+                                new ChromaNoteData(customData, _tracks, _pointDefinitions, _v2)
+                            );
                             break;
 
                         case ArcEditorData arcData:
-                            dictionary.Add(beatmapObjectData, new ChromaNoteData(customData, _tracks, _pointDefinitions, _v2));
+                            dictionary.Add(
+                                beatmapObjectData,
+                                new ChromaNoteData(customData, _tracks, _pointDefinitions, _v2)
+                            );
                             break;
 
                         case ObstacleEditorData obstacleData:
-                            dictionary.Add(beatmapObjectData, new ChromaObjectData(customData, _tracks, _pointDefinitions, _v2));
+                            dictionary.Add(
+                                beatmapObjectData,
+                                new ChromaObjectData(customData, _tracks, _pointDefinitions, _v2)
+                            );
                             break;
 
                         default:
@@ -200,7 +234,9 @@ namespace EditorEX.Chroma.Deserializer
 
         public Dictionary<BasicEventEditorData, IEventCustomData> DeserializeEvents()
         {
-            List<BasicEventEditorData> beatmapEventDatas = _beatmapBasicEventsDataModel.GetAllEventsAsList().ToList();
+            List<BasicEventEditorData> beatmapEventDatas = _beatmapBasicEventsDataModel
+                .GetAllEventsAsList()
+                .ToList();
 
             EditorLegacyLightHelper legacyLightHelper = null;
             if (_v2)
@@ -211,10 +247,12 @@ namespace EditorEX.Chroma.Deserializer
             var dictionary = new Dictionary<BasicEventEditorData, IEventCustomData>();
             foreach (BasicEventEditorData beatmapEventData in beatmapEventDatas)
             {
-
                 try
                 {
-                    dictionary.Add(beatmapEventData, new EditorChromaEventData(beatmapEventData, legacyLightHelper, _v2));
+                    dictionary.Add(
+                        beatmapEventData,
+                        new EditorChromaEventData(beatmapEventData, legacyLightHelper, _v2)
+                    );
                 }
                 catch (Exception e)
                 {
@@ -228,21 +266,33 @@ namespace EditorEX.Chroma.Deserializer
             for (int i = beatmapEventDatas.Count - 1; i >= 0; i--)
             {
                 var beatmapEventData = beatmapEventDatas[i];
-                if (!(beatmapEventData is BasicEventEditorData basicBeatmapEventData)) continue;
-                if (!TryGetEventData(beatmapEventDatas[i], out EditorChromaEventData currentEventData))
+                if (!(beatmapEventData is BasicEventEditorData basicBeatmapEventData))
+                    continue;
+                if (
+                    !TryGetEventData(
+                        beatmapEventDatas[i],
+                        out EditorChromaEventData currentEventData
+                    )
+                )
                 {
                     continue;
                 }
 
                 int type = (int)beatmapEventData.type;
-                if (!allNextSameTypes.TryGetValue(
+                if (
+                    !allNextSameTypes.TryGetValue(
                         type,
-                        out Dictionary<int, BasicEventEditorData> nextSameTypes))
+                        out Dictionary<int, BasicEventEditorData> nextSameTypes
+                    )
+                )
                 {
-                    allNextSameTypes[type] = nextSameTypes = new Dictionary<int, BasicEventEditorData>();
+                    allNextSameTypes[type] = nextSameTypes =
+                        new Dictionary<int, BasicEventEditorData>();
                 }
 
-                currentEventData.NextSameTypeEvent = currentEventData.NextSameTypeEvent ?? new Dictionary<int, BasicEventEditorData>(nextSameTypes);
+                currentEventData.NextSameTypeEvent =
+                    currentEventData.NextSameTypeEvent
+                    ?? new Dictionary<int, BasicEventEditorData>(nextSameTypes);
                 IEnumerable<int> ids = currentEventData.LightID;
                 if (ids == null)
                 {
@@ -263,7 +313,10 @@ namespace EditorEX.Chroma.Deserializer
 
             return dictionary;
 
-            bool TryGetEventData(BasicEventEditorData beatmapEventData, out EditorChromaEventData chromaEventData)
+            bool TryGetEventData(
+                BasicEventEditorData beatmapEventData,
+                out EditorChromaEventData chromaEventData
+            )
             {
                 if (dictionary.TryGetValue(beatmapEventData, out IEventCustomData eventCustomData))
                 {

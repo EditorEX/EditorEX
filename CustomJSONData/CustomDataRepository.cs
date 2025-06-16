@@ -1,7 +1,7 @@
-﻿using BeatmapEditor3D.DataModels;
-using EditorEX.CustomJSONData.CustomEvents;
+﻿using System.Collections.Generic;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
-using System.Collections.Generic;
+using EditorEX.CustomJSONData.CustomEvents;
 using EditorEX.Util;
 
 namespace EditorEX.CustomJSONData
@@ -12,9 +12,13 @@ namespace EditorEX.CustomJSONData
 
         public List<CustomEventEditorData> CustomEvents = new();
 
-        public ReversibleDictionary<CustomEventEditorData, CustomEventData> CustomEventConversions = new();
+        public ReversibleDictionary<CustomEventEditorData, CustomEventData> CustomEventConversions =
+            new();
 
-        public ReversibleDictionary<BasicEventEditorData?, BeatmapEventData> ChromaBasicEventConversions = new();
+        public ReversibleDictionary<
+            BasicEventEditorData?,
+            BeatmapEventData
+        > ChromaBasicEventConversions = new();
 
         public Version3CustomBeatmapSaveData customBeatmapSaveData;
 
@@ -25,9 +29,7 @@ namespace EditorEX.CustomJSONData
             customLivePreviewBeatmapData = original.customLivePreviewBeatmapData;
         }
 
-        public RepoData()
-        {
-        }
+        public RepoData() { }
     }
 
     // This is a workaround to provide custom data as the EditorData clases are sealed...
@@ -51,7 +53,10 @@ namespace EditorEX.CustomJSONData
             return result;
         }
 
-        public static void AddCustomEventConversion(CustomEventEditorData editorData, CustomEventData customData)
+        public static void AddCustomEventConversion(
+            CustomEventEditorData editorData,
+            CustomEventData customData
+        )
         {
             _repoData.CustomEventConversions.Add(editorData, customData);
         }
@@ -80,7 +85,10 @@ namespace EditorEX.CustomJSONData
             return result;
         }
 
-        public static void AddBasicEventConversion(BasicEventEditorData? editorData, BeatmapEventData customData)
+        public static void AddBasicEventConversion(
+            BasicEventEditorData? editorData,
+            BeatmapEventData customData
+        )
         {
             _repoData.ChromaBasicEventConversions.Add(editorData, customData);
         }

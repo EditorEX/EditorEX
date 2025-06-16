@@ -1,6 +1,6 @@
-﻿using EditorEX.SDK.Factories;
+﻿using System;
+using EditorEX.SDK.Factories;
 using HMUI;
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,7 +28,8 @@ namespace EditorEX.SDK.Components
             StringInputFactory stringInputFactory,
             ModalFactory modalFactory,
             ButtonFactory buttonFactory,
-            TextFactory textFactory)
+            TextFactory textFactory
+        )
         {
             _stringInputFactory = stringInputFactory;
             _modalFactory = modalFactory;
@@ -59,7 +60,9 @@ namespace EditorEX.SDK.Components
             titleFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             _inputField = _stringInputFactory.Create(vertical.transform, "", 200f, null);
-            _inputTitle = _inputField.transform.parent.Find("Label").GetComponent<CurvedTextMeshPro>();
+            _inputTitle = _inputField
+                .transform.parent.Find("Label")
+                .GetComponent<CurvedTextMeshPro>();
 
             var horizontal = new GameObject("Horizontal").AddComponent<HorizontalLayoutGroup>();
             horizontal.spacing = 30f;
@@ -75,7 +78,13 @@ namespace EditorEX.SDK.Components
             _modalView.gameObject.SetActive(false);
         }
 
-        public void Prompt(string title, string inputTitle, string initialValue, Action<string>? onConfirm, Action? onDeny)
+        public void Prompt(
+            string title,
+            string inputTitle,
+            string initialValue,
+            Action<string>? onConfirm,
+            Action? onDeny
+        )
         {
             _title.text = title;
 

@@ -14,7 +14,8 @@ namespace EditorEX.Essentials.Patches
         public ProcessNewEditorData(
             EditorBeatmapObjectsInTimeRowProcessor processor,
             SiraLog siraLog,
-            PopulateBeatmap populateBeatmap)
+            PopulateBeatmap populateBeatmap
+        )
         {
             _siraLog = siraLog;
             _processor = processor;
@@ -22,7 +23,10 @@ namespace EditorEX.Essentials.Patches
         }
 
         [AffinityPostfix]
-        [AffinityPatch(typeof(BeatFrameSortedCollection<BeatmapObjectsFrameDataContainer>), nameof(BeatFrameSortedCollection<BeatmapObjectsFrameDataContainer>.Add))]
+        [AffinityPatch(
+            typeof(BeatFrameSortedCollection<BeatmapObjectsFrameDataContainer>),
+            nameof(BeatFrameSortedCollection<BeatmapObjectsFrameDataContainer>.Add)
+        )]
         private void AddData()
         {
             _processor.Reset();
@@ -30,7 +34,10 @@ namespace EditorEX.Essentials.Patches
         }
 
         [AffinityPostfix]
-        [AffinityPatch(typeof(BeatFrameSortedCollection<BeatmapObjectsFrameDataContainer>), nameof(BeatFrameSortedCollection<BeatmapObjectsFrameDataContainer>.Add))]
+        [AffinityPatch(
+            typeof(BeatFrameSortedCollection<BeatmapObjectsFrameDataContainer>),
+            nameof(BeatFrameSortedCollection<BeatmapObjectsFrameDataContainer>.Add)
+        )]
         private void RemoveData(BaseEditorData? data)
         {
             EditorSpawnDataRepository.RemoveSpawnData(data);

@@ -17,7 +17,8 @@ namespace EditorEX.SDK.Factories
         private void Construct(
             ImageFactory imageFactory,
             ColorCollector colorCollector,
-            IInstantiator instantiator)
+            IInstantiator instantiator
+        )
         {
             _imageFactory = imageFactory;
             _colorCollector = colorCollector;
@@ -36,10 +37,18 @@ namespace EditorEX.SDK.Factories
                 modalView.Hide();
             };
 
-            var bg = _imageFactory.Create(modalView.transform, "#Background8px", new Base.LayoutData());
+            var bg = _imageFactory.Create(
+                modalView.transform,
+                "#Background8px",
+                new Base.LayoutData()
+            );
             bg._colorSo = _colorCollector.GetColor("VerticalList/Background/Pressed");
 
-            var highlight = _imageFactory.Create(modalView.transform, "#Background8px", new Base.LayoutData());
+            var highlight = _imageFactory.Create(
+                modalView.transform,
+                "#Background8px",
+                new Base.LayoutData()
+            );
             highlight._colorSo = _colorCollector.GetColor("Button/Text/Highlighted");
 
             bg.transform.SetParent(highlight.transform);

@@ -1,6 +1,7 @@
 ﻿namespace EditorEX.SDK.Signals
 {
-    public class AddressableCollectorItemLoadedSignal<T> : IAddressableCollectorItemLoadedSignal where T : UnityEngine.Object
+    public class AddressableCollectorItemLoadedSignal<T> : IAddressableCollectorItemLoadedSignal
+        where T : UnityEngine.Object
     {
         public string Label { get; }
 
@@ -12,7 +13,8 @@
             Object = _object;
         }
 
-        public U GetValue<U>() where U : UnityEngine.Object
+        public U GetValue<U>()
+            where U : UnityEngine.Object
         {
             if (Object is not U o)
             {

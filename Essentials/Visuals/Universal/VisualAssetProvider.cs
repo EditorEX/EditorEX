@@ -21,14 +21,29 @@ namespace EditorEX.Essentials.Visuals.Universal
 
         private IEnumerator LoadObjects()
         {
-            var load = Addressables.LoadSceneAsync("StandardGameplay", LoadSceneMode.Additive, true, int.MaxValue);
+            var load = Addressables.LoadSceneAsync(
+                "StandardGameplay",
+                LoadSceneMode.Additive,
+                true,
+                int.MaxValue
+            );
             yield return load;
 
             UnityEngine.Object[] allObjects = Resources.FindObjectsOfTypeAll<UnityEngine.Object>();
 
-            gameNotePrefab = Instantiate(Resources.FindObjectsOfTypeAll<BeatmapObjectsInstaller>().FirstOrDefault()._normalBasicNotePrefab.gameObject);
+            gameNotePrefab = Instantiate(
+                Resources
+                    .FindObjectsOfTypeAll<BeatmapObjectsInstaller>()
+                    .FirstOrDefault()
+                    ._normalBasicNotePrefab.gameObject
+            );
             gameNotePrefab.SetActive(false);
-            obstaclePrefab = Instantiate(Resources.FindObjectsOfTypeAll<BeatmapObjectsInstaller>().FirstOrDefault()._obstaclePrefab.gameObject);
+            obstaclePrefab = Instantiate(
+                Resources
+                    .FindObjectsOfTypeAll<BeatmapObjectsInstaller>()
+                    .FirstOrDefault()
+                    ._obstaclePrefab.gameObject
+            );
             obstaclePrefab.SetActive(false);
 
             onFinishLoading?.Invoke();

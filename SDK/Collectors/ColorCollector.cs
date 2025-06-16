@@ -63,7 +63,9 @@ namespace EditorEX.SDK.Collectors
         {
             if (!_colors.ContainsKey(name))
             {
-                throw new ArgumentException($"Color {name} does not exist! Did you mispell something?");
+                throw new ArgumentException(
+                    $"Color {name} does not exist! Did you mispell something?"
+                );
             }
             return _colors[name];
         }

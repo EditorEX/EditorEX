@@ -1,6 +1,6 @@
-﻿using BeatmapEditor3D;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using BeatmapEditor3D;
 using UnityEngine;
 
 namespace EditorEX.Analyzer.Swings.SwingBaker
@@ -17,13 +17,21 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
         private int totalFrames;
         private float secondsPerFrame = 1 / 24f;
 
-        public SwingTrackGenerator(SliceMap sliceMap, bool rightHand, LevelUtils levelUtils, AudioDataModel audioDataModel)
+        public SwingTrackGenerator(
+            SliceMap sliceMap,
+            bool rightHand,
+            LevelUtils levelUtils,
+            AudioDataModel audioDataModel
+        )
         {
             _levelUtils = levelUtils;
             _audioDataModel = audioDataModel;
             _sliceMap = sliceMap;
             _track = new BakedSwingTrack();
-            totalFrames = (int)Mathf.Ceil(_audioDataModel.bpmData.BeatToSeconds(_sliceMap.Cuts.Last().sliceEndBeat) * 24);
+            totalFrames = (int)
+                Mathf.Ceil(
+                    _audioDataModel.bpmData.BeatToSeconds(_sliceMap.Cuts.Last().sliceEndBeat) * 24
+                );
 
             var handFrames = ProcessHandFrames(rightHand);
             _handFrames = handFrames;
@@ -70,14 +78,20 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
             }
             else
             {
-                _levelUtils.GetWorldXYFromBeatmapCoords((int)_restingWristPosition.x, (int)_restingWristPosition.y);
+                _levelUtils.GetWorldXYFromBeatmapCoords(
+                    (int)_restingWristPosition.x,
+                    (int)_restingWristPosition.y
+                );
                 SetTargetWristOrientation(_restingWristOrientation, lastFrame);
 
                 float u = Mathf.Clamp((t - 0.2f), 0.0f, 1.0f);
 
-                _targetWristOrientDrag = Mathf.Lerp(_minWristOrientDrag, _maxWristOrientDrag, u) / Time.timeScale;
-                _targetPalmOrientDrag = Mathf.Lerp(_minPalmOrientDrag, _maxPalmOrientDrag, u) / Time.timeScale;
-                _targetWristPositDrag = Mathf.Lerp(_minWristPositDrag, _maxWristPositDrag, u) / Time.timeScale;
+                _targetWristOrientDrag =
+                    Mathf.Lerp(_minWristOrientDrag, _maxWristOrientDrag, u) / Time.timeScale;
+                _targetPalmOrientDrag =
+                    Mathf.Lerp(_minPalmOrientDrag, _maxPalmOrientDrag, u) / Time.timeScale;
+                _targetWristPositDrag =
+                    Mathf.Lerp(_minWristPositDrag, _maxWristPositDrag, u) / Time.timeScale;
             }
         }
 
@@ -97,7 +111,7 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
                 _wristPositDrag = _maxWristPositDrag,
                 _wristOrientation = -10f,
                 _palmOrientation = 0.0f,
-                _wristPosition = _targetWristPosition
+                _wristPosition = _targetWristPosition,
             };
 
             _targetWristOrientDrag = _maxWristOrientDrag;
@@ -112,40 +126,82 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
 
                 float _timeToReachSabers = -Mathf.Abs((Mathf.Abs(-30f) - 3.0f) / 75f);
 
-                float _beatTimeToReachSabers = _audioDataModel.bpmData.SecondsToBeat(_timeToReachSabers);
+                float _beatTimeToReachSabers = _audioDataModel.bpmData.SecondsToBeat(
+                    _timeToReachSabers
+                );
                 float _beatTimeToPrepareSwing = _beatTimeToReachSabers * 0.5f;
 
                 if (_sliceIndex < _sliceMap.GetSliceCount())
                 {
                     BeatCutData cutData = _sliceMap.GetBeatCutData(_sliceIndex);
-                    if (_beatTime > cutData.sliceStartBeat - _startBeatOffset + _beatTimeToPrepareSwing)
+                    if (
+                        _beatTime
+                        > cutData.sliceStartBeat - _startBeatOffset + _beatTimeToPrepareSwing
+                    )
                     {
-                        _targetWristPosition = _levelUtils.GetWorldXYFromBeatmapCoords(cutData.startPositioning.x, cutData.startPositioning.y);
+                        _targetWristPosition = _levelUtils.GetWorldXYFromBeatmapCoords(
+                            cutData.startPositioning.x,
+                            cutData.startPositioning.y
+                        );
                         SetTargetWristOrientation(cutData.startPositioning.angle * -1, lastFrame);
                     }
-                    if (_beatTime > cutData.sliceStartBeat - _startBeatOffset + _beatTimeToReachSabers)
+                    if (
+                        _beatTime
+                        > cutData.sliceStartBeat - _startBeatOffset + _beatTimeToReachSabers
+                    )
                     {
-                        _targetPalmOrientation = cutData.sliceParity == Parity.Forehand ? 180.0f : 0.0f;
+                        _targetPalmOrientation =
+                            cutData.sliceParity == Parity.Forehand ? 180.0f : 0.0f;
                     }
-                    if (_beatTime > cutData.sliceEndBeat - _startBeatOffset + _beatTimeToReachSabers)
+                    if (
+                        _beatTime
+                        > cutData.sliceEndBeat - _startBeatOffset + _beatTimeToReachSabers
+                    )
                     {
                         ++_sliceIndex;
                         if (_sliceIndex < _sliceMap.GetSliceCount())
                         {
                             BeatCutData nextCutData = _sliceMap.GetBeatCutData(_sliceIndex);
-                            float timeTilNextBeat = _audioDataModel.bpmData.BeatToSeconds(nextCutData.sliceStartBeat - cutData.sliceEndBeat);
+                            float timeTilNextBeat = _audioDataModel.bpmData.BeatToSeconds(
+                                nextCutData.sliceStartBeat - cutData.sliceEndBeat
+                            );
                             SetTimeToNextBeat(timeTilNextBeat, lastFrame);
                         }
                     }
                 }
 
                 var frame = new HandFrame();
-                frame._wristOrientDrag = lastFrame._wristOrientDrag - ((lastFrame._wristOrientDrag - _targetWristOrientDrag) / 30f);
-                frame._palmOrientDrag = lastFrame._palmOrientDrag - ((lastFrame._palmOrientDrag - _targetPalmOrientDrag) / 5f);
-                frame._wristPositDrag = lastFrame._wristPositDrag - ((lastFrame._wristPositDrag - _targetWristPositDrag) / 10f);
-                frame._wristOrientation = lastFrame._wristOrientation - ((lastFrame._wristOrientation - (_targetWristOrientation + 5.0f * Mathf.Sin(second))) / lastFrame._wristOrientDrag);
-                frame._palmOrientation = lastFrame._palmOrientation - ((lastFrame._palmOrientation - (_targetPalmOrientation + 5.0f * Mathf.Cos(second))) / lastFrame._palmOrientDrag);
-                frame._wristPosition = lastFrame._wristPosition - ((lastFrame._wristPosition - _targetWristPosition) / lastFrame._wristPositDrag);
+                frame._wristOrientDrag =
+                    lastFrame._wristOrientDrag
+                    - ((lastFrame._wristOrientDrag - _targetWristOrientDrag) / 30f);
+                frame._palmOrientDrag =
+                    lastFrame._palmOrientDrag
+                    - ((lastFrame._palmOrientDrag - _targetPalmOrientDrag) / 5f);
+                frame._wristPositDrag =
+                    lastFrame._wristPositDrag
+                    - ((lastFrame._wristPositDrag - _targetWristPositDrag) / 10f);
+                frame._wristOrientation =
+                    lastFrame._wristOrientation
+                    - (
+                        (
+                            lastFrame._wristOrientation
+                            - (_targetWristOrientation + 5.0f * Mathf.Sin(second))
+                        ) / lastFrame._wristOrientDrag
+                    );
+                frame._palmOrientation =
+                    lastFrame._palmOrientation
+                    - (
+                        (
+                            lastFrame._palmOrientation
+                            - (_targetPalmOrientation + 5.0f * Mathf.Cos(second))
+                        ) / lastFrame._palmOrientDrag
+                    );
+                frame._wristPosition =
+                    lastFrame._wristPosition
+                    - (
+                        (lastFrame._wristPosition - _targetWristPosition)
+                        / lastFrame._wristPositDrag
+                    );
                 frame._targetWristPosition = _targetWristPosition;
                 frame._timeToReachSabers = _timeToReachSabers;
 
@@ -188,9 +244,21 @@ namespace EditorEX.Analyzer.Swings.SwingBaker
                 pos.y = handFrame._wristPosition.y;
                 pos.z = -0f;
                 wrist.transform.position = pos;
-                wrist.transform.localRotation = Quaternion.AngleAxis(handFrame._wristOrientation, Vector3.forward);
-                palm.transform.localRotation = Quaternion.AngleAxis(handFrame._palmOrientation, Vector3.right);
-                frames.Add(new Frame() { position = saber.transform.position, rotation = saber.transform.rotation });
+                wrist.transform.localRotation = Quaternion.AngleAxis(
+                    handFrame._wristOrientation,
+                    Vector3.forward
+                );
+                palm.transform.localRotation = Quaternion.AngleAxis(
+                    handFrame._palmOrientation,
+                    Vector3.right
+                );
+                frames.Add(
+                    new Frame()
+                    {
+                        position = saber.transform.position,
+                        rotation = saber.transform.rotation,
+                    }
+                );
             }
 
             Object.Destroy(wrist);

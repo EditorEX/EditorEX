@@ -7,6 +7,7 @@ namespace EditorEX.Essentials.VariableMovement
     {
         [Inject]
         internal EditorNoodleMovementDataProvider.Pool? Pool = null!;
+
         [Inject]
         public IVariableMovementDataProvider? Original = null!;
     }

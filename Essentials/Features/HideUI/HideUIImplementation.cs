@@ -1,5 +1,5 @@
-﻿using BeatmapEditor3D;
-using System.Linq;
+﻿using System.Linq;
+using BeatmapEditor3D;
 using UnityEngine;
 using Zenject;
 
@@ -18,7 +18,9 @@ namespace EditorEX.Essentials.Features.HideUI
         {
             if (_screenSystem == null)
             {
-                _screenSystem = Resources.FindObjectsOfTypeAll<BeatmapEditorScreenSystem>().FirstOrDefault();
+                _screenSystem = Resources
+                    .FindObjectsOfTypeAll<BeatmapEditorScreenSystem>()
+                    .FirstOrDefault();
             }
             _screenSystem?.gameObject.SetActive((!_screenSystem?.gameObject?.activeSelf) ?? true);
         }

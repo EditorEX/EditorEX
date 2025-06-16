@@ -16,8 +16,10 @@ namespace EditorEX.UI.Cursor
             Hand = 32649,
             ArrowAndQuestionMark = 32651,
             IBeam = 32513,
-            //Icon = 32641, // Obsolete for applications marked version 4.0 or later. 
+
+            //Icon = 32641, // Obsolete for applications marked version 4.0 or later.
             SlashedCircle = 32648,
+
             //Size = 32640,  // Obsolete for applications marked version 4.0 or later. Use FourPointedArrowPointingNorthSouthEastAndWest
             FourPointedArrowPointingNorthSouthEastAndWest = 32646,
             DoublePointedArrowPointingNortheastAndSouthwest = 32643,
@@ -25,7 +27,7 @@ namespace EditorEX.UI.Cursor
             DoublePointedArrowPointingNorthwestAndSoutheast = 32642,
             DoublePointedArrowPointingWestAndEast = 32644,
             VerticalArrow = 32516,
-            Hourglass = 32514
+            Hourglass = 32514,
         }
 
         [DllImport("user32.dll", EntryPoint = "SetCursor")]

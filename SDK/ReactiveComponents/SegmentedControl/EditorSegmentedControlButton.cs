@@ -32,9 +32,19 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
                 _selectedIndex = value;
                 _selectedIndex.ValueChangedEvent += (value) =>
                 {
-                    _button.SetSelected(value == Position, SelectableCell.TransitionType.Instant, null, false);
+                    _button.SetSelected(
+                        value == Position,
+                        SelectableCell.TransitionType.Instant,
+                        null,
+                        false
+                    );
                 };
-                _button.SetSelected(_selectedIndex.Value == Position, SelectableCell.TransitionType.Instant, null, false);
+                _button.SetSelected(
+                    _selectedIndex.Value == Position,
+                    SelectableCell.TransitionType.Instant,
+                    null,
+                    false
+                );
                 NotifyPropertyChanged();
             }
         }
@@ -68,27 +78,35 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
                 1 => "#WhitePixel",
                 2 => "#Background8pxLeft",
                 3 => "#Background8px",
-                _ => throw new ArgumentOutOfRangeException(nameof(position), position, null)
+                _ => throw new ArgumentOutOfRangeException(nameof(position), position, null),
             };
             return new EditorBackground()
             {
                 Source = source,
                 ImageType = Image.Type.Sliced,
-                ContentTransform = { localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one },
-                Children = {
-                    new EditorLabel() {
+                ContentTransform =
+                {
+                    localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one,
+                },
+                Children =
+                {
+                    new EditorLabel()
+                    {
                         FontSize = 12,
-                        ContentTransform = { localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one },
+                        ContentTransform =
+                        {
+                            localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one,
+                        },
                     }
-                    .AsFlexItem()
-                    .Bind(ref _label)
-                }
+                        .AsFlexItem()
+                        .Bind(ref _label),
+                },
             }
-            .AsFlexItem(maxSize: "fit-content")
-            .AsFlexGroup(justifyContent: Justify.Center, padding: new YogaFrame(5, 3))
-            .Bind(ref _background)
-            .WithNativeComponent(out _button)
-            .Use();
+                .AsFlexItem(maxSize: "fit-content")
+                .AsFlexGroup(justifyContent: Justify.Center, padding: new YogaFrame(5, 3))
+                .Bind(ref _background)
+                .WithNativeComponent(out _button)
+                .Use();
         }
 
         private void ApplyLabel()
@@ -98,9 +116,11 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
             {
                 var append = _tabbingType switch
                 {
-                    TabbingType.Qwerty => TabbingSegmentedControlController._qwertyKeyBinds[Position].ToString(),
+                    TabbingType.Qwerty => TabbingSegmentedControlController
+                        ._qwertyKeyBinds[Position]
+                        .ToString(),
                     TabbingType.Alpha => (Position + 1).ToString(),
-                    _ => ""
+                    _ => "",
                 };
 
                 sb.Append($" | {append}");
@@ -110,13 +130,22 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
 
         protected override void OnStart()
         {
-            var container = Content.transform.GetComponentInParent<ReactiveContainerHolder>().ReactiveContainer;
+            var container = Content
+                .transform.GetComponentInParent<ReactiveContainerHolder>()
+                .ReactiveContainer;
             Content.SetActive(false);
-            _selectableStateController = container.Instantiator.InstantiateComponent<SelectableCellSelectableStateController>(Content);
+            _selectableStateController =
+                container.Instantiator.InstantiateComponent<SelectableCellSelectableStateController>(
+                    Content
+                );
             _selectableStateController._component = _button;
 
-            var stateTransition = _background.Content.gameObject.AddComponent<ColorGraphicStateTransition>();
-            stateTransition._transition = container.TransitionCollector.GetTransition<ColorTransitionSO>("SelectableCell/Background");
+            var stateTransition =
+                _background.Content.gameObject.AddComponent<ColorGraphicStateTransition>();
+            stateTransition._transition =
+                container.TransitionCollector.GetTransition<ColorTransitionSO>(
+                    "SelectableCell/Background"
+                );
             stateTransition._selectableStateController = _selectableStateController;
             stateTransition._component = _background.WrappedImage.ImageView;
 

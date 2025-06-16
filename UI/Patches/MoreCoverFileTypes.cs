@@ -1,19 +1,25 @@
-﻿using BeatmapEditor3D.Views;
-using HarmonyLib;
-using SiraUtil.Affinity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using BeatmapEditor3D.Views;
+using HarmonyLib;
+using SiraUtil.Affinity;
 
 namespace EditorEX.UI.Patches
 {
     internal class MoreCoverFileTypes : IAffinity
     {
-        private readonly static string[] fileTypes = ["png", "jpg", "jpeg"];
+        private static readonly string[] fileTypes = ["png", "jpg", "jpeg"];
 
-        private static readonly FieldInfo _fileTypesGetter = AccessTools.Field(typeof(MoreCoverFileTypes), "fileTypes");
+        private static readonly FieldInfo _fileTypesGetter = AccessTools.Field(
+            typeof(MoreCoverFileTypes),
+            "fileTypes"
+        );
 
-        [AffinityPatch(typeof(CoverImageInputView), nameof(CoverImageInputView.HandleOpenFileButtonClicked))]
+        [AffinityPatch(
+            typeof(CoverImageInputView),
+            nameof(CoverImageInputView.HandleOpenFileButtonClicked)
+        )]
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {

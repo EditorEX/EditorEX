@@ -15,15 +15,23 @@ namespace EditorEX.SDK.Factories
         private PrefabCollector _prefabCollector = null!;
 
         [Inject]
-        private void Construct(
-            PrefabCollector prefabCollector)
+        private void Construct(PrefabCollector prefabCollector)
         {
             _prefabCollector = prefabCollector;
         }
 
-        public TMP_InputField Create(Transform parent, string text, float inputWidth, UnityAction<string> onChange)
+        public TMP_InputField Create(
+            Transform parent,
+            string text,
+            float inputWidth,
+            UnityAction<string> onChange
+        )
         {
-            var field = GameObject.Instantiate(_prefabCollector.GetInputFieldPrefab().transform.parent, parent, false);
+            var field = GameObject.Instantiate(
+                _prefabCollector.GetInputFieldPrefab().transform.parent,
+                parent,
+                false
+            );
             field.name = "ExStringInput";
 
             var gameObject = field.gameObject;
@@ -60,7 +68,10 @@ namespace EditorEX.SDK.Factories
             vertical.childControlHeight = false;
             vertical.spacing = 5f;
 
-            inputField.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(inputWidth, 25f);
+            inputField.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(
+                inputWidth,
+                25f
+            );
 
             var textArea = inputField.transform.Find("Text Area").GetComponent<RectTransform>();
             textArea.sizeDelta = new Vector2(200f, 20f);

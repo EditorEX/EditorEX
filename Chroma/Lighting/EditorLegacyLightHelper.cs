@@ -1,7 +1,7 @@
-﻿using BeatmapEditor3D.DataModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BeatmapEditor3D.DataModels;
 using UnityEngine;
 
 // Based from https://github.com/Aeroluna/Heck
@@ -20,7 +20,12 @@ namespace EditorEX.Chroma.Lighting
                     continue;
                 }
 
-                if (!LegacyColorEvents.TryGetValue(d.type, out List<Tuple<float, Color>> dictionaryID))
+                if (
+                    !LegacyColorEvents.TryGetValue(
+                        d.type,
+                        out List<Tuple<float, Color>> dictionaryID
+                    )
+                )
                 {
                     dictionaryID = new List<Tuple<float, Color>>();
                     LegacyColorEvents.Add(d.type, dictionaryID);
@@ -30,16 +35,26 @@ namespace EditorEX.Chroma.Lighting
             }
         }
 
-        internal Dictionary<BasicBeatmapEventType, List<Tuple<float, Color>>> LegacyColorEvents { get; } = new();
+        internal Dictionary<
+            BasicBeatmapEventType,
+            List<Tuple<float, Color>>
+        > LegacyColorEvents { get; } = new();
 
         internal Color? GetLegacyColor(BasicEventEditorData beatmapEventData)
         {
-            if (!LegacyColorEvents.TryGetValue(beatmapEventData.type, out List<Tuple<float, Color>> dictionaryID))
+            if (
+                !LegacyColorEvents.TryGetValue(
+                    beatmapEventData.type,
+                    out List<Tuple<float, Color>> dictionaryID
+                )
+            )
             {
                 return null;
             }
 
-            List<Tuple<float, Color>> colors = dictionaryID.Where(n => n.Item1 <= beatmapEventData.beat).ToList();
+            List<Tuple<float, Color>> colors = dictionaryID
+                .Where(n => n.Item1 <= beatmapEventData.beat)
+                .ToList();
             if (colors.Count > 0)
             {
                 return colors.Last().Item2;

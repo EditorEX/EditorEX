@@ -8,10 +8,7 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
         public virtual string ColorSource
         {
             get => _colorSource;
-            set
-            {
-                _colorSource = value;
-            }
+            set { _colorSource = value; }
         }
 
         private string _colorSource = string.Empty;
@@ -25,7 +22,9 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
         {
             if (component is IColorSOAttachable colorSOAttachable)
             {
-                var container = component.Content.transform.GetComponentInParent<ReactiveContainerHolder>().ReactiveContainer;
+                var container = component
+                    .Content.transform.GetComponentInParent<ReactiveContainerHolder>()
+                    .ReactiveContainer;
                 colorSOAttachable.ColorSO = container.ColorCollector.GetColor(ColorSource);
             }
         }

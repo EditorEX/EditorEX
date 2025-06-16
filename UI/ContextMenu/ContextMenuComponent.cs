@@ -1,8 +1,8 @@
-﻿using EditorEX.SDK.Components;
+﻿using System.Collections.Generic;
+using System.Linq;
+using EditorEX.SDK.Components;
 using EditorEX.SDK.ContextMenu;
 using EditorEX.SDK.Factories;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -24,7 +24,8 @@ namespace EditorEX.UI.ContextMenu
         private void Construct(
             List<IContextMenuProvider> contextMenuProviders,
             ModalFactory modalFactory,
-            ClickableTextFactory clickableTextFactory)
+            ClickableTextFactory clickableTextFactory
+        )
         {
             _contextMenuProviders = contextMenuProviders;
             _modalFactory = modalFactory;
@@ -41,7 +42,8 @@ namespace EditorEX.UI.ContextMenu
             modal.gameObject.SetActive(false);
         }
 
-        private void CreateButtons<T>(IEnumerable<IContextOption> contextOptions, T data) where T : IContextMenuObject
+        private void CreateButtons<T>(IEnumerable<IContextOption> contextOptions, T data)
+            where T : IContextMenuObject
         {
             if (_verticalLayoutGroup != null)
             {
@@ -59,14 +61,20 @@ namespace EditorEX.UI.ContextMenu
 
             foreach (var contextOption in contextOptions)
             {
-                var clickable = _clickableTextFactory.Create(_verticalLayoutGroup.transform, contextOption.GetText(), 18f, () =>
-                {
-                    contextOption.Invoke(data);
-                });
+                var clickable = _clickableTextFactory.Create(
+                    _verticalLayoutGroup.transform,
+                    contextOption.GetText(),
+                    18f,
+                    () =>
+                    {
+                        contextOption.Invoke(data);
+                    }
+                );
             }
         }
 
-        public void ShowContextMenu<T>(T data, Vector2 position, object? linkedObject) where T : IContextMenuObject
+        public void ShowContextMenu<T>(T data, Vector2 position, object? linkedObject)
+            where T : IContextMenuObject
         {
             var providers = _contextMenuProviders.OfType<ContextMenuProvider<T>>();
             if (providers == null || providers.Count() == 0)

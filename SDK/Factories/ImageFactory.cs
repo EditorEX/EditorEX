@@ -13,8 +13,7 @@ namespace EditorEX.SDK.Factories
         private ColorCollector _colorCollector = null!;
 
         [Inject]
-        private void Construct(
-            ColorCollector colorCollector)
+        private void Construct(ColorCollector colorCollector)
         {
             _colorCollector = colorCollector;
         }
@@ -37,7 +36,8 @@ namespace EditorEX.SDK.Factories
             return image;
         }
 
-        public T Create<T>(Transform parent, Sprite sprite, LayoutData layoutData) where T : ImageView
+        public T Create<T>(Transform parent, Sprite sprite, LayoutData layoutData)
+            where T : ImageView
         {
             var image = Create<T>(parent, layoutData);
 
@@ -46,7 +46,8 @@ namespace EditorEX.SDK.Factories
             return image;
         }
 
-        public T Create<T>(Transform parent, string location, LayoutData layoutData) where T : ImageView
+        public T Create<T>(Transform parent, string location, LayoutData layoutData)
+            where T : ImageView
         {
             var image = Create<T>(parent, layoutData);
 
@@ -55,12 +56,10 @@ namespace EditorEX.SDK.Factories
             return image;
         }
 
-        private T Create<T>(Transform parent, LayoutData layoutData) where T : ImageView
+        private T Create<T>(Transform parent, LayoutData layoutData)
+            where T : ImageView
         {
-            GameObject gameObj = new("ExImage")
-            {
-                layer = 5,
-            };
+            GameObject gameObj = new("ExImage") { layer = 5 };
 
             gameObj.SetActive(false);
             gameObj.transform.SetParent(parent, false);
@@ -68,7 +67,8 @@ namespace EditorEX.SDK.Factories
             var rectTransform = gameObj.AddComponent<RectTransform>();
 
             rectTransform.sizeDelta = layoutData.sizeDelta ?? rectTransform.sizeDelta;
-            rectTransform.anchoredPosition = layoutData.anchoredPosition ?? rectTransform.anchoredPosition;
+            rectTransform.anchoredPosition =
+                layoutData.anchoredPosition ?? rectTransform.anchoredPosition;
 
             var image = gameObj.AddComponent<T>();
             image._colorSo = _colorCollector.GetColor("Button/Background/Normal");

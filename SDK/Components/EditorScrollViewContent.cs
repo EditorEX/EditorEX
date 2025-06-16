@@ -1,5 +1,5 @@
-﻿using HMUI;
-using System.Collections;
+﻿using System.Collections;
+using HMUI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,14 +9,8 @@ namespace EditorEX.SDK.Components
     {
         public ScrollView ScrollView
         {
-            get
-            {
-                return scrollView;
-            }
-            set
-            {
-                scrollView = value;
-            }
+            get { return scrollView; }
+            set { scrollView = value; }
         }
 
         protected void Start()

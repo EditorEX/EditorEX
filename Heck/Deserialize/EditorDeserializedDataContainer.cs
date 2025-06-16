@@ -1,5 +1,5 @@
-﻿using Heck.Animation;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Heck.Animation;
 
 namespace EditorEX.Heck.Deserialize
 {

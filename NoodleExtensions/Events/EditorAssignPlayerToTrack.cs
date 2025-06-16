@@ -1,17 +1,17 @@
-﻿using CustomJSONData.CustomBeatmap;
-using Heck.Event;
-using Heck;
-using NoodleExtensions.Animation;
-using NoodleExtensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BeatmapEditor3D.Controller;
+using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData;
+using EditorEX.Heck.Deserialize;
+using Heck;
+using Heck.Event;
+using NoodleExtensions;
+using NoodleExtensions.Animation;
+using NoodleExtensions.Managers;
 using UnityEngine;
 using Zenject;
-using EditorEX.Heck.Deserialize;
-using EditorEX.CustomJSONData;
-using BeatmapEditor3D.Controller;
-using NoodleExtensions.Managers;
 
 // Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.Events
@@ -28,17 +28,27 @@ namespace EditorEX.NoodleExtensions.Events
         private EditorAssignPlayerToTrack(
             IInstantiator container,
             PlayerTransforms playerTransforms,
-            [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData)
+            [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData
+        )
         {
             _container = container;
             _playerTransforms = playerTransforms;
             _editorDeserializedData = editorDeserializedData;
-            _beatmapEditor360CameraController = Resources.FindObjectsOfTypeAll<BeatmapEditor360CameraController>().FirstOrDefault();
+            _beatmapEditor360CameraController = Resources
+                .FindObjectsOfTypeAll<BeatmapEditor360CameraController>()
+                .FirstOrDefault();
         }
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!(_editorDeserializedData?.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out NoodlePlayerTrackEventData? noodlePlayerData) ?? false))
+            if (
+                !(
+                    _editorDeserializedData?.Resolve(
+                        CustomDataRepository.GetCustomEventConversion(customEventData),
+                        out NoodlePlayerTrackEventData? noodlePlayerData
+                    ) ?? false
+                )
+            )
             {
                 return;
             }
@@ -46,7 +56,9 @@ namespace EditorEX.NoodleExtensions.Events
             PlayerObject resultPlayerTrackObject = noodlePlayerData.PlayerObject;
             if (!_playerTracks.TryGetValue(resultPlayerTrackObject, out PlayerTrack? playerTrack))
             {
-                _playerTracks[resultPlayerTrackObject] = playerTrack = Create(resultPlayerTrackObject);
+                _playerTracks[resultPlayerTrackObject] = playerTrack = Create(
+                    resultPlayerTrackObject
+                );
             }
 
             playerTrack.AssignTrack(noodlePlayerData.Track);
@@ -63,7 +75,11 @@ namespace EditorEX.NoodleExtensions.Events
                 PlayerObject.Head => _playerTransforms._headTransform,
                 PlayerObject.LeftHand => _playerTransforms._leftHandTransform,
                 PlayerObject.RightHand => _playerTransforms._rightHandTransform,
-                _ => throw new ArgumentOutOfRangeException(nameof(playerTrackObject), playerTrackObject, null)
+                _ => throw new ArgumentOutOfRangeException(
+                    nameof(playerTrackObject),
+                    playerTrackObject,
+                    null
+                ),
             };
 
             if (playerTrackObject == PlayerObject.Root)
@@ -74,7 +90,10 @@ namespace EditorEX.NoodleExtensions.Events
             origin.SetParent(target.parent, false);
             target.SetParent(origin, true);
 
-            return _container.InstantiateComponent<PlayerTrack>(noodleObject, new object[] { playerTrackObject });
+            return _container.InstantiateComponent<PlayerTrack>(
+                noodleObject,
+                new object[] { playerTrackObject }
+            );
         }
     }
 }

@@ -31,53 +31,69 @@ namespace EditorEX.Essentials.Movement.Arc
 
         public float colorIntensity
         {
-            get
-            {
-                return _coreIntensity * _effectIntensity;
-            }
+            get { return _coreIntensity * _effectIntensity; }
         }
+
         protected void Awake()
         {
             _dipEffectFadeElements = new SliderIntensityEffect.FadeElement[]
             {
                 new(EaseType.OutQuad, 1f, 0f),
                 new(EaseType.Linear, 0f, 0f),
-                new(EaseType.Linear, 0f, 1f, delegate
-                {
-                    Action action = fadeInDidStartEvent;
-                    if (action == null)
+                new(
+                    EaseType.Linear,
+                    0f,
+                    1f,
+                    delegate
                     {
-                        return;
+                        Action action = fadeInDidStartEvent;
+                        if (action == null)
+                        {
+                            return;
+                        }
+                        action();
                     }
-                    action();
-                })
+                ),
             };
 
             _flashEffectFadeElements = new SliderIntensityEffect.FadeElement[]
             {
                 new(EaseType.OutQuad, 1f, _flashBoost),
-                new(EaseType.OutQuart, _flashBoost, 1f)
+                new(EaseType.OutQuart, _flashBoost, 1f),
             };
 
             _fadeInEffectFadeElements = new SliderIntensityEffect.FadeElement[]
             {
-                new(EaseType.Linear, 0f, 1f, delegate
-                {
-                    Action action2 = fadeInDidStartEvent;
-                    if (action2 == null)
+                new(
+                    EaseType.Linear,
+                    0f,
+                    1f,
+                    delegate
                     {
-                        return;
+                        Action action2 = fadeInDidStartEvent;
+                        if (action2 == null)
+                        {
+                            return;
+                        }
+                        action2();
                     }
-                    action2();
-                })
+                ),
             };
         }
 
-        public void Init(float sliderDuration, IVariableMovementDataProvider variableMovementTypeProvider, bool startVisible)
+        public void Init(
+            float sliderDuration,
+            IVariableMovementDataProvider variableMovementTypeProvider,
+            bool startVisible
+        )
         {
             _variableMovementTypeProvider = variableMovementTypeProvider;
             _sliderDuration = sliderDuration;
-            headIntensity = ((sliderDuration < _variableMovementTypeProvider.halfJumpDuration) ? _shortSliderHeadIntensity : _longSliderHeadIntensity);
+            headIntensity = (
+                (sliderDuration < _variableMovementTypeProvider.halfJumpDuration)
+                    ? _shortSliderHeadIntensity
+                    : _longSliderHeadIntensity
+            );
             _coreIntensity = headIntensity;
             _effectIntensity = (startVisible ? 1f : 0f);
             float num = Mathf.Max(sliderDuration - _fadeOutDuration - _stayOffDuration, 0.1f);
@@ -91,10 +107,16 @@ namespace EditorEX.Essentials.Movement.Arc
 
         public void ManualUpdate(float timeSinceHeadNoteJump)
         {
-            _coreIntensity = Mathf.Lerp(headIntensity, _tailIntensity, (timeSinceHeadNoteJump - _halfJumpDuration) / _sliderDuration);
+            _coreIntensity = Mathf.Lerp(
+                headIntensity,
+                _tailIntensity,
+                (timeSinceHeadNoteJump - _halfJumpDuration) / _sliderDuration
+            );
         }
 
-        private IEnumerator ProcessEffectCoroutine(IEnumerable<SliderIntensityEffect.FadeElement> fadeElements)
+        private IEnumerator ProcessEffectCoroutine(
+            IEnumerable<SliderIntensityEffect.FadeElement> fadeElements
+        )
         {
             foreach (SliderIntensityEffect.FadeElement fadeElement in fadeElements)
             {
@@ -107,8 +129,15 @@ namespace EditorEX.Essentials.Movement.Arc
                 float num;
                 while ((num = _audioTimeSyncController.songTime - startTime) < fadeElement.duration)
                 {
-                    float num2 = Interpolation.Interpolate(num / fadeElement.duration, fadeElement.easeType);
-                    _effectIntensity = Mathf.LerpUnclamped(fadeElement.startIntensity, fadeElement.endIntensity, num2);
+                    float num2 = Interpolation.Interpolate(
+                        num / fadeElement.duration,
+                        fadeElement.easeType
+                    );
+                    _effectIntensity = Mathf.LerpUnclamped(
+                        fadeElement.startIntensity,
+                        fadeElement.endIntensity,
+                        num2
+                    );
                     yield return null;
                 }
             }

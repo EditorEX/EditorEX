@@ -1,6 +1,6 @@
-﻿using Chroma.EnvironmentEnhancement.Component;
+﻿using System.Collections.Generic;
+using Chroma.EnvironmentEnhancement.Component;
 using CustomJSONData.CustomBeatmap;
-using System.Collections.Generic;
 using UnityEngine;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
 
@@ -11,13 +11,15 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
     {
         private readonly EditorILightWithIdCustomizer _lightWithIdCustomizer;
 
-        private EditorComponentCustomizer(
-            EditorILightWithIdCustomizer _lightWithIdCustomizer)
+        private EditorComponentCustomizer(EditorILightWithIdCustomizer _lightWithIdCustomizer)
         {
             this._lightWithIdCustomizer = _lightWithIdCustomizer;
         }
 
-        internal static void GetAllComponents(List<UnityEngine.Component> components, Transform root)
+        internal static void GetAllComponents(
+            List<UnityEngine.Component> components,
+            Transform root
+        )
         {
             components.AddRange(root.GetComponents<UnityEngine.Component>());
 
@@ -44,10 +46,15 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
                 BloomFogCustomizer.BloomFogEnvironmentInit(allComponents, bloomFogEnvironment);
             }
 
-            CustomData? tubeBloomPrePassLight = customData.Get<CustomData>(TUBE_BLOOM_PRE_PASS_LIGHT);
+            CustomData? tubeBloomPrePassLight = customData.Get<CustomData>(
+                TUBE_BLOOM_PRE_PASS_LIGHT
+            );
             if (tubeBloomPrePassLight != null)
             {
-                TubeBloomLightCustomizer.TubeBloomPrePassLightInit(allComponents, tubeBloomPrePassLight);
+                TubeBloomLightCustomizer.TubeBloomPrePassLightInit(
+                    allComponents,
+                    tubeBloomPrePassLight
+                );
             }
         }
     }

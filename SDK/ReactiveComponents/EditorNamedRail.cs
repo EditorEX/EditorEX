@@ -41,7 +41,7 @@ namespace EditorEX.SDK.ReactiveComponents
                 }
                 if (_labelContainer?.LayoutModifier is YogaModifier labelYogaModifier)
                 {
-                    labelYogaModifier.Size = new YogaVector((100f-value).pct(), "auto");
+                    labelYogaModifier.Size = new YogaVector((100f - value).pct(), "auto");
                 }
             }
         }
@@ -58,29 +58,36 @@ namespace EditorEX.SDK.ReactiveComponents
         {
             return new Layout
             {
-                Children = {
+                Children =
+                {
                     new Layout
                     {
-                        Children = {
+                        Children =
+                        {
                             new EditorLabel
                             {
                                 Text = "Oops, text is missing",
                                 Alignment = TextAlignmentOptions.Left,
-                            }.AsFlexItem(alignSelf: Align.Center).Bind(ref _label),
-
-                            new EditorLabel
-                            {
-                                Text = "*", 
-                                Enabled = false,
-                            }.Export(out _modifiedHint).AsFlexItem()
-                        }
-                    }.AsFlexGroup().AsFlexItem().Export(out _labelContainer),
-                }
-            }.AsFlexGroup(
-                justifyContent: Justify.SpaceBetween,
-                alignItems: Align.Center,
-                gap: 1f
-            ).Bind(ref _container).Use();
+                            }
+                                .AsFlexItem(alignSelf: Align.Center)
+                                .Bind(ref _label),
+                            new EditorLabel { Text = "*", Enabled = false }
+                                .Export(out _modifiedHint)
+                                .AsFlexItem(),
+                        },
+                    }
+                        .AsFlexGroup()
+                        .AsFlexItem()
+                        .Export(out _labelContainer),
+                },
+            }
+                .AsFlexGroup(
+                    justifyContent: Justify.SpaceBetween,
+                    alignItems: Align.Center,
+                    gap: 1f
+                )
+                .Bind(ref _container)
+                .Use();
         }
 
         protected override void OnInitialize()

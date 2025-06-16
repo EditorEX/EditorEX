@@ -1,8 +1,8 @@
-﻿using SiraUtil.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using EditorEX.MapData.Contexts;
+using SiraUtil.Logging;
 using Zenject;
 
 namespace EditorEX.Essentials.Movement
@@ -15,7 +15,8 @@ namespace EditorEX.Essentials.Movement
         [Inject]
         private VariableMovementTypeProvider(
             SiraLog siraLog,
-            [Inject(Id = "VariableMovement")] List<ValueTuple<string, Type>> providers)
+            [Inject(Id = "VariableMovement")] List<ValueTuple<string, Type>> providers
+        )
         {
             _siraLog = siraLog;
             _providers = providers;
@@ -29,7 +30,9 @@ namespace EditorEX.Essentials.Movement
 
             if (pickedProvider == null)
             {
-                _siraLog.Error($"Something has gone horribly wrong! No Variable Movement Provider could be found for the present conditions. Mode {mode}");
+                _siraLog.Error(
+                    $"Something has gone horribly wrong! No Variable Movement Provider could be found for the present conditions. Mode {mode}"
+                );
             }
 
             return pickedProvider;

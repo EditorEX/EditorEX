@@ -9,10 +9,14 @@ namespace EditorEX.Essentials.Features.ViewMode
     {
         private readonly SingleDisposable _singleDisposable = new();
 
-        private ViewModeInputBinder(SignalBus signalBus, InputActionsStreamContainer inputActionsStreamContainer)
+        private ViewModeInputBinder(
+            SignalBus signalBus,
+            InputActionsStreamContainer inputActionsStreamContainer
+        )
         {
             var streamForBindingGroup = inputActionsStreamContainer.GetStreamForBindingGroup(
-                InputRef.EssentialsGroup.GetKeyBindingGroupType());
+                InputRef.EssentialsGroup.GetKeyBindingGroupType()
+            );
 
             var compositeDisposable = new CompositeDisposable();
             _singleDisposable.disposable = compositeDisposable;
@@ -20,10 +24,16 @@ namespace EditorEX.Essentials.Features.ViewMode
             for (int i = 0; i < InputRef.ViewModeBindings.Count; i++)
             {
                 int index = i;
-                streamForBindingGroup.Subscribe(
-                    InputRef.ViewModeBindings[i].GetInputAction(),
-                    InputEventType.KeyDown,
-                    new Action(() => signalBus.Fire(new ViewModeSwitchedSignal(ViewModeRepository.GetViewModes()[index]))))
+                streamForBindingGroup
+                    .Subscribe(
+                        InputRef.ViewModeBindings[i].GetInputAction(),
+                        InputEventType.KeyDown,
+                        new Action(() =>
+                            signalBus.Fire(
+                                new ViewModeSwitchedSignal(ViewModeRepository.GetViewModes()[index])
+                            )
+                        )
+                    )
                     .AddTo(compositeDisposable);
             }
         }

@@ -1,10 +1,10 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
 using IPA.Utilities;
-using System;
-using System.Collections.Generic;
 
 // Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.ObjectData
@@ -13,7 +13,14 @@ namespace EditorEX.NoodleExtensions.ObjectData
     {
         internal string Link { get; }
 
-        internal EditorNoodleNoteData(NoteEditorData? noteData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
+        internal EditorNoodleNoteData(
+            NoteEditorData? noteData,
+            CustomData customData,
+            Dictionary<string, List<object>> pointDefinitions,
+            Dictionary<string, Track> beatmapTracks,
+            bool v2,
+            bool leftHanded
+        )
             : base(noteData, customData, pointDefinitions, beatmapTracks, v2, leftHanded)
         {
             try

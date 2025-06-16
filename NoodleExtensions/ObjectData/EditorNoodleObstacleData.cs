@@ -1,10 +1,10 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using Heck;
 using Heck.Animation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 // Based from https://github.com/Aeroluna/Heck
@@ -22,13 +22,23 @@ namespace EditorEX.NoodleExtensions.ObjectData
 
         internal bool InternalDoUnhide { get; set; }
 
-        internal EditorNoodleObstacleData(ObstacleEditorData? obstacleData, CustomData customData, Dictionary<string, List<object>> pointDefinitions, Dictionary<string, Track> beatmapTracks, bool v2, bool leftHanded)
+        internal EditorNoodleObstacleData(
+            ObstacleEditorData? obstacleData,
+            CustomData customData,
+            Dictionary<string, List<object>> pointDefinitions,
+            Dictionary<string, Track> beatmapTracks,
+            bool v2,
+            bool leftHanded
+        )
             : base(obstacleData, customData, pointDefinitions, beatmapTracks, v2, leftHanded)
         {
             try
             {
-                IEnumerable<float?> nullableFloats = customData.GetNullableFloats(v2 ? "_scale" : "size");
-                IEnumerable<float?> scale = (nullableFloats != null) ? nullableFloats.ToList() : null;
+                IEnumerable<float?> nullableFloats = customData.GetNullableFloats(
+                    v2 ? "_scale" : "size"
+                );
+                IEnumerable<float?> scale =
+                    (nullableFloats != null) ? nullableFloats.ToList() : null;
                 Width = (scale != null) ? scale.ElementAtOrDefault(0) : null;
                 Height = (scale != null) ? scale.ElementAtOrDefault(1) : null;
                 Length = (scale != null) ? scale.ElementAtOrDefault(2) : null;

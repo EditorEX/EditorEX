@@ -11,8 +11,7 @@ namespace EditorEX.UI.Patches.SDK
     {
         private readonly IInstantiator _instantiator;
 
-        private AddBeatmapListContextMenu(
-            IInstantiator instantiator)
+        private AddBeatmapListContextMenu(IInstantiator instantiator)
         {
             _instantiator = instantiator;
         }
@@ -21,10 +20,13 @@ namespace EditorEX.UI.Patches.SDK
         [AffinityPostfix]
         private void SetData(BeatmapsListTableCell __instance, BeatmapInfoData beatmapInfo)
         {
-            BeatmapListContextMenu contextMenu = __instance.gameObject.GetComponent<BeatmapListContextMenu>();
+            BeatmapListContextMenu contextMenu =
+                __instance.gameObject.GetComponent<BeatmapListContextMenu>();
             if (__instance.gameObject.GetComponent<BeatmapListContextMenu>() == null)
             {
-                contextMenu = _instantiator.InstantiateComponent<BeatmapListContextMenu>(__instance.gameObject);
+                contextMenu = _instantiator.InstantiateComponent<BeatmapListContextMenu>(
+                    __instance.gameObject
+                );
             }
             contextMenu.SetData(beatmapInfo);
         }
@@ -33,10 +35,13 @@ namespace EditorEX.UI.Patches.SDK
         [AffinityPostfix]
         private void SetData(RecentBeatmapView __instance, BeatmapInfoData beatmapInfoData)
         {
-            BeatmapListContextMenu contextMenu = __instance.gameObject.GetComponent<BeatmapListContextMenu>();
+            BeatmapListContextMenu contextMenu =
+                __instance.gameObject.GetComponent<BeatmapListContextMenu>();
             if (__instance.gameObject.GetComponent<BeatmapListContextMenu>() == null)
             {
-                contextMenu = _instantiator.InstantiateComponent<BeatmapListContextMenu>(__instance.gameObject);
+                contextMenu = _instantiator.InstantiateComponent<BeatmapListContextMenu>(
+                    __instance.gameObject
+                );
             }
             contextMenu.SetData(beatmapInfoData);
         }

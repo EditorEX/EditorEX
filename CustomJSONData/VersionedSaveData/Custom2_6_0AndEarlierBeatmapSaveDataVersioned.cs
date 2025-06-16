@@ -1,11 +1,11 @@
-﻿using BeatmapSaveDataVersion2_6_0AndEarlier;
-using EditorEX.CustomJSONData.CustomEvents;
-using CustomJSONData.CustomBeatmap;
+﻿using System;
 using System.Collections.Generic;
-using BeatmapSaveDataCommon;
-using System;
-using V2 = BeatmapSaveDataVersion2_6_0AndEarlier;
 using System.Linq;
+using BeatmapSaveDataCommon;
+using BeatmapSaveDataVersion2_6_0AndEarlier;
+using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData.CustomEvents;
+using V2 = BeatmapSaveDataVersion2_6_0AndEarlier;
 
 namespace EditorEX.CustomJSONData.VersionedSaveData
 {
@@ -20,7 +20,16 @@ namespace EditorEX.CustomJSONData.VersionedSaveData
         public SpecialEventKeywordFiltersData _specialEventsKeywordFilters { get; }
         public CustomData _customData { get; }
 
-        public Custom2_6_0AndEarlierBeatmapSaveDataVersioned(string version, List<EventData> events, List<V2.NoteData> notes, List<V2.SliderData> sliders, List<V2.WaypointData> waypoints, List<CustomObstacleDataSerialized> obstacles, SpecialEventKeywordFiltersData specialEventsKeywordFilters, CustomData customData)
+        public Custom2_6_0AndEarlierBeatmapSaveDataVersioned(
+            string version,
+            List<EventData> events,
+            List<V2.NoteData> notes,
+            List<V2.SliderData> sliders,
+            List<V2.WaypointData> waypoints,
+            List<CustomObstacleDataSerialized> obstacles,
+            SpecialEventKeywordFiltersData specialEventsKeywordFilters,
+            CustomData customData
+        )
         {
             _version = version;
             _events = events;
@@ -50,7 +59,9 @@ namespace EditorEX.CustomJSONData.VersionedSaveData
 
         public class CustomObstacleDataSerialized : IBeat
         {
-            internal CustomObstacleDataSerialized(Version2_6_0AndEarlierCustomBeatmapSaveData.ObstacleSaveData customEventData)
+            internal CustomObstacleDataSerialized(
+                Version2_6_0AndEarlierCustomBeatmapSaveData.ObstacleSaveData customEventData
+            )
             {
                 _time = customEventData.time;
                 _lineIndex = customEventData.lineIndex;
@@ -78,7 +89,6 @@ namespace EditorEX.CustomJSONData.VersionedSaveData
             {
                 return beat.CompareTo(other.beat);
             }
-
         }
     }
 }

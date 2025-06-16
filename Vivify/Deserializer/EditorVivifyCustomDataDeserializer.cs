@@ -1,4 +1,6 @@
-﻿using BeatmapEditor3D.DataModels;
+﻿using System;
+using System.Collections.Generic;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
@@ -6,15 +8,16 @@ using EditorEX.Heck.Deserialize;
 using Heck.Animation;
 using Heck.Deserialize;
 using SiraUtil.Logging;
-using System;
-using System.Collections.Generic;
 using Vivify;
 using static Vivify.VivifyController;
 
 // Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Vivify.Deserializer
 {
-    internal class EditorVivifyCustomDataDeserializer : IEditorEarlyDeserializer, IEditorObjectsDeserializer, IEditorCustomEventsDeserializer
+    internal class EditorVivifyCustomDataDeserializer
+        : IEditorEarlyDeserializer,
+            IEditorObjectsDeserializer,
+            IEditorCustomEventsDeserializer
     {
         private readonly SiraLog _siraLog;
         private readonly BeatmapObjectsDataModel _beatmapObjectsDataModel;
@@ -27,7 +30,8 @@ namespace EditorEX.Vivify.Deserializer
             BeatmapObjectsDataModel beatmapObjectsDataModel,
             Dictionary<string, Track> beatmapTracks,
             Dictionary<string, List<object>> pointDefinitions,
-            TrackBuilder trackBuilder)
+            TrackBuilder trackBuilder
+        )
         {
             _siraLog = siraLog;
             _beatmapObjectsDataModel = beatmapObjectsDataModel;
@@ -38,14 +42,20 @@ namespace EditorEX.Vivify.Deserializer
 
         public void DeserializeEarly()
         {
-            foreach (CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents())
+            foreach (
+                CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents()
+            )
             {
                 try
                 {
                     switch (customEventData.eventType)
                     {
                         case INSTANTIATE_PREFAB:
-                            _trackBuilder.AddFromCustomData(customEventData.customData, false, false);
+                            _trackBuilder.AddFromCustomData(
+                                customEventData.customData,
+                                false,
+                                false
+                            );
                             break;
 
                         default:
@@ -62,7 +72,9 @@ namespace EditorEX.Vivify.Deserializer
         public Dictionary<CustomEventEditorData, ICustomEventCustomData> DeserializeCustomEvents()
         {
             var dictionary = new Dictionary<CustomEventEditorData, ICustomEventCustomData>();
-            foreach (CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents())
+            foreach (
+                CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents()
+            )
             {
                 try
                 {
@@ -70,11 +82,17 @@ namespace EditorEX.Vivify.Deserializer
                     switch (customEventData.eventType)
                     {
                         case APPLY_POST_PROCESSING:
-                            dictionary.Add(customEventData, new ApplyPostProcessingData(data, _pointDefinitions));
+                            dictionary.Add(
+                                customEventData,
+                                new ApplyPostProcessingData(data, _pointDefinitions)
+                            );
                             break;
 
                         case ASSIGN_OBJECT_PREFAB:
-                            dictionary.Add(customEventData, new AssignObjectPrefabData(data, _tracks));
+                            dictionary.Add(
+                                customEventData,
+                                new AssignObjectPrefabData(data, _tracks)
+                            );
                             break;
 
                         case DECLARE_CULLING_TEXTURE:
@@ -90,27 +108,45 @@ namespace EditorEX.Vivify.Deserializer
                             break;
 
                         case INSTANTIATE_PREFAB:
-                            dictionary.Add(customEventData, new InstantiatePrefabData(data, _tracks));
+                            dictionary.Add(
+                                customEventData,
+                                new InstantiatePrefabData(data, _tracks)
+                            );
                             break;
 
                         case SET_MATERIAL_PROPERTY:
-                            dictionary.Add(customEventData, new SetMaterialPropertyData(data, _pointDefinitions));
+                            dictionary.Add(
+                                customEventData,
+                                new SetMaterialPropertyData(data, _pointDefinitions)
+                            );
                             break;
 
                         case SET_GLOBAL_PROPERTY:
-                            dictionary.Add(customEventData, new SetGlobalPropertyData(data, _pointDefinitions));
+                            dictionary.Add(
+                                customEventData,
+                                new SetGlobalPropertyData(data, _pointDefinitions)
+                            );
                             break;
 
                         case SET_CAMERA_PROPERTY:
-                            dictionary.Add(customEventData, new SetCameraPropertyData(data, _tracks));
+                            dictionary.Add(
+                                customEventData,
+                                new SetCameraPropertyData(data, _tracks)
+                            );
                             break;
 
                         case SET_ANIMATOR_PROPERTY:
-                            dictionary.Add(customEventData, new SetAnimatorPropertyData(data, _pointDefinitions));
+                            dictionary.Add(
+                                customEventData,
+                                new SetAnimatorPropertyData(data, _pointDefinitions)
+                            );
                             break;
 
                         case SET_RENDERING_SETTINGS:
-                            dictionary.Add(customEventData, new SetRenderingSettingsData(data, _pointDefinitions));
+                            dictionary.Add(
+                                customEventData,
+                                new SetRenderingSettingsData(data, _pointDefinitions)
+                            );
                             break;
 
                         default:
@@ -130,9 +166,12 @@ namespace EditorEX.Vivify.Deserializer
         {
             var dictionary = new Dictionary<BaseEditorData?, IObjectCustomData>();
 
-            foreach (BaseBeatmapObjectEditorData beatmapObjectData in _beatmapObjectsDataModel.allBeatmapObjects)
+            foreach (
+                BaseBeatmapObjectEditorData beatmapObjectData in _beatmapObjectsDataModel.allBeatmapObjects
+            )
             {
-                if (dictionary.ContainsKey(beatmapObjectData)) continue;
+                if (dictionary.ContainsKey(beatmapObjectData))
+                    continue;
                 try
                 {
                     CustomData customData = CustomDataRepository.GetCustomData(beatmapObjectData);

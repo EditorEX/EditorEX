@@ -7,13 +7,8 @@ namespace EditorEX.MapData.Contexts
     {
         public static Version Version { get; set; }
 
-        public static void Reset()
-        {
-
-        }
+        public static void Reset() { }
     }
 
-    public class EditorEXtraSongData
-    {
-    }
+    public class EditorEXtraSongData { }
 }

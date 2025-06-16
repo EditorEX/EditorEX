@@ -29,6 +29,22 @@
     <DisableZipRelease>True</DisableZipRelease>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="mscorlib">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\mscorlib.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="netstandard">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\netstandard.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\System.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\System.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(GameDirectory)\Libs\0Harmony.dll</HintPath>
       <Private>False</Private>
@@ -314,15 +330,13 @@
     <EmbeddedResource Include="UI\Resources\circle.png" />
     <EmbeddedResource Include="UI\Resources\lockcamera.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Util\BeatmapLevelDataModelSaverV2.cs" />
-    <Compile Remove="Util\BeatmapLevelDataModelSaverV3.cs" />
-    <Compile Remove="CustomJSONData\Patches\BeatmapLevelDataModelVersionedLoaderV2.cs" />
-    <Compile Remove="CustomJSONData\Patches\BeatmapLevelDataModelVersionedLoaderV3.cs" />
-    <Compile Remove="CustomJSONData\Patches\BeatmapProjectManagerV2Support.cs" />
-  </ItemGroup>
   <Target Name="Launch Game">
     <Message Text="Running $(GameDirectory)" Importance="high" />
-    <Exec WorkingDirectory="$(GameDirectory)" Command="BS.exe.lnk --verbose editor" StandardOutputImportance="low" StandardErrorImportance="low" />
+    <Exec
+      WorkingDirectory="$(GameDirectory)"
+      Command="BS.exe.lnk --verbose editor"
+      StandardOutputImportance="low"
+      StandardErrorImportance="low"
+    />
   </Target>
 </Project>

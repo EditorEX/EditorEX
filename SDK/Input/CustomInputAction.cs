@@ -15,7 +15,9 @@ namespace EditorEX.SDK.Input
         {
             if (ActionIndex != -1)
             {
-                throw new InvalidOperationException($"Action {Name} has already been assigned an index of {ActionIndex}.");
+                throw new InvalidOperationException(
+                    $"Action {Name} has already been assigned an index of {ActionIndex}."
+                );
             }
             ActionIndex = index;
         }

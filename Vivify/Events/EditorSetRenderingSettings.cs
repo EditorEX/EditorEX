@@ -39,168 +39,211 @@ namespace EditorEX.Vivify.Events
             {
                 nameof(RenderSettings.ambientEquatorColor),
                 new StructSettingHandler<RenderSettings, Vector4, Color>(
-                    new RenderColorCapturedSetting(nameof(RenderSettings.ambientEquatorColor)))
+                    new RenderColorCapturedSetting(nameof(RenderSettings.ambientEquatorColor))
+                )
             },
             {
                 nameof(RenderSettings.ambientGroundColor),
                 new StructSettingHandler<RenderSettings, Vector4, Color>(
-                    new RenderColorCapturedSetting(nameof(RenderSettings.ambientGroundColor)))
+                    new RenderColorCapturedSetting(nameof(RenderSettings.ambientGroundColor))
+                )
             },
             {
                 nameof(RenderSettings.ambientIntensity),
                 new StructSettingHandler<RenderSettings, float, float>(
-                    new RenderFloatCapturedSetting(nameof(RenderSettings.ambientIntensity)))
+                    new RenderFloatCapturedSetting(nameof(RenderSettings.ambientIntensity))
+                )
             },
             {
                 nameof(RenderSettings.ambientLight),
                 new StructSettingHandler<RenderSettings, Vector4, Color>(
-                    new RenderColorCapturedSetting(nameof(RenderSettings.ambientLight)))
+                    new RenderColorCapturedSetting(nameof(RenderSettings.ambientLight))
+                )
             },
             {
                 nameof(RenderSettings.ambientMode),
                 new StructSettingHandler<RenderSettings, float, AmbientMode>(
-                    new RenderEnumCapturedSetting<AmbientMode>(nameof(RenderSettings.ambientMode)))
+                    new RenderEnumCapturedSetting<AmbientMode>(nameof(RenderSettings.ambientMode))
+                )
             },
             {
                 nameof(RenderSettings.ambientSkyColor),
                 new StructSettingHandler<RenderSettings, Vector4, Color>(
-                    new RenderColorCapturedSetting(nameof(RenderSettings.ambientSkyColor)))
+                    new RenderColorCapturedSetting(nameof(RenderSettings.ambientSkyColor))
+                )
             },
             {
                 nameof(RenderSettings.defaultReflectionMode),
                 new StructSettingHandler<RenderSettings, float, DefaultReflectionMode>(
-                    new RenderEnumCapturedSetting<DefaultReflectionMode>(nameof(RenderSettings.defaultReflectionMode)))
+                    new RenderEnumCapturedSetting<DefaultReflectionMode>(
+                        nameof(RenderSettings.defaultReflectionMode)
+                    )
+                )
             },
             {
                 nameof(RenderSettings.defaultReflectionResolution),
                 new StructSettingHandler<RenderSettings, float, int>(
-                    new RenderIntCapturedSetting(nameof(RenderSettings.defaultReflectionResolution)))
+                    new RenderIntCapturedSetting(nameof(RenderSettings.defaultReflectionResolution))
+                )
             },
             {
                 nameof(RenderSettings.flareFadeSpeed),
                 new StructSettingHandler<RenderSettings, float, float>(
-                    new RenderFloatCapturedSetting(nameof(RenderSettings.flareFadeSpeed)))
+                    new RenderFloatCapturedSetting(nameof(RenderSettings.flareFadeSpeed))
+                )
             },
             {
                 nameof(RenderSettings.flareStrength),
                 new StructSettingHandler<RenderSettings, float, float>(
-                    new RenderFloatCapturedSetting(nameof(RenderSettings.flareStrength)))
+                    new RenderFloatCapturedSetting(nameof(RenderSettings.flareStrength))
+                )
             },
             {
                 nameof(RenderSettings.fog),
                 new StructSettingHandler<RenderSettings, float, bool>(
-                    new RenderBoolCapturedSetting(nameof(RenderSettings.fog)))
+                    new RenderBoolCapturedSetting(nameof(RenderSettings.fog))
+                )
             },
             {
                 nameof(RenderSettings.fogColor),
                 new StructSettingHandler<RenderSettings, Vector4, Color>(
-                    new RenderColorCapturedSetting(nameof(RenderSettings.fogColor)))
+                    new RenderColorCapturedSetting(nameof(RenderSettings.fogColor))
+                )
             },
             {
                 nameof(RenderSettings.fogDensity),
                 new StructSettingHandler<RenderSettings, float, float>(
-                    new RenderFloatCapturedSetting(nameof(RenderSettings.fogDensity)))
+                    new RenderFloatCapturedSetting(nameof(RenderSettings.fogDensity))
+                )
             },
             {
                 nameof(RenderSettings.fogEndDistance),
                 new StructSettingHandler<RenderSettings, float, float>(
-                    new RenderFloatCapturedSetting(nameof(RenderSettings.fogEndDistance)))
+                    new RenderFloatCapturedSetting(nameof(RenderSettings.fogEndDistance))
+                )
             },
             {
                 nameof(RenderSettings.fogMode),
                 new StructSettingHandler<RenderSettings, float, FogMode>(
-                    new RenderEnumCapturedSetting<FogMode>(nameof(RenderSettings.fogMode)))
+                    new RenderEnumCapturedSetting<FogMode>(nameof(RenderSettings.fogMode))
+                )
             },
             {
                 nameof(RenderSettings.fogStartDistance),
                 new StructSettingHandler<RenderSettings, float, float>(
-                    new RenderFloatCapturedSetting(nameof(RenderSettings.fogStartDistance)))
+                    new RenderFloatCapturedSetting(nameof(RenderSettings.fogStartDistance))
+                )
             },
             {
                 nameof(RenderSettings.haloStrength),
                 new StructSettingHandler<RenderSettings, float, float>(
-                    new RenderFloatCapturedSetting(nameof(RenderSettings.haloStrength)))
+                    new RenderFloatCapturedSetting(nameof(RenderSettings.haloStrength))
+                )
             },
             {
                 nameof(RenderSettings.reflectionBounces),
                 new StructSettingHandler<RenderSettings, float, int>(
-                    new RenderIntCapturedSetting(nameof(RenderSettings.reflectionBounces)))
+                    new RenderIntCapturedSetting(nameof(RenderSettings.reflectionBounces))
+                )
             },
             {
                 nameof(RenderSettings.reflectionIntensity),
                 new StructSettingHandler<RenderSettings, float, float>(
-                    new RenderFloatCapturedSetting(nameof(RenderSettings.reflectionIntensity)))
+                    new RenderFloatCapturedSetting(nameof(RenderSettings.reflectionIntensity))
+                )
             },
             {
                 nameof(RenderSettings.subtractiveShadowColor),
                 new StructSettingHandler<RenderSettings, Vector4, Color>(
-                    new RenderColorCapturedSetting(nameof(RenderSettings.subtractiveShadowColor)))
+                    new RenderColorCapturedSetting(nameof(RenderSettings.subtractiveShadowColor))
+                )
             },
             {
                 nameof(QualitySettings.anisotropicFiltering),
                 new StructSettingHandler<QualitySettings, float, AnisotropicFiltering>(
-                    new QualityEnumCapturedSetting<AnisotropicFiltering>(nameof(QualitySettings.anisotropicFiltering)))
+                    new QualityEnumCapturedSetting<AnisotropicFiltering>(
+                        nameof(QualitySettings.anisotropicFiltering)
+                    )
+                )
             },
             {
                 nameof(QualitySettings.antiAliasing),
                 new StructSettingHandler<QualitySettings, float, int>(
-                    new QualityIntCapturedSetting(nameof(QualitySettings.antiAliasing)))
+                    new QualityIntCapturedSetting(nameof(QualitySettings.antiAliasing))
+                )
             },
             {
                 nameof(QualitySettings.pixelLightCount),
                 new StructSettingHandler<QualitySettings, float, int>(
-                    new QualityIntCapturedSetting(nameof(QualitySettings.pixelLightCount)))
+                    new QualityIntCapturedSetting(nameof(QualitySettings.pixelLightCount))
+                )
             },
             {
                 nameof(QualitySettings.realtimeReflectionProbes),
                 new StructSettingHandler<QualitySettings, float, bool>(
-                    new QualityBoolCapturedSetting(nameof(QualitySettings.realtimeReflectionProbes)))
+                    new QualityBoolCapturedSetting(nameof(QualitySettings.realtimeReflectionProbes))
+                )
             },
             {
                 nameof(QualitySettings.shadowCascades),
                 new StructSettingHandler<QualitySettings, float, int>(
-                    new QualityIntCapturedSetting(nameof(QualitySettings.shadowCascades)))
+                    new QualityIntCapturedSetting(nameof(QualitySettings.shadowCascades))
+                )
             },
             {
                 nameof(QualitySettings.shadowDistance),
                 new StructSettingHandler<QualitySettings, float, float>(
-                    new QualityFloatCapturedSetting(nameof(QualitySettings.shadowDistance)))
+                    new QualityFloatCapturedSetting(nameof(QualitySettings.shadowDistance))
+                )
             },
             {
                 nameof(QualitySettings.shadowmaskMode),
                 new StructSettingHandler<QualitySettings, float, ShadowmaskMode>(
-                    new QualityEnumCapturedSetting<ShadowmaskMode>(nameof(QualitySettings.shadowmaskMode)))
+                    new QualityEnumCapturedSetting<ShadowmaskMode>(
+                        nameof(QualitySettings.shadowmaskMode)
+                    )
+                )
             },
             {
                 nameof(QualitySettings.shadowNearPlaneOffset),
                 new StructSettingHandler<QualitySettings, float, float>(
-                    new QualityFloatCapturedSetting(nameof(QualitySettings.shadowNearPlaneOffset)))
+                    new QualityFloatCapturedSetting(nameof(QualitySettings.shadowNearPlaneOffset))
+                )
             },
             {
                 nameof(QualitySettings.shadowProjection),
                 new StructSettingHandler<QualitySettings, float, ShadowProjection>(
-                    new QualityEnumCapturedSetting<ShadowProjection>(nameof(QualitySettings.shadowProjection)))
+                    new QualityEnumCapturedSetting<ShadowProjection>(
+                        nameof(QualitySettings.shadowProjection)
+                    )
+                )
             },
             {
                 nameof(QualitySettings.shadowResolution),
                 new StructSettingHandler<QualitySettings, float, ShadowResolution>(
-                    new QualityEnumCapturedSetting<ShadowResolution>(nameof(QualitySettings.shadowResolution)))
+                    new QualityEnumCapturedSetting<ShadowResolution>(
+                        nameof(QualitySettings.shadowResolution)
+                    )
+                )
             },
             {
                 nameof(QualitySettings.shadows),
                 new StructSettingHandler<QualitySettings, float, ShadowQuality>(
-                    new QualityEnumCapturedSetting<ShadowQuality>(nameof(QualitySettings.shadows)))
+                    new QualityEnumCapturedSetting<ShadowQuality>(nameof(QualitySettings.shadows))
+                )
             },
             {
                 nameof(QualitySettings.softParticles),
                 new StructSettingHandler<QualitySettings, float, bool>(
-                    new QualityBoolCapturedSetting(nameof(QualitySettings.softParticles)))
+                    new QualityBoolCapturedSetting(nameof(QualitySettings.softParticles))
+                )
             },
             {
                 nameof(XRSettings.useOcclusionMesh),
                 new StructSettingHandler<XRSettingsSetter, float, bool>(
-                    new BoolCapturedSetting<XRSettingsSetter>(nameof(XRSettings.useOcclusionMesh)))
-            }
+                    new BoolCapturedSetting<XRSettingsSetter>(nameof(XRSettings.useOcclusionMesh))
+                )
+            },
         };
 
         private EditorSetRenderingSettings(
@@ -211,7 +254,8 @@ namespace EditorEX.Vivify.Events
             CoroutineDummy coroutineDummy,
             EditorAssetBundleManager assetBundleManager,
             PrefabManager prefabManager,
-            PopulateBeatmap populateBeatmap)
+            PopulateBeatmap populateBeatmap
+        )
         {
             _log = log;
             _deserializedData = deserializedData;
@@ -222,21 +266,34 @@ namespace EditorEX.Vivify.Events
             _settings.Add(
                 "skybox",
                 new ClassSettingHandler<string, Material>(
-                    new EditorRenderMaterialCapturedSetting(nameof(RenderSettings.skybox), assetBundleManager)));
+                    new EditorRenderMaterialCapturedSetting(
+                        nameof(RenderSettings.skybox),
+                        assetBundleManager
+                    )
+                )
+            );
             _settings.Add(
                 "sun",
                 new ClassSettingHandler<string, Light>(
-                    new RenderLightCapturedSetting(nameof(RenderSettings.sun), prefabManager)));
+                    new RenderLightCapturedSetting(nameof(RenderSettings.sun), prefabManager)
+                )
+            );
         }
 
-        public class EditorRenderMaterialCapturedSetting : CapturedSettings<RenderSettings, Material>
+        public class EditorRenderMaterialCapturedSetting
+            : CapturedSettings<RenderSettings, Material>
         {
-            internal EditorRenderMaterialCapturedSetting(string property, EditorAssetBundleManager assetBundleManager)
+            internal EditorRenderMaterialCapturedSetting(
+                string property,
+                EditorAssetBundleManager assetBundleManager
+            )
                 : base(
                     property,
-                    obj => assetBundleManager.TryGetAsset((string)obj, out Material? material) ? material : null)
-            {
-            }
+                    obj =>
+                        assetBundleManager.TryGetAsset((string)obj, out Material? material)
+                            ? material
+                            : null
+                ) { }
         }
 
         private interface ISettingHandler
@@ -249,14 +306,20 @@ namespace EditorEX.Vivify.Events
                 bool noDuration,
                 float duration,
                 Functions easing,
-                float startTime);
+                float startTime
+            );
 
             public void Reset();
         }
 
         public void Callback(CustomEventData customEventData)
         {
-            if (!_deserializedData.Resolve(CustomDataRepository.GetCustomEventConversion(customEventData), out SetRenderingSettingsData? data))
+            if (
+                !_deserializedData.Resolve(
+                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    out SetRenderingSettingsData? data
+                )
+            )
             {
                 return;
             }
@@ -264,7 +327,12 @@ namespace EditorEX.Vivify.Events
             float duration = data.Duration;
             duration = (60f * duration) / _bpmController.currentBpm; // Convert to real time;
             List<RenderingSettingsProperty> properties = data.Properties;
-            SetRenderSettings(properties, duration, data.Easing, _audioDataModel.bpmData.BeatToSeconds(customEventData.time));
+            SetRenderSettings(
+                properties,
+                duration,
+                data.Easing,
+                _audioDataModel.bpmData.BeatToSeconds(customEventData.time)
+            );
         }
 
         public void Dispose()
@@ -287,7 +355,8 @@ namespace EditorEX.Vivify.Events
             List<RenderingSettingsProperty> properties,
             float duration,
             Functions easing,
-            float startTime)
+            float startTime
+        )
         {
             foreach (RenderingSettingsProperty property in properties)
             {
@@ -308,7 +377,8 @@ namespace EditorEX.Vivify.Events
             Action<object> set,
             float duration,
             float startTime,
-            Functions easing)
+            Functions easing
+        )
             where T : struct
         {
             while (true)
@@ -334,10 +404,13 @@ namespace EditorEX.Vivify.Events
             Action<object> set,
             float duration,
             float startTime,
-            Functions easing)
+            Functions easing
+        )
             where T : struct
         {
-            _coroutineDummy.StartCoroutine(AnimatePropertyCoroutine(points, set, duration, startTime, easing));
+            _coroutineDummy.StartCoroutine(
+                AnimatePropertyCoroutine(points, set, duration, startTime, easing)
+            );
         }
 
         private class StructSettingHandler<TSettings, THandled, TProperty> : ISettingHandler
@@ -362,7 +435,8 @@ namespace EditorEX.Vivify.Events
                 bool noDuration,
                 float duration,
                 Functions easing,
-                float startTime)
+                float startTime
+            )
             {
                 switch (property)
                 {
@@ -375,7 +449,8 @@ namespace EditorEX.Vivify.Events
                             _capturedSetting.Set,
                             duration,
                             startTime,
-                            easing);
+                            easing
+                        );
                         break;
                     case RenderingSettingsProperty<THandled> value:
                         _capturedSetting.Set(value.Value);
@@ -383,7 +458,9 @@ namespace EditorEX.Vivify.Events
                         break;
 
                     default:
-                        throw new InvalidOperationException($"Could not handle type [{property.GetType().FullName}].");
+                        throw new InvalidOperationException(
+                            $"Could not handle type [{property.GetType().FullName}]."
+                        );
                 }
             }
 
@@ -398,7 +475,9 @@ namespace EditorEX.Vivify.Events
         {
             private readonly CapturedSettings<RenderSettings, TProperty> _capturedSetting;
 
-            internal ClassSettingHandler(CapturedSettings<RenderSettings, TProperty> capturedSetting)
+            internal ClassSettingHandler(
+                CapturedSettings<RenderSettings, TProperty> capturedSetting
+            )
             {
                 _capturedSetting = capturedSetting;
             }
@@ -414,7 +493,8 @@ namespace EditorEX.Vivify.Events
                 bool noDuration,
                 float duration,
                 Functions easing,
-                float startTime)
+                float startTime
+            )
             {
                 switch (property)
                 {
@@ -424,7 +504,9 @@ namespace EditorEX.Vivify.Events
                         break;
 
                     default:
-                        throw new InvalidOperationException($"Could not handle type [{property.GetType().FullName}].");
+                        throw new InvalidOperationException(
+                            $"Could not handle type [{property.GetType().FullName}]."
+                        );
                 }
             }
 

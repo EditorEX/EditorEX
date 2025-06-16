@@ -1,5 +1,5 @@
-﻿using BeatmapEditor3D.DataModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using BeatmapEditor3D.DataModels;
 
 namespace EditorEX.Essentials.SpawnProcessing
 {
@@ -31,7 +31,8 @@ namespace EditorEX.Essentials.SpawnProcessing
             {
                 var spawnData = new EditorObjectSpawnData();
                 spawnData.flipLineIndex = (data as BaseBeatmapObjectEditorData).column;
-                spawnData.beforeJumpNoteLineLayer = (NoteLineLayer)(data as BaseBeatmapObjectEditorData).row;
+                spawnData.beforeJumpNoteLineLayer = (NoteLineLayer)
+                    (data as BaseBeatmapObjectEditorData).row;
                 _repoData.SpawnDataAssociation[data] = spawnData;
             }
             return _repoData.SpawnDataAssociation[data];
