@@ -1,4 +1,3 @@
-using System.Windows.Forms;
 using EditorEX.SDK.ReactiveComponents.Attachable;
 using EditorEX.SDK.ReactiveComponents.Table;
 using Reactive;
@@ -84,9 +83,6 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                             Children =
                             {
                                 new Table<DropdownOption, EditorDropdownCellWrapper>()
-                                {
-                                    ScrollbarScrollSize = -4,
-                                }
                                     .WithListener(x => x.SelectedIndexes, _ => CloseInternal())
                                     .AsFlexItem(flexGrow: 0.98f)
                                     .Bind(ref _table),
