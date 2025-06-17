@@ -11,7 +11,7 @@ namespace EditorEX.SDK.AddressableHelpers
 
         public UnityEngine.Object InternalValue
         {
-            get { return _value; }
+            get => _value;
             set
             {
                 if (value is T valueT)
@@ -31,6 +31,6 @@ namespace EditorEX.SDK.AddressableHelpers
             Key = key;
         }
 
-        private T _value;
+        private T? _value;
     }
 }

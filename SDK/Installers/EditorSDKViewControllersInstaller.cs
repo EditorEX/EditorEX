@@ -17,17 +17,13 @@ namespace EditorEX.SDK.Installers
             Container.BindInterfacesAndSelfTo<PrefabCollector>().AsSingle();
             Container.BindInterfacesAndSelfTo<ReactiveContainer>().AsSingle();
 
-            Container.BindInterfacesAndSelfTo<ScrollViewFactory>().AsSingle();
-            Container.BindInterfacesAndSelfTo<DropdownFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<TextFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ClickableTextFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ImageFactory>().AsSingle();
-            Container.BindInterfacesAndSelfTo<ClickableImageFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ButtonFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<IconButtonFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<StringInputFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ModalFactory>().AsSingle();
-            Container.BindInterfacesAndSelfTo<TextSegmentedControlFactory>().AsSingle();
 
             Container
                 .BindInterfacesAndSelfTo<ContextMenuComponent>()
