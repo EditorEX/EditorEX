@@ -1,14 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
+using System.Text;
 using BeatmapEditor3D.InputSystem;
+using BeatmapEditor3D.InputSystem.Utilities;
 using BeatmapEditor3D.Views;
-using EditorEX.SDK.Base;
-using EditorEX.SDK.Factories;
+using EditorEX.SDK.ReactiveComponents;
+using EditorEX.SDK.ReactiveComponents.Native;
+using EditorEX.SDK.ReactiveComponents.Table;
 using EditorEX.Util;
 using HarmonyLib;
-using HMUI;
+using Reactive;
+using Reactive.Components.Basic;
+using Reactive.Yoga;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
 using UnityEngine;
@@ -18,203 +22,188 @@ namespace EditorEX.UI.Patches
 {
     internal class BetterKeybindViewingPatches : IAffinity
     {
-        private static BetterKeybindViewingPatches? _instance;
-        private static Dictionary<InputActionBinding, KeyBindingView> _keyBindingViews =
-            new Dictionary<InputActionBinding, KeyBindingView>();
-        private static readonly MethodInfo _addDictionary = AccessTools.Method(
-            _keyBindingViews.GetType(),
-            "Add"
-        );
-        private static readonly FieldInfo _keyBindingViewField = AccessTools.Field(
-            typeof(BetterKeybindViewingPatches),
-            "_keyBindingViews"
-        );
-        private static readonly MethodInfo _redirect = AccessTools.Method(
-            typeof(BetterKeybindViewingPatches),
-            "Redirect"
-        );
-        private static readonly MethodInfo _redirectContentSize = AccessTools.Method(
-            typeof(BetterKeybindViewingPatches),
-            "RedirectContentSize"
-        );
-        private static readonly MethodInfo _createBindingGroupUI = AccessTools.Method(
-            typeof(KeybindsView),
-            "CreateBindingGroupUI"
-        );
+        private SiraLog _siraLog = null!;
+        private ReactiveContainer _reactiveContainer = null!;
 
-        private SiraLog _siraLog;
-        private ButtonFactory _buttonFactory;
-        private ScrollViewFactory _scrollViewFactory;
-        private StringInputFactory _stringInputFactory;
-        private ImageFactory _imageFactory;
-        private ScrollView? _scrollView;
-        private RectTransform? _buttonParent;
-        private Transform? _container;
-        private List<Transform> _groupTabs = new List<Transform>();
+        private Dictionary<InputActionBinding, KeyBindingView> _keyBindingViews =
+            new Dictionary<InputActionBinding, KeyBindingView>();
+        private Layout? _buttonContent;
+        private Layout? _bindingsContainer;
         private ReversibleDictionary<BindingGroup, GameObject> _groupButtons =
             new ReversibleDictionary<BindingGroup, GameObject>();
-        private int _selectedGroupIndex = 0;
+        private ObservableValue<int> _selectedGroupIndex = ValueUtils.Remember(0);
 
-        private BetterKeybindViewingPatches(
-            SiraLog siraLog,
-            ButtonFactory buttonFactory,
-            ScrollViewFactory scrollViewFactory,
-            StringInputFactory stringInputFactory,
-            ImageFactory imageFactory
+        private BetterKeybindViewingPatches(SiraLog siraLog, ReactiveContainer reactiveContainer)
+        {
+            _siraLog = siraLog;
+            _reactiveContainer = reactiveContainer;
+        }
+
+        private static StringBuilder _keybindStringBuilder = new();
+
+        private (string, string) GetKeybindString(
+            InputActionBinding inputActionBinding,
+            InputKey activatorKeyBind
         )
         {
-            _instance = this;
-            _siraLog = siraLog;
-            _buttonFactory = buttonFactory;
-            _scrollViewFactory = scrollViewFactory;
-            _stringInputFactory = stringInputFactory;
-            _imageFactory = imageFactory;
-        }
-
-        Transform NewGroupTab(KeybindsView keybindsView, BindingGroup bindingGroup)
-        {
-            if (_buttonParent == null || _container == null)
+            _keybindStringBuilder.Clear();
+            if (activatorKeyBind != InputKey.none)
             {
-                _siraLog.Error("BetterKeybindViewingPatches: ButtonParent or Container is null.");
-                return keybindsView._contentTransform;
+                _keybindStringBuilder.Append(activatorKeyBind.DisplayName() + " + ");
             }
-            _scrollView = _scrollViewFactory.Create(_container, new LayoutData());
-            _groupTabs.Add(_scrollView.transform);
-            if (_groupTabs.Count != 1)
+            for (int i = 0; i < inputActionBinding.keysCombination.Count; i++)
             {
-                _scrollView.gameObject.SetActive(false);
-            }
-            int index = _groupTabs.Count - 1;
-            var button = _buttonFactory.Create(
-                _buttonParent,
-                bindingGroup.type.DisplayName(),
-                () =>
+                _keybindStringBuilder.Append(inputActionBinding.keysCombination[i].DisplayName());
+                if (i < inputActionBinding.keysCombination.Count - 1)
                 {
-                    _selectedGroupIndex = index;
-                    for (int i = 0; i < _groupTabs.Count; i++)
-                    {
-                        _groupTabs[i].gameObject.SetActive(i == index);
-                    }
+                    _keybindStringBuilder.Append(" + ");
                 }
+            }
+            string text = inputActionBinding.inputAction.DisplayName();
+            if (inputActionBinding.strictCombination)
+            {
+                text += "*";
+            }
+            return (text, _keybindStringBuilder.ToString());
+        }
+
+        private void CreateBindingUI(
+            Layout group,
+            InputActionBinding inputActionBinding,
+            InputKey activatorKeyBind
+        )
+        {
+            var (text, keybindString) = GetKeybindString(inputActionBinding, activatorKeyBind);
+            group.Children.Add(
+                new EditorLabel
+                {
+                    Text = keybindString,
+                    FontSize = 17f,
+                    Alignment = TMPro.TextAlignmentOptions.Right,
+                }
+                    .InEditorNamedRail(text, 17f)
+                    .AsFlexItem()
             );
-            _groupButtons.Add(bindingGroup, button.gameObject);
-            //_imageFactory.Create(button.transform, "EditorEX.UI.Resources.circle.png", new LayoutData(new Vector2(15f, 15f), new Vector2(-15f, -20.26f)));
-            keybindsView._contentTransform = _scrollView.contentTransform;
-            _scrollView.contentTransform.GetComponent<VerticalLayoutGroup>().spacing = 50f;
-            return _scrollView.contentTransform;
         }
 
-        private static Transform Redirect(KeybindsView keybindsView, BindingGroup bindingGroup)
+        private void CreateBindingGroupUI(
+            BindingGroup bindingGroup,
+            Dictionary<InputAction, InputKey> commandToKeybind,
+            int index
+        )
         {
-            return _instance?.NewGroupTab(keybindsView, bindingGroup)
-                ?? keybindsView._contentTransform;
-        }
+            _bindingsContainer!.Children.Add(
+                new ScrollArea
+                {
+                    ScrollContent = new Layout
+                    {
+                        Children =
+                        {
+                            new EditorHeaderLabel
+                            {
+                                Text = bindingGroup.type.DisplayName(),
+                            }.AsFlexItem(margin: new YogaFrame(0f, 10f, 0f, 0f)),
+                        },
+                    }
+                        .Export(out var groupLayout)
+                        .AsFlexItem(size: "auto")
+                        .AsFlexGroup(FlexDirection.Column, gap: 20f),
+                }
+                    .AsFlexItem(size: new YogaVector("auto", 100.pct()))
+                    .EnabledWithObservable(_selectedGroupIndex, index)
+            );
 
-        private void RefreshContentSize()
-        {
-            _groupTabs.Last().gameObject.GetComponent<ScrollView>().UpdateContentSize();
-        }
+            foreach (var inputActionBinding in bindingGroup.bindings)
+            {
+                CreateBindingUI(
+                    groupLayout,
+                    inputActionBinding,
+                    commandToKeybind[bindingGroup.activator]
+                );
+            }
 
-        private static void RedirectContentSize()
-        {
-            _instance?.RefreshContentSize();
+            _buttonContent!.Children.Add(
+                new EditorLabelButton
+                {
+                    Text = bindingGroup.type.DisplayName(),
+                    FontSize = 18f,
+                    OnClick = () =>
+                    {
+                        _selectedGroupIndex.Value = index;
+                    },
+                }.AsFlexItem(size: new YogaVector { x = "auto", y = 40f })
+            );
         }
 
         [AffinityPatch(typeof(KeybindsView), nameof(KeybindsView.InitIfNeeded))]
         [AffinityPrefix]
-        private void UIPatch(KeybindsView __instance)
+        private bool InitIfNeeded(KeybindsView __instance)
         {
-            if (__instance._initialized)
+            Object.Destroy(__instance.transform.GetChild(0).gameObject);
+
+            new Layout
             {
-                return;
-            }
-            _container = __instance.transform.GetChild(0);
-            Object.Destroy(_container.GetChild(0).gameObject);
-
-            _buttonParent = _scrollViewFactory
-                .Create(_container, new LayoutData(new Vector2(-900f, 0f), new Vector2(1000f, 0f)))
-                .contentTransform;
-
-            var verticalLayoutGroup = _buttonParent.GetComponent<VerticalLayoutGroup>();
-            verticalLayoutGroup.childForceExpandWidth = false;
-            verticalLayoutGroup.childAlignment = TextAnchor.MiddleRight;
-            verticalLayoutGroup.spacing = 10f;
-        }
-
-        [AffinityPatch(typeof(KeybindsView), nameof(KeybindsView.InitIfNeeded))]
-        [AffinityPostfix]
-        private void UIPatchPost(KeybindsView __instance)
-        {
-            _scrollView?.UpdateContentSize();
-
-            var searchInput = _stringInputFactory.Create(
-                __instance.transform,
-                "Search",
-                300f,
-                x =>
+                Children =
                 {
-                    var results = SearchKeybindings(x);
-                    UpdateUIForSearchResults(results);
-                }
-            );
-            searchInput.transform.parent.localPosition = new Vector3(-890f, 495f, 0f);
-        }
+                    new Layout
+                    {
+                        Children =
+                        {
+                            new EditorStringInput { }
+                                .InEditorNamedRail("Search", 18f)
+                                .AsFlexItem(),
+                        },
+                    }
+                        .AsFlexItem(flex: 3, size: new YogaVector("auto", 100.pct()))
+                        .AsFlexGroup(FlexDirection.Column, gap: 40f)
+                        .Bind(ref _bindingsContainer),
+                    new Layout
+                    {
+                        Children =
+                        {
+                            new ScrollArea()
+                            {
+                                ScrollContent = new Layout { }
+                                    .Bind(ref _buttonContent)
+                                    .AsFlexItem()
+                                    .AsFlexGroup(FlexDirection.Column, gap: 10f),
+                            }
+                                .Export(out var _buttonScrollArea)
+                                .AsFlexItem(size: 100f.pct()),
+                            new EditorScrollbar()
+                                .AsFlexItem(
+                                    size: new() { x = 7f, y = 100.pct() },
+                                    position: new() { right = 2f }
+                                )
+                                .With(x => _buttonScrollArea!.Scrollbar = x),
+                        },
+                    }
+                        .AsFlexItem(flex: 1)
+                        .AsFlexGroup(FlexDirection.Row),
+                },
+            }
+                .WithReactiveContainer(_reactiveContainer)
+                .AsFlexItem(size: new YogaVector(1700f, 1000))
+                .AsFlexGroup(FlexDirection.Row, gap: 600f)
+                .Use(__instance.transform);
 
-        [AffinityPatch(typeof(KeybindsView), nameof(KeybindsView.CreateBindingGroupUI))]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerGroup(
-            IEnumerable<CodeInstruction> instructions
-        )
-        {
-            var result = new CodeMatcher(instructions)
-                .Advance(2)
-                .MatchForward(false, new CodeMatch(OpCodes.Ldarg_0), new CodeMatch(OpCodes.Ldfld))
-                .RemoveInstructions(2)
-                .Insert(
-                    new CodeInstruction(OpCodes.Ldarg_0),
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Call, _redirect)
-                )
-                .InstructionEnumeration();
+            var keybindings = KeyBindings.GetDefault();
+            Dictionary<InputAction, InputKey> dictionary = new Dictionary<InputAction, InputKey>();
+            dictionary[InputAction.None] = InputKey.none;
+            foreach (
+                InputActionBinding inputActionBinding in keybindings.activatorsBindingGroup.bindings
+            )
+            {
+                dictionary[inputActionBinding.inputAction] = inputActionBinding.keysCombination[0];
+            }
 
-            return result;
-        }
-
-        [AffinityPatch(typeof(KeybindsView), nameof(KeybindsView.CreateBindingUI))]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerBinding(
-            IEnumerable<CodeInstruction> instructions
-        )
-        {
-            var result = new CodeMatcher(instructions)
-                .End()
-                .Insert(
-                    new CodeInstruction(OpCodes.Ldsfld, _keyBindingViewField),
-                    new CodeInstruction(OpCodes.Ldarg_1),
-                    new CodeInstruction(OpCodes.Ldloc_0),
-                    new CodeInstruction(OpCodes.Callvirt, _addDictionary)
-                )
-                .InstructionEnumeration();
-
-            return result;
-        }
-
-        [AffinityPatch(typeof(KeybindsView), nameof(KeybindsView.InitIfNeeded))]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerGroupRefresh(
-            IEnumerable<CodeInstruction> instructions
-        )
-        {
-            var result = new CodeMatcher(instructions)
-                .End()
-                .Advance(-3)
-                .RemoveInstructions(3)
-                .MatchEndBackwards(new CodeMatch(OpCodes.Call, _createBindingGroupUI))
-                .Advance(1)
-                .Insert(new CodeInstruction(OpCodes.Call, _redirectContentSize))
-                .InstructionEnumeration();
-
-            return result;
+            CreateBindingGroupUI(keybindings.activatorsBindingGroup, dictionary, 0);
+            for (int i = 0; i < keybindings.extendedBindingGroups.Length; i++)
+            {
+                var bindingGroup = keybindings.extendedBindingGroups[i];
+                CreateBindingGroupUI(bindingGroup, dictionary, i + 1);
+            }
+            return false;
         }
 
         private void UpdateUIForSearchResults(SearchResult? result)
@@ -317,7 +306,6 @@ namespace EditorEX.UI.Patches
                 };
                 searchResult.groupResults.Add(groupResult);
             }
-            _scrollView?.UpdateContentSize();
             return searchResult;
         }
 
