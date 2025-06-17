@@ -1,6 +1,9 @@
 ﻿using CustomJSONData.CustomBeatmap;
 using Newtonsoft.Json;
 
+#pragma warning disable CS0414
+#pragma warning disable IDE0052
+
 namespace EditorEX.MapData.SerializedSaveData
 {
     public class SerializedCustomLevelInfoSaveData

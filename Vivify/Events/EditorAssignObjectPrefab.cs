@@ -107,7 +107,7 @@ namespace EditorEX.Vivify.Events
                 return;
             }
 
-            foreach ((string? key, AssignObjectPrefabData.IPrefabInfo value) in data.Assets)
+            foreach ((string? key, AssignObjectPrefabData.IPrefabInfo value) in data!.Assets)
             {
                 switch (value)
                 {

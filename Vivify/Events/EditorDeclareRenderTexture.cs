@@ -42,7 +42,7 @@ namespace EditorEX.Vivify.Events
                 return;
             }
 
-            _cameraEffectApplier.DeclaredTextureDatas.Add(data.Name, data);
+            _cameraEffectApplier.DeclaredTextureDatas.Add(data!.Name, data);
             _log.Debug($"Created texture [{data.Name}]");
         }
     }

@@ -15,7 +15,7 @@ namespace EditorEX.Util
 
         private static FieldInfo GetEventField(this Type type, string eventName)
         {
-            FieldInfo field = null;
+            FieldInfo? field = null;
             while (type != null)
             {
                 /* Find events defined as field */

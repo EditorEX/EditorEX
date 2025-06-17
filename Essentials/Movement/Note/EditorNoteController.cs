@@ -70,7 +70,7 @@ namespace EditorEX.Essentials.Movement.Note
             )
             {
                 _noteMovement = newNoteMovement;
-                _noteMovement.Enable();
+                _noteMovement!.Enable();
             }
 
             if (
@@ -83,7 +83,7 @@ namespace EditorEX.Essentials.Movement.Note
             )
             {
                 _noteVisuals = newNoteVisuals;
-                _noteVisuals.Enable();
+                _noteVisuals!.Enable();
             }
 
             if (
@@ -102,7 +102,7 @@ namespace EditorEX.Essentials.Movement.Note
                     is EditorNoodleMovementDataProvider noodleMovementDataProvider
                 )
                 {
-                    noodleMovementDataProvider.InitObject(_data);
+                    noodleMovementDataProvider.InitObject(_data!);
                 }
             }
         }
@@ -115,13 +115,13 @@ namespace EditorEX.Essentials.Movement.Note
 
             RefreshNoteMovementVisuals();
 
-            _noteMovement.Init(
+            _noteMovement!.Init(
                 noteData,
-                _variableMovementDataProvider,
+                _variableMovementDataProvider!,
                 _movementData,
-                () => _noteVisuals
+                () => _noteVisuals!
             );
-            _noteVisuals.Init(noteData);
+            _noteVisuals!.Init(noteData);
 
             ManualUpdate();
         }
@@ -152,10 +152,10 @@ namespace EditorEX.Essentials.Movement.Note
                 RefreshNoteMovementVisualsAndInit();
             }
 
-            _noteMovement.Setup(_data);
+            _noteMovement!.Setup(_data);
 
             _noteMovement.ManualUpdate();
-            _noteVisuals.ManualUpdate();
+            _noteVisuals!.ManualUpdate();
         }
     }
 }

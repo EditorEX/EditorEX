@@ -80,7 +80,7 @@ namespace EditorEX.Vivify.Events
                 }
 
                 List<MaterialProperty>? properties = data.Properties;
-                if (properties != null)
+                if (properties != null && material != null)
                 {
                     _setMaterialProperty.SetMaterialProperties(
                         material,

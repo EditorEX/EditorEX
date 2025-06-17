@@ -98,7 +98,7 @@ namespace EditorEX.Util
 
         public static void ResetNoteFlip(this NoteEditorData? editorData)
         {
-            EditorSpawnDataRepository.GetSpawnData(editorData).flipLineIndex = editorData.column;
+            EditorSpawnDataRepository.GetSpawnData(editorData).flipLineIndex = editorData!.column;
             EditorSpawnDataRepository.GetSpawnData(editorData).flipYSide = 0f;
         }
 

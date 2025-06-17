@@ -98,13 +98,13 @@ namespace EditorEX.Vivify.Events
                     continue;
                 }
 
-                string assetName = data.Asset;
+                string assetName = data!.Asset;
                 if (!_assetBundleManager.TryGetAsset(assetName, out GameObject? prefab))
                 {
                     continue;
                 }
 
-                GameObject gameObject = Object.Instantiate(prefab);
+                GameObject gameObject = Object.Instantiate(prefab!);
                 gameObject.SetActive(false);
                 _loadedPrefabs.Add(data, gameObject);
             }
@@ -129,7 +129,7 @@ namespace EditorEX.Vivify.Events
                 return;
             }
 
-            if (!_loadedPrefabs.TryGetValue(data, out GameObject gameObject))
+            if (!_loadedPrefabs.TryGetValue(data!, out GameObject gameObject))
             {
                 return;
             }
@@ -210,13 +210,13 @@ namespace EditorEX.Vivify.Events
 
                     if (
                         customEventEditorData2.eventType == DESTROY_PREFAB
-                        && _deserializedData.Resolve<DestroyObjectData>(
+                        && _deserializedData.Resolve(
                             customEventEditorData2,
                             out DestroyObjectData? data2
                         )
                     )
                     {
-                        if (data2.Id.Contains(data.Id))
+                        if (data2!.Id.Contains(data!.Id))
                         {
                             isDestroyed = true;
                             break;
@@ -230,7 +230,7 @@ namespace EditorEX.Vivify.Events
 
                 if (
                     currentBeat > customEventEditorData.beat
-                    && !_prefabManager._prefabs.ContainsKey(data.Id)
+                    && !_prefabManager._prefabs.ContainsKey(data!.Id!)
                 )
                 {
                     Callback(CustomDataRepository.GetCustomEventConversion(customEventEditorData));

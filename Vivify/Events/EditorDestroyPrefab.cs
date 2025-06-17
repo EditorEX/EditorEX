@@ -46,7 +46,7 @@ namespace EditorEX.Vivify.Events
                 return;
             }
 
-            string[] names = data.Id;
+            string[] names = data!.Id;
             foreach (string name in names)
             {
                 if (_cameraEffectApplier.CameraDatas.Remove(name))

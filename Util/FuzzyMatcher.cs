@@ -86,7 +86,7 @@ namespace EditorEX.Util
                 if (advanced || patternRepeat)
                 {
                     score += bestLetterScore;
-                    matchedIndices.Add((int)bestLetterIdx);
+                    matchedIndices.Add((int)bestLetterIdx!);
                     bestLetter = null;
                     bestLower = null;
                     bestLetterIdx = null;
@@ -156,7 +156,7 @@ namespace EditorEX.Util
             if (bestLetter != null)
             {
                 score += bestLetterScore;
-                matchedIndices.Add((int)bestLetterIdx);
+                matchedIndices.Add((int)bestLetterIdx!);
             }
 
             outScore = score;
