@@ -103,7 +103,11 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
                 },
             }
                 .AsFlexItem(maxSize: "fit-content")
-                .AsFlexGroup(justifyContent: Justify.Center, padding: new YogaFrame(5, 3))
+                .AsFlexGroup(
+                    justifyContent: Justify.Center,
+                    padding: new YogaFrame(5, 15),
+                    constrainHorizontal: false
+                )
                 .Bind(ref _background)
                 .WithNativeComponent(out _button)
                 .Use();

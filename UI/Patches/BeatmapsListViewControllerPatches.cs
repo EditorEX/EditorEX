@@ -68,7 +68,7 @@ namespace EditorEX.UI.Patches
                             SelectedIndex = _tab,
                             TabbingType = TabbingType.Alpha,
                         }
-                            .AsFlexItem(size: new YogaVector(500f, 30f))
+                            .AsFlexItem(size: new YogaVector(float.NaN, 30f))
                             .Animate(
                                 _tab,
                                 () =>
@@ -160,7 +160,11 @@ namespace EditorEX.UI.Patches
                     },
                 }
                     .AsFlexItem(size: new YogaVector(1500f, 1000))
-                    .AsFlexGroup(FlexDirection.Column, alignItems: Align.Center)
+                    .AsFlexGroup(
+                        FlexDirection.Column,
+                        alignItems: Align.Center,
+                        constrainHorizontal: false
+                    )
                     .WithReactiveContainer(_reactiveContainer)
                     .Use(__instance.transform);
             }
