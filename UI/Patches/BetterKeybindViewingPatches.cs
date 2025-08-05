@@ -273,7 +273,7 @@ namespace EditorEX.UI.Patches
             )
             {
                 Dictionary<InputActionBinding, int> matchingBindings = [];
-                
+
                 foreach (var binding in bindingGroup.bindings)
                 {
                     var text = binding.inputAction.DisplayName();

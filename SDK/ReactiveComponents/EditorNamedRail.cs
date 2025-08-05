@@ -68,7 +68,7 @@ namespace EditorEX.SDK.ReactiveComponents
                     }
                     .AsFlexItem(alignSelf: Align.Center)
                     .Bind(ref _label),
-                    
+
                     new EditorLabel { Text = "*", Enabled = false }
                         .Export(out _modifiedHint)
                         .AsFlexItem(),
