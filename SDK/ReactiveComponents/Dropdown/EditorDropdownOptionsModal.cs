@@ -1,5 +1,6 @@
 using EditorEX.SDK.ReactiveComponents.Attachable;
 using EditorEX.SDK.ReactiveComponents.Table;
+using EditorEX.Util;
 using Reactive;
 using Reactive.Components;
 using Reactive.Components.Basic;
@@ -72,38 +73,37 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
             protected override GameObject Construct()
             {
-                return new Layout
+                return new LayoutChildren
                 {
-                    Children =
+                    new LayoutChildren
                     {
-                        new EditorBackground()
-                        {
-                            Source = "#Background4px",
-                            ImageType = UnityEngine.UI.Image.Type.Sliced,
-                            Children =
-                            {
-                                new Table<DropdownOption, EditorDropdownCellWrapper>()
-                                    .WithListener(x => x.SelectedIndexes, _ => CloseInternal())
-                                    .AsFlexItem(flexGrow: 0.98f)
-                                    .Bind(ref _table),
-                                // Scrollbar
-                                new EditorScrollbar()
-                                    .AsFlexItem(
-                                        size: new() { x = 7f, y = 100.pct() },
-                                        position: new() { right = 2f }
-                                    )
-                                    .With(x => Table.Scrollbar = x),
-                            },
-                        }
-                            .With(x =>
-                                x.WrappedImage.Attach<ColorSOAttachable>("Button/Background/Normal")
+                        new Table<DropdownOption, EditorDropdownCellWrapper>()
+                            .WithListener(x => x.SelectedIndexes, _ => CloseInternal())
+                            .AsFlexItem(flexGrow: 0.98f)
+                            .Bind(ref _table),
+                            
+                        // Scrollbar
+                        new EditorScrollbar()
+                            .AsFlexItem(
+                                size: new() { x = 7f, y = 100.pct() },
+                                position: new() { right = 2f }
                             )
-                            .AsFlexGroup(padding: 2f)
-                            .AsFlexItem(flexGrow: 1f),
-                    },
+                            .With(x => Table.Scrollbar = x),
+                    }
+                    .As<EditorBackground>(x =>
+                    {
+                        x.Source = "#Background4px";
+                        x.ImageType = UnityEngine.UI.Image.Type.Sliced;
+                    })
+                    .With(x =>
+                        x.WrappedImage.Attach<ColorSOAttachable>("Button/Background/Normal")
+                    )
+                    .AsFlexGroup(padding: 2f)
+                    .AsFlexItem(flexGrow: 1f),
                 }
-                    .AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false)
-                    .Use();
+                .AsLayout()
+                .AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false)
+                .Use();
             }
         }
     }

@@ -3,6 +3,7 @@ using EditorEX.SDK.Base;
 using EditorEX.SDK.Collectors;
 using HMUI;
 using UnityEngine;
+using UnityEngine.UI;
 using Zenject;
 
 namespace EditorEX.SDK.Factories
@@ -73,7 +74,7 @@ namespace EditorEX.SDK.Factories
             var image = gameObj.AddComponent<T>();
             image._colorSo = _colorCollector.GetColor("Button/Background/Normal");
             image.useScriptableObjectColors = true;
-            image.type = UnityEngine.UI.Image.Type.Sliced;
+            image.type = Image.Type.Sliced;
 
             gameObj.SetActive(true);
 

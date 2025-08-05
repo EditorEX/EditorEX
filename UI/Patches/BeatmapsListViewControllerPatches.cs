@@ -59,114 +59,110 @@ namespace EditorEX.UI.Patches
                 beatmapList.GetComponent<RectTransform>().sizeDelta = new Vector2(-60f, 72f);
                 beatmapList.GetComponent<RectTransform>().anchoredPosition = new Vector2(0f, -40f);
 
-                new Layout
+                new LayoutChildren
                 {
-                    Children =
+                    new EditorSegmentedControl
                     {
-                        new EditorSegmentedControl
+                        SelectedIndex = _tab,
+                        TabbingType = TabbingType.Alpha,
+                    }
+                    .AsFlexItem(size: new YogaVector(float.NaN, 30f))
+                    .Animate(
+                        _tab,
+                        () =>
                         {
-                            SelectedIndex = _tab,
-                            TabbingType = TabbingType.Alpha,
-                        }
-                            .AsFlexItem(size: new YogaVector(float.NaN, 30f))
-                            .Animate(
-                                _tab,
-                                () =>
-                                {
-                                    if (_tab.Value != _segmentedControl!.Values.Length - 1)
-                                    {
-                                        _sourcesConfig.SelectedSource =
-                                            _sourcesConfig.Sources.Keys.ToList()[_tab.Value];
-                                        _beatmapsCollectionDataModel.RefreshCollection();
-                                    }
-                                }
-                            )
-                            .Bind(ref _segmentedControl),
-                        new Layout
-                        { // Song List/Filter/Recently Modified
-                            Children =
+                            if (_tab.Value != _segmentedControl!.Values.Length - 1)
                             {
-                                new LayoutElementComponent(
-                                    __instance
-                                        .transform.Find("RecentlyModifiedBeatmaps")
-                                        .gameObject.AddComponent<LayoutElement>()
-                                ).AsFlexItem(),
-                                new EditorStringInput()
-                                    .Bind(ref _filterInput)
-                                    .InEditorNamedRail("Filter", 18f)
-                                    .AsFlexItem(
-                                        size: new YogaVector(300f, 30f),
-                                        margin: new YogaFrame(100f, 0f, 50f, 0f)
-                                    ),
-                                new LayoutElementComponent(beatmapList).AsFlexItem(
-                                    size: new YogaVector(100.pct(), 50.pct())
-                                ),
-                            },
+                                _sourcesConfig.SelectedSource =
+                                    _sourcesConfig.Sources.Keys.ToList()[_tab.Value];
+                                _beatmapsCollectionDataModel.RefreshCollection();
+                            }
                         }
-                            .AsFlexGroup(FlexDirection.Column)
-                            .AsFlexItem(size: new YogaVector(100.pct(), 100.pct()))
-                            .DisabledWithObservable(
-                                _tab,
-                                () =>
-                                    (int)Mathf.Max((_segmentedControl?.Values.Length ?? 2f) - 1, 1)
-                            ),
-                        new Layout
-                        { // New Source
-                            Children =
-                            {
-                                new EditorHeaderLabel
-                                {
-                                    Text = "New Map Source",
-                                    FontSize = 24f,
-                                    Alignment = TextAlignmentOptions.Center,
-                                }.AsFlexItem(size: new YogaVector(100.pct(), 30f)),
-                                new EditorStringInput()
-                                    .Export(out var _newSourceName)
-                                    .InEditorNamedRail("Source Name", 18f)
-                                    .AsFlexItem(),
-                                new EditorStringInput() //TODO: File Path Input Validator
-                                    .Export(out var _newSourcePath)
-                                    .InEditorNamedRail("Source Path", 18f)
-                                    .AsFlexItem(),
-                                new EditorLabelButton
-                                {
-                                    Text = "Add Source",
-                                    OnClick = () =>
-                                    {
-                                        if (_newSourceName!.InputField.text != "")
-                                        {
-                                            _sourcesConfig.Sources.Add(
-                                                _newSourceName!.InputField.text,
-                                                _newSourcePath!.InputField.text
-                                            );
-                                            _newSourceName!.InputField.text = "";
-                                            _newSourcePath!.InputField.text = "";
-
-                                            _segmentedControl!.Values = SetupSources().ToArray();
-
-                                            _tab.Value = _segmentedControl!.Values.Length - 1;
-                                        }
-                                    },
-                                }.AsFlexItem(),
-                            },
-                        }
-                            .AsFlexGroup(FlexDirection.Column)
-                            .AsFlexItem()
-                            .EnabledWithObservable(
-                                _tab,
-                                () =>
-                                    (int)Mathf.Max((_segmentedControl?.Values.Length ?? 2f) - 1, 1)
-                            ),
-                    },
-                }
-                    .AsFlexItem(size: new YogaVector(1500f, 1000))
-                    .AsFlexGroup(
-                        FlexDirection.Column,
-                        alignItems: Align.Center,
-                        constrainHorizontal: false
                     )
-                    .WithReactiveContainer(_reactiveContainer)
-                    .Use(__instance.transform);
+                    .Bind(ref _segmentedControl),
+
+                    new LayoutChildren // Song List/Filter/Recently Modified
+                    {
+                        new LayoutElementComponent(
+                            __instance
+                                .transform.Find("RecentlyModifiedBeatmaps")
+                                .gameObject.AddComponent<LayoutElement>()
+                        ).AsFlexItem(),
+                        new EditorStringInput()
+                            .Bind(ref _filterInput)
+                            .InEditorNamedRail("Filter", 18f)
+                            .AsFlexItem(
+                                size: new YogaVector(300f, 30f),
+                                margin: new YogaFrame(100f, 0f, 50f, 0f)
+                            ),
+                        new LayoutElementComponent(beatmapList).AsFlexItem(
+                            size: new YogaVector(100.pct(), 50.pct())
+                        ),
+                    }
+                    .AsLayout()
+                    .AsFlexGroup(FlexDirection.Column)
+                    .AsFlexItem(size: new YogaVector(100.pct(), 100.pct()))
+                    .DisabledWithObservable(
+                        _tab,
+                        () =>
+                            (int)Mathf.Max((_segmentedControl?.Values.Length ?? 2f) - 1, 1)
+                    ),
+
+                    new LayoutChildren // New Source
+                    {
+                        new EditorHeaderLabel
+                        {
+                            Text = "New Map Source",
+                            FontSize = 24f,
+                            Alignment = TextAlignmentOptions.Center,
+                        }.AsFlexItem(size: new YogaVector(100.pct(), 30f)),
+                        new EditorStringInput()
+                            .Export(out var _newSourceName)
+                            .InEditorNamedRail("Source Name", 18f)
+                            .AsFlexItem(),
+                        new EditorStringInput() //TODO: File Path Input Validator
+                            .Export(out var _newSourcePath)
+                            .InEditorNamedRail("Source Path", 18f)
+                            .AsFlexItem(),
+                        new EditorLabelButton
+                        {
+                            Text = "Add Source",
+                            OnClick = () =>
+                            {
+                                if (_newSourceName!.InputField.text != "")
+                                {
+                                    _sourcesConfig.Sources.Add(
+                                        _newSourceName!.InputField.text,
+                                        _newSourcePath!.InputField.text
+                                    );
+                                    _newSourceName!.InputField.text = "";
+                                    _newSourcePath!.InputField.text = "";
+
+                                    _segmentedControl!.Values = SetupSources().ToArray();
+
+                                    _tab.Value = _segmentedControl!.Values.Length - 1;
+                                }
+                            },
+                        }.AsFlexItem()
+                    }
+                    .AsLayout()
+                    .AsFlexGroup(FlexDirection.Column)
+                    .AsFlexItem()
+                    .EnabledWithObservable(
+                        _tab,
+                        () =>
+                            (int)Mathf.Max((_segmentedControl?.Values.Length ?? 2f) - 1, 1)
+                    ),
+                }
+                .AsLayout()
+                .AsFlexItem(size: new YogaVector(1500f, 1000))
+                .AsFlexGroup(
+                    FlexDirection.Column,
+                    alignItems: Align.Center,
+                    constrainHorizontal: false
+                )
+                .WithReactiveContainer(_reactiveContainer)
+                .Use(__instance.transform);
             }
 
             ReloadCells();

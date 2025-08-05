@@ -1,5 +1,6 @@
 using System;
 using EditorEX.SDK.ReactiveComponents.Native;
+using EditorEX.Util;
 using HMUI;
 using Reactive;
 using Reactive.Components;
@@ -38,22 +39,22 @@ namespace EditorEX.SDK.ReactiveComponents
 
         protected override GameObject Construct()
         {
-            return new EditorBackground()
+            return new LayoutChildren
             {
-                Source = "#Background8px",
-                ImageType = Image.Type.Sliced,
-                Children =
-                {
-                    new EditorLabel { Alignment = TMPro.TextAlignmentOptions.Center }
-                        .AsFlexItem(size: "auto")
-                        .Bind(ref _label),
-                },
+                new EditorLabel { Alignment = TMPro.TextAlignmentOptions.Center }
+                    .AsFlexItem(size: "auto")
+                    .Bind(ref _label)
             }
-                .AsFlexGroup(padding: 8f, justifyContent: Justify.Center)
-                .AsFlexItem(size: new YogaVector("fit-content", "fit-content"))
-                .Bind(ref _background)
-                .WithNativeComponent(out _button)
-                .Use();
+            .As<EditorBackground>(x =>
+            {
+                x.Source = "#Background8px";
+                x.ImageType = Image.Type.Sliced;
+            })
+            .AsFlexGroup(padding: 8f, justifyContent: Justify.Center)
+            .AsFlexItem(size: new YogaVector("fit-content", "fit-content"))
+            .Bind(ref _background)
+            .WithNativeComponent(out _button)
+            .Use();
         }
 
         protected override void OnStart()

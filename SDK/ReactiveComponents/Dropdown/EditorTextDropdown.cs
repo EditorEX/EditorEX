@@ -1,4 +1,5 @@
 using System;
+using EditorEX.Util;
 using Reactive;
 using Reactive.BeatSaber.Components;
 using Reactive.Components;
@@ -32,22 +33,23 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
             protected override GameObject Construct()
             {
-                return new EditorBackgroundButton
+                return new LayoutChildren
                 {
-                    OnClick = SelectSelf,
-                    Children =
-                    {
-                        new Layout().AsFlexItem(flexGrow: 1f),
-                        new EditorLabel() { Alignment = TextAlignmentOptions.Left, FontSize = 18f }
-                            .AsFlexItem(flexGrow: 99f)
-                            .WithRectExpand()
-                            .Bind(ref _label),
-                    },
+                    new Layout().AsFlexItem(flexGrow: 1f),
+
+                    new EditorLabel() { Alignment = TextAlignmentOptions.Left, FontSize = 18f }
+                        .AsFlexItem(flexGrow: 99f)
+                        .WithRectExpand()
+                        .Bind(ref _label),
                 }
-                    .AsFlexGroup(alignItems: Reactive.Yoga.Align.Center, padding: 8f)
-                    .AsFlexItem(size: new() { x = "auto", y = 40f })
-                    .Bind(ref _button)
-                    .Use();
+                .As<EditorBackgroundButton>(x =>
+                {
+                    x.OnClick = SelectSelf;
+                })
+                .AsFlexGroup(alignItems: Reactive.Yoga.Align.Center, padding: 8f)
+                .AsFlexItem(size: new() { x = "auto", y = 40f })
+                .Bind(ref _button)
+                .Use();
             }
 
             public override void OnCellStateChange(bool selected) { }

@@ -1,10 +1,12 @@
 using System;
 using EditorEX.SDK.ReactiveComponents.Attachable;
+using EditorEX.Util;
 using Reactive;
 using Reactive.BeatSaber;
 using Reactive.Components;
 using Reactive.Yoga;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace EditorEX.SDK.ReactiveComponents.Table
 {
@@ -65,47 +67,43 @@ namespace EditorEX.SDK.ReactiveComponents.Table
 
         protected override GameObject Construct()
         {
-            return new Layout
+            return new LayoutChildren
             {
-                Children =
+                //handle container
+                new LayoutChildren
                 {
-                    //handle container
-                    new EditorBackground
+                    //handle
+                    new EditorImage
                     {
-                        Source = "#Background3px",
-                        ImageType = UnityEngine.UI.Image.Type.Sliced,
-
-                        Children =
+                        ContentTransform =
                         {
-                            //handle
-                            new EditorImage
-                            {
-                                ContentTransform =
-                                {
-                                    anchorMin = new(0f, 1f),
-                                    anchorMax = new(1f, 1f),
-                                    pivot = new(0.5f, 1f),
-                                },
-                                Source = "#Background3px",
-                                ImageType = UnityEngine.UI.Image.Type.Sliced,
-                            }
-                                .Attach<ColorSOAttachable>("Scrollbar/Handle/Normal")
-                                .Bind(ref _handleRect),
+                            anchorMin = new(0f, 1f),
+                            anchorMax = new(1f, 1f),
+                            pivot = new(0.5f, 1f),
                         },
+                        Source = "#Background3px",
+                        ImageType = Image.Type.Sliced,
                     }
-                        .With(x =>
-                            x.WrappedImage.Attach<ColorSOAttachable>("Scrollbar/Background/Normal")
-                        )
-                        .AsFlexItem(
-                            flexGrow: 1f,
-                            size: new() { x = 7f },
-                            margin: new() { top = 4f, bottom = 4f }
-                        )
-                        .Bind(ref _handleContainerRect),
-                },
+                    .Attach<ColorSOAttachable>("Scrollbar/Handle/Normal")
+                    .Bind(ref _handleRect),
+                }
+                .As<EditorBackground>(x => {
+                    x.Source =  "#Background3px";
+                    x.ImageType = Image.Type.Sliced;
+                })
+                .With(x =>
+                    x.WrappedImage.Attach<ColorSOAttachable>("Scrollbar/Background/Normal")
+                )
+                .AsFlexItem(
+                    flexGrow: 1f,
+                    size: new() { x = 7f },
+                    margin: new() { top = 4f, bottom = 4f }
+                )
+                .Bind(ref _handleContainerRect),
             }
-                .AsFlexGroup(direction: FlexDirection.Column, alignItems: Align.Center)
-                .Use();
+            .AsLayout()
+            .AsFlexGroup(direction: FlexDirection.Column, alignItems: Align.Center)
+            .Use();
         }
 
         protected override void OnInitialize()

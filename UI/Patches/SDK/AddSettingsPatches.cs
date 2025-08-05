@@ -41,21 +41,19 @@ namespace EditorEX.UI.Patches.SDK
             {
                 var tab = ValueUtils.Remember(0);
 
-                new Layout()
+                new LayoutChildren
                 {
-                    Children =
+                    new EditorSegmentedControl()
                     {
-                        new EditorSegmentedControl()
-                        {
-                            Values = _viewNames.ToArray(),
-                            SelectedIndex = tab,
-                        },
-                    },
+                        Values = _viewNames.ToArray(),
+                        SelectedIndex = tab,
+                    }
                 }
-                    .AsFlexGroup(FlexDirection.Column, gap: 20f, padding: 30)
-                    .Export(out var layout)
-                    .WithReactiveContainer(_reactiveContainer)
-                    .Use(__instance.transform);
+                .AsLayout()
+                .AsFlexGroup(FlexDirection.Column, gap: 20f, padding: 30)
+                .Export(out var layout)
+                .WithReactiveContainer(_reactiveContainer)
+                .Use(__instance.transform);
 
                 var vanillaContainer = __instance
                     .transform.Find("Container")

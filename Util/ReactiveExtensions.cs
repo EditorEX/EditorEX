@@ -362,12 +362,22 @@ namespace EditorEX.Util
             return component;
         }
 
-        public static Layout AsLayout<T>(this T children, Action<Layout>? configure = null) where T : List<ReactiveComponent>
+        public static Layout AsLayout<T>(this T children, Action<Layout>? configure = null) where T : List<IReactiveComponent>
         {
             Layout layout = new();
             layout.Children.AddRange(children);
             configure?.Invoke(layout);
             return layout;
         }
+
+        public static R As<T, R>(this T children, Action<R>? configure = null) where T : List<IReactiveComponent> where R : Layout, new()
+        {
+            R layout = new();
+            layout.Children.AddRange(children);
+            configure?.Invoke(layout);
+            return layout;
+        }
+
+        public static R As<R>(this LayoutChildren children, Action<R>? configure = null) where R : Layout, new() => children.As<LayoutChildren, R>(configure);
     }
 }

@@ -282,15 +282,14 @@ namespace EditorEX.UI.Patches
                             {
                                 new LayoutChildren
                                 {
-                                    new EditorBackgroundButton
+                                    new LayoutChildren
                                     {
-                                        Source = "#Background8px",
-                                        Children =
-                                        {
-                                            new EditorImage { Source = "#IconOpen", }
-                                            .AsFlexItem(size: new YogaVector(30f, 30f)),
-                                        },
+                                        new EditorImage { Source = "#IconOpen", }
+                                        .AsFlexItem(size: new YogaVector(30f, 30f)),
                                     }
+                                    .As<EditorBackgroundButton>(x => {
+                                        x.Source = "#Background8px";
+                                    })
                                     .AsFlexGroup(
                                         justifyContent: Justify.Center,
                                         alignItems: Align.Center
@@ -388,123 +387,123 @@ namespace EditorEX.UI.Patches
                                 Values = ["Environments", "Contributors"],
                                 TabbingType = TabbingType.Qwerty,
                             }.AsFlexItem(size: new YogaVector(250f, 30f)),
-                            new EditorBackground
+                            new LayoutChildren
                             {
-                                ColorSO = _colorCollector.GetColor(
-                                    "Navbar/Background/Normal"
-                                ),
-                                UseScriptableObjectColors = true,
-                                Source = "#Background8px",
-                                ImageType = Image.Type.Sliced,
-                                Children =
+                                new LayoutChildren // Environments
                                 {
-                                    new LayoutChildren // Environments
-                                    {
-                                        new EditorTextDropdown<string>()
-                                            .With(x =>
+                                    new EditorTextDropdown<string>()
+                                        .With(x =>
+                                        {
+                                            x.Items.AddRange(
+                                                _environmentsListModel
+                                                    .GetAllEnvironmentInfosWithType(
+                                                        EnvironmentType.Normal
+                                                    )
+                                                    .Select(x =>
+                                                        (
+                                                            x.serializedName,
+                                                            x.environmentName
+                                                        )
+                                                    )
+                                                    .ToDictionary(
+                                                        x => x.serializedName,
+                                                        x => x.environmentName
+                                                    )
+                                            );
+                                        })
+                                        .EnabledWithObservable(V4Level, false)
+                                        .Bind(ref _environmentDropdown)
+                                        .ExtractObservable(
+                                            out var normalEnvironmentValue,
+                                            _environmentDropdown!
+                                                .Items.First()
+                                                .ExtractTupleFromKVP()
+                                        )
+                                        .DropdownWithObservable(
+                                            normalEnvironmentValue
+                                        )
+                                        .Animate(
+                                            normalEnvironmentValue,
+                                            (x, v) =>
                                             {
-                                                x.Items.AddRange(
-                                                    _environmentsListModel
-                                                        .GetAllEnvironmentInfosWithType(
-                                                            EnvironmentType.Normal
-                                                        )
-                                                        .Select(x =>
-                                                            (
-                                                                x.serializedName,
-                                                                x.environmentName
-                                                            )
-                                                        )
-                                                        .ToDictionary(
-                                                            x => x.serializedName,
-                                                            x => x.environmentName
-                                                        )
+                                                Debug.Log(
+                                                    $"Selected Normal Environment: {v}"
                                                 );
-                                            })
-                                            .EnabledWithObservable(V4Level, false)
-                                            .Bind(ref _environmentDropdown)
-                                            .ExtractObservable(
-                                                out var normalEnvironmentValue,
-                                                _environmentDropdown!
-                                                    .Items.First()
-                                                    .ExtractTupleFromKVP()
-                                            )
-                                            .DropdownWithObservable(
-                                                normalEnvironmentValue
-                                            )
-                                            .Animate(
-                                                normalEnvironmentValue,
-                                                (x, v) =>
-                                                {
-                                                    Debug.Log(
-                                                        $"Selected Normal Environment: {v}"
-                                                    );
-                                                }
-                                            )
-                                            .AsFlexItem(
-                                                size: new YogaVector(200f, 40f)
-                                            )
-                                            .InEditorNamedRail("Environment", 18f),
-                                        new EditorTextDropdown<string>()
-                                            .With(x =>
+                                            }
+                                        )
+                                        .AsFlexItem(
+                                            size: new YogaVector(200f, 40f)
+                                        )
+                                        .InEditorNamedRail("Environment", 18f),
+                                    new EditorTextDropdown<string>()
+                                        .With(x =>
+                                        {
+                                            x.Items.AddRange(
+                                                _environmentsListModel
+                                                    .GetAllEnvironmentInfosWithType(
+                                                        EnvironmentType.Circle
+                                                    )
+                                                    .ToDictionary(
+                                                        x => x.serializedName,
+                                                        x => x.environmentName
+                                                    )
+                                            );
+                                        })
+                                        .EnabledWithObservable(V4Level, false)
+                                        .Bind(
+                                            ref _allDirectionsEnvironmentDropdown
+                                        )
+                                        .ExtractObservable(
+                                            out var allDirectionsEnvironmentValue,
+                                            _allDirectionsEnvironmentDropdown!
+                                                .Items.First()
+                                                .ExtractTupleFromKVP()
+                                        )
+                                        .DropdownWithObservable(
+                                            allDirectionsEnvironmentValue
+                                        )
+                                        .Animate(
+                                            allDirectionsEnvironmentValue,
+                                            (x, v) =>
                                             {
-                                                x.Items.AddRange(
-                                                    _environmentsListModel
-                                                        .GetAllEnvironmentInfosWithType(
-                                                            EnvironmentType.Circle
-                                                        )
-                                                        .ToDictionary(
-                                                            x => x.serializedName,
-                                                            x => x.environmentName
-                                                        )
+                                                Debug.Log(
+                                                    $"Selected All Directions Environment: {v}"
                                                 );
-                                            })
-                                            .EnabledWithObservable(V4Level, false)
-                                            .Bind(
-                                                ref _allDirectionsEnvironmentDropdown
-                                            )
-                                            .ExtractObservable(
-                                                out var allDirectionsEnvironmentValue,
-                                                _allDirectionsEnvironmentDropdown!
-                                                    .Items.First()
-                                                    .ExtractTupleFromKVP()
-                                            )
-                                            .DropdownWithObservable(
-                                                allDirectionsEnvironmentValue
-                                            )
-                                            .Animate(
-                                                allDirectionsEnvironmentValue,
-                                                (x, v) =>
-                                                {
-                                                    Debug.Log(
-                                                        $"Selected All Directions Environment: {v}"
-                                                    );
-                                                }
-                                            )
-                                            .AsFlexItem(
-                                                size: new YogaVector(200f, 40f)
-                                            )
-                                            .InEditorNamedRail(
-                                                "360 Environment",
-                                                18f
-                                            ),
-                                    }
-                                    .AsLayout()
-                                    .EnabledWithObservable(secondaryTab, 0)
-                                    .AsFlexGroup(
-                                        FlexDirection.Column,
-                                        gap: 5f,
-                                        padding: new YogaFrame(24f, 80f)
-                                    )
-                                    .AsFlexItem(size: 100.pct()),
+                                            }
+                                        )
+                                        .AsFlexItem(
+                                            size: new YogaVector(200f, 40f)
+                                        )
+                                        .InEditorNamedRail(
+                                            "360 Environment",
+                                            18f
+                                        ),
+                                }
+                                .AsLayout()
+                                .EnabledWithObservable(secondaryTab, 0)
+                                .AsFlexGroup(
+                                    FlexDirection.Column,
+                                    gap: 5f,
+                                    padding: new YogaFrame(24f, 80f)
+                                )
+                                .AsFlexItem(size: 100.pct()),
 
-                                    new LayoutChildren // Contributors
-                                    {}
-                                    .AsLayout()
-                                    .EnabledWithObservable(secondaryTab, 1)
-                                    .AsFlexGroup(gap: 5f, padding: 24f)
-                                    .AsFlexItem(),
-                                },
-                            }.AsFlexItem(minSize: new() { x = 800f, y = 800f }),
+                                new LayoutChildren // Contributors
+                                {}
+                                .AsLayout()
+                                .EnabledWithObservable(secondaryTab, 1)
+                                .AsFlexGroup(gap: 5f, padding: 24f)
+                                .AsFlexItem(),
+                            }
+                            .As<EditorBackground>(x => {
+                                x.ColorSO = _colorCollector.GetColor(
+                                    "Navbar/Background/Normal"
+                                );
+                                x.UseScriptableObjectColors = true;
+                                x.Source = "#Background8px";
+                                x.ImageType = Image.Type.Sliced;
+                            })
+                            .AsFlexItem(minSize: new() { x = 800f, y = 800f }),
                         }
                         .AsLayout()
                         .AsFlexGroup(

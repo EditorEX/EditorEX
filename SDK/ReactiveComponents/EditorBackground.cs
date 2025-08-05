@@ -2,6 +2,7 @@ using EditorEX.SDK.ReactiveComponents.Attachable;
 using HMUI;
 using Reactive.Components;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
@@ -75,13 +76,13 @@ namespace EditorEX.SDK.ReactiveComponents
             set => Component.PreserveAspect = value;
         }
 
-        public UnityEngine.UI.Image.Type ImageType
+        public Image.Type ImageType
         {
             get => Component.ImageType;
             set => Component.ImageType = value;
         }
 
-        public UnityEngine.UI.Image.FillMethod FillMethod
+        public Image.FillMethod FillMethod
         {
             get => Component.FillMethod;
             set => Component.FillMethod = value;

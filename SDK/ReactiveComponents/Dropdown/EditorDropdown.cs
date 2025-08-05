@@ -117,9 +117,22 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 .WithBeforeOpenListener(HandleBeforeModalOpened)
                 .Bind(ref _modal);
 
-            return new EditorBackgroundButton
+            return new LayoutChildren
             {
-                OnClick = () =>
+                new TCell { UsedAsPreview = true }
+                    .AsFlexItem(flexGrow: 1f)
+                    .Bind(ref _previewCell),
+                // Icon
+                new EditorImage
+                {
+                    Source = "#IconDropdown",
+                    Color = new Color(0.55f, 0.6f, 0.6f, 1f), //Use a color collector later, its annoying to use in Construct atm
+                    PreserveAspect = true,
+                }.AsFlexItem(size: 20f, aspectRatio: 1f),
+            }
+            .As<EditorBackgroundButton>(x =>
+            {
+                x.OnClick = () =>
                 {
                     if (Items.Count == 0 || _modal.ModalOpened)
                     {
@@ -127,26 +140,12 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                     }
 
                     _modal.PresentEditor(ContentTransform);
-                },
-
-                Children =
-                {
-                    new TCell { UsedAsPreview = true }
-                        .AsFlexItem(flexGrow: 1f)
-                        .Bind(ref _previewCell),
-                    // Icon
-                    new EditorImage
-                    {
-                        Source = "#IconDropdown",
-                        Color = new Color(0.55f, 0.6f, 0.6f, 1f), //Use a color collector later, its annoying to use in Construct atm
-                        PreserveAspect = true,
-                    }.AsFlexItem(size: 20f, aspectRatio: 1f),
-                },
-            }
-                .WithNativeComponent(out _canvasGroup)
-                .AsFlexGroup(alignContent: Reactive.Yoga.Align.Center)
-                .Bind(ref _button)
-                .Use();
+                };
+            })
+            .WithNativeComponent(out _canvasGroup)
+            .AsFlexGroup(alignContent: Reactive.Yoga.Align.Center)
+            .Bind(ref _button)
+            .Use();
         }
 
         protected override void OnInitialize()

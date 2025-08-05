@@ -1,5 +1,6 @@
 using System;
 using EditorEX.SDK.ReactiveComponents.Native;
+using EditorEX.Util;
 using HMUI;
 using Reactive;
 using Reactive.Components;
@@ -22,22 +23,22 @@ namespace EditorEX.SDK.ReactiveComponents
 
         protected override GameObject Construct()
         {
-            return new EditorBackground()
+            return new LayoutChildren
             {
-                Source = "#Background4px",
-                ImageType = Image.Type.Sliced,
-                Children =
-                {
-                    new EditorImage() { Source = "#IconCheckmark" }
-                        .AsFlexItem(size: 20f)
-                        .Bind(ref _checkmark),
-                },
+                new EditorImage() { Source = "#IconCheckmark" }
+                    .AsFlexItem(size: 20f)
+                    .Bind(ref _checkmark)
             }
-                .AsFlexGroup(padding: 8f)
-                .AsFlexItem(size: 36f, maxSize: 36f)
-                .Bind(ref _background)
-                .WithNativeComponent(out _toggle)
-                .Use();
+            .As<EditorBackground>(x =>
+            {
+                x.Source = "#Background4px";
+                x.ImageType = Image.Type.Sliced;
+            })
+            .AsFlexGroup(padding: 8f)
+            .AsFlexItem(size: 36f, maxSize: 36f)
+            .Bind(ref _background)
+            .WithNativeComponent(out _toggle)
+            .Use();
         }
 
         protected override void OnStart()

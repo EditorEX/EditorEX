@@ -95,22 +95,20 @@ namespace EditorEX.UI.Patches
             _bindingsContainer!.Children.Add(
                 new ScrollArea
                 {
-                    ScrollContent = new Layout
+                    ScrollContent = new LayoutChildren
                     {
-                        Children =
+                        new EditorHeaderLabel
                         {
-                            new EditorHeaderLabel
-                            {
-                                Text = bindingGroup.type.DisplayName(),
-                            }.AsFlexItem(margin: new YogaFrame(0f, 10f, 0f, 0f)),
-                        },
+                            Text = bindingGroup.type.DisplayName(),
+                        }.AsFlexItem(margin: new YogaFrame(0f, 10f, 0f, 0f)),
                     }
-                        .Export(out var groupLayout)
-                        .AsFlexItem(size: "auto")
-                        .AsFlexGroup(FlexDirection.Column, gap: 20f),
+                    .AsLayout()
+                    .Export(out var groupLayout)
+                    .AsFlexItem(size: "auto")
+                    .AsFlexGroup(FlexDirection.Column, gap: 20f),
                 }
-                    .AsFlexItem(size: new YogaVector("auto", 100.pct()))
-                    .EnabledWithObservable(_selectedGroupIndex, index)
+                .AsFlexItem(size: new YogaVector("auto", 100.pct()))
+                .EnabledWithObservable(_selectedGroupIndex, index)
             );
 
             foreach (var inputActionBinding in bindingGroup.bindings)
@@ -141,51 +139,47 @@ namespace EditorEX.UI.Patches
         {
             Object.Destroy(__instance.transform.GetChild(0).gameObject);
 
-            new Layout
+            new LayoutChildren
             {
-                Children =
+                new LayoutChildren
                 {
-                    new Layout
+                    new EditorStringInput { }
+                        .InEditorNamedRail("Search", 18f)
+                        .AsFlexItem(),
+                }
+                .AsLayout()
+                .AsFlexItem(flex: 3, size: new YogaVector("auto", 100.pct()))
+                .AsFlexGroup(FlexDirection.Column, gap: 40f)
+                .Bind(ref _bindingsContainer),
+
+                new LayoutChildren
+                {
+                    new ScrollArea()
                     {
-                        Children =
-                        {
-                            new EditorStringInput { }
-                                .InEditorNamedRail("Search", 18f)
-                                .AsFlexItem(),
-                        },
+                        ScrollContent = new Layout { }
+                            .Bind(ref _buttonContent)
+                            .AsFlexItem()
+                            .AsFlexGroup(FlexDirection.Column, gap: 10f),
                     }
-                        .AsFlexItem(flex: 3, size: new YogaVector("auto", 100.pct()))
-                        .AsFlexGroup(FlexDirection.Column, gap: 40f)
-                        .Bind(ref _bindingsContainer),
-                    new Layout
-                    {
-                        Children =
-                        {
-                            new ScrollArea()
-                            {
-                                ScrollContent = new Layout { }
-                                    .Bind(ref _buttonContent)
-                                    .AsFlexItem()
-                                    .AsFlexGroup(FlexDirection.Column, gap: 10f),
-                            }
-                                .Export(out var _buttonScrollArea)
-                                .AsFlexItem(size: 100f.pct()),
-                            new EditorScrollbar()
-                                .AsFlexItem(
-                                    size: new() { x = 7f, y = 100.pct() },
-                                    position: new() { right = 2f }
-                                )
-                                .With(x => _buttonScrollArea!.Scrollbar = x),
-                        },
-                    }
-                        .AsFlexItem(flex: 1)
-                        .AsFlexGroup(FlexDirection.Row),
-                },
+                    .Export(out var _buttonScrollArea)
+                    .AsFlexItem(size: 100f.pct()),
+
+                    new EditorScrollbar()
+                        .AsFlexItem(
+                            size: new() { x = 7f, y = 100.pct() },
+                            position: new() { right = 2f }
+                        )
+                        .With(x => _buttonScrollArea!.Scrollbar = x),
+                }
+                .AsLayout()
+                .AsFlexItem(flex: 1)
+                .AsFlexGroup(FlexDirection.Row),
             }
-                .WithReactiveContainer(_reactiveContainer)
-                .AsFlexItem(size: new YogaVector(1700f, 1000))
-                .AsFlexGroup(FlexDirection.Row, gap: 600f)
-                .Use(__instance.transform);
+            .AsLayout()
+            .WithReactiveContainer(_reactiveContainer)
+            .AsFlexItem(size: new YogaVector(1700f, 1000))
+            .AsFlexGroup(FlexDirection.Row, gap: 600f)
+            .Use(__instance.transform);
 
             var keybindings = KeyBindings.GetDefault();
             Dictionary<InputAction, InputKey> dictionary = new Dictionary<InputAction, InputKey>();
@@ -278,8 +272,8 @@ namespace EditorEX.UI.Patches
                 ).Concat(keybindings.extendedBindingGroups)
             )
             {
-                Dictionary<InputActionBinding, int> matchingBindings =
-                    new Dictionary<InputActionBinding, int>();
+                Dictionary<InputActionBinding, int> matchingBindings = [];
+                
                 foreach (var binding in bindingGroup.bindings)
                 {
                     var text = binding.inputAction.DisplayName();

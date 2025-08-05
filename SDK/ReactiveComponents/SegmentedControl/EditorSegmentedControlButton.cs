@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.ReactiveComponents.Native;
+using EditorEX.Util;
 using HMUI;
 using Reactive;
 using Reactive.Yoga;
@@ -80,37 +81,34 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
                 3 => "#Background8px",
                 _ => throw new ArgumentOutOfRangeException(nameof(position), position, null),
             };
-            return new EditorBackground()
+            return new LayoutChildren
             {
-                Source = source,
-                ImageType = Image.Type.Sliced,
-                ContentTransform =
+                new EditorLabel()
                 {
-                    localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one,
-                },
-                Children =
-                {
-                    new EditorLabel()
+                    FontSize = 12,
+                    ContentTransform =
                     {
-                        FontSize = 12,
-                        ContentTransform =
-                        {
-                            localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one,
-                        },
-                    }
-                        .AsFlexItem()
-                        .Bind(ref _label),
-                },
+                        localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one,
+                    },
+                }
+                .AsFlexItem()
+                .Bind(ref _label),
             }
-                .AsFlexItem(maxSize: "fit-content")
-                .AsFlexGroup(
-                    justifyContent: Justify.Center,
-                    padding: new YogaFrame(5, 15),
-                    constrainHorizontal: false
-                )
-                .Bind(ref _background)
-                .WithNativeComponent(out _button)
-                .Use();
+            .As<EditorBackground>(x =>
+            {
+                x.Source = source;
+                x.ImageType = Image.Type.Sliced;
+                x.ContentTransform.localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one;
+            })
+            .AsFlexItem(maxSize: "fit-content")
+            .AsFlexGroup(
+                justifyContent: Justify.Center,
+                padding: new YogaFrame(5, 15),
+                constrainHorizontal: false
+            )
+            .Bind(ref _background)
+            .WithNativeComponent(out _button)
+            .Use();
         }
 
         private void ApplyLabel()

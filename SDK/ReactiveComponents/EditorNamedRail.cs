@@ -1,3 +1,4 @@
+using EditorEX.Util;
 using Reactive;
 using Reactive.Yoga;
 using TMPro;
@@ -56,38 +57,35 @@ namespace EditorEX.SDK.ReactiveComponents
 
         protected override GameObject Construct()
         {
-            return new Layout
+            return new LayoutChildren
             {
-                Children =
+                new LayoutChildren
                 {
-                    new Layout
+                    new EditorLabel
                     {
-                        Children =
-                        {
-                            new EditorLabel
-                            {
-                                Text = "Oops, text is missing",
-                                Alignment = TextAlignmentOptions.Left,
-                            }
-                                .AsFlexItem(alignSelf: Align.Center)
-                                .Bind(ref _label),
-                            new EditorLabel { Text = "*", Enabled = false }
-                                .Export(out _modifiedHint)
-                                .AsFlexItem(),
-                        },
+                        Text = "Oops, text is missing",
+                        Alignment = TextAlignmentOptions.Left,
                     }
-                        .AsFlexGroup()
-                        .AsFlexItem()
-                        .Export(out _labelContainer),
-                },
+                    .AsFlexItem(alignSelf: Align.Center)
+                    .Bind(ref _label),
+                    
+                    new EditorLabel { Text = "*", Enabled = false }
+                        .Export(out _modifiedHint)
+                        .AsFlexItem(),
+                }
+                .AsLayout()
+                .AsFlexGroup()
+                .AsFlexItem()
+                .Export(out _labelContainer)
             }
-                .AsFlexGroup(
-                    justifyContent: Justify.SpaceBetween,
-                    alignItems: Align.Center,
-                    gap: 1f
-                )
-                .Bind(ref _container)
-                .Use();
+            .AsLayout()
+            .AsFlexGroup(
+                justifyContent: Justify.SpaceBetween,
+                alignItems: Align.Center,
+                gap: 1f
+            )
+            .Bind(ref _container)
+            .Use();
         }
 
         protected override void OnInitialize()

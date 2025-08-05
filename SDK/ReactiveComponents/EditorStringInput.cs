@@ -1,4 +1,5 @@
 using EditorEX.SDK.ReactiveComponents.Attachable;
+using EditorEX.Util;
 using IPA.Utilities;
 using Reactive;
 using Reactive.Yoga;
@@ -16,42 +17,39 @@ namespace EditorEX.SDK.ReactiveComponents
 
         protected override GameObject Construct()
         {
-            return new Layout()
+            return new LayoutChildren
             {
-                Children =
+                new LayoutChildren
                 {
-                    new Layout()
+                    new EditorLabel()
                     {
-                        Children =
-                        {
-                            new EditorLabel()
-                            {
-                                Text = "",
-                                FontSize = 18f,
-                                Alignment = TextAlignmentOptions.Left,
-                            }
-                                .Attach<ColorSOAttachable>("Input/Text/Normal")
-                                .Export(out _text)
-                                .AsFlexItem(minSize: new YogaVector(100.pct(), 20f)),
-                        },
+                        Text = "",
+                        FontSize = 18f,
+                        Alignment = TextAlignmentOptions.Left,
                     }
-                        .Export(out var viewport)
-                        .WithNativeComponent(out RectMask2D _)
-                        .AsFlexItem(size: new YogaVector(100.pct(), 22f)),
-                    new EditorImage() { Source = "#WhitePixel" }
-                        .Attach<ColorSOAttachable>("Input/Background")
-                        .AsFlexItem(size: new YogaVector(100.pct(), 1f)),
-                },
+                        .Attach<ColorSOAttachable>("Input/Text/Normal")
+                        .Export(out _text)
+                        .AsFlexItem(minSize: new YogaVector(100.pct(), 20f)),
+                }
+                .AsLayout()
+                .Export(out var viewport)
+                .WithNativeComponent(out RectMask2D _)
+                .AsFlexItem(size: new YogaVector(100.pct(), 22f)),
+
+                new EditorImage() { Source = "#WhitePixel" }
+                    .Attach<ColorSOAttachable>("Input/Background")
+                    .AsFlexItem(size: new YogaVector(100.pct(), 1f)),
             }
-                .WithNativeComponent(out _inputField)
-                .With(x =>
-                {
-                    _inputField.textComponent = _text.TextMesh;
-                    _inputField.textViewport = viewport.ContentTransform;
-                })
-                .AsFlexItem(size: new YogaVector("auto", 20f))
-                .AsFlexGroup(FlexDirection.Column, gap: 6f)
-                .Use();
+            .AsLayout()
+            .WithNativeComponent(out _inputField)
+            .With(x =>
+            {
+                _inputField.textComponent = _text.TextMesh;
+                _inputField.textViewport = viewport.ContentTransform;
+            })
+            .AsFlexItem(size: new YogaVector("auto", 20f))
+            .AsFlexGroup(FlexDirection.Column, gap: 6f)
+            .Use();
         }
 
         protected override void OnStart()
