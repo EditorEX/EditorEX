@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
@@ -162,9 +163,7 @@ namespace EditorEX.UI.Patches
 
                 var secondaryTab = ValueUtils.Remember(0);
 
-                new Layout
-                {
-                    Children =
+                new List<ReactiveComponent>
                     {
                         new EditorSegmentedControl
                         {
@@ -538,8 +537,8 @@ namespace EditorEX.UI.Patches
                             )
                             .AsFlexItem()
                             .EnabledWithObservable(MainTab, 0),
-                    },
-                }
+                    }
+                    .AsLayout()
                     .AsFlexGroup(
                         gap: 60f,
                         padding: 10f,

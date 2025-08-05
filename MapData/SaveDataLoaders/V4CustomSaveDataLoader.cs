@@ -84,10 +84,10 @@ namespace EditorEX.MapData.SaveDataLoaders
             List<BeatmapLevelColorSchemeEditorData> colorSchemes = customBeatmapLevelSaveData
                 .colorSchemes.Select(
                     (SerializedCustomBeatmapLevelSaveData.ColorScheme colorScheme) =>
-                        BeatmapLevelColorSchemeEditorData.Create(
+                        new BeatmapLevelColorSchemeEditorData(
                             colorScheme.colorSchemeName,
                             colorScheme.overrideNotes,
-                            GetColorFromHtmlString(colorScheme.saberAColor),
+                             GetColorFromHtmlString(colorScheme.saberAColor),
                             GetColorFromHtmlString(colorScheme.saberBColor),
                             GetColorFromHtmlString(colorScheme.obstaclesColor),
                             colorScheme.overrideLights,

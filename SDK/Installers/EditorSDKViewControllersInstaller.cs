@@ -21,7 +21,6 @@ namespace EditorEX.SDK.Installers
             Container.BindInterfacesAndSelfTo<ClickableTextFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ImageFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ButtonFactory>().AsSingle();
-            Container.BindInterfacesAndSelfTo<IconButtonFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<StringInputFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ModalFactory>().AsSingle();
 

@@ -607,7 +607,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                 (BaseSliderEditorData tail) =>
                     Math.Abs(tail.tailBeat - currentTimeSliceTime) < 0.001f
             );
-            IL_C6:
+        IL_C6:
             if (flag)
             {
                 return;

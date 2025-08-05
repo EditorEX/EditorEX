@@ -361,5 +361,13 @@ namespace EditorEX.Util
             };
             return component;
         }
+
+        public static Layout AsLayout<T>(this T children, Action<Layout>? configure = null) where T : List<ReactiveComponent>
+        {
+            Layout layout = new();
+            layout.Children.AddRange(children);
+            configure?.Invoke(layout);
+            return layout;
+        }
     }
 }

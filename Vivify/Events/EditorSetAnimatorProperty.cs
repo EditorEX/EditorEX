@@ -247,37 +247,37 @@ namespace EditorEX.Vivify.Events
                     switch (type)
                     {
                         case AnimatorPropertyType.Bool:
-                        {
-                            bool value = points.Interpolate(time) >= 1;
-                            foreach (Animator animator in animators)
                             {
-                                animator.SetBool(name, value);
-                            }
+                                bool value = points.Interpolate(time) >= 1;
+                                foreach (Animator animator in animators)
+                                {
+                                    animator.SetBool(name, value);
+                                }
 
-                            break;
-                        }
+                                break;
+                            }
 
                         case AnimatorPropertyType.Float:
-                        {
-                            float value = points.Interpolate(time);
-                            foreach (Animator animator in animators)
                             {
-                                animator.SetFloat(name, value);
-                            }
+                                float value = points.Interpolate(time);
+                                foreach (Animator animator in animators)
+                                {
+                                    animator.SetFloat(name, value);
+                                }
 
-                            break;
-                        }
+                                break;
+                            }
 
                         case AnimatorPropertyType.Integer:
-                        {
-                            float value = points.Interpolate(time);
-                            foreach (Animator animator in animators)
                             {
-                                animator.SetInteger(name, (int)value);
-                            }
+                                float value = points.Interpolate(time);
+                                foreach (Animator animator in animators)
+                                {
+                                    animator.SetInteger(name, (int)value);
+                                }
 
-                            break;
-                        }
+                                break;
+                            }
 
                         default:
                             yield break;

@@ -70,7 +70,7 @@ namespace EditorEX.MapData.SaveDataLoaders
                 )
                 {
                     beatmapLevelColorSchemes.Add(
-                        BeatmapLevelColorSchemeEditorData.Create(
+                        new BeatmapLevelColorSchemeEditorData(
                             beatmapLevelColorSchemeSaveData.colorScheme.colorSchemeId,
                             true,
                             beatmapLevelColorSchemeSaveData.colorScheme.saberAColor,

@@ -11,16 +11,11 @@ namespace EditorEX.UI.Patches
 {
     internal class EditDifficultyBeatmapPatches : IAffinity
     {
-        private IconButtonFactory _iconButtonFactory;
         private LazyInject<BeatmapProjectManager> _beatmapProjectManager;
 
-        public EditDifficultyBeatmapPatches(
-            IconButtonFactory iconButtonFactory,
-            LazyInject<BeatmapProjectManager> beatmapProjectManager
-        )
+        public EditDifficultyBeatmapPatches(LazyInject<BeatmapProjectManager> beatmapProjectManager)
         {
             _beatmapProjectManager = beatmapProjectManager;
-            _iconButtonFactory = iconButtonFactory;
         }
 
         [AffinityPatch(typeof(DifficultyBeatmapView), nameof(DifficultyBeatmapView.SetData))]
@@ -76,8 +71,6 @@ namespace EditorEX.UI.Patches
 
                 var labelFitter = difficultyLabel.gameObject.AddComponent<ContentSizeFitter>();
                 labelFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-                button = _iconButtonFactory.Create(wrapper.transform, "#IconOpen", () => { });
             }
 
             button!.interactable = __instance._beatmapData != null;
