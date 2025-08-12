@@ -31,25 +31,24 @@ namespace EditorEX.SDK.ReactiveComponents
                         .Export(out _text)
                         .AsFlexItem(minSize: new YogaVector(100.pct(), 20f)),
                 }
-                .AsLayout()
-                .Export(out var viewport)
-                .WithNativeComponent(out RectMask2D _)
-                .AsFlexItem(size: new YogaVector(100.pct(), 22f)),
-
+                    .AsLayout()
+                    .Export(out var viewport)
+                    .WithNativeComponent(out RectMask2D _)
+                    .AsFlexItem(size: new YogaVector(100.pct(), 22f)),
                 new EditorImage() { Source = "#WhitePixel" }
                     .Attach<ColorSOAttachable>("Input/Background")
                     .AsFlexItem(size: new YogaVector(100.pct(), 1f)),
             }
-            .AsLayout()
-            .WithNativeComponent(out _inputField)
-            .With(x =>
-            {
-                _inputField.textComponent = _text.TextMesh;
-                _inputField.textViewport = viewport.ContentTransform;
-            })
-            .AsFlexItem(size: new YogaVector("auto", 20f))
-            .AsFlexGroup(FlexDirection.Column, gap: 6f)
-            .Use();
+                .AsLayout()
+                .WithNativeComponent(out _inputField)
+                .With(x =>
+                {
+                    _inputField.textComponent = _text.TextMesh;
+                    _inputField.textViewport = viewport.ContentTransform;
+                })
+                .AsFlexItem(size: new YogaVector("auto", 20f))
+                .AsFlexGroup(FlexDirection.Column, gap: 6f)
+                .Use();
         }
 
         protected override void OnStart()

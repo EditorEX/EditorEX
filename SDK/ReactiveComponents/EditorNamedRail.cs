@@ -66,26 +66,25 @@ namespace EditorEX.SDK.ReactiveComponents
                         Text = "Oops, text is missing",
                         Alignment = TextAlignmentOptions.Left,
                     }
-                    .AsFlexItem(alignSelf: Align.Center)
-                    .Bind(ref _label),
-
+                        .AsFlexItem(alignSelf: Align.Center)
+                        .Bind(ref _label),
                     new EditorLabel { Text = "*", Enabled = false }
                         .Export(out _modifiedHint)
                         .AsFlexItem(),
                 }
-                .AsLayout()
-                .AsFlexGroup()
-                .AsFlexItem()
-                .Export(out _labelContainer)
+                    .AsLayout()
+                    .AsFlexGroup()
+                    .AsFlexItem()
+                    .Export(out _labelContainer),
             }
-            .AsLayout()
-            .AsFlexGroup(
-                justifyContent: Justify.SpaceBetween,
-                alignItems: Align.Center,
-                gap: 1f
-            )
-            .Bind(ref _container)
-            .Use();
+                .AsLayout()
+                .AsFlexGroup(
+                    justifyContent: Justify.SpaceBetween,
+                    alignItems: Align.Center,
+                    gap: 1f
+                )
+                .Bind(ref _container)
+                .Use();
         }
 
         protected override void OnInitialize()

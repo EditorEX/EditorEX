@@ -81,7 +81,6 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                             .WithListener(x => x.SelectedIndexes, _ => CloseInternal())
                             .AsFlexItem(flexGrow: 0.98f)
                             .Bind(ref _table),
-                            
                         // Scrollbar
                         new EditorScrollbar()
                             .AsFlexItem(
@@ -90,20 +89,20 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                             )
                             .With(x => Table.Scrollbar = x),
                     }
-                    .As<EditorBackground>(x =>
-                    {
-                        x.Source = "#Background4px";
-                        x.ImageType = UnityEngine.UI.Image.Type.Sliced;
-                    })
-                    .With(x =>
-                        x.WrappedImage.Attach<ColorSOAttachable>("Button/Background/Normal")
-                    )
-                    .AsFlexGroup(padding: 2f)
-                    .AsFlexItem(flexGrow: 1f),
+                        .As<EditorBackground>(x =>
+                        {
+                            x.Source = "#Background4px";
+                            x.ImageType = UnityEngine.UI.Image.Type.Sliced;
+                        })
+                        .With(x =>
+                            x.WrappedImage.Attach<ColorSOAttachable>("Button/Background/Normal")
+                        )
+                        .AsFlexGroup(padding: 2f)
+                        .AsFlexItem(flexGrow: 1f),
                 }
-                .AsLayout()
-                .AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false)
-                .Use();
+                    .AsLayout()
+                    .AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false)
+                    .Use();
             }
         }
     }

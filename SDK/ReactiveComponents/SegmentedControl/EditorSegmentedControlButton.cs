@@ -91,24 +91,25 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
                         localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one,
                     },
                 }
-                .AsFlexItem()
-                .Bind(ref _label),
+                    .AsFlexItem()
+                    .Bind(ref _label),
             }
-            .As<EditorBackground>(x =>
-            {
-                x.Source = source;
-                x.ImageType = Image.Type.Sliced;
-                x.ContentTransform.localScale = position == 2 ? new Vector3(-1, 1, 1) : Vector3.one;
-            })
-            .AsFlexItem(maxSize: "fit-content")
-            .AsFlexGroup(
-                justifyContent: Justify.Center,
-                padding: new YogaFrame(5, 15),
-                constrainHorizontal: false
-            )
-            .Bind(ref _background)
-            .WithNativeComponent(out _button)
-            .Use();
+                .As<EditorBackground>(x =>
+                {
+                    x.Source = source;
+                    x.ImageType = Image.Type.Sliced;
+                    x.ContentTransform.localScale =
+                        position == 2 ? new Vector3(-1, 1, 1) : Vector3.one;
+                })
+                .AsFlexItem(maxSize: "fit-content")
+                .AsFlexGroup(
+                    justifyContent: Justify.Center,
+                    padding: new YogaFrame(5, 15),
+                    constrainHorizontal: false
+                )
+                .Bind(ref _background)
+                .WithNativeComponent(out _button)
+                .Use();
         }
 
         private void ApplyLabel()

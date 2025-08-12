@@ -23,22 +23,29 @@ namespace EditorEX.Essentials
                 newComponent = existing;
                 return false;
             }
+            Debug.Log("x1 " + (types == null));
             var type = typeProvider.GetProvidedType(types);
+            Debug.Log("x2 " + (type == null));
+            Debug.Log("x3 " + type.FullName);
 
             T? newToUse = (T?)(object?)gameObject?.GetComponent(type);
 
             // We can't use != with generic values, can't use a type constraint for IEquatible as then the interface would need to inherit such also.
             if (
                 newToUse != null
-                && existing != null
-                && !EqualityComparer<T>.Default.Equals(existing, newToUse)
+                && (
+                    (existing != null && !EqualityComparer<T>.Default.Equals(existing, newToUse))
+                    || existing == null
+                )
             )
             {
+                Debug.Log("setting");
                 existing?.Disable();
                 newComponent = newToUse;
                 return true;
             }
 
+            Debug.Log("setting2");
             newComponent = existing;
             return false;
         }
@@ -75,10 +82,15 @@ namespace EditorEX.Essentials
             // We can't use != with generic values, can't use a type constraint for IEquatible as then the interface would need to inherit such also.
             if (
                 newToUse != null
-                && existing != null
-                && !EqualityComparer<IVariableMovementDataProvider>.Default.Equals(
-                    existing,
-                    newToUse
+                && (
+                    (
+                        existing != null
+                        && !EqualityComparer<IVariableMovementDataProvider>.Default.Equals(
+                            existing,
+                            newToUse
+                        )
+                    )
+                    || existing == null
                 )
             )
             {

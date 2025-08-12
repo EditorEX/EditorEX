@@ -47,13 +47,13 @@ namespace EditorEX.UI.Patches.SDK
                     {
                         Values = _viewNames.ToArray(),
                         SelectedIndex = tab,
-                    }
+                    },
                 }
-                .AsLayout()
-                .AsFlexGroup(FlexDirection.Column, gap: 20f, padding: 30)
-                .Export(out var layout)
-                .WithReactiveContainer(_reactiveContainer)
-                .Use(__instance.transform);
+                    .AsLayout()
+                    .AsFlexGroup(FlexDirection.Column, gap: 20f, padding: 30)
+                    .Export(out var layout)
+                    .WithReactiveContainer(_reactiveContainer)
+                    .Use(__instance.transform);
 
                 var vanillaContainer = __instance
                     .transform.Find("Container")

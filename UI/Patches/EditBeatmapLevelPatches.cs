@@ -177,74 +177,45 @@ namespace EditorEX.UI.Patches
                         {
                             new LayoutChildren
                             {
-                                new EditorImage
-                                {
-                                    Source = "https://picsum.photos/200",
-                                }.AsFlexItem(size: 200f),
+                                new EditorImage { Source = "https://picsum.photos/200" }.AsFlexItem(
+                                    size: 200f
+                                ),
                                 new LayoutChildren()
                                     .AsLayout()
                                     .AsFlexItem()
                                     .AsFlexGroup(FlexDirection.Column),
                             }
-                            .AsLayout()
-                            .AsFlexItem()
-                            .AsFlexGroup(FlexDirection.Row),
-
+                                .AsLayout()
+                                .AsFlexItem()
+                                .AsFlexGroup(FlexDirection.Row),
                             new LayoutChildren
                             {
                                 new EditorStringInput()
-                                    .WithInputValidatorCopy<
-                                        StringInputFieldValidator,
-                                        string
-                                    >(
+                                    .WithInputValidatorCopy<StringInputFieldValidator, string>(
                                         __instance._songNameInputValidator,
                                         ref __instance._songNameInputValidator
                                     )
                                     .InEditorNamedRail("Song Name", 18f, 55f)
-                                    .LinkNamedRailWithValidator<
-                                        StringInputFieldValidator,
-                                        string
-                                    >()
-                                    .AsFlexItem(
-                                        size: new() { x = 100f.pct(), y = "auto" }
-                                    ),
+                                    .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
+                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
                                 new EditorStringInput()
-                                    .WithInputValidatorCopy<
-                                        StringInputFieldValidator,
-                                        string
-                                    >(
+                                    .WithInputValidatorCopy<StringInputFieldValidator, string>(
                                         __instance._songSubNameInputValidator,
                                         ref __instance._songSubNameInputValidator
                                     )
                                     .InEditorNamedRail("Song Sub Name", 18f, 55f)
-                                    .LinkNamedRailWithValidator<
-                                        StringInputFieldValidator,
-                                        string
-                                    >()
-                                    .AsFlexItem(
-                                        size: new() { x = 100f.pct(), y = "auto" }
-                                    ),
+                                    .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
+                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
                                 new EditorStringInput()
-                                    .WithInputValidatorCopy<
-                                        StringInputFieldValidator,
-                                        string
-                                    >(
+                                    .WithInputValidatorCopy<StringInputFieldValidator, string>(
                                         __instance._songAuthorNameInputValidator,
                                         ref __instance._songAuthorNameInputValidator
                                     )
                                     .InEditorNamedRail("Song Author Name", 18f, 55f)
-                                    .LinkNamedRailWithValidator<
-                                        StringInputFieldValidator,
-                                        string
-                                    >()
-                                    .AsFlexItem(
-                                        size: new() { x = 100f.pct(), y = "auto" }
-                                    ),
+                                    .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
+                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
                                 new EditorStringInput()
-                                    .WithInputValidator<
-                                        StringInputFieldValidator,
-                                        string
-                                    >(
+                                    .WithInputValidator<StringInputFieldValidator, string>(
                                         out _levelAuthorInputValidator,
                                         x =>
                                             __instance._signalBus.Fire(
@@ -256,58 +227,43 @@ namespace EditorEX.UI.Patches
                                                 )
                                             )
                                     )
-                                    .InEditorNamedRail(
-                                        "Level Author Name",
-                                        18f,
-                                        55f
-                                    )
-                                    .LinkNamedRailWithValidator<
-                                        StringInputFieldValidator,
-                                        string
-                                    >()
+                                    .InEditorNamedRail("Level Author Name", 18f, 55f)
+                                    .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
                                     .EnabledWithObservable(V4Level, false)
-                                    .AsFlexItem(
-                                        size: new() { x = 100f.pct(), y = "auto" }
-                                    ),
+                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
                             }
-                            .AsLayout()
-                            .AsFlexGroup(
-                                gap: 40f,
-                                direction: FlexDirection.Column,
-                                alignItems: Align.FlexStart
-                            )
-                            .AsFlexItem(),
-
+                                .AsLayout()
+                                .AsFlexGroup(
+                                    gap: 40f,
+                                    direction: FlexDirection.Column,
+                                    alignItems: Align.FlexStart
+                                )
+                                .AsFlexItem(),
                             new LayoutChildren // Audio Info
                             {
                                 new LayoutChildren
                                 {
                                     new LayoutChildren
                                     {
-                                        new EditorImage { Source = "#IconOpen", }
-                                        .AsFlexItem(size: new YogaVector(30f, 30f)),
+                                        new EditorImage { Source = "#IconOpen" }.AsFlexItem(
+                                            size: new YogaVector(30f, 30f)
+                                        ),
                                     }
-                                    .As<EditorBackgroundButton>(x => {
-                                        x.Source = "#Background8px";
-                                    })
-                                    .AsFlexGroup(
-                                        justifyContent: Justify.Center,
-                                        alignItems: Align.Center
-                                    )
-                                    .AsFlexItem(
-                                        size: new YogaVector(40f, 40f)
-                                    )
-                                    .With(x =>
-                                    {
-                                        __instance._editBpmGridButton =
-                                            x.Component.Button;
-                                    }),
-
+                                        .As<EditorBackgroundButton>(x =>
+                                        {
+                                            x.Source = "#Background8px";
+                                        })
+                                        .AsFlexGroup(
+                                            justifyContent: Justify.Center,
+                                            alignItems: Align.Center
+                                        )
+                                        .AsFlexItem(size: new YogaVector(40f, 40f))
+                                        .With(x =>
+                                        {
+                                            __instance._editBpmGridButton = x.Component.Button;
+                                        }),
                                     new EditorStringInput()
-                                        .WithInputValidatorCopy<
-                                            FloatInputFieldValidator,
-                                            float
-                                        >(
+                                        .WithInputValidatorCopy<FloatInputFieldValidator, float>(
                                             __instance._beatsPerMinuteInputValidator,
                                             ref __instance._beatsPerMinuteInputValidator
                                         )
@@ -316,69 +272,44 @@ namespace EditorEX.UI.Patches
                                             FloatInputFieldValidator,
                                             float
                                         >()
-                                        .AsFlexItem(
-                                            size: new() { x = 260f, y = "auto" }
-                                        ),
+                                        .AsFlexItem(size: new() { x = 260f, y = "auto" }),
                                 }
-                                .AsLayout()
-                                .AsFlexGroup(gap: 4f)
-                                .AsFlexItem(
-                                    size: new() { x = 100f.pct(), y = "auto" }
-                                ),
-
+                                    .AsLayout()
+                                    .AsFlexGroup(gap: 4f)
+                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
                                 new EditorStringInput()
-                                    .WithInputValidatorCopy<
-                                        FloatInputFieldValidator,
-                                        float
-                                    >(
+                                    .WithInputValidatorCopy<FloatInputFieldValidator, float>(
                                         __instance._previewStartTimeInputValidator,
                                         ref __instance._previewStartTimeInputValidator
                                     )
-                                    .InEditorNamedRail(
-                                        "Preview Start Time",
-                                        18f,
-                                        30f
-                                    )
-                                    .LinkNamedRailWithValidator<
-                                        FloatInputFieldValidator,
-                                        float
-                                    >()
-                                    .AsFlexItem(
-                                        size: new() { x = 100f.pct(), y = "auto" }
-                                    ),
+                                    .InEditorNamedRail("Preview Start Time", 18f, 30f)
+                                    .LinkNamedRailWithValidator<FloatInputFieldValidator, float>()
+                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
                                 new EditorStringInput()
-                                    .WithInputValidatorCopy<
-                                        FloatInputFieldValidator,
-                                        float
-                                    >(
+                                    .WithInputValidatorCopy<FloatInputFieldValidator, float>(
                                         __instance._previewDurationInputValidator,
                                         ref __instance._previewDurationInputValidator
                                     )
                                     .InEditorNamedRail("Preview Duration", 18f, 30f)
-                                    .LinkNamedRailWithValidator<
-                                        FloatInputFieldValidator,
-                                        float
-                                    >()
-                                    .AsFlexItem(
-                                        size: new() { x = 100f.pct(), y = "auto" }
-                                    ),
+                                    .LinkNamedRailWithValidator<FloatInputFieldValidator, float>()
+                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
                             }
+                                .AsLayout()
+                                .AsFlexGroup(
+                                    gap: 40f,
+                                    direction: FlexDirection.Column,
+                                    alignItems: Align.FlexStart
+                                )
+                                .AsFlexItem(size: new() { x = 60f.pct(), y = "auto" }),
+                        }
                             .AsLayout()
                             .AsFlexGroup(
-                                gap: 40f,
+                                gap: 60f,
                                 direction: FlexDirection.Column,
-                                alignItems: Align.FlexStart
+                                alignItems: Align.FlexStart,
+                                padding: new YogaFrame(40f, 0f, 0f, 0f)
                             )
-                            .AsFlexItem(size: new() { x = 60f.pct(), y = "auto" }),
-                        }
-                        .AsLayout()
-                        .AsFlexGroup(
-                            gap: 60f,
-                            direction: FlexDirection.Column,
-                            alignItems: Align.FlexStart,
-                            padding: new YogaFrame(40f, 0f, 0f, 0f)
-                        )
-                        .AsFlexItem(size: new() { x = 500f, y = "auto" }),
+                            .AsFlexItem(size: new() { x = 500f, y = "auto" }),
                         new LayoutChildren // Right Side
                         {
                             new EditorSegmentedControl
@@ -400,10 +331,7 @@ namespace EditorEX.UI.Patches
                                                         EnvironmentType.Normal
                                                     )
                                                     .Select(x =>
-                                                        (
-                                                            x.serializedName,
-                                                            x.environmentName
-                                                        )
+                                                        (x.serializedName, x.environmentName)
                                                     )
                                                     .ToDictionary(
                                                         x => x.serializedName,
@@ -419,21 +347,15 @@ namespace EditorEX.UI.Patches
                                                 .Items.First()
                                                 .ExtractTupleFromKVP()
                                         )
-                                        .DropdownWithObservable(
-                                            normalEnvironmentValue
-                                        )
+                                        .DropdownWithObservable(normalEnvironmentValue)
                                         .Animate(
                                             normalEnvironmentValue,
                                             (x, v) =>
                                             {
-                                                Debug.Log(
-                                                    $"Selected Normal Environment: {v}"
-                                                );
+                                                Debug.Log($"Selected Normal Environment: {v}");
                                             }
                                         )
-                                        .AsFlexItem(
-                                            size: new YogaVector(200f, 40f)
-                                        )
+                                        .AsFlexItem(size: new YogaVector(200f, 40f))
                                         .InEditorNamedRail("Environment", 18f),
                                     new EditorTextDropdown<string>()
                                         .With(x =>
@@ -450,18 +372,14 @@ namespace EditorEX.UI.Patches
                                             );
                                         })
                                         .EnabledWithObservable(V4Level, false)
-                                        .Bind(
-                                            ref _allDirectionsEnvironmentDropdown
-                                        )
+                                        .Bind(ref _allDirectionsEnvironmentDropdown)
                                         .ExtractObservable(
                                             out var allDirectionsEnvironmentValue,
                                             _allDirectionsEnvironmentDropdown!
                                                 .Items.First()
                                                 .ExtractTupleFromKVP()
                                         )
-                                        .DropdownWithObservable(
-                                            allDirectionsEnvironmentValue
-                                        )
+                                        .DropdownWithObservable(allDirectionsEnvironmentValue)
                                         .Animate(
                                             allDirectionsEnvironmentValue,
                                             (x, v) =>
@@ -471,66 +389,61 @@ namespace EditorEX.UI.Patches
                                                 );
                                             }
                                         )
-                                        .AsFlexItem(
-                                            size: new YogaVector(200f, 40f)
-                                        )
-                                        .InEditorNamedRail(
-                                            "360 Environment",
-                                            18f
-                                        ),
+                                        .AsFlexItem(size: new YogaVector(200f, 40f))
+                                        .InEditorNamedRail("360 Environment", 18f),
                                 }
-                                .AsLayout()
-                                .EnabledWithObservable(secondaryTab, 0)
-                                .AsFlexGroup(
-                                    FlexDirection.Column,
-                                    gap: 5f,
-                                    padding: new YogaFrame(24f, 80f)
-                                )
-                                .AsFlexItem(size: 100.pct()),
-
+                                    .AsLayout()
+                                    .EnabledWithObservable(secondaryTab, 0)
+                                    .AsFlexGroup(
+                                        FlexDirection.Column,
+                                        gap: 5f,
+                                        padding: new YogaFrame(24f, 80f)
+                                    )
+                                    .AsFlexItem(size: 100.pct()),
                                 new LayoutChildren // Contributors
-                                {}
-                                .AsLayout()
-                                .EnabledWithObservable(secondaryTab, 1)
-                                .AsFlexGroup(gap: 5f, padding: 24f)
-                                .AsFlexItem(),
+                                { }
+                                    .AsLayout()
+                                    .EnabledWithObservable(secondaryTab, 1)
+                                    .AsFlexGroup(gap: 5f, padding: 24f)
+                                    .AsFlexItem(),
                             }
-                            .As<EditorBackground>(x => {
-                                x.ColorSO = _colorCollector.GetColor(
-                                    "Navbar/Background/Normal"
-                                );
-                                x.UseScriptableObjectColors = true;
-                                x.Source = "#Background8px";
-                                x.ImageType = Image.Type.Sliced;
-                            })
-                            .AsFlexItem(minSize: new() { x = 800f, y = 800f }),
+                                .As<EditorBackground>(x =>
+                                {
+                                    x.ColorSO = _colorCollector.GetColor(
+                                        "Navbar/Background/Normal"
+                                    );
+                                    x.UseScriptableObjectColors = true;
+                                    x.Source = "#Background8px";
+                                    x.ImageType = Image.Type.Sliced;
+                                })
+                                .AsFlexItem(minSize: new() { x = 800f, y = 800f }),
                         }
+                            .AsLayout()
+                            .AsFlexGroup(
+                                gap: 10f,
+                                direction: FlexDirection.Column,
+                                alignItems: Align.Center
+                            )
+                            .AsFlexItem(),
+                    }
                         .AsLayout()
                         .AsFlexGroup(
-                            gap: 10f,
-                            direction: FlexDirection.Column,
-                            alignItems: Align.Center
+                            gap: 250f,
+                            direction: FlexDirection.Row,
+                            alignItems: Align.FlexStart
                         )
-                        .AsFlexItem(),
-                    }
+                        .AsFlexItem()
+                        .EnabledWithObservable(MainTab, 0),
+                }
                     .AsLayout()
                     .AsFlexGroup(
-                        gap: 250f,
-                        direction: FlexDirection.Row,
-                        alignItems: Align.FlexStart
+                        gap: 60f,
+                        padding: 10f,
+                        direction: FlexDirection.Column,
+                        alignItems: Align.Center
                     )
-                    .AsFlexItem()
-                    .EnabledWithObservable(MainTab, 0),
-                }
-                .AsLayout()
-                .AsFlexGroup(
-                    gap: 60f,
-                    padding: 10f,
-                    direction: FlexDirection.Column,
-                    alignItems: Align.Center
-                )
-                .WithReactiveContainer(_reactiveContainer)
-                .Use(__instance.transform);
+                    .WithReactiveContainer(_reactiveContainer)
+                    .Use(__instance.transform);
 
                 __instance.gameObject.SetActive(true);
             }

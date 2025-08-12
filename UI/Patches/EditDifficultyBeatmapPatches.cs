@@ -22,6 +22,7 @@ namespace EditorEX.UI.Patches
         [AffinityPostfix]
         private void Modify(DifficultyBeatmapView __instance, DifficultyBeatmapData beatmapData)
         {
+            return;
             if (beatmapData == null)
                 return;
             var v4 = LevelContext.Version >= BeatmapProjectFileHelper.version400;

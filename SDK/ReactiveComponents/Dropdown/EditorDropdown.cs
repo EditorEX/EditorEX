@@ -130,22 +130,22 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                     PreserveAspect = true,
                 }.AsFlexItem(size: 20f, aspectRatio: 1f),
             }
-            .As<EditorBackgroundButton>(x =>
-            {
-                x.OnClick = () =>
+                .As<EditorBackgroundButton>(x =>
                 {
-                    if (Items.Count == 0 || _modal.ModalOpened)
+                    x.OnClick = () =>
                     {
-                        return;
-                    }
+                        if (Items.Count == 0 || _modal.ModalOpened)
+                        {
+                            return;
+                        }
 
-                    _modal.PresentEditor(ContentTransform);
-                };
-            })
-            .WithNativeComponent(out _canvasGroup)
-            .AsFlexGroup(alignContent: Reactive.Yoga.Align.Center)
-            .Bind(ref _button)
-            .Use();
+                        _modal.PresentEditor(ContentTransform);
+                    };
+                })
+                .WithNativeComponent(out _canvasGroup)
+                .AsFlexGroup(alignContent: Reactive.Yoga.Align.Center)
+                .Bind(ref _button)
+                .Use();
         }
 
         protected override void OnInitialize()

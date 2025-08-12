@@ -49,9 +49,9 @@ namespace EditorEX.SDKImplementation
                     .AsFlexItem(size: new YogaVector(350f, 40f))
                     .InEditorNamedRail("Input", 18f),
             }
-            .AsLayout()
-            .AsFlexGroup(FlexDirection.Column, Justify.Center, gap: 10f)
-            .AsFlexItem(size: new YogaVector(900f, "auto"));
+                .AsLayout()
+                .AsFlexGroup(FlexDirection.Column, Justify.Center, gap: 10f)
+                .AsFlexItem(size: new YogaVector(900f, "auto"));
         }
 
         public SettingsViewData GetViewData()

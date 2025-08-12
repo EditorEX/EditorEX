@@ -66,21 +66,20 @@ namespace EditorEX.UI.Patches
                         SelectedIndex = _tab,
                         TabbingType = TabbingType.Alpha,
                     }
-                    .AsFlexItem(size: new YogaVector(float.NaN, 30f))
-                    .Animate(
-                        _tab,
-                        () =>
-                        {
-                            if (_tab.Value != _segmentedControl!.Values.Length - 1)
+                        .AsFlexItem(size: new YogaVector(float.NaN, 30f))
+                        .Animate(
+                            _tab,
+                            () =>
                             {
-                                _sourcesConfig.SelectedSource =
-                                    _sourcesConfig.Sources.Keys.ToList()[_tab.Value];
-                                _beatmapsCollectionDataModel.RefreshCollection();
+                                if (_tab.Value != _segmentedControl!.Values.Length - 1)
+                                {
+                                    _sourcesConfig.SelectedSource =
+                                        _sourcesConfig.Sources.Keys.ToList()[_tab.Value];
+                                    _beatmapsCollectionDataModel.RefreshCollection();
+                                }
                             }
-                        }
-                    )
-                    .Bind(ref _segmentedControl),
-
+                        )
+                        .Bind(ref _segmentedControl),
                     new LayoutChildren // Song List/Filter/Recently Modified
                     {
                         new LayoutElementComponent(
@@ -99,15 +98,13 @@ namespace EditorEX.UI.Patches
                             size: new YogaVector(100.pct(), 50.pct())
                         ),
                     }
-                    .AsLayout()
-                    .AsFlexGroup(FlexDirection.Column)
-                    .AsFlexItem(size: new YogaVector(100.pct(), 100.pct()))
-                    .DisabledWithObservable(
-                        _tab,
-                        () =>
-                            (int)Mathf.Max((_segmentedControl?.Values.Length ?? 2f) - 1, 1)
-                    ),
-
+                        .AsLayout()
+                        .AsFlexGroup(FlexDirection.Column)
+                        .AsFlexItem(size: new YogaVector(100.pct(), 100.pct()))
+                        .DisabledWithObservable(
+                            _tab,
+                            () => (int)Mathf.Max((_segmentedControl?.Values.Length ?? 2f) - 1, 1)
+                        ),
                     new LayoutChildren // New Source
                     {
                         new EditorHeaderLabel
@@ -143,26 +140,25 @@ namespace EditorEX.UI.Patches
                                     _tab.Value = _segmentedControl!.Values.Length - 1;
                                 }
                             },
-                        }.AsFlexItem()
+                        }.AsFlexItem(),
                     }
-                    .AsLayout()
-                    .AsFlexGroup(FlexDirection.Column)
-                    .AsFlexItem()
-                    .EnabledWithObservable(
-                        _tab,
-                        () =>
-                            (int)Mathf.Max((_segmentedControl?.Values.Length ?? 2f) - 1, 1)
-                    ),
+                        .AsLayout()
+                        .AsFlexGroup(FlexDirection.Column)
+                        .AsFlexItem()
+                        .EnabledWithObservable(
+                            _tab,
+                            () => (int)Mathf.Max((_segmentedControl?.Values.Length ?? 2f) - 1, 1)
+                        ),
                 }
-                .AsLayout()
-                .AsFlexItem(size: new YogaVector(1500f, 1000))
-                .AsFlexGroup(
-                    FlexDirection.Column,
-                    alignItems: Align.Center,
-                    constrainHorizontal: false
-                )
-                .WithReactiveContainer(_reactiveContainer)
-                .Use(__instance.transform);
+                    .AsLayout()
+                    .AsFlexItem(size: new YogaVector(1500f, 1000))
+                    .AsFlexGroup(
+                        FlexDirection.Column,
+                        alignItems: Align.Center,
+                        constrainHorizontal: false
+                    )
+                    .WithReactiveContainer(_reactiveContainer)
+                    .Use(__instance.transform);
             }
 
             ReloadCells();

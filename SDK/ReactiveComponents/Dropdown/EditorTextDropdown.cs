@@ -36,20 +36,19 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 return new LayoutChildren
                 {
                     new Layout().AsFlexItem(flexGrow: 1f),
-
                     new EditorLabel() { Alignment = TextAlignmentOptions.Left, FontSize = 18f }
                         .AsFlexItem(flexGrow: 99f)
                         .WithRectExpand()
                         .Bind(ref _label),
                 }
-                .As<EditorBackgroundButton>(x =>
-                {
-                    x.OnClick = SelectSelf;
-                })
-                .AsFlexGroup(alignItems: Reactive.Yoga.Align.Center, padding: 8f)
-                .AsFlexItem(size: new() { x = "auto", y = 40f })
-                .Bind(ref _button)
-                .Use();
+                    .As<EditorBackgroundButton>(x =>
+                    {
+                        x.OnClick = SelectSelf;
+                    })
+                    .AsFlexGroup(alignItems: Reactive.Yoga.Align.Center, padding: 8f)
+                    .AsFlexItem(size: new() { x = "auto", y = 40f })
+                    .Bind(ref _button)
+                    .Use();
             }
 
             public override void OnCellStateChange(bool selected) { }

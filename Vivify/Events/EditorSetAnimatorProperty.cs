@@ -247,37 +247,37 @@ namespace EditorEX.Vivify.Events
                     switch (type)
                     {
                         case AnimatorPropertyType.Bool:
+                        {
+                            bool value = points.Interpolate(time) >= 1;
+                            foreach (Animator animator in animators)
                             {
-                                bool value = points.Interpolate(time) >= 1;
-                                foreach (Animator animator in animators)
-                                {
-                                    animator.SetBool(name, value);
-                                }
-
-                                break;
+                                animator.SetBool(name, value);
                             }
+
+                            break;
+                        }
 
                         case AnimatorPropertyType.Float:
+                        {
+                            float value = points.Interpolate(time);
+                            foreach (Animator animator in animators)
                             {
-                                float value = points.Interpolate(time);
-                                foreach (Animator animator in animators)
-                                {
-                                    animator.SetFloat(name, value);
-                                }
-
-                                break;
+                                animator.SetFloat(name, value);
                             }
+
+                            break;
+                        }
 
                         case AnimatorPropertyType.Integer:
+                        {
+                            float value = points.Interpolate(time);
+                            foreach (Animator animator in animators)
                             {
-                                float value = points.Interpolate(time);
-                                foreach (Animator animator in animators)
-                                {
-                                    animator.SetInteger(name, (int)value);
-                                }
-
-                                break;
+                                animator.SetInteger(name, (int)value);
                             }
+
+                            break;
+                        }
 
                         default:
                             yield break;

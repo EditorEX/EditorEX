@@ -84,26 +84,27 @@ namespace EditorEX.SDK.ReactiveComponents.Table
                         Source = "#Background3px",
                         ImageType = Image.Type.Sliced,
                     }
-                    .Attach<ColorSOAttachable>("Scrollbar/Handle/Normal")
-                    .Bind(ref _handleRect),
+                        .Attach<ColorSOAttachable>("Scrollbar/Handle/Normal")
+                        .Bind(ref _handleRect),
                 }
-                .As<EditorBackground>(x => {
-                    x.Source =  "#Background3px";
-                    x.ImageType = Image.Type.Sliced;
-                })
-                .With(x =>
-                    x.WrappedImage.Attach<ColorSOAttachable>("Scrollbar/Background/Normal")
-                )
-                .AsFlexItem(
-                    flexGrow: 1f,
-                    size: new() { x = 7f },
-                    margin: new() { top = 4f, bottom = 4f }
-                )
-                .Bind(ref _handleContainerRect),
+                    .As<EditorBackground>(x =>
+                    {
+                        x.Source = "#Background3px";
+                        x.ImageType = Image.Type.Sliced;
+                    })
+                    .With(x =>
+                        x.WrappedImage.Attach<ColorSOAttachable>("Scrollbar/Background/Normal")
+                    )
+                    .AsFlexItem(
+                        flexGrow: 1f,
+                        size: new() { x = 7f },
+                        margin: new() { top = 4f, bottom = 4f }
+                    )
+                    .Bind(ref _handleContainerRect),
             }
-            .AsLayout()
-            .AsFlexGroup(direction: FlexDirection.Column, alignItems: Align.Center)
-            .Use();
+                .AsLayout()
+                .AsFlexGroup(direction: FlexDirection.Column, alignItems: Align.Center)
+                .Use();
         }
 
         protected override void OnInitialize()

@@ -27,18 +27,18 @@ namespace EditorEX.SDK.ReactiveComponents
             {
                 new EditorImage() { Source = "#IconCheckmark" }
                     .AsFlexItem(size: 20f)
-                    .Bind(ref _checkmark)
+                    .Bind(ref _checkmark),
             }
-            .As<EditorBackground>(x =>
-            {
-                x.Source = "#Background4px";
-                x.ImageType = Image.Type.Sliced;
-            })
-            .AsFlexGroup(padding: 8f)
-            .AsFlexItem(size: 36f, maxSize: 36f)
-            .Bind(ref _background)
-            .WithNativeComponent(out _toggle)
-            .Use();
+                .As<EditorBackground>(x =>
+                {
+                    x.Source = "#Background4px";
+                    x.ImageType = Image.Type.Sliced;
+                })
+                .AsFlexGroup(padding: 8f)
+                .AsFlexItem(size: 36f, maxSize: 36f)
+                .Bind(ref _background)
+                .WithNativeComponent(out _toggle)
+                .Use();
         }
 
         protected override void OnStart()

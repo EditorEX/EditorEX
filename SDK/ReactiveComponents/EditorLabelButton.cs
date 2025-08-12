@@ -43,18 +43,18 @@ namespace EditorEX.SDK.ReactiveComponents
             {
                 new EditorLabel { Alignment = TMPro.TextAlignmentOptions.Center }
                     .AsFlexItem(size: "auto")
-                    .Bind(ref _label)
+                    .Bind(ref _label),
             }
-            .As<EditorBackground>(x =>
-            {
-                x.Source = "#Background8px";
-                x.ImageType = Image.Type.Sliced;
-            })
-            .AsFlexGroup(padding: 8f, justifyContent: Justify.Center)
-            .AsFlexItem(size: new YogaVector("fit-content", "fit-content"))
-            .Bind(ref _background)
-            .WithNativeComponent(out _button)
-            .Use();
+                .As<EditorBackground>(x =>
+                {
+                    x.Source = "#Background8px";
+                    x.ImageType = Image.Type.Sliced;
+                })
+                .AsFlexGroup(padding: 8f, justifyContent: Justify.Center)
+                .AsFlexItem(size: new YogaVector("fit-content", "fit-content"))
+                .Bind(ref _background)
+                .WithNativeComponent(out _button)
+                .Use();
         }
 
         protected override void OnStart()

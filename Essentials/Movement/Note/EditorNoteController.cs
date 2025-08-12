@@ -69,6 +69,10 @@ namespace EditorEX.Essentials.Movement.Note
                 )
             )
             {
+                Debug.Log(
+                    "Note movement type changed, refreshing note movement and visuals. "
+                        + (newNoteMovement == null)
+                );
                 _noteMovement = newNoteMovement;
                 _noteMovement!.Enable();
             }

@@ -87,7 +87,7 @@ namespace EditorEX.MapData.SaveDataLoaders
                         new BeatmapLevelColorSchemeEditorData(
                             colorScheme.colorSchemeName,
                             colorScheme.overrideNotes,
-                             GetColorFromHtmlString(colorScheme.saberAColor),
+                            GetColorFromHtmlString(colorScheme.saberAColor),
                             GetColorFromHtmlString(colorScheme.saberBColor),
                             GetColorFromHtmlString(colorScheme.obstaclesColor),
                             colorScheme.overrideLights,
