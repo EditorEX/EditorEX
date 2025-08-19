@@ -94,6 +94,9 @@ namespace EditorEX.Vivify.Events
                 object value = property.Value;
                 bool noDuration = duration == 0 || startTime + duration < _audioTimeSource.songTime;
                 AnimatedAnimatorProperty? animated = property as AnimatedAnimatorProperty;
+                Debug.Log(
+                    $"Setting animator property: {name} ({type}) with value: {value} (noDuration: {noDuration})"
+                );
                 switch (type)
                 {
                     case AnimatorPropertyType.Bool:

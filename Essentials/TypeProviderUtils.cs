@@ -23,10 +23,7 @@ namespace EditorEX.Essentials
                 newComponent = existing;
                 return false;
             }
-            Debug.Log("x1 " + (types == null));
             var type = typeProvider.GetProvidedType(types);
-            Debug.Log("x2 " + (type == null));
-            Debug.Log("x3 " + type.FullName);
 
             T? newToUse = (T?)(object?)gameObject?.GetComponent(type);
 
@@ -39,13 +36,11 @@ namespace EditorEX.Essentials
                 )
             )
             {
-                Debug.Log("setting");
                 existing?.Disable();
                 newComponent = newToUse;
                 return true;
             }
 
-            Debug.Log("setting2");
             newComponent = existing;
             return false;
         }

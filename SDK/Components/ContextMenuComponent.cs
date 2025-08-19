@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace EditorEX.UI.ContextMenu
+namespace EditorEX.SDK.Components
 {
     public class ContextMenuComponent : MonoBehaviour
     {

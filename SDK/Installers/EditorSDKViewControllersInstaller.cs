@@ -2,7 +2,6 @@
 using EditorEX.SDK.Components;
 using EditorEX.SDK.Factories;
 using EditorEX.SDK.ReactiveComponents;
-using EditorEX.UI.ContextMenu;
 using Zenject;
 
 namespace EditorEX.SDK.Installers
@@ -20,8 +19,6 @@ namespace EditorEX.SDK.Installers
             Container.BindInterfacesAndSelfTo<TextFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ClickableTextFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ImageFactory>().AsSingle();
-            Container.BindInterfacesAndSelfTo<ButtonFactory>().AsSingle();
-            Container.BindInterfacesAndSelfTo<StringInputFactory>().AsSingle();
             Container.BindInterfacesAndSelfTo<ModalFactory>().AsSingle();
 
             Container

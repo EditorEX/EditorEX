@@ -152,7 +152,10 @@ namespace EditorEX.Vivify.Events
                 _transformControllerFactory.Create(gameObject, data.Track);
             }
 
-            _instantiator.SongSynchronize(gameObject, customEventData.time);
+            _instantiator.SongSynchronize(
+                gameObject,
+                _audioDataModel.bpmData.BeatToSeconds(customEventData.time)
+            );
 
             string? id = data.Id;
             if (id != null)

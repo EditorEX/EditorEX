@@ -12,6 +12,7 @@ using EditorEX.SDK.ReactiveComponents.SegmentedControl;
 using EditorEX.Util;
 using HMUI;
 using Reactive;
+using Reactive.Components;
 using Reactive.Yoga;
 using SiraUtil.Affinity;
 using TMPro;
@@ -87,6 +88,17 @@ namespace EditorEX.UI.Patches
                                 .transform.Find("RecentlyModifiedBeatmaps")
                                 .gameObject.AddComponent<LayoutElement>()
                         ).AsFlexItem(),
+                        new EditorLabelButton
+                        {
+                            Text = "Test",
+                            OnClick = () =>
+                            {
+                                new SharedModal<EditorContextMenu>().PresentEditor(
+                                    _segmentedControl.ContentTransform,
+                                    true
+                                );
+                            },
+                        },
                         new EditorStringInput()
                             .Bind(ref _filterInput)
                             .InEditorNamedRail("Filter", 18f)
