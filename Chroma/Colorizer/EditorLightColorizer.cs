@@ -359,6 +359,7 @@ namespace EditorEX.Chroma.Colorizer
         }
 
         internal class Factory
-            : PlaceholderFactory<EditorChromaLightSwitchEventEffect, EditorLightColorizer> { }
+            : PlaceholderFactory<EditorChromaLightSwitchEventEffect, EditorLightColorizer>
+        { }
     }
 }

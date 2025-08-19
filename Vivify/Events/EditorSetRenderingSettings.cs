@@ -293,7 +293,8 @@ namespace EditorEX.Vivify.Events
                         assetBundleManager.TryGetAsset((string)obj, out Material? material)
                             ? material
                             : null
-                ) { }
+                )
+            { }
         }
 
         private interface ISettingHandler

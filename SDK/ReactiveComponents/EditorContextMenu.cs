@@ -31,11 +31,11 @@ namespace EditorEX.SDK.ReactiveComponents
                 .With(x => x.WrappedImage.Attach<ColorSOAttachable>("Button/Background/Normal"))
                 .AsFlexGroup(padding: 2f)
                 .AsFlexItem(flexGrow: 1f)
-            
-                }
-                    .AsLayout()
-                    .AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false)
-                    .Use();
+
+            }
+            .AsLayout()
+            .AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false)
+            .Use();
         }
 
         protected override void OnOpen(bool opened)
