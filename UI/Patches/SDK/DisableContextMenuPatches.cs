@@ -27,12 +27,12 @@ namespace EditorEX.UI.Patches.SDK
         private void PatchExecute(IPointerClickHandler handler, BaseEventData eventData)
         {
             if (
-                _contextMenuComponent.modal.isShown
+                _contextMenuComponent.Modal.ModalOpened
                 && handler is Component component
-                && !component.transform.IsChildOf(_contextMenuComponent.modal.transform)
+                && !component.transform.IsChildOf(_contextMenuComponent.Modal.ContentTransform)
             )
             {
-                _contextMenuComponent.modal.Hide();
+                _contextMenuComponent.Modal.Close(false);
             }
         }
 
@@ -45,7 +45,7 @@ namespace EditorEX.UI.Patches.SDK
         {
             if (__result.magnitude > 0.001f)
             {
-                _contextMenuComponent.modal.Hide();
+                _contextMenuComponent.Modal.Close(false);
             }
         }
     }

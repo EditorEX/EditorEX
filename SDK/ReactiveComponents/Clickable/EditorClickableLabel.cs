@@ -1,11 +1,19 @@
+using System;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.ReactiveComponents.Native;
+using Reactive.Components;
 using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class EditorClickableLabel : EditorLabel
+    public class EditorClickableLabel : EditorLabel, IComponentHolder<EditorClickableText>
     {
+        public EditorClickableText Component => (EditorClickableText)_text;
+        public Action OnClick
+        {
+            set => Component.OnClickEvent += (x) => value?.Invoke();
+        }
+
         protected override void Construct(RectTransform rect)
         {
             _text = rect.gameObject.AddComponent<EditorClickableText>();

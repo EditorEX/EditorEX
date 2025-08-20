@@ -227,6 +227,11 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(GameDirectory)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
@@ -333,6 +338,7 @@
     <EmbeddedResource Include="UI\Resources\lily.jpg" />
     <EmbeddedResource Include="UI\Resources\circle.png" />
     <EmbeddedResource Include="UI\Resources\lockcamera.png" />
+    <EmbeddedResource Include="UI\Resources\Background6px.png" />
   </ItemGroup>
   <Target Name="Launch Game">
     <Message Text="Running $(GameDirectory)" Importance="high" />

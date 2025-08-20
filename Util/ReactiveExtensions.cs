@@ -22,6 +22,16 @@ namespace EditorEX.Util
             return component;
         }
 
+        public static GameObject WithReactiveContainer(
+            this GameObject gameObject,
+            ReactiveContainer container
+        )
+        {
+            var comp = gameObject.AddComponent<ReactiveContainerHolder>();
+            comp.ReactiveContainer = container;
+            return gameObject;
+        }
+
         /// <summary>
         /// Makes a component's enabled state react to an observable value.
         /// The component will be enabled when the observable's value equals the specified value.

@@ -3,6 +3,11 @@ using System.Linq;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.ContextMenu;
 using EditorEX.SDK.Factories;
+using EditorEX.SDK.ReactiveComponents;
+using EditorEX.SDK.ReactiveComponents.Native;
+using EditorEX.Util;
+using Reactive;
+using Reactive.Components;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -11,25 +16,20 @@ namespace EditorEX.SDK.Components
 {
     public class ContextMenuComponent : MonoBehaviour
     {
+        public SharedModal<EditorContextMenu> Modal => _modal;
         private List<IContextMenuProvider> _contextMenuProviders = null!;
-        private ModalFactory _modalFactory = null!;
-        private ClickableTextFactory _clickableTextFactory = null!;
-
-        private VerticalLayoutGroup _verticalLayoutGroup;
+        private SharedModal<EditorContextMenu> _modal = null!;
+        private ReactiveContainer? _reactiveContainer;
         private object? _linkedObject;
-
-        public EditorModalView modal { get; private set; }
 
         [Inject]
         private void Construct(
             List<IContextMenuProvider> contextMenuProviders,
-            ModalFactory modalFactory,
-            ClickableTextFactory clickableTextFactory
+            ReactiveContainer reactiveContainer
         )
         {
             _contextMenuProviders = contextMenuProviders;
-            _modalFactory = modalFactory;
-            _clickableTextFactory = clickableTextFactory;
+            _reactiveContainer = reactiveContainer;
         }
 
         private void Start()
@@ -37,38 +37,30 @@ namespace EditorEX.SDK.Components
             var mainScreen = GameObject.Find("MainScreen");
             transform.SetParent(mainScreen.transform, false);
 
-            modal = _modalFactory.Create(transform);
+            _modal = new SharedModal<EditorContextMenu>();
 
-            modal.gameObject.SetActive(false);
+            mainScreen.WithReactiveContainer(_reactiveContainer!);
         }
 
         private void CreateButtons<T>(IEnumerable<IContextOption> contextOptions, T data)
             where T : IContextMenuObject
         {
-            if (_verticalLayoutGroup != null)
-            {
-                Destroy(_verticalLayoutGroup.gameObject);
-            }
+            var layout = _modal.Modal.Layout;
 
-            _verticalLayoutGroup = new GameObject().AddComponent<VerticalLayoutGroup>();
-            _verticalLayoutGroup.transform.SetParent(modal.transform);
-            _verticalLayoutGroup.spacing = 5;
-            _verticalLayoutGroup.padding = new RectOffset(15, 15, 8, 8);
-
-            var fitter = _verticalLayoutGroup.gameObject.AddComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            layout.Children.Clear();
 
             foreach (var contextOption in contextOptions)
             {
-                var clickable = _clickableTextFactory.Create(
-                    _verticalLayoutGroup.transform,
-                    contextOption.GetText(),
-                    18f,
-                    () =>
+                layout.Children.Add(
+                    new EditorClickableLabel
                     {
-                        contextOption.Invoke(data);
-                    }
+                        Text = contextOption.GetText(),
+                        FontSize = 18f,
+                        OnClick = () =>
+                        {
+                            contextOption.Invoke(data);
+                        },
+                    }.AsFlexItem()
                 );
             }
         }
@@ -84,22 +76,15 @@ namespace EditorEX.SDK.Components
 
             var contextOptions = providers.SelectMany(x => x.GetIContextOptions());
 
+            _modal.PresentEditor(transform, true);
+
             CreateButtons(contextOptions, data);
 
-            var rectTransform = modal.GetComponent<RectTransform>();
+            var rectTransform = _modal.Modal.ContentTransform.GetComponent<RectTransform>();
 
-            modal.gameObject.SetActive(false);
-            modal.gameObject.SetActive(true);
-
-            position.x += rectTransform.sizeDelta.x / 2f;
-            position.y -= rectTransform.sizeDelta.y / 2f;
-
-            if (modal.isShown)
-            {
-                modal.Hide();
-            }
-            transform.position = position;
-            modal.Show(true);
+            //position.x += rectTransform.sizeDelta.x / 2f;
+            //position.y -= rectTransform.sizeDelta.y / 2f;
+            rectTransform.position = position;
 
             _linkedObject = linkedObject;
         }
@@ -108,7 +93,7 @@ namespace EditorEX.SDK.Components
         {
             if (_linkedObject == instance)
             {
-                modal.Hide();
+                _modal.Close(false);
                 _linkedObject = null;
             }
         }

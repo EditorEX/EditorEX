@@ -18,8 +18,7 @@ namespace EditorEX.Chroma.Colorizer
         public Dictionary<
             BasicBeatmapEventType,
             List<EditorParticleColorizer>
-        > Colorizers
-        { get; } = new();
+        > Colorizers { get; } = new();
 
         internal void Create(ParticleSystemEventEffect particleSystemEventEffect)
         {
@@ -175,7 +174,6 @@ namespace EditorEX.Chroma.Colorizer
         }
 
         internal class Factory
-            : PlaceholderFactory<ParticleSystemEventEffect, EditorParticleColorizer>
-        { }
+            : PlaceholderFactory<ParticleSystemEventEffect, EditorParticleColorizer> { }
     }
 }

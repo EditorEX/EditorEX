@@ -592,7 +592,6 @@ namespace EditorEX.Chroma.Lighting
         }
 
         internal class Factory
-            : PlaceholderFactory<LightSwitchEventEffect, EditorChromaLightSwitchEventEffect>
-        { }
+            : PlaceholderFactory<LightSwitchEventEffect, EditorChromaLightSwitchEventEffect> { }
     }
 }

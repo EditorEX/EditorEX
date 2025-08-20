@@ -61,32 +61,32 @@ namespace EditorEX.Chroma.Patches.Events
             {
                 // Actual lasering
                 case 0:
+                {
+                    __instance.enabled = false;
+                    if (!lockPosition)
                     {
-                        __instance.enabled = false;
-                        if (!lockPosition)
-                        {
-                            __instance.transform.localRotation = ____startRotation;
-                        }
-
-                        break;
+                        __instance.transform.localRotation = ____startRotation;
                     }
+
+                    break;
+                }
 
                 case > 0:
+                {
+                    __instance.enabled = true;
+                    ____rotationSpeed = precisionSpeed * 20f * direction;
+                    if (!lockPosition)
                     {
-                        __instance.enabled = true;
-                        ____rotationSpeed = precisionSpeed * 20f * direction;
-                        if (!lockPosition)
-                        {
-                            __instance.transform.localRotation = ____startRotation;
-                            __instance.transform.Rotate(
-                                ____rotationVector,
-                                Random.Range(0f, 180f),
-                                Space.Self
-                            );
-                        }
-
-                        break;
+                        __instance.transform.localRotation = ____startRotation;
+                        __instance.transform.Rotate(
+                            ____rotationVector,
+                            Random.Range(0f, 180f),
+                            Space.Self
+                        );
                     }
+
+                    break;
+                }
             }
 
             return false;

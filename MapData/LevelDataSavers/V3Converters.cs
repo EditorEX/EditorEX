@@ -310,180 +310,180 @@ public static class V3Converters
         switch (type)
         {
             case EventBoxGroupType.Color:
-                {
-                    V3CustomSaveData.LightColorEventBoxGroupSaveData lightColorEventBoxGroup =
-                        new V3CustomSaveData.LightColorEventBoxGroupSaveData(
-                            e.beat,
-                            e.groupId,
-                            eventBoxesByEventBoxGroupId
-                                .Select(
-                                    (EventBoxEditorData eventBox) =>
-                                        (LightColorEventBoxEditorData)eventBox
-                                )
-                                .Select(
-                                    (LightColorEventBoxEditorData eventBox) =>
-                                        new LightColorEventBox(
-                                            CreateIndexFilter(eventBox.indexFilter),
-                                            eventBox.beatDistributionParam,
-                                            (DistributionParamType)eventBox.beatDistributionParamType,
-                                            eventBox.brightnessDistributionParam,
-                                            eventBox.brightnessDistributionShouldAffectFirstBaseEvent,
-                                            (DistributionParamType)
-                                                eventBox.brightnessDistributionParamType,
-                                            ConvertEaseType(eventBox.brightnessDistributionEaseType),
-                                            beatmapEventBoxGroupsDataModel
-                                                .GetBaseEventsListByEventBoxId<LightColorBaseEditorData>(
-                                                    eventBox.id
-                                                )
-                                                .OrderBy((LightColorBaseEditorData i) => i.beat)
-                                                .Select(
-                                                    (LightColorBaseEditorData data) =>
-                                                        new V3.LightColorBaseData(
-                                                            data.beat,
-                                                            data.easeLeadType == EaseLeadType.InOut
-                                                                ? TransitionType.Interpolate
-                                                                : TransitionType.Extend /* TODO: *sigh* */
-                                                            ,
-                                                            (BeatmapSaveDataCommon.EnvironmentColorType)
-                                                                data.colorType,
-                                                            data.brightness,
-                                                            data.strobeBeatFrequency,
-                                                            data.strobeBrightness,
-                                                            data.strobeFade
-                                                        )
-                                                )
-                                                .ToList()
-                                        )
-                                )
-                                .ToList(),
-                            e.GetCustomData()
-                        );
-                    list.Add(lightColorEventBoxGroup);
-                    break;
-                }
+            {
+                V3CustomSaveData.LightColorEventBoxGroupSaveData lightColorEventBoxGroup =
+                    new V3CustomSaveData.LightColorEventBoxGroupSaveData(
+                        e.beat,
+                        e.groupId,
+                        eventBoxesByEventBoxGroupId
+                            .Select(
+                                (EventBoxEditorData eventBox) =>
+                                    (LightColorEventBoxEditorData)eventBox
+                            )
+                            .Select(
+                                (LightColorEventBoxEditorData eventBox) =>
+                                    new LightColorEventBox(
+                                        CreateIndexFilter(eventBox.indexFilter),
+                                        eventBox.beatDistributionParam,
+                                        (DistributionParamType)eventBox.beatDistributionParamType,
+                                        eventBox.brightnessDistributionParam,
+                                        eventBox.brightnessDistributionShouldAffectFirstBaseEvent,
+                                        (DistributionParamType)
+                                            eventBox.brightnessDistributionParamType,
+                                        ConvertEaseType(eventBox.brightnessDistributionEaseType),
+                                        beatmapEventBoxGroupsDataModel
+                                            .GetBaseEventsListByEventBoxId<LightColorBaseEditorData>(
+                                                eventBox.id
+                                            )
+                                            .OrderBy((LightColorBaseEditorData i) => i.beat)
+                                            .Select(
+                                                (LightColorBaseEditorData data) =>
+                                                    new V3.LightColorBaseData(
+                                                        data.beat,
+                                                        data.easeLeadType == EaseLeadType.InOut
+                                                            ? TransitionType.Interpolate
+                                                            : TransitionType.Extend /* TODO: *sigh* */
+                                                        ,
+                                                        (BeatmapSaveDataCommon.EnvironmentColorType)
+                                                            data.colorType,
+                                                        data.brightness,
+                                                        data.strobeBeatFrequency,
+                                                        data.strobeBrightness,
+                                                        data.strobeFade
+                                                    )
+                                            )
+                                            .ToList()
+                                    )
+                            )
+                            .ToList(),
+                        e.GetCustomData()
+                    );
+                list.Add(lightColorEventBoxGroup);
+                break;
+            }
             case EventBoxGroupType.Rotation:
-                {
-                    V3CustomSaveData.LightRotationEventBoxGroupSaveData lightRotationEventBoxGroup =
-                        new V3CustomSaveData.LightRotationEventBoxGroupSaveData(
-                            e.beat,
-                            e.groupId,
-                            eventBoxesByEventBoxGroupId
-                                .Select(
-                                    (EventBoxEditorData eventBox) =>
-                                        (LightRotationEventBoxEditorData)eventBox
-                                )
-                                .Select(
-                                    (LightRotationEventBoxEditorData eventBox) =>
-                                        new LightRotationEventBox(
-                                            CreateIndexFilter(eventBox.indexFilter),
-                                            eventBox.beatDistributionParam,
-                                            (DistributionParamType)eventBox.beatDistributionParamType,
-                                            eventBox.rotationDistributionParam,
-                                            (DistributionParamType)
-                                                eventBox.rotationDistributionParamType,
-                                            eventBox.rotationDistributionShouldAffectFirstBaseEvent,
-                                            ConvertEaseType(eventBox.rotationDistributionEaseType),
-                                            (Axis)eventBox.axis,
-                                            eventBox.flipRotation,
-                                            beatmapEventBoxGroupsDataModel
-                                                .GetBaseEventsListByEventBoxId<LightRotationBaseEditorData>(
-                                                    eventBox.id
-                                                )
-                                                .OrderBy((LightRotationBaseEditorData i) => i.beat)
-                                                .Select(
-                                                    delegate (LightRotationBaseEditorData data)
-                                                    {
-                                                        float beat = data.beat;
-                                                        BeatmapSaveDataCommon.EaseType easeType =
-                                                            ConvertEaseType(
-                                                                new ValueTuple<
-                                                                    EaseLeadType,
-                                                                    EaseCurveType
-                                                                >(
-                                                                    data.easeLeadType,
-                                                                    data.easeCurveType
-                                                                ).ToEaseType()
-                                                            );
-                                                        int loopsCount = data.loopsCount;
-                                                        int rotation = (int)data.rotation; //TODO: Investigate float->int
-                                                        return new V3.LightRotationBaseData(
-                                                            beat,
-                                                            data.usePreviousValue,
-                                                            easeType,
-                                                            loopsCount,
-                                                            rotation,
-                                                            (RotationDirection)data.rotationDirection
+            {
+                V3CustomSaveData.LightRotationEventBoxGroupSaveData lightRotationEventBoxGroup =
+                    new V3CustomSaveData.LightRotationEventBoxGroupSaveData(
+                        e.beat,
+                        e.groupId,
+                        eventBoxesByEventBoxGroupId
+                            .Select(
+                                (EventBoxEditorData eventBox) =>
+                                    (LightRotationEventBoxEditorData)eventBox
+                            )
+                            .Select(
+                                (LightRotationEventBoxEditorData eventBox) =>
+                                    new LightRotationEventBox(
+                                        CreateIndexFilter(eventBox.indexFilter),
+                                        eventBox.beatDistributionParam,
+                                        (DistributionParamType)eventBox.beatDistributionParamType,
+                                        eventBox.rotationDistributionParam,
+                                        (DistributionParamType)
+                                            eventBox.rotationDistributionParamType,
+                                        eventBox.rotationDistributionShouldAffectFirstBaseEvent,
+                                        ConvertEaseType(eventBox.rotationDistributionEaseType),
+                                        (Axis)eventBox.axis,
+                                        eventBox.flipRotation,
+                                        beatmapEventBoxGroupsDataModel
+                                            .GetBaseEventsListByEventBoxId<LightRotationBaseEditorData>(
+                                                eventBox.id
+                                            )
+                                            .OrderBy((LightRotationBaseEditorData i) => i.beat)
+                                            .Select(
+                                                delegate(LightRotationBaseEditorData data)
+                                                {
+                                                    float beat = data.beat;
+                                                    BeatmapSaveDataCommon.EaseType easeType =
+                                                        ConvertEaseType(
+                                                            new ValueTuple<
+                                                                EaseLeadType,
+                                                                EaseCurveType
+                                                            >(
+                                                                data.easeLeadType,
+                                                                data.easeCurveType
+                                                            ).ToEaseType()
                                                         );
-                                                    }
-                                                )
-                                                .ToList()
-                                        )
-                                )
-                                .ToList(),
-                            e.GetCustomData()
-                        );
-                    list.Add(lightRotationEventBoxGroup);
-                    break;
-                }
+                                                    int loopsCount = data.loopsCount;
+                                                    int rotation = (int)data.rotation; //TODO: Investigate float->int
+                                                    return new V3.LightRotationBaseData(
+                                                        beat,
+                                                        data.usePreviousValue,
+                                                        easeType,
+                                                        loopsCount,
+                                                        rotation,
+                                                        (RotationDirection)data.rotationDirection
+                                                    );
+                                                }
+                                            )
+                                            .ToList()
+                                    )
+                            )
+                            .ToList(),
+                        e.GetCustomData()
+                    );
+                list.Add(lightRotationEventBoxGroup);
+                break;
+            }
             case EventBoxGroupType.Translation:
-                {
-                    LightTranslationEventBoxGroup lightTranslationEventBoxGroup =
-                        new LightTranslationEventBoxGroup(
-                            e.beat,
-                            e.groupId,
-                            eventBoxesByEventBoxGroupId
-                                .Select(
-                                    (EventBoxEditorData eventBox) =>
-                                        (LightTranslationEventBoxEditorData)eventBox
-                                )
-                                .Select(
-                                    (LightTranslationEventBoxEditorData eventBox) =>
-                                        new LightTranslationEventBox(
-                                            CreateIndexFilter(eventBox.indexFilter),
-                                            eventBox.beatDistributionParam,
-                                            (DistributionParamType)eventBox.beatDistributionParamType,
-                                            eventBox.gapDistributionParam,
-                                            (DistributionParamType)eventBox.gapDistributionParamType,
-                                            eventBox.gapDistributionShouldAffectFirstBaseEvent,
-                                            ConvertEaseType(eventBox.gapDistributionEaseType),
-                                            (Axis)eventBox.axis,
-                                            eventBox.flipTranslation,
-                                            beatmapEventBoxGroupsDataModel
-                                                .GetBaseEventsListByEventBoxId<LightTranslationBaseEditorData>(
-                                                    eventBox.id
-                                                )
-                                                .OrderBy((LightTranslationBaseEditorData i) => i.beat)
-                                                .Select(
-                                                    delegate (LightTranslationBaseEditorData data)
-                                                    {
-                                                        float beat2 = data.beat;
-                                                        BeatmapSaveDataCommon.EaseType easeType2 =
-                                                            ConvertEaseType(
-                                                                new ValueTuple<
-                                                                    EaseLeadType,
-                                                                    EaseCurveType
-                                                                >(
-                                                                    data.easeLeadType,
-                                                                    data.easeCurveType
-                                                                ).ToEaseType()
-                                                            );
-                                                        float translation = data.translation;
-                                                        return new V3.LightTranslationBaseData(
-                                                            beat2,
-                                                            data.usePreviousValue,
-                                                            easeType2,
-                                                            translation
+            {
+                LightTranslationEventBoxGroup lightTranslationEventBoxGroup =
+                    new LightTranslationEventBoxGroup(
+                        e.beat,
+                        e.groupId,
+                        eventBoxesByEventBoxGroupId
+                            .Select(
+                                (EventBoxEditorData eventBox) =>
+                                    (LightTranslationEventBoxEditorData)eventBox
+                            )
+                            .Select(
+                                (LightTranslationEventBoxEditorData eventBox) =>
+                                    new LightTranslationEventBox(
+                                        CreateIndexFilter(eventBox.indexFilter),
+                                        eventBox.beatDistributionParam,
+                                        (DistributionParamType)eventBox.beatDistributionParamType,
+                                        eventBox.gapDistributionParam,
+                                        (DistributionParamType)eventBox.gapDistributionParamType,
+                                        eventBox.gapDistributionShouldAffectFirstBaseEvent,
+                                        ConvertEaseType(eventBox.gapDistributionEaseType),
+                                        (Axis)eventBox.axis,
+                                        eventBox.flipTranslation,
+                                        beatmapEventBoxGroupsDataModel
+                                            .GetBaseEventsListByEventBoxId<LightTranslationBaseEditorData>(
+                                                eventBox.id
+                                            )
+                                            .OrderBy((LightTranslationBaseEditorData i) => i.beat)
+                                            .Select(
+                                                delegate(LightTranslationBaseEditorData data)
+                                                {
+                                                    float beat2 = data.beat;
+                                                    BeatmapSaveDataCommon.EaseType easeType2 =
+                                                        ConvertEaseType(
+                                                            new ValueTuple<
+                                                                EaseLeadType,
+                                                                EaseCurveType
+                                                            >(
+                                                                data.easeLeadType,
+                                                                data.easeCurveType
+                                                            ).ToEaseType()
                                                         );
-                                                    }
-                                                )
-                                                .ToList()
-                                        )
-                                )
-                                .ToList()
-                        );
-                    list.Add(lightTranslationEventBoxGroup);
-                    break;
-                }
+                                                    float translation = data.translation;
+                                                    return new V3.LightTranslationBaseData(
+                                                        beat2,
+                                                        data.usePreviousValue,
+                                                        easeType2,
+                                                        translation
+                                                    );
+                                                }
+                                            )
+                                            .ToList()
+                                    )
+                            )
+                            .ToList()
+                    );
+                list.Add(lightTranslationEventBoxGroup);
+                break;
+            }
             default:
                 if (type == EventBoxGroupType.FloatFx)
                 {
@@ -494,7 +494,7 @@ public static class V3Converters
                         eventBoxesByEventBoxGroupId
                             .Select((EventBoxEditorData eventBox) => (FxEventBoxEditorData)eventBox)
                             .Select(
-                                delegate (FxEventBoxEditorData eventBox)
+                                delegate(FxEventBoxEditorData eventBox)
                                 {
                                     V3.IndexFilter indexFilter = CreateIndexFilter(
                                         eventBox.indexFilter
