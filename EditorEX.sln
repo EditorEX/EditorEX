@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34723.18
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorEX", "EditorEX.csproj", "{4973C4CF-A6BD-4331-9BA6-909F4C3A001A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorEX", "EditorEX\EditorEX.csproj", "{4973C4CF-A6BD-4331-9BA6-909F4C3A001A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorEX.SDK", "EditorEX.SDK\EditorEX.SDK.csproj", "{52C8EC64-EA2A-4654-B840-A1FC3F2CF721}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4973C4CF-A6BD-4331-9BA6-909F4C3A001A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4973C4CF-A6BD-4331-9BA6-909F4C3A001A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4973C4CF-A6BD-4331-9BA6-909F4C3A001A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52C8EC64-EA2A-4654-B840-A1FC3F2CF721}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52C8EC64-EA2A-4654-B840-A1FC3F2CF721}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52C8EC64-EA2A-4654-B840-A1FC3F2CF721}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52C8EC64-EA2A-4654-B840-A1FC3F2CF721}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
