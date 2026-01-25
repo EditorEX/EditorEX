@@ -160,23 +160,24 @@ namespace EditorEX.UI.Patches
                 {
                     new ScrollArea()
                     {
+                        ScrollSize = -500f,
                         ScrollContent = new Layout { }
                             .Bind(ref _buttonContent)
                             .AsFlexItem()
-                            .AsFlexGroup(FlexDirection.Column, gap: 10f),
+                            .AsFlexGroup(FlexDirection.Column, gap: 10f, constrainVertical: false),
                     }
                         .WithRectExpand()
                         .Export(out var _buttonScrollArea),
                     new EditorScrollbar()
                         .AsFlexItem(
                             size: new() { x = 7f, y = 100.pct() },
-                            position: new() { right = 2f }
+                            position: new() { right = -20f }
                         )
                         .With(x => _buttonScrollArea!.Scrollbar = x),
                 }
                     .AsLayout()
                     .AsFlexItem(flex: 1)
-                    .AsFlexGroup(FlexDirection.Row),
+                    .AsFlexGroup(FlexDirection.Row, gap: 10f),
             }
                 .AsLayout()
                 .WithReactiveContainer(_reactiveContainer)
