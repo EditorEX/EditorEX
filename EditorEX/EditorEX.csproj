@@ -315,6 +315,8 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+
+    <Analyzer Include="$(ReactiveDir)\src\reactive\Reactive.Compiler\bin\Release\netstandard2.0\Reactive.Compiler.dll" />
   </ItemGroup>
 
   <ItemGroup>

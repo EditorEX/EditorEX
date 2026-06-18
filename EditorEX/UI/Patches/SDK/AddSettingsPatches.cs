@@ -39,7 +39,7 @@ namespace EditorEX.UI.Patches.SDK
         {
             if (firstActivation)
             {
-                var tab = ValueUtils.Remember(0);
+                var tab = StateUtils.Remember(0);
 
                 new LayoutChildren
                 {
@@ -63,12 +63,10 @@ namespace EditorEX.UI.Patches.SDK
                 layout.Children.Add(
                     new LayoutElementComponent(vanillaContainer)
                         .AsFlexItem()
-                        .EnabledWithObservable(tab, 0)
+                        .EnabledWithState(tab, 0)
                 );
                 layout.Children.AddRange(
-                    _viewContents.Select(
-                        (x, index) => x.Create().EnabledWithObservable(tab, index + 1)
-                    )
+                    _viewContents.Select((x, index) => x.Create().EnabledWithState(tab, index + 1))
                 );
             }
         }

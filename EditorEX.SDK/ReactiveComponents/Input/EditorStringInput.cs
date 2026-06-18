@@ -39,15 +39,15 @@ namespace EditorEX.SDK.ReactiveComponents
                     }
                         .Attach<ColorSOAttachable>("Input/Text/Normal")
                         .Export(out _text)
-                        .AsFlexItem(minSize: new YogaVector(100.pct(), 20f)),
+                        .AsFlexItem(minSize: new YogaVector(100.pct, 20f)),
                 }
                     .AsLayout()
                     .Export(out var viewport)
                     .WithNativeComponent(out RectMask2D _)
-                    .AsFlexItem(size: new YogaVector(100.pct(), 22f)),
+                    .AsFlexItem(size: new YogaVector(100.pct, 22f)),
                 new EditorImage() { Source = "#WhitePixel" }
                     .Attach<ColorSOAttachable>("Input/Background")
-                    .AsFlexItem(size: new YogaVector(100.pct(), 1f)),
+                    .AsFlexItem(size: new YogaVector(100.pct, 1f)),
             }
                 .AsLayout()
                 .WithNativeComponent(out _inputField)

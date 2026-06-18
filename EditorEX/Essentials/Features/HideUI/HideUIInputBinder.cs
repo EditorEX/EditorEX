@@ -25,7 +25,7 @@ namespace EditorEX.Essentials.Features.HideUI
                 .Subscribe(
                     InputRef.ToggleEditorGUI.GetInputAction(),
                     InputEventType.KeyDown,
-                    new Action(signalBus.Fire<HideUIFeatureToggledSignal>)
+                    signalBus.Fire<HideUIFeatureToggledSignal>
                 )
                 .AddTo(compositeDisposable);
         }

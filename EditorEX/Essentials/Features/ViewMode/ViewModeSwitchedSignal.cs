@@ -1,12 +1,6 @@
-namespace EditorEX.Essentials.Features.ViewMode
-{
-    public class ViewModeSwitchedSignal
-    {
-        public ViewMode ViewMode { get; private set; }
+namespace EditorEX.Essentials.Features.ViewMode;
 
-        public ViewModeSwitchedSignal(ViewMode viewMode)
-        {
-            ViewMode = viewMode;
-        }
-    }
+public class ViewModeSwitchedSignal(ViewMode viewMode)
+{
+    public ViewMode ViewMode { get; private set; } = viewMode;
 }

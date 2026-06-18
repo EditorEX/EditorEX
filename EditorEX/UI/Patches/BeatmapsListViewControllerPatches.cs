@@ -21,7 +21,7 @@ namespace EditorEX.UI.Patches
         private readonly SourcesConfig _sourcesConfig;
         private readonly BeatmapsCollectionDataModel _beatmapsCollectionDataModel;
 
-        private ObservableValue<int> _tab = ValueUtils.Remember(0);
+        private State<int> _tab = StateUtils.Remember(0);
         private EditorSegmentedControl? _segmentedControl;
         private EditorStringInput? _filterInput;
 
@@ -59,14 +59,14 @@ namespace EditorEX.UI.Patches
                         TabbingType = TabbingType.Alpha,
                     }
                         .AsFlexItem(size: new YogaVector(float.NaN, 30f))
-                        .Animate(
+                        .On(
                             _tab,
-                            () =>
+                            val =>
                             {
-                                if (_tab.Value != _segmentedControl!.Values.Length - 1)
+                                if (val != _segmentedControl!.Values.Length - 1)
                                 {
                                     _sourcesConfig.SelectedSource =
-                                        _sourcesConfig.Sources.Keys.ToList()[_tab.Value];
+                                        _sourcesConfig.Sources.Keys.ToList()[val];
                                     _beatmapsCollectionDataModel.RefreshCollection();
                                 }
                             }
@@ -91,13 +91,13 @@ namespace EditorEX.UI.Patches
                                 margin: new YogaFrame(100f, 0f, 50f, 0f)
                             ),
                         new LayoutElementComponent(beatmapList).AsFlexItem(
-                            size: new YogaVector(100.pct(), 50.pct())
+                            size: new YogaVector(100.pct, 50.pct)
                         ),
                     }
                         .AsLayout()
                         .AsFlexGroup(FlexDirection.Column)
-                        .AsFlexItem(size: new YogaVector(100.pct(), 100.pct()))
-                        .DisabledWithObservable(
+                        .AsFlexItem(size: new YogaVector(100.pct, 100.pct))
+                        .DisabledWithState(
                             _tab,
                             () => (int)Mathf.Max((_segmentedControl?.Values.Length ?? 2f) - 1, 1)
                         ),
@@ -108,7 +108,7 @@ namespace EditorEX.UI.Patches
                             Text = "New Map Source",
                             FontSize = 24f,
                             Alignment = TextAlignmentOptions.Center,
-                        }.AsFlexItem(size: new YogaVector(100.pct(), 30f)),
+                        }.AsFlexItem(size: new YogaVector(100.pct, 30f)),
                         new EditorStringInput()
                             .Export(out var _newSourceName)
                             .InEditorNamedRail("Source Name", 18f)
@@ -140,8 +140,8 @@ namespace EditorEX.UI.Patches
                     }
                         .AsLayout()
                         .AsFlexGroup(FlexDirection.Column, gap: 20f)
-                        .AsFlexItem(size: new YogaVector(40.pct(), "auto"))
-                        .EnabledWithObservable(
+                        .AsFlexItem(size: new YogaVector(40.pct, "auto"))
+                        .EnabledWithState(
                             _tab,
                             () => (int)Mathf.Max((_segmentedControl?.Values.Length ?? 2f) - 1, 1)
                         ),

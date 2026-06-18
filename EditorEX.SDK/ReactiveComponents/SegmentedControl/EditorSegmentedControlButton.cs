@@ -25,7 +25,7 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
         }
 
         public int Position { get; set; }
-        public ObservableValue<int> SelectedIndex
+        public State<int> SelectedIndex
         {
             get => _selectedIndex;
             set
@@ -65,7 +65,7 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
 
         private string _text = string.Empty;
         private TabbingType _tabbingType = TabbingType.None;
-        private ObservableValue<int> _selectedIndex = new ObservableValue<int>(0);
+        private State<int> _selectedIndex = new State<int>(0);
         private EditorLabel _label = null!;
         private EditorBackground _background = null!;
         private SegmentedControlCell _button = null!;

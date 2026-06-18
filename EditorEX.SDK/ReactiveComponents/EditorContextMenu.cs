@@ -24,12 +24,6 @@ namespace EditorEX.SDK.ReactiveComponents
 
         protected override GameObject Construct()
         {
-            Console.WriteLine(
-                Resources
-                    .FindObjectsOfTypeAll<Sprite>()
-                    .FirstOrDefault(x => x.name == "Background8px")
-                    .pixelsPerUnit
-            );
             return new LayoutChildren
             {
                 new LayoutChildren
@@ -58,23 +52,15 @@ namespace EditorEX.SDK.ReactiveComponents
                                 {
                                     var bytes = Utilities.GetResource(
                                         Assembly.GetExecutingAssembly(),
-                                        "EditorEX.UI.Resources.Background6px.png"
+                                        "EditorEX.SDK.Resources.Background6px.png"
                                     );
-                                    foreach (
-                                        var thing in Assembly
-                                            .GetExecutingAssembly()
-                                            .GetManifestResourceNames()
-                                    )
-                                    {
-                                        Console.WriteLine(thing);
-                                    }
-                                    Console.WriteLine(bytes.Length);
+
                                     var texture = await Utilities.LoadImageAsync(
                                         bytes,
                                         true,
                                         false
                                     );
-                                    Console.WriteLine(texture.GetPixel(4, 0).r);
+
                                     var sprite = Sprite.Create(
                                         texture,
                                         new Rect(0, 0, texture.width, texture.height),

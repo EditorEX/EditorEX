@@ -33,146 +33,130 @@ namespace EditorEX.Util
         }
 
         /// <summary>
-        /// Makes a component's enabled state react to an observable value.
-        /// The component will be enabled when the observable's value equals the specified value.
+        /// Makes a component's enabled state react to an state value.
+        /// The component will be enabled when the state's value equals the specified value.
         /// </summary>
         /// <typeparam name="T">The type of the component</typeparam>
-        /// <typeparam name="R">The type of the observable value</typeparam>
+        /// <typeparam name="R">The type of the state value</typeparam>
         /// <param name="component">The component to update</param>
-        /// <param name="observable">The observable value to watch</param>
+        /// <param name="state">The state value to watch</param>
         /// <param name="value">A function returning the value to check against</param>
         /// <returns>The component for chaining</returns>
-        public static T EnabledWithObservable<T, R>(
-            this T component,
-            ObservableValue<R> observable,
-            Func<R> value
-        )
+        public static T EnabledWithState<T, R>(this T component, State<R> state, Func<R> value)
             where T : ReactiveComponent
         {
-            component.Enabled = observable.Value?.Equals(value()) ?? true;
-            component.Animate(
-                observable,
-                () =>
+            component.On(
+                state,
+                val =>
                 {
-                    component.Enabled = observable.Value?.Equals(value()) ?? true;
-                }
+                    component.Enabled = val?.Equals(value()) ?? true;
+                },
+                true
             );
             return component;
         }
 
         /// <summary>
-        /// Makes a GameObject's active state react to an observable value.
-        /// The GameObject will be active when the observable's value equals the specified value.
+        /// Makes a GameObject's active state react to a state value.
+        /// The GameObject will be active when the state's value equals the specified value.
         /// </summary>
-        /// <typeparam name="R">The type of the observable value</typeparam>
+        /// <typeparam name="R">The type of the state value</typeparam>
         /// <param name="component">The GameObject to update</param>
-        /// <param name="observable">The observable value to watch</param>
+        /// <param name="state">The state value to watch</param>
         /// <param name="value">A function returning the value to check against</param>
         /// <returns>The GameObject for chaining</returns>
-        public static GameObject EnabledWithObservable<R>(
+        public static GameObject EnabledWithState<R>(
             this GameObject component,
-            ObservableValue<R> observable,
+            State<R> state,
             Func<R> value
         )
         {
-            component.SetActive(observable.Value?.Equals(value()) ?? true);
+            component.SetActive(state.Value?.Equals(value()) ?? true);
             void Closure(R val)
             {
                 if (component == null)
                 {
-                    observable.ValueChangedEvent -= Closure;
+                    state.ValueChangedEvent -= Closure;
                     return;
                 }
-                component.SetActive(observable.Value?.Equals(value()) ?? true);
+                component.SetActive(state.Value?.Equals(value()) ?? true);
             }
-            observable.ValueChangedEvent += Closure;
+            state.ValueChangedEvent += Closure;
             return component;
         }
 
         /// <summary>
-        /// Makes a component's enabled state react inversely to an observable value.
-        /// The component will be disabled when the observable's value equals the specified value.
+        /// Makes a component's enabled state react inversely to an state value.
+        /// The component will be disabled when the state's value equals the specified value.
         /// </summary>
         /// <typeparam name="T">The type of the component</typeparam>
-        /// <typeparam name="R">The type of the observable value</typeparam>
+        /// <typeparam name="R">The type of the state value</typeparam>
         /// <param name="component">The component to update</param>
-        /// <param name="observable">The observable value to watch</param>
+        /// <param name="state">The state value to watch</param>
         /// <param name="value">A function returning the value to check against</param>
         /// <returns>The component for chaining</returns>
-        public static T DisabledWithObservable<T, R>(
-            this T component,
-            ObservableValue<R> observable,
-            Func<R> value
-        )
+        public static T DisabledWithState<T, R>(this T component, State<R> state, Func<R> value)
             where T : ReactiveComponent
         {
-            component.Enabled = !observable.Value?.Equals(value()) ?? false;
-            component.Animate(
-                observable,
-                () =>
+            component.Enabled = !state.Value?.Equals(value()) ?? false;
+            component.On(
+                state,
+                val =>
                 {
-                    component.Enabled = !observable.Value?.Equals(value()) ?? false;
+                    component.Enabled = !val?.Equals(value()) ?? false;
                 }
             );
             return component;
         }
 
         /// <summary>
-        /// Makes a component's enabled state react to an observable value.
-        /// The component will be enabled when the observable's value equals the specified value.
+        /// Makes a component's enabled state react to an state value.
+        /// The component will be enabled when the state's value equals the specified value.
         /// </summary>
         /// <typeparam name="T">The type of the component</typeparam>
-        /// <typeparam name="R">The type of the observable value</typeparam>
+        /// <typeparam name="R">The type of the state value</typeparam>
         /// <param name="component">The component to update</param>
-        /// <param name="observable">The observable value to watch</param>
+        /// <param name="state">The state value to watch</param>
         /// <param name="value">The value to check against</param>
         /// <returns>The component for chaining</returns>
-        public static T EnabledWithObservable<T, R>(
-            this T component,
-            ObservableValue<R> observable,
-            R value
-        )
+        public static T EnabledWithState<T, R>(this T component, State<R> state, R value)
             where T : ReactiveComponent
         {
-            return component.EnabledWithObservable(observable, () => value);
+            return component.EnabledWithState(state, () => value);
         }
 
         /// <summary>
-        /// Makes a GameObject's active state react to an observable value.
-        /// The GameObject will be active when the observable's value equals the specified value.
+        /// Makes a GameObject's active state react to a state value.
+        /// The GameObject will be active when the state's value equals the specified value.
         /// </summary>
-        /// <typeparam name="R">The type of the observable value</typeparam>
+        /// <typeparam name="R">The type of the state value</typeparam>
         /// <param name="component">The GameObject to update</param>
-        /// <param name="observable">The observable value to watch</param>
+        /// <param name="state">The state value to watch</param>
         /// <param name="value">The value to check against</param>
         /// <returns>The GameObject for chaining</returns>
-        public static GameObject EnabledWithObservable<R>(
+        public static GameObject EnabledWithState<R>(
             this GameObject component,
-            ObservableValue<R> observable,
+            State<R> state,
             R value
         )
         {
-            return component.EnabledWithObservable(observable, () => value);
+            return component.EnabledWithState(state, () => value);
         }
 
         /// <summary>
-        /// Makes a component's enabled state react inversely to an observable value.
-        /// The component will be disabled when the observable's value equals the specified value.
+        /// Makes a component's enabled state react inversely to an state value.
+        /// The component will be disabled when the state's value equals the specified value.
         /// </summary>
         /// <typeparam name="T">The type of the component</typeparam>
-        /// <typeparam name="R">The type of the observable value</typeparam>
+        /// <typeparam name="R">The type of the state value</typeparam>
         /// <param name="component">The component to update</param>
-        /// <param name="observable">The observable value to watch</param>
+        /// <param name="state">The state value to watch</param>
         /// <param name="value">The value to check against</param>
         /// <returns>The component for chaining</returns>
-        public static T DisabledWithObservable<T, R>(
-            this T component,
-            ObservableValue<R> observable,
-            R value
-        )
+        public static T DisabledWithState<T, R>(this T component, State<R> state, R value)
             where T : ReactiveComponent
         {
-            return component.DisabledWithObservable(observable, () => value);
+            return component.DisabledWithState(state, () => value);
         }
 
         /// <summary>
@@ -301,68 +285,64 @@ namespace EditorEX.Util
         }
 
         /// <summary>
-        /// Creates an observable value from a dropdown component's current selection.
+        /// Creates an state value from a dropdown component's current selection.
         /// </summary>
         /// <typeparam name="T">The type of the dropdown key</typeparam>
         /// <param name="component">The dropdown component</param>
-        /// <param name="observable">The output observable containing the selected key and text</param>
+        /// <param name="state">The output state containing the selected key and text</param>
         /// <returns>The dropdown for chaining</returns>
-        public static EditorTextDropdown<T> ExtractObservableFromDropdown<T>(
+        public static EditorTextDropdown<T> ExtractStateFromDropdown<T>(
             this EditorTextDropdown<T> component,
-            out ObservableValue<(T, string)> observable
+            out State<(T, string)> state
         )
         {
-            return component.ExtractObservable(
-                out observable,
+            return component.ExtractState(
+                out state,
                 (component.SelectedKey, component.Items[component.SelectedKey])
             );
         }
 
         /// <summary>
-        /// Creates a new observable value with a default value assigned and exports it.
+        /// Creates a new state value with a default value assigned and exports it.
         /// </summary>
         /// <typeparam name="T">The type of the component</typeparam>
-        /// <typeparam name="R">The type of the observable value</typeparam>
+        /// <typeparam name="R">The type of the state value</typeparam>
         /// <param name="component">The component to associate with</param>
-        /// <param name="observable">The output observable value</param>
-        /// <param name="value">The initial value for the observable</param>
+        /// <param name="state">The output state value</param>
+        /// <param name="value">The initial value for the state</param>
         /// <returns>The component for chaining</returns>
-        public static T ExtractObservable<T, R>(
-            this T component,
-            out ObservableValue<R> observable,
-            R value
-        )
+        public static T ExtractState<T, R>(this T component, out State<R> state, R value)
             where T : ReactiveComponent
         {
-            observable = new ObservableValue<R>(value);
+            state = new State<R>(value);
             return component;
         }
 
         /// <summary>
-        /// Binds a dropdown component to an observable value for two-way data binding.
-        /// Updates the observable when dropdown selection changes and updates dropdown when observable changes.
+        /// Binds a dropdown component to an state value for two-way data binding.
+        /// Updates the state when dropdown selection changes and updates dropdown when observable changes.
         /// </summary>
         /// <typeparam name="T">The type of the dropdown key</typeparam>
         /// <param name="component">The dropdown component to bind</param>
-        /// <param name="observable">The observable to bind to</param>
+        /// <param name="state">The state to bind to</param>
         /// <returns>The dropdown for chaining</returns>
-        public static EditorTextDropdown<T> DropdownWithObservable<T>(
+        public static EditorTextDropdown<T> DropdownWithState<T>(
             this EditorTextDropdown<T> component,
-            ObservableValue<(T, string)> observable
+            State<(T, string)> state
         )
         {
             component.WithListener(
                 "SelectedKey",
                 (T x) =>
                 {
-                    if (observable?.Value.Item1?.Equals(x) ?? false)
+                    if (state?.Value.Item1?.Equals(x) ?? false)
                     {
                         return;
                     }
-                    observable?.Value = (x, component.Items[x]);
+                    state?.Value = (x, component.Items[x]);
                 }
             );
-            observable.ValueChangedEvent += (value) =>
+            state.ValueChangedEvent += (value) =>
             {
                 if (component.Items.ContainsKey(value.Item1))
                 {

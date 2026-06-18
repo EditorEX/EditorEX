@@ -26,7 +26,7 @@ namespace EditorEX.SDK.ReactiveComponents
                     _container.Children.Add(_component);
                     if (_component.LayoutModifier is YogaModifier yogaModifier)
                     {
-                        yogaModifier.Size = new YogaVector(70.pct(), "auto");
+                        yogaModifier.Size = new YogaVector(70.pct, "auto");
                     }
                 }
             }
@@ -38,11 +38,11 @@ namespace EditorEX.SDK.ReactiveComponents
             {
                 if (_component?.LayoutModifier is YogaModifier compYogaModifier)
                 {
-                    compYogaModifier.Size = new YogaVector(value.pct(), "auto");
+                    compYogaModifier.Size = new YogaVector(value.pct, "auto");
                 }
                 if (_labelContainer?.LayoutModifier is YogaModifier labelYogaModifier)
                 {
-                    labelYogaModifier.Size = new YogaVector((100f - value).pct(), "auto");
+                    labelYogaModifier.Size = new YogaVector((100f - value).pct, "auto");
                 }
             }
         }

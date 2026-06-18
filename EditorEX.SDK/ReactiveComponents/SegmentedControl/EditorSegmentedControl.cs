@@ -45,7 +45,7 @@ namespace EditorEX.SDK.ReactiveComponents
             };
         }
 
-        public ObservableValue<int> SelectedIndex
+        public State<int> SelectedIndex
         {
             get => _selectedIndex;
             set
@@ -78,7 +78,7 @@ namespace EditorEX.SDK.ReactiveComponents
 
         private string[] _values = [];
         private TabbingType _tabbingType = TabbingType.None;
-        private ObservableValue<int> _selectedIndex = new ObservableValue<int>(0);
+        private State<int> _selectedIndex = new State<int>(0);
         private Layout _layout = null!;
         private KeyboardBinder _keyboardBinder = new KeyboardBinder();
 

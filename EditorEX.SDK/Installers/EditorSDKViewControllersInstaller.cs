@@ -1,6 +1,7 @@
 ﻿using EditorEX.SDK.Collectors;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.ReactiveComponents;
+using EditorEX.SDK.UI.Patches;
 using Zenject;
 
 namespace EditorEX.SDK.Installers
@@ -9,6 +10,8 @@ namespace EditorEX.SDK.Installers
     {
         public override void InstallBindings()
         {
+            //Container.BindInterfacesAndSelfTo<DisableContextMenuPatches>().AsSingle();
+
             Container.BindInterfacesAndSelfTo<ColorCollector>().AsSingle();
             Container.BindInterfacesAndSelfTo<TransitionCollector>().AsSingle();
             Container.BindInterfacesAndSelfTo<FontCollector>().AsSingle();

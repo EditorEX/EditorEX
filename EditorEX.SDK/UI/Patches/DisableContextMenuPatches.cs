@@ -3,7 +3,7 @@ using SiraUtil.Affinity;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace EditorEX.UI.Patches.SDK
+namespace EditorEX.SDK.UI.Patches
 {
     // If we click anything that is not a child of the modal or if the we scroll, we should close the modal.
     internal class DisableContextMenuPatches : IAffinity

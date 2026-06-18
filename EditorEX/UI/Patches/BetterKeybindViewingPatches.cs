@@ -29,7 +29,7 @@ namespace EditorEX.UI.Patches
         private Layout? _bindingsContainer;
         private ReversibleDictionary<BindingGroup, EditorLabelButton> _groupButtons = new();
         private Dictionary<InputActionBinding, EditorNamedRail> _keyBindingViews = new();
-        private ObservableValue<int> _selectedGroupIndex = ValueUtils.Remember(0);
+        private State<int> _selectedGroupIndex = StateUtils.Remember(0);
 
         private BetterKeybindViewingPatches(SiraLog siraLog, ReactiveContainer reactiveContainer)
         {
@@ -106,8 +106,8 @@ namespace EditorEX.UI.Patches
                         .AsFlexGroup(FlexDirection.Column, gap: 20f),
                 }
                     .WithRectExpand()
-                    .AsFlexItem(size: new YogaVector("auto", 100.pct()))
-                    .EnabledWithObservable(_selectedGroupIndex, index)
+                    .AsFlexItem(size: new YogaVector("auto", 100.pct))
+                    .EnabledWithState(_selectedGroupIndex, index)
             );
 
             foreach (var inputActionBinding in bindingGroup.bindings)
@@ -153,7 +153,7 @@ namespace EditorEX.UI.Patches
                         .AsFlexItem(),
                 }
                     .AsLayout()
-                    .AsFlexItem(flex: 3, size: new YogaVector("auto", 100.pct()))
+                    .AsFlexItem(flex: 3, size: new YogaVector("auto", 100.pct))
                     .AsFlexGroup(FlexDirection.Column, gap: 40f)
                     .Bind(ref _bindingsContainer),
                 new LayoutChildren
@@ -170,7 +170,7 @@ namespace EditorEX.UI.Patches
                         .Export(out var _buttonScrollArea),
                     new EditorScrollbar()
                         .AsFlexItem(
-                            size: new() { x = 7f, y = 100.pct() },
+                            size: new() { x = 7f, y = 100.pct },
                             position: new() { right = -20f }
                         )
                         .With(x => _buttonScrollArea!.Scrollbar = x),

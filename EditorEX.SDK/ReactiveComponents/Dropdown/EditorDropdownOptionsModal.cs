@@ -84,7 +84,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                         // Scrollbar
                         new EditorScrollbar()
                             .AsFlexItem(
-                                size: new() { x = 7f, y = 100.pct() },
+                                size: new() { x = 7f, y = 100.pct },
                                 position: new() { right = 2f }
                             )
                             .With(x => Table.Scrollbar = x),

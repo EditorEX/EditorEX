@@ -40,8 +40,8 @@ namespace EditorEX.UI.Patches
         private EditorTextDropdown<string>? _allDirectionsEnvironmentDropdown;
         private EditorTextDropdown<string>? _customPlatformDropdown;
 
-        private ObservableValue<bool> V4Level = ValueUtils.Remember(false);
-        private ObservableValue<int> MainTab = ValueUtils.Remember(0);
+        private State<bool> V4Level = StateUtils.Remember(false);
+        private State<int> MainTab = StateUtils.Remember(0);
 
         private EditBeatmapLevelPatches(
             BeatmapLevelDataModel beatmapLevelDataModel,
@@ -149,11 +149,11 @@ namespace EditorEX.UI.Patches
                     .transform.Find("DifficultyBeatmapSetContainer")
                     .gameObject;
                 _beatmapsRoot = difficultyBeatmapSetContainer;
-                _beatmapsRoot.EnabledWithObservable(MainTab, 1);
+                _beatmapsRoot.EnabledWithState(MainTab, 1);
                 var infoContainer = __instance.transform.Find("BeatmapInfoContainer");
                 infoContainer.gameObject.SetActive(false);
 
-                var secondaryTab = ValueUtils.Remember(0);
+                var secondaryTab = StateUtils.Remember(0);
 
                 new LayoutChildren
                 {
@@ -190,7 +190,7 @@ namespace EditorEX.UI.Patches
                                     )
                                     .InEditorNamedRail("Song Name", 18f, 55f)
                                     .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
-                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
+                                    .AsFlexItem(size: new() { x = 100f.pct, y = "auto" }),
                                 new EditorStringInput()
                                     .WithInputValidatorCopy<StringInputFieldValidator, string>(
                                         __instance._songSubNameInputValidator,
@@ -198,7 +198,7 @@ namespace EditorEX.UI.Patches
                                     )
                                     .InEditorNamedRail("Song Sub Name", 18f, 55f)
                                     .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
-                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
+                                    .AsFlexItem(size: new() { x = 100f.pct, y = "auto" }),
                                 new EditorStringInput()
                                     .WithInputValidatorCopy<StringInputFieldValidator, string>(
                                         __instance._songAuthorNameInputValidator,
@@ -206,7 +206,7 @@ namespace EditorEX.UI.Patches
                                     )
                                     .InEditorNamedRail("Song Author Name", 18f, 55f)
                                     .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
-                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
+                                    .AsFlexItem(size: new() { x = 100f.pct, y = "auto" }),
                                 new EditorStringInput()
                                     .WithInputValidator<StringInputFieldValidator, string>(
                                         out _levelAuthorInputValidator,
@@ -222,8 +222,8 @@ namespace EditorEX.UI.Patches
                                     )
                                     .InEditorNamedRail("Level Author Name", 18f, 55f)
                                     .LinkNamedRailWithValidator<StringInputFieldValidator, string>()
-                                    .EnabledWithObservable(V4Level, false)
-                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
+                                    .EnabledWithState(V4Level, false)
+                                    .AsFlexItem(size: new() { x = 100f.pct, y = "auto" }),
                             }
                                 .AsLayout()
                                 .AsFlexGroup(
@@ -269,7 +269,7 @@ namespace EditorEX.UI.Patches
                                 }
                                     .AsLayout()
                                     .AsFlexGroup(gap: 4f)
-                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
+                                    .AsFlexItem(size: new() { x = 100f.pct, y = "auto" }),
                                 new EditorStringInput()
                                     .WithInputValidatorCopy<FloatInputFieldValidator, float>(
                                         __instance._previewStartTimeInputValidator,
@@ -277,7 +277,7 @@ namespace EditorEX.UI.Patches
                                     )
                                     .InEditorNamedRail("Preview Start Time", 18f, 30f)
                                     .LinkNamedRailWithValidator<FloatInputFieldValidator, float>()
-                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
+                                    .AsFlexItem(size: new() { x = 100f.pct, y = "auto" }),
                                 new EditorStringInput()
                                     .WithInputValidatorCopy<FloatInputFieldValidator, float>(
                                         __instance._previewDurationInputValidator,
@@ -285,7 +285,7 @@ namespace EditorEX.UI.Patches
                                     )
                                     .InEditorNamedRail("Preview Duration", 18f, 30f)
                                     .LinkNamedRailWithValidator<FloatInputFieldValidator, float>()
-                                    .AsFlexItem(size: new() { x = 100f.pct(), y = "auto" }),
+                                    .AsFlexItem(size: new() { x = 100f.pct, y = "auto" }),
                             }
                                 .AsLayout()
                                 .AsFlexGroup(
@@ -293,7 +293,7 @@ namespace EditorEX.UI.Patches
                                     direction: FlexDirection.Column,
                                     alignItems: Align.FlexStart
                                 )
-                                .AsFlexItem(size: new() { x = 60f.pct(), y = "auto" }),
+                                .AsFlexItem(size: new() { x = 60f.pct, y = "auto" }),
                         }
                             .AsLayout()
                             .AsFlexGroup(
@@ -332,16 +332,16 @@ namespace EditorEX.UI.Patches
                                                     )
                                             );
                                         })
-                                        .EnabledWithObservable(V4Level, false)
+                                        .EnabledWithState(V4Level, false)
                                         .Bind(ref _environmentDropdown)
-                                        .ExtractObservable(
+                                        .ExtractState(
                                             out var normalEnvironmentValue,
                                             _environmentDropdown!
                                                 .Items.First()
                                                 .ExtractTupleFromKVP()
                                         )
-                                        .DropdownWithObservable(normalEnvironmentValue)
-                                        .Animate(
+                                        .DropdownWithState(normalEnvironmentValue)
+                                        .On(
                                             normalEnvironmentValue,
                                             (x, v) =>
                                             {
@@ -364,16 +364,16 @@ namespace EditorEX.UI.Patches
                                                     )
                                             );
                                         })
-                                        .EnabledWithObservable(V4Level, false)
+                                        .EnabledWithState(V4Level, false)
                                         .Bind(ref _allDirectionsEnvironmentDropdown)
-                                        .ExtractObservable(
+                                        .ExtractState(
                                             out var allDirectionsEnvironmentValue,
                                             _allDirectionsEnvironmentDropdown!
                                                 .Items.First()
                                                 .ExtractTupleFromKVP()
                                         )
-                                        .DropdownWithObservable(allDirectionsEnvironmentValue)
-                                        .Animate(
+                                        .DropdownWithState(allDirectionsEnvironmentValue)
+                                        .On(
                                             allDirectionsEnvironmentValue,
                                             (x, v) =>
                                             {
@@ -386,17 +386,17 @@ namespace EditorEX.UI.Patches
                                         .InEditorNamedRail("360 Environment", 18f),
                                 }
                                     .AsLayout()
-                                    .EnabledWithObservable(secondaryTab, 0)
+                                    .EnabledWithState(secondaryTab, 0)
                                     .AsFlexGroup(
                                         FlexDirection.Column,
                                         gap: 5f,
                                         padding: new YogaFrame(24f, 80f)
                                     )
-                                    .AsFlexItem(size: 100.pct()),
+                                    .AsFlexItem(size: 100.pct),
                                 new LayoutChildren // Contributors
                                 { }
                                     .AsLayout()
-                                    .EnabledWithObservable(secondaryTab, 1)
+                                    .EnabledWithState(secondaryTab, 1)
                                     .AsFlexGroup(gap: 5f, padding: 24f)
                                     .AsFlexItem(),
                             }
@@ -426,7 +426,7 @@ namespace EditorEX.UI.Patches
                             alignItems: Align.FlexStart
                         )
                         .AsFlexItem()
-                        .EnabledWithObservable(MainTab, 0),
+                        .EnabledWithState(MainTab, 0),
                 }
                     .AsLayout()
                     .AsFlexGroup(

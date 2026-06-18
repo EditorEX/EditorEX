@@ -14,6 +14,7 @@ namespace EditorEX.SDK.Components
     {
         public SharedModal<EditorContextMenu> Modal => _modal;
         private List<IContextMenuProvider> _contextMenuProviders = null!;
+        private IEnumerable<IContextOption>? _contextOptions;
         private SharedModal<EditorContextMenu> _modal = null!;
         private ReactiveContainer? _reactiveContainer;
         private object? _linkedObject;
@@ -43,8 +44,6 @@ namespace EditorEX.SDK.Components
         {
             var layout = _modal.Modal.Layout;
 
-            layout.Children.Clear();
-
             foreach (var contextOption in contextOptions)
             {
                 layout.Children.Add(
@@ -64,22 +63,29 @@ namespace EditorEX.SDK.Components
         public void ShowContextMenu<T>(T data, Vector2 position, object? linkedObject)
             where T : IContextMenuObject
         {
-            var providers = _contextMenuProviders.OfType<ContextMenuProvider<T>>();
-            if (providers == null || providers.Count() == 0)
+            var providers = _contextMenuProviders.OfType<ContextMenuProvider<T>>().ToArray();
+            if (!providers.Any())
             {
                 return;
             }
 
-            var contextOptions = providers.SelectMany(x => x.GetIContextOptions());
+            var contextOptions = providers.SelectMany(x => x.GetIContextOptions()).ToArray();
 
-            _modal.PresentEditor(transform, true);
+            if (_contextOptions != contextOptions && _modal.ModalOpened)
+            {
+                _modal?.Modal?.Destroy();
+                _modal = new SharedModal<EditorContextMenu>();
+            }
+            _contextOptions = contextOptions;
+
+            _modal.PresentEditor(transform);
 
             CreateButtons(contextOptions, data);
 
             var rectTransform = _modal.Modal.ContentTransform.GetComponent<RectTransform>();
 
-            //position.x += rectTransform.sizeDelta.x / 2f;
-            //position.y -= rectTransform.sizeDelta.y / 2f;
+            position.x += rectTransform.sizeDelta.x / 2f;
+            position.y -= rectTransform.sizeDelta.y / 2f;
             rectTransform.position = position;
 
             _linkedObject = linkedObject;
