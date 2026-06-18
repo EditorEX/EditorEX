@@ -29,7 +29,7 @@ namespace EditorEX.SDKImplementation
 
         public override ContextOption<SourceListContextMenuObject>[] GetContextOptions()
         {
-            return [new("Rename", Rename), new("Add Path", AddPath), new("Delete", Delete)];
+            return [new("Rename", Rename), new("Delete", Delete)];
         }
 
         private void Rename(SourceListContextMenuObject contextObject)
@@ -59,16 +59,6 @@ namespace EditorEX.SDKImplementation
             _sourcesConfig.Sources.Remove(contextObject.SourceName);
 
             _beatmapsListViewControllerPatches.ReloadCells();
-        }
-
-        private void AddPath(SourceListContextMenuObject contextObject)
-        {
-            // var newSource = NativeFileDialogs.OpenDirectoryDialog($"New {contextObject.SourceName} Directory", Environment.CurrentDirectory);
-
-            // if (newSource != null && Directory.Exists(newSource))
-            //     _sourcesConfig.Sources[contextObject.SourceName].Add(newSource.Replace("\\", "/"));
-
-            // _beatmapsListViewControllerPatches.ReloadCells();
         }
     }
 }
