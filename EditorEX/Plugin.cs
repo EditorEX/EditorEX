@@ -24,11 +24,14 @@ namespace EditorEX
     [Plugin(RuntimeOptions.SingleStartInit)]
     public class Plugin
     {
+        public static IPALogger Logger;
+
         [Init]
         public Plugin(IPALogger logger, Zenjector zenjector, IPA.Config.Config conf)
         {
             MainConfig config = conf.Generated<MainConfig>();
             zenjector.UseLogger(logger);
+            Logger = logger;
             zenjector.UseMetadataBinder<Plugin>();
 
             zenjector.Install<EditorEssentialsModelsInstaller, BeatmapEditorDataModelsInstaller>();

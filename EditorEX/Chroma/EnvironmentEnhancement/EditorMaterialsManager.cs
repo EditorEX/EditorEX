@@ -5,6 +5,7 @@ using Chroma;
 using Chroma.EnvironmentEnhancement;
 using Chroma.EnvironmentEnhancement.Saved;
 using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData;
 using EditorEX.MapData.Contexts;
 using Heck.Animation;
 using IPA.Utilities;
@@ -44,45 +45,38 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
 
         private EditorMaterialsManager(
             EnvironmentMaterialsManager environmentMaterialsManager,
-            IReadonlyBeatmapData readonlyBeatmap,
             Dictionary<string, Track> beatmapTracks,
-            LazyInject<MaterialColorAnimator> materialColorAnimator,
-            SavedEnvironmentLoader savedEnvironmentLoader,
-            global::Chroma.Settings.Config config
+            LazyInject<MaterialColorAnimator> materialColorAnimator
         )
         {
-            CustomBeatmapData beatmapData = (CustomBeatmapData)readonlyBeatmap;
-            _v2 = LevelContext.Version.Major == 2;
+            var beatmapData = CustomDataRepository.GetBeatmapData();
+            _v2 = MapContext.Version.Major == 2;
             _environmentMaterialsManager = environmentMaterialsManager;
             _beatmapTracks = beatmapTracks;
             _materialColorAnimator = materialColorAnimator;
+            Plugin.Logger.Info("1");
 
             if (beatmapData == null)
             {
                 return;
             }
+            Plugin.Logger.Info("2");
 
-            CustomData? materialsData = null;
-            if (!config.EnvironmentEnhancementsDisabled)
-            {
-                materialsData = beatmapData?.customData?.Get<CustomData>(
-                    _v2 ? V2_MATERIALS : MATERIALS
-                );
-            }
+            var materialsData = beatmapData?.customData?.Get<CustomData>(
+                _v2 ? V2_MATERIALS : MATERIALS
+            );
 
-            if (materialsData == null && config.CustomEnvironmentEnabled)
-            {
-                _v2 = false;
-                materialsData = savedEnvironmentLoader.SavedEnvironment?.Materials;
-            }
+            Plugin.Logger.Info("4");
 
             if (materialsData == null)
             {
                 return;
             }
+            Plugin.Logger.Info("5");
 
-            foreach ((string key, object? value) in materialsData)
+            foreach (var (key, value) in materialsData)
             {
+                Plugin.Logger.Info($"6 {key} {value}");
                 if (value == null)
                 {
                     throw new InvalidOperationException($"[{key}] was null.");

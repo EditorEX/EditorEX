@@ -187,7 +187,7 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Tweening">
+    <Reference Include="Tweening" Publicize="true">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Tweening.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>

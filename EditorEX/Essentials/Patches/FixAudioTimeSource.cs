@@ -1,5 +1,8 @@
 ﻿using BeatmapEditor3D;
 using SiraUtil.Affinity;
+using Tweening;
+using UnityEngine;
+using Zenject;
 
 namespace EditorEX.Essentials.Patches
 {
@@ -38,11 +41,7 @@ namespace EditorEX.Essentials.Patches
                 __result = 0f;
                 return false;
             }
-            __result =
-                __instance._audioDataModel.bpmData.BeatToSeconds(__instance._beatmapState.beat)
-                - __instance._audioDataModel.bpmData.BeatToSeconds(
-                    __instance._beatmapState.prevBeat
-                );
+            __result = Time.deltaTime * __instance.timeScale;
             return false;
         }
 

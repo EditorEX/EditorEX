@@ -1,4 +1,5 @@
-﻿using EditorEX.Essentials.SpawnProcessing;
+﻿using EditorEX.Essentials.Patches;
+using EditorEX.Essentials.SpawnProcessing;
 using Zenject;
 
 namespace EditorEX.Essentials.Installers
@@ -7,6 +8,7 @@ namespace EditorEX.Essentials.Installers
     {
         public override void InstallBindings()
         {
+            Container.BindInterfacesAndSelfTo<FixSongTimeTweening>().AsSingle().NonLazy();
             EditorSpawnDataRepository.ClearAll();
         }
     }
