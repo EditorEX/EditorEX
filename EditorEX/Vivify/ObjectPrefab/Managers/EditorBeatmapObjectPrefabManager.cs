@@ -269,8 +269,9 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
                 ]),
                 SaberModelController saberModelController =>
                     _instantiator.Instantiate<SaberModelControllerHijacker>([saberModelController]),
-                _ => _instantiator.Instantiate<MpbControllerHijacker>([component]),
+                _ => _instantiator.Instantiate<EditorNoteMpbHijacker>([component]),
             };
+            Plugin.Logger.Info(Hijackers[component].GetType().Name);
         }
 
         if (activePool == null && !ActivePools.TryGetValue(component, out activePool))
