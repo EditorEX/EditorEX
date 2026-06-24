@@ -50,6 +50,7 @@ namespace EditorEX.Chroma.Installers
 
                 Container.BindInterfacesAndSelfTo<EditorChromaGradientController>().AsSingle();
 
+                Container.BindInterfacesTo<EditorEventMarkerColorizer>().AsSingle();
                 Container.BindInterfacesTo<EditorLightPairRotationChromafier>().AsSingle();
                 Container.BindInterfacesTo<EditorLightRotationChromafier>().AsSingle();
                 Container.BindInterfacesTo<EditorRingRotationChromafier>().AsSingle();
