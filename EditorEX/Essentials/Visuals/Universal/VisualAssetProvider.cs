@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
@@ -29,21 +30,14 @@ namespace EditorEX.Essentials.Visuals.Universal
             );
             yield return load;
 
-            UnityEngine.Object[] allObjects = Resources.FindObjectsOfTypeAll<UnityEngine.Object>();
+            var objectsInstaller = Resources
+                .FindObjectsOfTypeAll<BeatmapObjectsInstaller>()
+                .FirstOrDefault();
 
-            gameNotePrefab = Instantiate(
-                Resources
-                    .FindObjectsOfTypeAll<BeatmapObjectsInstaller>()
-                    .FirstOrDefault()
-                    ._normalBasicNotePrefab.gameObject
-            );
+            gameNotePrefab = Instantiate(objectsInstaller._normalBasicNotePrefab.gameObject);
             gameNotePrefab.SetActive(false);
-            obstaclePrefab = Instantiate(
-                Resources
-                    .FindObjectsOfTypeAll<BeatmapObjectsInstaller>()
-                    .FirstOrDefault()
-                    ._obstaclePrefab.gameObject
-            );
+
+            obstaclePrefab = Instantiate(objectsInstaller._obstaclePrefab.gameObject);
             obstaclePrefab.SetActive(false);
 
             onFinishLoading?.Invoke();

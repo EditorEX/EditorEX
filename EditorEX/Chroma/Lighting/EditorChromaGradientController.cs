@@ -28,17 +28,30 @@ namespace EditorEX.Chroma.Lighting
 
         private Dictionary<BasicBeatmapEventType, ChromaGradientEvent> Gradients { get; } = new();
 
+        // Reused across frames so an idle/active Tick allocates nothing. Interpolate() can remove
+        // from Gradients mid-iteration, so we snapshot into this buffer first instead of iterating
+        // (or copying) the live dictionary every frame.
+        private readonly List<
+            KeyValuePair<BasicBeatmapEventType, ChromaGradientEvent>
+        > _tickBuffer = new();
+
         public void Tick()
         {
-            foreach (
-                (BasicBeatmapEventType eventType, ChromaGradientEvent value) in new Dictionary<
-                    BasicBeatmapEventType,
-                    ChromaGradientEvent
-                >(Gradients)
-            )
+            if (Gradients.Count == 0)
             {
-                Color color = value.Interpolate();
-                _manager.Colorize(eventType, true, color, color, color, color);
+                return;
+            }
+
+            _tickBuffer.Clear();
+            foreach (KeyValuePair<BasicBeatmapEventType, ChromaGradientEvent> pair in Gradients)
+            {
+                _tickBuffer.Add(pair);
+            }
+
+            for (int i = 0; i < _tickBuffer.Count; i++)
+            {
+                Color color = _tickBuffer[i].Value.Interpolate();
+                _manager.Colorize(_tickBuffer[i].Key, true, color, color, color, color);
             }
         }
 

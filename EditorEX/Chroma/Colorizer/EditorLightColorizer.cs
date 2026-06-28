@@ -42,6 +42,16 @@ namespace EditorEX.Chroma.Colorizer
             params Color?[] colors
         ) => GetColorizer(eventType).Colorize(refresh, colors);
 
+        // Allocation-free overload for the per-frame gradient path (avoids the params array).
+        public void Colorize(
+            BasicBeatmapEventType eventType,
+            bool refresh,
+            Color? color0,
+            Color? color1,
+            Color? color2,
+            Color? color3
+        ) => GetColorizer(eventType).Colorize(refresh, color0, color1, color2, color3);
+
         public void Colorize(
             BasicBeatmapEventType eventType,
             IEnumerable<ILightWithId> selectLights,
@@ -308,6 +318,29 @@ namespace EditorEX.Chroma.Colorizer
             Colorize(refresh, null, colors);
         }
 
+        // Allocation-free overload for the per-frame gradient path (avoids the params array).
+        // COLOR_FIELDS is 4, matching the four explicit colors.
+        public void Colorize(
+            bool refresh,
+            Color? color0,
+            Color? color1,
+            Color? color2,
+            Color? color3
+        )
+        {
+            _colors[0] = color0;
+            _colors[1] = color1;
+            _colors[2] = color2;
+            _colors[3] = color3;
+
+            if (!refresh)
+            {
+                return;
+            }
+
+            Refresh(null);
+        }
+
         public void Colorize(bool refresh, IEnumerable<ILightWithId>? selectLights, Color?[] colors)
         {
             for (int i = 0; i < colors.Length; i++)
@@ -331,14 +364,24 @@ namespace EditorEX.Chroma.Colorizer
 
         public IEnumerable<ILightWithId> GetLightWithIds(IEnumerable<int> ids)
         {
-            IEnumerable<int> newIds = ids.Select(n =>
-                _tableManager.GetActiveTableValue(_lightId, n) ?? n
-            );
+            List<ILightWithId> result = new();
+            int lightCount = Lights.Count;
+            foreach (int n in ids)
+            {
+                int id = _tableManager.GetActiveTableValue(_lightId, n) ?? n;
+                if (id < 0 || id >= lightCount)
+                {
+                    continue;
+                }
 
-            return newIds
-                .Select(id => Lights.ElementAtOrDefault(id))
-                .Where(lightWithId => lightWithId != null)
-                .ToList();
+                ILightWithId light = Lights[id];
+                if (light != null)
+                {
+                    result.Add(light);
+                }
+            }
+
+            return result;
         }
 
         // dont use this please

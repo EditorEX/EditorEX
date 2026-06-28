@@ -6,7 +6,6 @@ using Zenject;
 
 namespace EditorEX.Essentials.Patches;
 
-[HarmonyPatch(typeof(Tween))]
 public class FixSongTimeTweening : IAffinity
 {
     private AudioDataModel _audioDataModel;

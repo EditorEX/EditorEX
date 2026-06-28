@@ -209,6 +209,17 @@ namespace EditorEX.Chroma.Lighting
             );
         }
 
+        private IEnumerable<ChromaIDColorTween> SelectTweens(IEnumerable<ILightWithId> selectLights)
+        {
+            foreach (ILightWithId light in selectLights)
+            {
+                if (ColorTweens.TryGetValue(light, out ChromaIDColorTween tween))
+                {
+                    yield return tween;
+                }
+            }
+        }
+
         public void Refresh(
             bool hard,
             IEnumerable<ILightWithId>? selectLights,
@@ -218,11 +229,7 @@ namespace EditorEX.Chroma.Lighting
         )
         {
             IEnumerable<ChromaIDColorTween> selectTweens =
-                selectLights == null
-                    ? ColorTweens.Values
-                    : selectLights
-                        .Where(n => ColorTweens.ContainsKey(n))
-                        .Select(n => ColorTweens[n]);
+                selectLights == null ? ColorTweens.Values : SelectTweens(selectLights);
 
             foreach (ChromaIDColorTween tween in selectTweens)
             {
@@ -345,14 +352,12 @@ namespace EditorEX.Chroma.Lighting
                 // this code is UGLY
                 void CheckNextEventForFadeBetter()
                 {
-                    _editorDeserializedData.Resolve(
-                        CustomDataRepository.GetBasicEventConversion(previousEvent),
-                        out EditorChromaEventData? eventData
-                    );
+                    _editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(previousEvent), out EditorChromaEventData? eventData);
+                    
                     Dictionary<int, BasicEventEditorData>? nextSameTypesDict =
                         eventData?.NextSameTypeEvent;
                     BasicBeatmapEventData? nextSameTypeEvent = null;
-                    return;
+                    
                     if (nextSameTypesDict == null)
                     {
                         nextSameTypeEvent = previousEvent.nextSameTypeEventData; //clean up

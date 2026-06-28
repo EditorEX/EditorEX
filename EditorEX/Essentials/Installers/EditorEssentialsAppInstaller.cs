@@ -12,6 +12,10 @@ namespace EditorEX.Essentials.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<PopulateBeatmap>().AsSingle().NonLazy();
+            Container
+                .BindInterfacesAndSelfTo<ObjectMarkerOptimizationPatches>()
+                .AsSingle()
+                .NonLazy();
             Container.BindInterfacesAndSelfTo<SwapMovementProvider>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<CustomInputActionRegistry>().AsSingle().NonLazy();

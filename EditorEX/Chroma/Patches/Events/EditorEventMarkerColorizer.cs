@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using Chroma;
@@ -11,8 +12,6 @@ namespace EditorEX.Chroma.Patches.Events
 {
     // Colors the timeline event markers (the dot markers and the duration bars)
     // using Chroma custom color data read from the deserialized event data.
-    // The marker objects carry the BasicEventEditorData directly, so we can
-    // resolve the Chroma color without going through the live preview conversion.
     internal class EditorEventMarkerColorizer : IAffinity
     {
         private readonly EditorDeserializedData _editorDeserializedData;
@@ -61,7 +60,6 @@ namespace EditorEX.Chroma.Patches.Events
             return false;
         }
 
-        // The dot marker (LightEventMarkerObject and friends go through this virtual base).
         [AffinityPrefix]
         [AffinityPatch(
             typeof(EventMarkerObject),
@@ -71,9 +69,11 @@ namespace EditorEX.Chroma.Patches.Events
             typeof(BasicEventEditorData),
             typeof(Color)
         )]
-        private void PrefixMarker(BasicEventEditorData basicEventData, ref Color color)
+        private void PrefixMarker(BasicEventEditorData? basicEventData, ref Color color)
         {
-            if (TryGetMarkerColor(basicEventData, out Color chromaColor))
+            if (basicEventData == null)
+                return;
+            if (TryGetMarkerColor(basicEventData, out var chromaColor))
             {
                 color = chromaColor;
             }
@@ -111,6 +111,89 @@ namespace EditorEX.Chroma.Patches.Events
             else if (chromaData.ColorData.HasValue)
             {
                 colorA = chromaData.ColorData.Value;
+            }
+        }
+
+        // The game only spawns a duration bar for events with an end time. Gradients
+        // aren't tied to end time, so we spawn our own bar for gradient events that
+        // have none, spanning the gradient's beat duration. The bar is added to the
+        // spawner's own list/pool so its despawn lifecycle is handled by the game.
+        [AffinityPostfix]
+        [AffinityPatch(typeof(LightEventMarkerSpawner), nameof(LightEventMarkerSpawner.SpawnAt))]
+        private void SpawnAtPostfix(
+            LightEventMarkerSpawner __instance,
+            BasicEventEditorData data,
+            float xPos,
+            float currentBeat,
+            List<DurationEventMarkerObject> ____durationEventMarkerObjects,
+            DurationEventMarkerObject.Pool ____durationEventMarkerObjectPool
+        )
+        {
+            // The game already spawned (and we already colored) a bar in this case.
+            if (data.hasEndTime)
+            {
+                return;
+            }
+
+            if (
+                !TryGetChromaData(data, out EditorChromaEventData chromaData)
+                || chromaData.GradientObject == null
+            )
+            {
+                return;
+            }
+
+            float startPos = __instance._beatmapObjectPlacementHelper.BeatToPosition(
+                data.beat,
+                currentBeat
+            );
+            float endPos = __instance._beatmapObjectPlacementHelper.BeatToPosition(
+                data.beat + chromaData.GradientObject.Duration,
+                currentBeat
+            );
+
+            DurationEventMarkerObject bar = ____durationEventMarkerObjectPool.Spawn();
+            ____durationEventMarkerObjects.Add(bar);
+            bar.Init(
+                data,
+                chromaData.GradientObject.StartColor,
+                chromaData.GradientObject.EndColor
+            );
+            bar.SetScaleZ(endPos - startPos);
+            bar.transform.localPosition = new Vector3(xPos, -0.125f, startPos);
+        }
+
+        // The game's UpdateDurationEvents rescales every bar using basicEventData.endBeat,
+        // which is meaningless for our gradient bars (the event has no end time). Recompute
+        // their scale from the gradient duration after the game has run.
+        [AffinityPostfix]
+        [AffinityPatch(
+            typeof(LightEventMarkerSpawner),
+            nameof(LightEventMarkerSpawner.UpdateDurationEvents)
+        )]
+        private void UpdateDurationEventsPostfix(
+            LightEventMarkerSpawner __instance,
+            List<DurationEventMarkerObject> ____durationEventMarkerObjects
+        )
+        {
+            foreach (DurationEventMarkerObject bar in ____durationEventMarkerObjects)
+            {
+                BasicEventEditorData data = bar.basicEventData;
+                if (
+                    data == null
+                    || data.hasEndTime
+                    || !TryGetChromaData(data, out EditorChromaEventData chromaData)
+                    || chromaData.GradientObject == null
+                )
+                {
+                    continue;
+                }
+
+                float startPos = __instance._beatmapObjectPlacementHelper.BeatToPosition(data.beat);
+                float endPos = __instance._beatmapObjectPlacementHelper.BeatToPosition(
+                    data.beat + chromaData.GradientObject.Duration
+                );
+                bar.SetScaleZ(endPos - startPos);
             }
         }
     }

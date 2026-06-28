@@ -30,6 +30,11 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
         // Obstacle related fields
         private ObstacleEditorData? _editorData;
+
+        // Resolved once per Init (when _editorData changes) and reused on the per-frame update path
+        // (NoodleUpdate + NoodleGetPosForTime) instead of two dictionary lookups every frame.
+        private EditorNoodleObstacleData? _noodleData;
+
         private float _width;
         private float _height;
         private float _length;
@@ -130,6 +135,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
             _editorBeatmapObjectSpawnMovementData = movementData;
             _editorData = editorData as ObstacleEditorData;
+            _noodleData = null;
             if (_editorData == null)
             {
                 _siraLog.Error("EditorObstacleGameMovement: Null editorData");
@@ -177,13 +183,9 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             transform.localPosition = vector;
             transform.localRotation = _worldRotation;
 
-            if (
-                !_editorDeserializedData.Resolve(
-                    editorData,
-                    out EditorNoodleObstacleData? noodleData
-                )
-                || noodleData == null
-            )
+            _editorDeserializedData.Resolve(editorData, out EditorNoodleObstacleData? noodleData);
+            _noodleData = noodleData;
+            if (noodleData == null)
             {
                 return;
             }
@@ -228,13 +230,8 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
         private bool NoodleGetPosForTime(float time, out Vector3 __result)
         {
             __result = default;
-            if (
-                !_editorDeserializedData.Resolve(
-                    _editorData,
-                    out EditorNoodleObstacleData? noodleData
-                )
-                || noodleData == null
-            )
+            EditorNoodleObstacleData? noodleData = _noodleData;
+            if (noodleData == null)
             {
                 return false;
             }
@@ -307,13 +304,8 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
         public void NoodleUpdate()
         {
-            if (
-                !_editorDeserializedData.Resolve(
-                    _editorData,
-                    out EditorNoodleObstacleData? noodleData
-                )
-                || noodleData == null
-            )
+            EditorNoodleObstacleData? noodleData = _noodleData;
+            if (noodleData == null)
             {
                 return;
             }

@@ -1,4 +1,5 @@
-﻿using BeatmapEditor3D;
+﻿using System.Reflection;
+using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Chroma.Deserializer;
 using EditorEX.Chroma.Installers;
@@ -14,6 +15,7 @@ using EditorEX.NoodleExtensions.Installers;
 using EditorEX.SDK.Installers;
 using EditorEX.UI.Installers;
 using EditorEX.Vivify.Deserializer;
+using HarmonyLib;
 using IPA;
 using IPA.Config.Stores;
 using SiraUtil.Zenject;
@@ -25,6 +27,7 @@ namespace EditorEX
     public class Plugin
     {
         public static IPALogger Logger;
+        public static Harmony harmony = new Harmony("dev.futuremapper.editorex");
 
         [Init]
         public Plugin(IPALogger logger, Zenjector zenjector, IPA.Config.Config conf)
@@ -86,6 +89,18 @@ namespace EditorEX
             ViewModeRepository.RegisterViewMode(
                 new ViewMode("Preview w/ Camlock", "preview-lock-cam", true, false, true)
             );
+        }
+
+        [OnEnable]
+        public void OnEnable()
+        {
+            harmony.PatchAll(Assembly.GetExecutingAssembly());
+        }
+
+        [OnDisable]
+        public void OnDisable()
+        {
+            harmony.UnpatchSelf();
         }
     }
 }

@@ -7,7 +7,6 @@ using EditorEX.Essentials.Visuals.Universal;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
 using EditorEX.Vivify.ObjectPrefab.Managers;
-using HarmonyLib;
 using Heck.Animation;
 using NoodleExtensions;
 using NoodleExtensions.Animation;
@@ -33,11 +32,18 @@ namespace EditorEX.Essentials.Visuals.Note
 
         // Visuals fields
         private NoteEditorData? _editorData;
+
+        // Resolved once per Init (when _editorData changes) and reused on the per-frame ManualUpdate
+        // path instead of doing dictionary lookups every frame for every note.
+        private EditorNoodleBaseNoteData? _noodleData;
+        private ChromaObjectData? _chromaData;
+
         private GameObject _gameRoot;
 
         private MaterialPropertyBlockController[] _colorPropertyBlockControllers;
         private CutoutEffect _noteCutout;
         private CutoutEffect _arrowCutout;
+        private EditorNoteJump _noteJump;
 
         private GameObject[] _arrowObjects;
         private GameObject _circleObject;
@@ -111,12 +117,23 @@ namespace EditorEX.Essentials.Visuals.Note
             _noteCutout = _gameRoot.GetComponent<CutoutEffect>();
             _arrowCutout = _arrowObjects[0].GetComponent<CutoutEffect>();
 
+            // Cached once; used on the per-frame animation path instead of GetComponent every frame.
+            _noteJump = GetComponent<EditorNoteJump>();
+
             Disable();
         }
 
         public void Init(BaseEditorData? editorData)
         {
             _editorData = editorData as NoteEditorData;
+
+            EditorNoodleBaseNoteData? noodleData = null;
+            _noodleEditorDeserializedData?.Resolve(_editorData, out noodleData);
+            _noodleData = noodleData;
+
+            ChromaObjectData? chromaData = null;
+            _chromeEditorDeserializedData?.Resolve(_editorData, out chromaData);
+            _chromaData = chromaData;
 
             if (_active)
             {
@@ -129,17 +146,21 @@ namespace EditorEX.Essentials.Visuals.Note
 
             var noteColor = _colorManager.ColorForType(_editorData.type);
 
-            _colorPropertyBlockControllers.Do(x =>
+            Color noteColorWithAlpha = noteColor.ColorWithAlpha(1f);
+            foreach (MaterialPropertyBlockController controller in _colorPropertyBlockControllers)
             {
-                x.materialPropertyBlock.SetColor(
+                controller.materialPropertyBlock.SetColor(
                     ColorNoteVisuals._colorId,
-                    noteColor.ColorWithAlpha(1f)
+                    noteColorWithAlpha
                 );
-                x.ApplyChanges();
-            });
+                controller.ApplyChanges();
+            }
 
             bool anyDirection = _editorData.cutDirection == NoteCutDirection.Any;
-            _arrowObjects.Do(x => x.SetActive(!anyDirection));
+            foreach (GameObject arrowObject in _arrowObjects)
+            {
+                arrowObject.SetActive(!anyDirection);
+            }
             _circleObject.SetActive(anyDirection);
             _circleObject.GetComponent<MeshRenderer>().enabled = anyDirection;
 
@@ -185,11 +206,8 @@ namespace EditorEX.Essentials.Visuals.Note
 
         public void ManualUpdate()
         {
-            EditorNoodleBaseNoteData? noodleData = null;
-            if (
-                !(_noodleEditorDeserializedData?.Resolve(_editorData, out noodleData) ?? false)
-                || noodleData == null
-            )
+            EditorNoodleBaseNoteData? noodleData = _noodleData;
+            if (noodleData == null)
             {
                 return;
             }
@@ -209,7 +227,7 @@ namespace EditorEX.Essentials.Visuals.Note
             }
             else
             {
-                float jumpDuration = GetComponent<EditorNoteJump>().jumpDuration;
+                float jumpDuration = _noteJump.jumpDuration;
                 float elapsedTime =
                     _audioDataModel.bpmData.BeatToSeconds(_state.beat)
                     - (
@@ -241,15 +259,8 @@ namespace EditorEX.Essentials.Visuals.Note
                     _editorData?.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f
                 );
 
-            if (
-                !(
-                    _chromeEditorDeserializedData?.Resolve(
-                        _editorData,
-                        out ChromaObjectData? chromaData
-                    ) ?? false
-                )
-                || chromaData == null
-            )
+            ChromaObjectData? chromaData = _chromaData;
+            if (chromaData == null)
             {
                 return;
             }
@@ -273,14 +284,12 @@ namespace EditorEX.Essentials.Visuals.Note
                 return;
             }
 
-            _colorPropertyBlockControllers.Do(x =>
+            Color animatedColor = colorOffset.Value.ColorWithAlpha(1f);
+            foreach (MaterialPropertyBlockController controller in _colorPropertyBlockControllers)
             {
-                x.materialPropertyBlock.SetColor(
-                    ColorNoteVisuals._colorId,
-                    colorOffset.Value.ColorWithAlpha(1f)
-                );
-                x.ApplyChanges();
-            });
+                controller.materialPropertyBlock.SetColor(ColorNoteVisuals._colorId, animatedColor);
+                controller.ApplyChanges();
+            }
         }
 
         public GameObject GetVisualRoot()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.CustomJSONData.CustomEvents;
 using Heck.Deserialize;
@@ -16,8 +17,27 @@ namespace EditorEX.Heck.Deserialize
         )
         {
             CustomEventCustomDatas = customEventCustomDatas;
-            _eventCustomDatas = eventCustomDatas;
+            _eventCustomDatas = BuildEventLookup(eventCustomDatas);
             _objectCustomDatas = objectCustomDatas;
+        }
+
+        // Event transformers (e.g. modifiers) produce fresh BasicEventEditorData instances,
+        // so the markers/effects hold a different object than the one used as the key during
+        // deserialization. The instances keep their BeatmapEditorObjectId (copy constructor
+        // copies id), so we key by id to keep resolving working across transforms.
+        private static Dictionary<BeatmapEditorObjectId, IEventCustomData> BuildEventLookup(
+            Dictionary<BasicEventEditorData, IEventCustomData> eventCustomDatas
+        )
+        {
+            Dictionary<BeatmapEditorObjectId, IEventCustomData> lookup = new(
+                eventCustomDatas.Count
+            );
+            foreach (KeyValuePair<BasicEventEditorData, IEventCustomData> pair in eventCustomDatas)
+            {
+                lookup[pair.Key.id] = pair.Value;
+            }
+
+            return lookup;
         }
 
         public bool Resolve<T>(CustomEventEditorData customEventData, out T? result)
@@ -39,7 +59,39 @@ namespace EditorEX.Heck.Deserialize
                 result = default;
                 return false;
             }
-            return Resolve(_eventCustomDatas, beatmapEventData, out result);
+            // Dedicated struct-key path. The reference was already null-checked above, so the
+            // id is valid and there is nothing left to null-check. Routing it through the generic
+            // Resolve below would compile `baseData == null` into a `box BeatmapEditorObjectId`,
+            // which Unity's Mono does not elide -> a heap allocation on every event resolve.
+            return ResolveById(_eventCustomDatas, beatmapEventData.id, out result);
+        }
+
+        private static bool ResolveById<TResultType, TResultData>(
+            Dictionary<BeatmapEditorObjectId, TResultType> dictionary,
+            BeatmapEditorObjectId id,
+            out TResultData? result
+        )
+            where TResultData : TResultType?
+        {
+            if (!dictionary.TryGetValue(id, out TResultType customData) || customData == null)
+            {
+                result = default;
+                return false;
+            }
+            if (customData is TResultData t)
+            {
+                result = t;
+                return true;
+            }
+            throw new InvalidOperationException(
+                string.Concat(
+                    "Custom data was not of correct type. Expected: [",
+                    typeof(TResultType).Name,
+                    "], was: [",
+                    customData.GetType().Name,
+                    "]."
+                )
+            );
         }
 
         public bool Resolve<T>(BaseEditorData? beatmapObjectData, out T? result)
@@ -101,7 +153,7 @@ namespace EditorEX.Heck.Deserialize
 
         internal Dictionary<CustomEventEditorData, ICustomEventCustomData> CustomEventCustomDatas;
 
-        private Dictionary<BasicEventEditorData, IEventCustomData> _eventCustomDatas;
+        internal Dictionary<BeatmapEditorObjectId, IEventCustomData> _eventCustomDatas;
 
         private Dictionary<BaseEditorData, IObjectCustomData> _objectCustomDatas;
     }
