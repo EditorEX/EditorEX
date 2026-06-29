@@ -335,11 +335,6 @@ public class BasicEventObjectsViewRefreshPatch : IAffinity
             }
         }
 
-        if (replaced == 0)
-            Plugin.Logger.Warn(
-                "RemoveSpawnedEvents: no Find(InstanceEquals) sites redirected (game update?)"
-            );
-
         return codes;
     }
 }

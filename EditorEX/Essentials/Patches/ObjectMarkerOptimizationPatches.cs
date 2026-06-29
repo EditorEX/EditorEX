@@ -14,7 +14,6 @@ public class ObjectMarkerOptimizationPatches : IAffinity
     )]
     private void UpdatePrefab(BeatmapLevelEditorInstaller __instance)
     {
-        Plugin.Logger.Info("Hello");
         Object.Destroy(__instance._textEventMarkerObjectPrefab._sideText);
         __instance._textEventMarkerObjectPrefab._topText.isTextObjectScaleStatic = true;
 

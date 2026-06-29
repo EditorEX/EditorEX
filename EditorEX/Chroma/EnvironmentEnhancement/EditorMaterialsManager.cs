@@ -54,29 +54,23 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             _environmentMaterialsManager = environmentMaterialsManager;
             _beatmapTracks = beatmapTracks;
             _materialColorAnimator = materialColorAnimator;
-            Plugin.Logger.Info("1");
 
             if (beatmapData == null)
             {
                 return;
             }
-            Plugin.Logger.Info("2");
 
             var materialsData = beatmapData?.customData?.Get<CustomData>(
                 _v2 ? V2_MATERIALS : MATERIALS
             );
 
-            Plugin.Logger.Info("4");
-
             if (materialsData == null)
             {
                 return;
             }
-            Plugin.Logger.Info("5");
 
             foreach (var (key, value) in materialsData)
             {
-                Plugin.Logger.Info($"6 {key} {value}");
                 if (value == null)
                 {
                     throw new InvalidOperationException($"[{key}] was null.");
