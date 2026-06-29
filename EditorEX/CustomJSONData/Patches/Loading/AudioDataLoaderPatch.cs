@@ -286,14 +286,14 @@ namespace EditorEX.CustomJSONData.Patches.Loading
                                     __instance._beatmapLevelDataModel.songTimeOffset,
                                     result.frequency
                                 );
-                                
+
                                 bpmData = new BpmData(
                                     __instance._beatmapLevelDataModel.beatsPerMinute,
                                     result.samples,
                                     result.frequency,
                                     startOffset
                                 );
-                                
+
                                 if (bpmData == null)
                                 {
                                     __instance._signalBus.Fire(

@@ -22,6 +22,8 @@ namespace EditorEX.Essentials.Installers
                 .NonLazy();
             Container.BindInterfacesAndSelfTo<SwapMovementProvider>().AsSingle().NonLazy();
 
+            Container.BindInterfacesAndSelfTo<ProfilerMarking>().AsSingle().NonLazy();
+
             Container.BindInterfacesAndSelfTo<CustomInputActionRegistry>().AsSingle().NonLazy();
 
             CustomInputBuilder
