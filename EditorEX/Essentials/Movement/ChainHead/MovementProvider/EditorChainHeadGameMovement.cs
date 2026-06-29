@@ -257,9 +257,7 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
             UpdateChainElements();
         }
 
-        // Place each link relative to the head: both run the same closed-form note jump (link at its
-        // own time/offset/gravity), and the link's local position is the difference. The root carries
-        // the links along via its own transform.
+        // Place each link relative to the head
         private void UpdateChainElements()
         {
             if (_links.Count == 0)
@@ -292,9 +290,6 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
                     continue;
                 }
 
-                // Hide the link until it starts sliding in, the same way the floor movement gates the
-                // head note. Otherwise the jump extrapolates far off-screen out of the spawn window and
-                // the links visibly fly away when scrubbing past the chain.
                 bool active = songTime > noteTime - moveDuration - halfJumpDuration;
                 GameObject linkObject = transform.gameObject;
                 if (linkObject.activeSelf != active)
@@ -317,10 +312,6 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
             }
         }
 
-        // Closed-form note position (unrotated, in the spawn-movement local frame), matching
-        // EditorNoteFloorMovement + EditorNoteJump: a constant-speed floor slide until the jump
-        // begins, then the parabolic jump (with the late "shoot past the player" z pull). The chain
-        // uses moveStart == moveEnd == jumpEnd offset, so a single offset feeds all three terms.
         private Vector3 ComputeJumpLocalPosition(
             float songTime,
             float noteTime,
@@ -405,7 +396,6 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
             return quaternion;
         }
 
-        // Quadratic bezier, identical to BurstSliderSpawner.BezierCurve.
         private static void BezierCurve(
             Vector2 p0,
             Vector2 p1,
@@ -425,9 +415,6 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
 
         public void Enable() { }
 
-        // Nothing to restore here: when we hand off to basic mode, EditorChainHeadBasicMovement.Init
-        // re-lays out the head note transform and link element roots into the static chain shape, so
-        // the jump's last-frame poses are overwritten there rather than reset here.
         public void Disable() { }
 
         private void HandleFloorMovementDidFinish()

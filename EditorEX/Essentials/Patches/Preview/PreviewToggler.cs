@@ -18,6 +18,7 @@ namespace EditorEX.Essentials.Patches.Preview
         private Transform currentLine;
         private BeatGridContainer container;
         private GameObject lanes;
+        private GameObject hjdLine;
 
         public PreviewToggler(ActiveViewMode activeViewMode)
         {
@@ -37,6 +38,15 @@ namespace EditorEX.Essentials.Patches.Preview
             container = __instance.GetComponentInChildren<BeatGridContainer>();
             currentLine = container._currentBeatLineTransform;
             lanes = __instance.transform.Find("BeatGridContainer").Find("GridLanes").gameObject;
+            hjdLine = __instance.transform.Find("BeatGridContainer").Find("HalfJumpDurationBeatline").gameObject;
+        }
+
+        [AffinityPrefix]
+        [AffinityPatch(typeof(BeatGridContainer), nameof(BeatGridContainer.Enable))]
+        private bool Patch(BeatGridContainer __instance)
+        {
+            
+            return _activeViewMode.Mode.ShowGridAndSelection;
         }
 
         public void Dispose()
@@ -52,14 +62,25 @@ namespace EditorEX.Essentials.Patches.Preview
             selection.gameObject.SetActive(showGrid);
             if (showGrid)
             {
-                container.Enable();
+                container._mainBeatlineContainer.enabled = true;
+                container._beatNumberContainer.enabled = true;
+                container._normalBeatlineContainer.enabled = true;
+                container._mainBeatlineContainer.Enable();
+                container._beatNumberContainer.Enable();
+                container._normalBeatlineContainer.Enable();
             }
             else
             {
-                container.Disable();
-            }
+                container._mainBeatlineContainer.Disable();
+                container._beatNumberContainer.Disable();
+                container._normalBeatlineContainer.Disable();
+                container._mainBeatlineContainer.enabled = false;
+                container._beatNumberContainer.enabled = false;
+                container._normalBeatlineContainer.enabled = false;
+            }   
             currentLine.gameObject.SetActive(showGrid);
             lanes.SetActive(showGrid);
+            hjdLine.SetActive(showGrid);
         }
     }
 }

@@ -28,11 +28,10 @@ namespace EditorEX.Essentials.Features.ViewMode
                     .Subscribe(
                         InputRef.ViewModeBindings[i].GetInputAction(),
                         InputEventType.KeyDown,
-                        new Action(() =>
+                        () =>
                             signalBus.Fire(
                                 new ViewModeSwitchedSignal(ViewModeRepository.GetViewModes()[index])
                             )
-                        )
                     )
                     .AddTo(compositeDisposable);
             }

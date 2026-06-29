@@ -9,17 +9,10 @@ using Zenject;
 
 namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
 {
-    // Normal-mode chain movement. EditorEX owns all chain positioning itself; nothing else places the
-    // head/links outside game-preview mode. This provider drives the shared visual roots
-    // (ChainVisualRoots) into the chain's static shape: the chain root sits at the head's lane/beat
-    // position, the head root is rotated to its cut direction, and each link root is placed at its
-    // quadratic-bezier offset relative to the head (the same curve the game movement and the editor's
-    // BurstSliderSpawner use), rotated to its tangent. The layout is constant relative to the head, so
-    // it's computed once in Init; ManualUpdate only scrolls the chain root's z with the beat.
     public class EditorChainHeadBasicMovement : MonoBehaviour, IObjectMovement
     {
-        private const float _laneWidth = 0.8f;
-        private const float _yOffset = 0.5f;
+        private const float LaneWidth = 0.8f;
+        private const float YOffset = 0.5f;
 
         private ChainEditorData? _editorData;
         private ChainVisualRoots _visualRoots = null!;
@@ -44,12 +37,10 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
                 throw new ArgumentNullException(nameof(editorData));
             }
             _editorData = editorData as ChainEditorData;
-            // Set the full position, not just z: DisableMovement strips the base game's InsertObject
-            // placement, so this movement is now solely responsible for the chain head's x/y as well.
             float z = _beatmapObjectPlacementHelper.BeatToPosition(editorData.beat);
             transform.localPosition = new Vector3(
-                (_editorData.column - 1.5f) * _laneWidth,
-                _yOffset + _editorData.row * _laneWidth,
+                (_editorData.column - 1.5f) * LaneWidth,
+                YOffset + _editorData.row * LaneWidth,
                 z
             );
 
@@ -59,9 +50,6 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
             LayoutChain(z);
         }
 
-        // Rotate the head root to its cut direction (the chain root carries its position) and place each
-        // link root at its static bezier offset relative to the head. Mirrors the editor's intended
-        // chain shape (ChainNoteView.CreateSlider / BurstSliderSpawner.ProcessSliderData).
         private void LayoutChain(float headZ)
         {
             if (_editorData == null)
@@ -76,8 +64,6 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
                     _editorData.cutDirection.RotationAngle(),
                     Vector3.forward
                 );
-                // The game movement's floor machinery gates the head root active by time (it's the
-                // jump's visual root); basic mode doesn't run that, so re-enable it here.
                 if (!_visualRoots.HeadRoot.gameObject.activeSelf)
                 {
                     _visualRoots.HeadRoot.gameObject.SetActive(true);
@@ -93,12 +79,12 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
             float tailZ = _beatmapObjectPlacementHelper.BeatToPosition(_editorData.tailBeat);
 
             Vector2 start = new Vector2(
-                (_editorData.column - 1.5f) * _laneWidth,
-                _yOffset + _editorData.row * _laneWidth
+                (_editorData.column - 1.5f) * LaneWidth,
+                YOffset + _editorData.row * LaneWidth
             );
             Vector2 end = new Vector2(
-                (_editorData.tailColumn - 1.5f) * _laneWidth,
-                _yOffset + _editorData.tailRow * _laneWidth
+                (_editorData.tailColumn - 1.5f) * LaneWidth,
+                YOffset + _editorData.tailRow * LaneWidth
             );
             Vector2 chainVector = end - start;
             float controlAngle =
@@ -133,7 +119,7 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
                     0f,
                     Vector2.SignedAngle(new Vector2(0f, -1f), tangent)
                 );
-                // The game movement gates link-root visibility by time; basic mode shows them all.
+
                 if (!link.Root.gameObject.activeSelf)
                 {
                     link.Root.gameObject.SetActive(true);
@@ -141,7 +127,6 @@ namespace EditorEX.Essentials.Movement.ChainHead.MovementProvider
             }
         }
 
-        // Quadratic bezier, identical to BurstSliderSpawner.BezierCurve.
         private static void BezierCurve(
             Vector2 p0,
             Vector2 p1,

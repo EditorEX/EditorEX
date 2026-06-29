@@ -38,21 +38,20 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
         private float _width;
         private float _height;
         private float _length;
+        private Vector3 _moveOffset;
         private Vector3 _startPos;
         private Vector3 _midPos;
         private Vector3 _endPos;
-        private float _move1Duration;
-        private float _move2Duration;
         private float _startTimeOffset;
         private float _obstacleDuration;
         private bool _passedThreeQuartersOfMove2Reported;
         private bool _passedAvoidedMarkReported;
+        private float _passedThreeQuartersOfMove2Time;
         private float _passedAvoidedMarkTime;
         private float _finishMovementTime;
         private Bounds _bounds;
         private Color _color;
         private Quaternion _worldRotation;
-        private Quaternion _inverseWorldRotation;
 
         // Object fields
         private StretchableObstacle? _stretchableObstacle;
@@ -149,22 +148,18 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             float worldRotation = 0f;
 
             _worldRotation = GetWorldRotation(_editorData, worldRotation);
-            _inverseWorldRotation = Quaternion.Inverse(_worldRotation);
             _obstacleDuration = _editorData.duration;
             _height = obstacleSpawnData.obstacleHeight;
             _color = _colorManager.obstaclesColor;
             _width = GetCustomWidth(obstacleSpawnData.obstacleWidth, _editorData);
-            Vector3 vector =
-                _variableMovementDataProvider.moveStartPosition + obstacleSpawnData.moveOffset;
-            Vector3 vector2 =
-                _variableMovementDataProvider.moveEndPosition + obstacleSpawnData.moveOffset;
-            float num =
-                (
-                    _variableMovementDataProvider.jumpEndPosition
-                    + obstacleSpawnData.moveOffset
-                    - vector2
-                ).magnitude / _variableMovementDataProvider.jumpDuration;
+            _moveOffset = obstacleSpawnData.moveOffset;
+
+            Vector3 startPos = _variableMovementDataProvider.moveStartPosition + _moveOffset;
+            Vector3 midPos = _variableMovementDataProvider.moveEndPosition + _moveOffset;
+            Vector3 endPos = _variableMovementDataProvider.jumpEndPosition + _moveOffset;
+            float num = (endPos - midPos).magnitude / _variableMovementDataProvider.jumpDuration;
             _length = GetCustomLength(num * _editorData.duration, _editorData);
+
             _stretchableObstacle.SetAllProperties(
                 _width * 0.98f,
                 _height,
@@ -177,10 +172,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             _bounds = _stretchableObstacle.bounds;
             _passedThreeQuartersOfMove2Reported = false;
             _passedAvoidedMarkReported = false;
-            _passedAvoidedMarkTime =
-                _move1Duration + _move2Duration * 0.5f + _obstacleDuration + 0.15f;
-            _finishMovementTime = _move1Duration + _move2Duration + _obstacleDuration;
-            transform.localPosition = vector;
+            transform.localPosition = startPos;
             transform.localRotation = _worldRotation;
 
             _editorDeserializedData.Resolve(editorData, out EditorNoodleObstacleData? noodleData);
@@ -210,13 +202,13 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 //_obstacleTracker.AddActive(__instance);
             }
 
-            noodleData.InternalStartPos = _startPos;
-            noodleData.InternalMidPos = _midPos;
-            noodleData.InternalEndPos = _endPos;
+            noodleData.InternalStartPos = startPos;
+            noodleData.InternalMidPos = midPos;
+            noodleData.InternalEndPos = endPos;
             noodleData.InternalLocalRotation = localRotation;
             noodleData.InternalBoundsSize = _bounds.size;
 
-            Vector3 noteOffset = _endPos;
+            Vector3 noteOffset = endPos;
             noteOffset.z = 0;
             noodleData.InternalNoteOffset = noteOffset;
         }
@@ -236,8 +228,11 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 return false;
             }
 
+            float moveDuration = _variableMovementDataProvider.moveDuration;
+
             float jumpTime = Mathf.Clamp(
-                (time - _move1Duration) / (_move2Duration + _obstacleDuration),
+                (time - moveDuration)
+                    / (_variableMovementDataProvider.jumpDuration + _obstacleDuration),
                 0,
                 1
             );
@@ -255,9 +250,9 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
             Vector3 noteOffset = noodleData.InternalNoteOffset;
             Vector3 definitePosition = position.Value + noteOffset;
-            if (time < _move1Duration)
+            if (time < moveDuration)
             {
-                __result = Vector3.LerpUnclamped(_startPos, _midPos, time / _move1Duration);
+                __result = Vector3.LerpUnclamped(_startPos, _midPos, time / moveDuration);
                 __result += definitePosition - _midPos;
             }
             else
@@ -275,18 +270,20 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 return result;
             }
 
+            float moveDuration = _variableMovementDataProvider.moveDuration;
+
             Vector3 vector;
-            if (time < _move1Duration)
+            if (time < moveDuration)
             {
                 vector = Vector3.LerpUnclamped(
                     _startPos,
                     _midPos,
-                    (_move1Duration < Mathf.Epsilon) ? 0f : (time / _move1Duration)
+                    (moveDuration < Mathf.Epsilon) ? 0f : (time / moveDuration)
                 );
             }
             else
             {
-                float num = (time - _move1Duration) / _move2Duration;
+                float num = (time - moveDuration) / _variableMovementDataProvider.jumpDuration;
                 vector.x = _startPos.x;
                 vector.y = _startPos.y;
                 vector.z = Mathf.LerpUnclamped(_midPos.z, _endPos.z, num);
@@ -331,7 +328,9 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             else
             {
                 float elapsedTime = _audioTimeSyncController.songTime - _startTimeOffset;
-                normalTime = (elapsedTime - _move1Duration) / (_move2Duration + _obstacleDuration);
+                normalTime =
+                    (elapsedTime - _variableMovementDataProvider.moveDuration)
+                    / (_variableMovementDataProvider.jumpDuration + _obstacleDuration);
             }
 
             _animationHelper.GetObjectOffset(
@@ -369,7 +368,6 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 {
                     worldRotationQuatnerion *= rotationOffset.Value;
                     _worldRotation = worldRotationQuatnerion;
-                    _inverseWorldRotation = Quaternion.Inverse(worldRotationQuatnerion);
                 }
 
                 worldRotationQuatnerion *= localRotation;
@@ -402,15 +400,40 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
         public void ManualUpdate()
         {
+            if (_editorData == null)
+            {
+                return;
+            }
+
+            // Recompute movement timings/positions until the obstacle passes the avoided mark,
+            // mirroring the gameplay ObstacleController (the variable movement data can change
+            // between frames). NoodleUpdate runs afterwards so animation offsets layer on top of
+            // these base positions.
+            if (!_passedAvoidedMarkReported)
+            {
+                float moveDuration = _variableMovementDataProvider.moveDuration;
+                float jumpDuration = _variableMovementDataProvider.jumpDuration;
+                float halfJumpDuration = _variableMovementDataProvider.halfJumpDuration;
+
+                _startTimeOffset =
+                    _audioDataModel.bpmData.BeatToSeconds(_editorData.beat)
+                    - moveDuration
+                    - halfJumpDuration;
+                _passedThreeQuartersOfMove2Time = moveDuration + jumpDuration * 0.75f;
+                _passedAvoidedMarkTime =
+                    moveDuration + halfJumpDuration + _obstacleDuration + 0.15f;
+                _finishMovementTime = moveDuration + jumpDuration + _obstacleDuration;
+                _startPos = _variableMovementDataProvider.moveStartPosition + _moveOffset;
+                _midPos = _variableMovementDataProvider.moveEndPosition + _moveOffset;
+                _endPos = _variableMovementDataProvider.jumpEndPosition + _moveOffset;
+            }
+
             NoodleUpdate();
 
             float num = _audioTimeSyncController.songTime - _startTimeOffset;
             Vector3 posForTime = GetPosForTime(num);
             transform.localPosition = _worldRotation * posForTime;
-            if (
-                !_passedThreeQuartersOfMove2Reported
-                && num > _move1Duration + _move2Duration * 0.75f
-            )
+            if (!_passedThreeQuartersOfMove2Reported && num > _passedThreeQuartersOfMove2Time)
             {
                 _passedThreeQuartersOfMove2Reported = true;
             }
