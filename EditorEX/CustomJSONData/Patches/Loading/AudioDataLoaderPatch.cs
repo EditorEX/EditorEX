@@ -120,7 +120,7 @@ namespace EditorEX.CustomJSONData.Patches.Loading
             bool hasV2BpmInfo = File.Exists(Path.Combine(projectPath, "BPMInfo.dat"));
             bool hasV4BpmInfo = File.Exists(Path.Combine(projectPath, audioDataFilename));
 
-            BpmData bpmData = null;
+            BpmData? bpmData = null;
 
             if (hasV2BpmInfo)
             {
@@ -152,13 +152,11 @@ namespace EditorEX.CustomJSONData.Patches.Loading
                     );
                     return false;
                 }
-                else
-                {
-                    bpmData = AudioDataLoader.LoadBpmData(
-                        audioSaveData,
-                        __instance._beatmapLevelDataModel.songTimeOffset
-                    );
-                }
+
+                bpmData = AudioDataLoader.LoadBpmData(
+                    audioSaveData,
+                    __instance._beatmapLevelDataModel.songTimeOffset
+                );
             }
 
             bool setBpmDataWithClip = false;
@@ -240,13 +238,11 @@ namespace EditorEX.CustomJSONData.Patches.Loading
                     );
                     return false;
                 }
-                else
-                {
-                    bpmData = AudioDataLoader.LoadBpmData(
-                        audioSaveData,
-                        __instance._beatmapLevelDataModel.songTimeOffset
-                    );
-                }
+
+                bpmData = AudioDataLoader.LoadBpmData(
+                    audioSaveData,
+                    __instance._beatmapLevelDataModel.songTimeOffset
+                );
             }
 
             bool setBpmDataWithClip = false;
@@ -259,6 +255,7 @@ namespace EditorEX.CustomJSONData.Patches.Loading
             Task<AudioClip> audioClip = __instance._audioClipLoader.LoadAudioFile(
                 Path.Combine(projectPath, __instance._beatmapLevelDataModel.songFilename)
             );
+
             if (audioClip == null)
             {
                 __instance._signalBus.Fire(
@@ -269,54 +266,62 @@ namespace EditorEX.CustomJSONData.Patches.Loading
             }
             else
             {
-                audioClip.ContinueWith(task =>
-                {
-                    var result = audioClip.Result;
-                    if (result == null)
+                audioClip.ContinueWith(
+                    task =>
                     {
-                        __instance._signalBus.Fire(
-                            new BeatmapDataModelSignals.AudioDataLoadedResult(
-                                LoadAudioDataResult.UnableToLoadAudio
-                            )
-                        );
-                    }
-                    else
-                    {
-                        if (setBpmDataWithClip)
+                        var result = audioClip.Result;
+                        if (result == null)
                         {
-                            int startOffset = AudioTimeHelper.SecondsToSamples(
-                                __instance._beatmapLevelDataModel.songTimeOffset,
-                                result.frequency
+                            __instance._signalBus.Fire(
+                                new BeatmapDataModelSignals.AudioDataLoadedResult(
+                                    LoadAudioDataResult.UnableToLoadAudio
+                                )
                             );
-                            bpmData = new BpmData(
-                                __instance._beatmapLevelDataModel.beatsPerMinute,
-                                result.samples,
-                                result.frequency,
-                                startOffset
-                            );
-                            if (bpmData == null)
-                            {
-                                __instance._signalBus.Fire(
-                                    new BeatmapDataModelSignals.AudioDataLoadedResult(
-                                        LoadAudioDataResult.UnableToLoadAudioData
-                                    )
-                                );
-                                return;
-                            }
                         }
+                        else
+                        {
+                            if (setBpmDataWithClip)
+                            {
+                                int startOffset = AudioTimeHelper.SecondsToSamples(
+                                    __instance._beatmapLevelDataModel.songTimeOffset,
+                                    result.frequency
+                                );
+                                
+                                bpmData = new BpmData(
+                                    __instance._beatmapLevelDataModel.beatsPerMinute,
+                                    result.samples,
+                                    result.frequency,
+                                    startOffset
+                                );
+                                
+                                if (bpmData == null)
+                                {
+                                    __instance._signalBus.Fire(
+                                        new BeatmapDataModelSignals.AudioDataLoadedResult(
+                                            LoadAudioDataResult.UnableToLoadAudioData
+                                        )
+                                    );
+                                    return;
+                                }
+                            }
 
-                        __instance._audioDataModel.UpdateWith(bpmData, result);
-                        __instance._beatmapBasicEventsDataModel.SetBpmData(bpmData);
-                        __instance._waveformDataModel.PrepareWaveformData(result);
-                        __instance._signalBus.Fire(
-                            new BeatmapDataModelSignals.AudioDataLoadedResult(
-                                LoadAudioDataResult.Success
-                            )
-                        );
-                        __instance._waveformDataModel._computeMonoSamples.Complete();
-                        __instance._waveformDataModel._computeMonoSamples.scheduled = true;
-                    }
-                });
+                            __instance._audioDataModel.UpdateWith(bpmData, result);
+
+                            __instance._beatmapBasicEventsDataModel.SetBpmData(bpmData);
+                            __instance._waveformDataModel.PrepareWaveformData(result);
+
+                            __instance._signalBus.Fire(
+                                new BeatmapDataModelSignals.AudioDataLoadedResult(
+                                    LoadAudioDataResult.Success
+                                )
+                            );
+
+                            __instance._waveformDataModel._computeMonoSamples.Complete();
+                            __instance._waveformDataModel._computeMonoSamples.scheduled = true;
+                        }
+                    },
+                    TaskScheduler.FromCurrentSynchronizationContext()
+                );
             }
 
             return false;
