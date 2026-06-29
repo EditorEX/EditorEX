@@ -16,6 +16,10 @@ namespace EditorEX.Essentials.Installers
                 .BindInterfacesAndSelfTo<ObjectMarkerOptimizationPatches>()
                 .AsSingle()
                 .NonLazy();
+            Container
+                .BindInterfacesAndSelfTo<BasicEventObjectsViewRefreshPatch>()
+                .AsSingle()
+                .NonLazy();
             Container.BindInterfacesAndSelfTo<SwapMovementProvider>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<CustomInputActionRegistry>().AsSingle().NonLazy();

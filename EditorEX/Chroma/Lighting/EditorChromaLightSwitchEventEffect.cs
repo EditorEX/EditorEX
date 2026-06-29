@@ -352,12 +352,15 @@ namespace EditorEX.Chroma.Lighting
                 // this code is UGLY
                 void CheckNextEventForFadeBetter()
                 {
-                    _editorDeserializedData.Resolve(CustomDataRepository.GetBasicEventConversion(previousEvent), out EditorChromaEventData? eventData);
-                    
+                    _editorDeserializedData.Resolve(
+                        CustomDataRepository.GetBasicEventConversion(previousEvent),
+                        out EditorChromaEventData? eventData
+                    );
+
                     Dictionary<int, BasicEventEditorData>? nextSameTypesDict =
                         eventData?.NextSameTypeEvent;
                     BasicBeatmapEventData? nextSameTypeEvent = null;
-                    
+
                     if (nextSameTypesDict == null)
                     {
                         nextSameTypeEvent = previousEvent.nextSameTypeEventData; //clean up

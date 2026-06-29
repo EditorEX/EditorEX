@@ -5,6 +5,7 @@ using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Views;
 using BeatmapEditor3D.Visuals;
 using EditorEX.Essentials.Movement.Arc;
+using EditorEX.Essentials.Movement.ChainHead;
 using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Movement.Obstacle;
 using HarmonyLib;
@@ -16,7 +17,14 @@ namespace EditorEX.Essentials.Patches.Movement
     [AffinityPatch]
     public class InitMovement : IAffinity
     {
-        private static readonly MethodInfo _init = AccessTools.Method(typeof(InitMovement), "Init");
+        private static readonly MethodInfo _initNote = AccessTools.Method(
+            typeof(InitMovement),
+            "InitNote"
+        );
+        private static readonly MethodInfo _initChain = AccessTools.Method(
+            typeof(InitMovement),
+            "InitChain"
+        );
         private static readonly MethodInfo _initObstacle = AccessTools.Method(
             typeof(InitMovement),
             "InitObstacle"
@@ -26,11 +34,20 @@ namespace EditorEX.Essentials.Patches.Movement
             "InitArc"
         );
 
-        public static void Init(GameObject gameObject, BaseEditorData editorData)
+        public static void InitNote(GameObject gameObject, BaseEditorData editorData)
         {
             if (gameObject.GetComponent<EditorNoteController>() == null)
                 return;
             gameObject.GetComponent<EditorNoteController>().Init(editorData as NoteEditorData);
+        }
+
+        public static void InitChain(ChainNoteView gameObject, BaseEditorData editorData)
+        {
+            if (gameObject.GetComponent<EditorChainHeadController>() == null)
+                return;
+            gameObject
+                .GetComponent<EditorChainHeadController>()
+                .Init(editorData as ChainEditorData);
         }
 
         public static void InitObstacle(ObstacleView obstacleView, BaseEditorData editorData)
@@ -60,7 +77,24 @@ namespace EditorEX.Essentials.Patches.Movement
             var result = new CodeMatcher(instructions)
                 .End()
                 .Advance(-1) // before ret
-                .Insert(new(OpCodes.Ldloc_S, 5), new(OpCodes.Ldarg_1), new(OpCodes.Call, _init))
+                .Insert(new(OpCodes.Ldloc_S, 5), new(OpCodes.Ldarg_1), new(OpCodes.Call, _initNote))
+                .InstructionEnumeration();
+            return result;
+        }
+
+        [AffinityPatch(
+            typeof(ChainBeatmapObjectsView),
+            nameof(ChainBeatmapObjectsView.InsertObject)
+        )]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerChain(
+            IEnumerable<CodeInstruction> instructions
+        )
+        {
+            var result = new CodeMatcher(instructions)
+                .End()
+                .Advance(-1) // before ret
+                .Insert(new(OpCodes.Ldloc_0), new(OpCodes.Ldarg_1), new(OpCodes.Call, _initChain))
                 .InstructionEnumeration();
             return result;
         }

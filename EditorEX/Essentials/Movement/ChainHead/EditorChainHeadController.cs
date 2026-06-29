@@ -16,7 +16,7 @@ namespace EditorEX.Essentials.Movement.ChainHead
         private ActiveViewMode _activeViewMode = null!;
         private EditorBasicBeatmapObjectSpawnMovementData _movementData = null!;
 
-        private ArcEditorData? _data;
+        private ChainEditorData? _data;
         private IObjectMovement? _arcMovement;
         private IVariableMovementDataProvider? _variableMovementDataProvider;
 
@@ -89,7 +89,7 @@ namespace EditorEX.Essentials.Movement.ChainHead
             }
         }
 
-        public void Init(ArcEditorData? editorData)
+        public void Init(ChainEditorData? editorData)
         {
             if (editorData == null)
                 return;
