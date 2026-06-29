@@ -41,6 +41,7 @@ namespace EditorEX.UI.Cursor
             SetCursor(LoadCursor(IntPtr.Zero, (int)cursor));
         }
 
+        private bool? lastFrameValue = null;
         public void Tick()
         {
             bool any = false;
@@ -52,7 +53,9 @@ namespace EditorEX.UI.Cursor
             {
                 any |= selectable.highlighted;
             }
+            if (lastFrameValue.HasValue && lastFrameValue.Value == any) return;
             ChangeCursor(any ? WindowsCursor.Hand : WindowsCursor.StandardArrow);
+            lastFrameValue = any;
         }
     }
 }
