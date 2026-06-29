@@ -14,6 +14,7 @@ using EditorEX.Essentials.Patches.Preview;
 using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.VariableMovement;
 using EditorEX.Essentials.Visuals;
+using EditorEX.Essentials.Visuals.ChainHead;
 using EditorEX.Essentials.Visuals.Note;
 using EditorEX.Essentials.Visuals.Obstacle;
 using EditorEX.Essentials.Visuals.Universal;
@@ -138,6 +139,17 @@ namespace EditorEX.Essentials.Installers
                 .Bind<ValueTuple<string[], Type>>()
                 .WithId("Visuals")
                 .FromInstance((["preview", "preview-lock-cam"], typeof(EditorObstacleGameVisuals)));
+
+            Container
+                .Bind<ValueTuple<string[], Type>>()
+                .WithId("Visuals")
+                .FromInstance((["normal"], typeof(EditorChainHeadBasicVisuals)));
+            Container
+                .Bind<ValueTuple<string[], Type>>()
+                .WithId("Visuals")
+                .FromInstance(
+                    (["preview", "preview-lock-cam"], typeof(EditorChainHeadGameVisuals))
+                );
 
             Container.Bind<EditorBeatmapObjectsInTimeRowProcessor>().AsSingle();
 

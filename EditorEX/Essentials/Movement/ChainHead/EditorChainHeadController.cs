@@ -3,6 +3,7 @@ using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.VariableMovement;
+using EditorEX.Essentials.Visuals;
 using UnityEngine;
 using Zenject;
 
@@ -12,12 +13,14 @@ namespace EditorEX.Essentials.Movement.ChainHead
     {
         private IReadonlyBeatmapState _state = null!;
         private MovementTypeProvider _movementTypeProvider = null!;
+        private VisualsTypeProvider _visualsTypeProvider = null!;
         private VariableMovementTypeProvider _variableMovementTypeProvider = null!;
         private ActiveViewMode _activeViewMode = null!;
         private EditorBasicBeatmapObjectSpawnMovementData _movementData = null!;
 
         private ChainEditorData? _data;
-        private IObjectMovement? _arcMovement;
+        private IObjectMovement? _chainMovement;
+        private IObjectVisuals? _chainVisuals;
         private IVariableMovementDataProvider? _variableMovementDataProvider;
 
         [Inject]
@@ -25,47 +28,62 @@ namespace EditorEX.Essentials.Movement.ChainHead
             IReadonlyBeatmapState state,
             ActiveViewMode activeViewMode,
             MovementTypeProvider movementTypeProvider,
+            VisualsTypeProvider visualsTypeProvider,
             VariableMovementTypeProvider variableMovementTypeProvider,
             EditorBasicBeatmapObjectSpawnMovementData movementData
         )
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
+            _visualsTypeProvider = visualsTypeProvider;
             _variableMovementTypeProvider = variableMovementTypeProvider;
             _movementData = movementData;
 
             _activeViewMode = activeViewMode;
-            _activeViewMode.ModeChanged += RefreshHeadMovementAndInit;
+            _activeViewMode.ModeChanged += RefreshHeadMovementVisualsAndInit;
         }
 
         public void Dispose()
         {
-            _activeViewMode.ModeChanged -= RefreshHeadMovementAndInit;
+            _activeViewMode.ModeChanged -= RefreshHeadMovementVisualsAndInit;
         }
 
-        private void RefreshHeadMovementAndInit()
+        private void RefreshHeadMovementVisualsAndInit()
         {
             try
             {
-                RefreshHeadMovement();
+                RefreshHeadMovementVisuals();
                 Init(_data);
             }
             catch { }
         }
 
-        private void RefreshHeadMovement()
+        private void RefreshHeadMovementVisuals()
         {
             if (
                 TypeProviderUtils.GetProvidedComponent(
                     gameObject,
                     _movementTypeProvider,
-                    _arcMovement,
-                    out var newNoteMovement
+                    _chainMovement,
+                    out var newChainMovement
                 )
             )
             {
-                _arcMovement = newNoteMovement;
-                _arcMovement?.Enable();
+                _chainMovement = newChainMovement;
+                _chainMovement?.Enable();
+            }
+
+            if (
+                TypeProviderUtils.GetProvidedComponent(
+                    gameObject,
+                    _visualsTypeProvider,
+                    _chainVisuals,
+                    out var newChainVisuals
+                )
+            )
+            {
+                _chainVisuals = newChainVisuals;
+                _chainVisuals?.Enable();
             }
 
             if (
@@ -95,9 +113,10 @@ namespace EditorEX.Essentials.Movement.ChainHead
                 return;
             _data = editorData;
 
-            RefreshHeadMovement();
+            RefreshHeadMovementVisuals();
 
-            _arcMovement.Init(editorData, _variableMovementDataProvider, _movementData, null);
+            _chainMovement?.Init(editorData, _variableMovementDataProvider, _movementData, null);
+            _chainVisuals?.Init(editorData);
 
             ManualUpdate();
         }
@@ -119,14 +138,15 @@ namespace EditorEX.Essentials.Movement.ChainHead
 
         public void ManualUpdate()
         {
-            if (_arcMovement == null)
+            if (_chainMovement == null || _chainVisuals == null)
             {
-                RefreshHeadMovementAndInit();
+                RefreshHeadMovementVisualsAndInit();
             }
 
-            _arcMovement?.Setup(_data);
+            _chainMovement?.Setup(_data);
 
-            _arcMovement?.ManualUpdate();
+            _chainMovement?.ManualUpdate();
+            _chainVisuals?.ManualUpdate();
         }
     }
 }

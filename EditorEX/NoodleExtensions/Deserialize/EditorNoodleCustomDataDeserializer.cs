@@ -111,9 +111,13 @@ namespace EditorEX.NoodleExtensions.Deserialize
                             }
                             else
                             {
+                                // A chain is a slider (head + tail), so it must deserialize to
+                                // EditorNoodleSliderData like arcs do. Registering a plain
+                                // EditorNoodleObjectData here made GetSliderSpawnData's resolve throw a
+                                // type mismatch the moment chain game movement asked for slider data.
                                 dictionary.Add(
                                     baseEditorData,
-                                    new EditorNoodleObjectData(
+                                    new EditorNoodleSliderData(
                                         customChainData,
                                         customData,
                                         _pointDefinitions,

@@ -13,6 +13,9 @@ namespace EditorEX.Essentials.Visuals.Universal
         public GameObject gameNotePrefab;
         public GameObject obstaclePrefab;
 
+        public GameObject burstSliderHeadPrefab;
+        public GameObject burstSliderElementPrefab;
+
         public event Action onFinishLoading;
 
         private void Start()
@@ -39,6 +42,16 @@ namespace EditorEX.Essentials.Visuals.Universal
 
             obstaclePrefab = Instantiate(objectsInstaller._obstaclePrefab.gameObject);
             obstaclePrefab.SetActive(false);
+
+            burstSliderHeadPrefab = Instantiate(
+                objectsInstaller._burstSliderHeadNotePrefab.gameObject
+            );
+            burstSliderHeadPrefab.SetActive(false);
+
+            burstSliderElementPrefab = Instantiate(
+                objectsInstaller._burstSliderNotePrefab.gameObject
+            );
+            burstSliderElementPrefab.SetActive(false);
 
             onFinishLoading?.Invoke();
 

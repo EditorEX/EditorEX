@@ -24,7 +24,7 @@ namespace EditorEX.NoodleExtensions.ObjectData
         }
 
         internal EditorNoodleSliderData(
-            ArcEditorData? sliderData,
+            BaseSliderEditorData? sliderData,
             CustomData customData,
             Dictionary<string, List<object>> pointDefinitions,
             Dictionary<string, Track> beatmapTracks,

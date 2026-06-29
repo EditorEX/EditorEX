@@ -91,9 +91,14 @@ namespace EditorEX.Essentials.Patches.Movement
             IEnumerable<CodeInstruction> instructions
         )
         {
+            // Insert *after* the trailing chainNoteView.gameObject.SetActive(true) (before the ret),
+            // not before it. The chain view is spawned inactive and only activated by that final
+            // SetActive, which is what runs the controller/movement Awake. If InitChain ran before
+            // SetActive, EditorChainHeadController.Init would drive EditorChainHeadGameMovement before
+            // its Awake had grabbed the EditorNoteJump/EditorNoteFloorMovement components, leaving the
+            // jump uninitialised (NRE on the next ManualUpdate).
             var result = new CodeMatcher(instructions)
-                .End()
-                .Advance(-1) // before ret
+                .End() // trailing ret, i.e. just after SetActive(true)
                 .Insert(new(OpCodes.Ldloc_0), new(OpCodes.Ldarg_1), new(OpCodes.Call, _initChain))
                 .InstructionEnumeration();
             return result;

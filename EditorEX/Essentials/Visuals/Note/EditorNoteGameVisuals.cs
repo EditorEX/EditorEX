@@ -117,7 +117,6 @@ namespace EditorEX.Essentials.Visuals.Note
             _noteCutout = _gameRoot.GetComponent<CutoutEffect>();
             _arrowCutout = _arrowObjects[0].GetComponent<CutoutEffect>();
 
-            // Cached once; used on the per-frame animation path instead of GetComponent every frame.
             _noteJump = GetComponent<EditorNoteJump>();
 
             Disable();

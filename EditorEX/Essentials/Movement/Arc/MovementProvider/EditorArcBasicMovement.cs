@@ -30,9 +30,10 @@ namespace EditorEX.Essentials.Movement.Arc.MovementProvider
         )
         {
             _editorData = editorData as BaseSliderEditorData;
-            Vector3 localPosition = transform.localPosition;
-            localPosition.z = _beatmapObjectPlacementHelper.BeatToPosition(editorData.beat);
-            transform.localPosition = localPosition;
+            // Set the full position, not just z: DisableMovement strips the base game's InsertObject
+            // placement (which put the arc root at local (0, 0, z)), so restore that here in full.
+            float z = _beatmapObjectPlacementHelper.BeatToPosition(editorData.beat);
+            transform.localPosition = new Vector3(0f, 0f, z);
 
             var material = GetComponent<ArcView>()
                 ._arcMeshController.GetComponent<MeshRenderer>()

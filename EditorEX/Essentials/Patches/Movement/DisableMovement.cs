@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using BeatmapEditor3D.Views;
+using BeatmapEditor3D.Visuals;
 using HarmonyLib;
 using SiraUtil.Affinity;
 using UnityEngine;
@@ -28,28 +29,24 @@ namespace EditorEX.Essentials.Patches.Movement
             typeof(Transform),
             nameof(Transform.localPosition)
         );
+        private static readonly MethodInfo _setLocalRotation = AccessTools.PropertySetter(
+            typeof(Transform),
+            nameof(Transform.localRotation)
+        );
 
         // Matches both Component.get_transform and GameObject.get_transform.
         private static bool IsGetTransform(CodeInstruction instruction) =>
-            (instruction.opcode == OpCodes.Callvirt || instruction.opcode == OpCodes.Call)
-            && instruction.operand is MethodInfo method
-            && method.Name == "get_transform";
+            (
+                (instruction.opcode == OpCodes.Callvirt || instruction.opcode == OpCodes.Call)
+                && instruction.operand is MethodInfo method
+                && method.Name == "get_transform"
+            )
+            || (
+                instruction.opcode == OpCodes.Ldfld
+                && instruction.operand is FieldInfo field
+                && field.Name == "_transform"
+            );
 
-        // Removes one `<view>.transform.localPosition = <recomputed>;` read-modify-write block from an
-        // UpdateObjects loop body. The block is always laid out as:
-        //     <load view>                            (viewLoadLength instructions)
-        //     callvirt Component.get_transform
-        //     callvirt Transform.get_localPosition   <-- anchor we match on
-        //     stloc    <localPosition>
-        //     ...      localPosition.z = helper.BeatToPosition(beat) ...
-        //     <load view>
-        //     callvirt Component.get_transform
-        //     ldloc    <localPosition>
-        //     callvirt Transform.set_localPosition   <-- end of block
-        // so the block begins (1 + viewLoadLength) instructions before get_localPosition (the
-        // get_transform plus the view load) and ends at the set_localPosition call. Removing the whole
-        // block is stack-neutral and also drops the BeatToPosition call that used to run for every
-        // object every frame.
         private static void StripLocalPositionUpdate(
             CodeMatcher matcher,
             int viewLoadLength,
@@ -69,18 +66,6 @@ namespace EditorEX.Essentials.Patches.Movement
             matcher.RemoveInstructionsInRange(blockStart, blockEnd);
         }
 
-        // Removes the one-shot `<view>.transform.localPosition = new Vector3(...);` placement statement
-        // from an InsertObject method. Each InsertObject contains exactly one Transform.set_localPosition
-        // (the placement). The statement is laid out as:
-        //     <load view>                            (a single ldloc/ldloc.s)
-        //     callvirt get_transform                 <-- nearest get_transform walking back from the write
-        //     ...build the Vector3...
-        //     newobj   Vector3..ctor
-        //     callvirt Transform.set_localPosition   <-- end of statement
-        // so we anchor on the (unique) set_localPosition, walk back to the get_transform that feeds it,
-        // and remove from the view load (one instruction before that get_transform) through the write.
-        // Any later transform usage in the method (e.g. SetParent) keeps its own view load and is left
-        // untouched.
         private static void StripLocalPositionInsert(CodeMatcher matcher, string label)
         {
             matcher
@@ -91,17 +76,26 @@ namespace EditorEX.Essentials.Patches.Movement
             matcher
                 .MatchBack(false, new CodeMatch(IsGetTransform))
                 .ThrowIfInvalid($"{label}: transform load not found");
-            int blockStart = matcher.Pos - 1; // the ldloc loading the view, just before `.transform`
+            int blockStart = matcher.Pos - 1;
 
             matcher.RemoveInstructionsInRange(blockStart, blockEnd);
         }
 
-        // Was: .Advance(17).RemoveInstructions(20).Advance(40).RemoveInstructions(20)
-        //   -> blind-skip 17 to the note-loop localPosition block, remove 20; skip 40 more to the
-        //      bomb-loop block, remove 20. Those raw counts were off by one (they clipped the first
-        //      instruction of the following UpdateState call) and broke on any IL shift.
-        // Now: match and remove the note-loop and bomb-loop localPosition blocks exactly. Both loops
-        //      read the view from a KeyValuePair (`ldloca.s kvp; call get_Value`), so viewLoadLength is 2.
+        private static void StripLocalRotationInsert(CodeMatcher matcher, string label)
+        {
+            matcher
+                .MatchForward(false, new CodeMatch(OpCodes.Callvirt, _setLocalRotation))
+                .ThrowIfInvalid($"{label}: localRotation write not found");
+            int blockEnd = matcher.Pos;
+
+            matcher
+                .MatchBack(false, new CodeMatch(IsGetTransform))
+                .ThrowIfInvalid($"{label}: transform load not found");
+            int blockStart = matcher.Pos - 1;
+
+            matcher.RemoveInstructionsInRange(blockStart, blockEnd);
+        }
+
         [AffinityPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.UpdateObjects))]
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerNote(
@@ -114,10 +108,6 @@ namespace EditorEX.Essentials.Patches.Movement
             return matcher.InstructionEnumeration();
         }
 
-        // Was: .Advance(155).RemoveInstructions(20)
-        //   -> blind-skip 155 to the initial-placement `gameObject.transform.localPosition = new
-        //      Vector3(...)` statement near the end of InsertObject and remove 20.
-        // Now: anchor on the placement write and remove the whole statement (see StripLocalPositionInsert).
         [AffinityPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.InsertObject))]
         [AffinityTranspiler]
         private IEnumerable<CodeInstruction> TranspilerNoteInsert(
@@ -126,6 +116,18 @@ namespace EditorEX.Essentials.Patches.Movement
         {
             var matcher = new CodeMatcher(instructions);
             StripLocalPositionInsert(matcher, "NoteBeatmapObjectView.InsertObject");
+            return matcher.InstructionEnumeration();
+        }
+
+        [AffinityPatch(typeof(ChainElementNoteView), nameof(ChainElementNoteView.Init))]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerChainElementInit(
+            IEnumerable<CodeInstruction> instructions
+        )
+        {
+            var matcher = new CodeMatcher(instructions);
+            StripLocalRotationInsert(matcher, "ChainElementNoteView.Init");
+            StripLocalPositionInsert(matcher, "ChainElementNoteView.Init");
             return matcher.InstructionEnumeration();
         }
 
@@ -205,6 +207,25 @@ namespace EditorEX.Essentials.Patches.Movement
         {
             var matcher = new CodeMatcher(instructions);
             StripLocalPositionInsert(matcher, "ChainBeatmapObjectsView.InsertObject");
+            return matcher.InstructionEnumeration();
+        }
+
+        // New: strip the per-frame localPosition block from ChainBeatmapObjectsView.UpdateObjects, the
+        // same as the note/arc/obstacle loops. Without this the base game keeps writing the chain's z
+        // as a flat scroll position (BeatToPosition) every frame, which fights EditorChainHeadGameMovement
+        // and overwrites the head's jump z during the jump phase. The loop reads the view from a
+        // KeyValuePair (`ldloca.s kvp; call get_Value`), so viewLoadLength is 2.
+        [AffinityPatch(
+            typeof(ChainBeatmapObjectsView),
+            nameof(ChainBeatmapObjectsView.UpdateObjects)
+        )]
+        [AffinityTranspiler]
+        private IEnumerable<CodeInstruction> TranspilerChain(
+            IEnumerable<CodeInstruction> instructions
+        )
+        {
+            var matcher = new CodeMatcher(instructions);
+            StripLocalPositionUpdate(matcher, 2, "ChainBeatmapObjectsView.UpdateObjects");
             return matcher.InstructionEnumeration();
         }
     }

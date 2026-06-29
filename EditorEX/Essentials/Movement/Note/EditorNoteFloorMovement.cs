@@ -59,7 +59,7 @@ namespace EditorEX.Essentials.Movement.Note
         }
 
         public void Init(
-            NoteEditorData? editorData,
+            BaseEditorData? editorData,
             IVariableMovementDataProvider variableMovementDataProvider,
             float worldRotation,
             float beatTime,
@@ -145,7 +145,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         private EditorNoodleBaseNoteData? _noodleData;
 
-        private NoteEditorData? _editorData;
+        private BaseEditorData? _editorData;
 
         private Func<IObjectVisuals> _rotatedObject;
     }

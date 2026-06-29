@@ -52,11 +52,11 @@ namespace EditorEX.Essentials.Patches.Preview
             selection.gameObject.SetActive(showGrid);
             if (showGrid)
             {
-                //container.Enable();
+                container.Enable();
             }
             else
             {
-                //container.Disable();
+                container.Disable();
             }
             currentLine.gameObject.SetActive(showGrid);
             lanes.SetActive(showGrid);

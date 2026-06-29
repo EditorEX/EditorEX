@@ -8,6 +8,7 @@ using EditorEX.Essentials.Movement.Note.MovementProvider;
 using EditorEX.Essentials.Movement.Obstacle;
 using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
 using EditorEX.Essentials.VariableMovement;
+using EditorEX.Essentials.Visuals.ChainHead;
 using EditorEX.Essentials.Visuals.Note;
 using EditorEX.Essentials.Visuals.Obstacle;
 using SiraUtil.Affinity;
@@ -42,12 +43,18 @@ namespace EditorEX.Essentials.Patches.Movement
             __instance._bombNoteViewPrefab.gameObject.AddComponent<EditorNoteController>();
             __instance._bombNoteViewPrefab.gameObject.AddComponent<VariableMovementHolder>();
 
+            // Shared head/link visual roots (positioned root with Basic + Game children); the movements
+            // drive the roots and the visuals populate/toggle their respective child. Added first so the
+            // movement/visuals components find it.
+            __instance._chainNoteViewPrefab.gameObject.AddComponent<ChainVisualRoots>();
             __instance._chainNoteViewPrefab.gameObject.AddComponent<EditorChainHeadBasicMovement>();
             __instance._chainNoteViewPrefab.gameObject.AddComponent<EditorChainHeadGameMovement>();
-            //__instance._chainNoteViewPrefab.gameObject.AddComponent<EditorNoteGameVisuals>();
-            //__instance._chainNoteViewPrefab.gameObject.AddComponent<EditorNoteBasicVisuals>();
-            //__instance._chainNoteViewPrefab.gameObject.AddComponent<EditorNoteJump>();
-            //__instance._chainNoteViewPrefab.gameObject.AddComponent<EditorNoteFloorMovement>();
+            __instance._chainNoteViewPrefab.gameObject.AddComponent<EditorChainHeadBasicVisuals>();
+            __instance._chainNoteViewPrefab.gameObject.AddComponent<EditorChainHeadGameVisuals>();
+            // EditorChainHeadGameMovement drives the head with the same jump/floor machinery as notes,
+            // so the chain head prefab needs these two components present for it to GetComponent.
+            __instance._chainNoteViewPrefab.gameObject.AddComponent<EditorNoteJump>();
+            __instance._chainNoteViewPrefab.gameObject.AddComponent<EditorNoteFloorMovement>();
             __instance._chainNoteViewPrefab.gameObject.AddComponent<EditorChainHeadController>();
             __instance._chainNoteViewPrefab.gameObject.AddComponent<VariableMovementHolder>();
 

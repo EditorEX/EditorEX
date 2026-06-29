@@ -28,7 +28,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         private bool _definitePosition;
         private EditorNoodleBaseNoteData NoodleData;
-        private NoteEditorData? _editorData;
+        private BaseEditorData? _editorData;
         private Func<IObjectVisuals> _rotatedObject;
         private float _yAvoidanceUp = 0.45f;
         private float _yAvoidanceDown = 0.15f;
@@ -82,7 +82,7 @@ namespace EditorEX.Essentials.Movement.Note
         }
 
         public void Init(
-            NoteEditorData? editorData,
+            BaseEditorData? editorData,
             IVariableMovementDataProvider variableMovementDataProvider,
             float noteTime,
             float worldRotation,
