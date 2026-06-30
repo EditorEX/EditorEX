@@ -6,8 +6,8 @@
     <PluginId>EditorEX</PluginId>
     <PluginName>EditorEX</PluginName>
     <Authors>FutureMapper</Authors>
-    <Version>1.0.0</Version>
-    <GameVersion>1.40.0</GameVersion>
+    <Version>1.1.0</Version>
+    <GameVersion>1.40.8</GameVersion>
     <Description>A complete beatmap editor overhaul, integrating the Heck suite, and adding other utilites built on top of the EditorEX SDK</Description>
     <!--<PluginIcon></PluginIcon>-->
     <!--<ProjectSource></ProjectSource>-->

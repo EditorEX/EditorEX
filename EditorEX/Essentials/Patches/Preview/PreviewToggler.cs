@@ -23,7 +23,10 @@ namespace EditorEX.Essentials.Patches.Preview
         private GameObject lanes;
         private GameObject hjdLine;
 
-        public PreviewToggler(ActiveViewMode activeViewMode, EditorGameplayCoreSceneSetupData setupData)
+        public PreviewToggler(
+            ActiveViewMode activeViewMode,
+            EditorGameplayCoreSceneSetupData setupData
+        )
         {
             _activeViewMode = activeViewMode;
             _activeViewMode.ModeChanged += TogglePreview;
@@ -42,7 +45,10 @@ namespace EditorEX.Essentials.Patches.Preview
             container = __instance.GetComponentInChildren<BeatGridContainer>();
             currentLine = container._currentBeatLineTransform;
             lanes = __instance.transform.Find("BeatGridContainer").Find("GridLanes").gameObject;
-            hjdLine = __instance.transform.Find("BeatGridContainer").Find("HalfJumpDurationBeatline").gameObject;
+            hjdLine = __instance
+                .transform.Find("BeatGridContainer")
+                .Find("HalfJumpDurationBeatline")
+                .gameObject;
         }
 
         [AffinityPrefix]
@@ -117,7 +123,7 @@ namespace EditorEX.Essentials.Patches.Preview
                 //container._mainBeatlineContainer.enabled = false;
                 //container._beatNumberContainer.enabled = false;
                 //container._normalBeatlineContainer.enabled = false;
-            }   
+            }
             currentLine.gameObject.SetActive(showGrid);
             lanes.SetActive(showGrid);
             hjdLine.SetActive(showGrid);

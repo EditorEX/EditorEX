@@ -31,7 +31,10 @@ namespace EditorEX.Essentials.Features.ViewMode
 
         private void SetMode(ViewMode mode)
         {
-            if (_activeViewMode.Mode == mode || _beatmapState.editingMode != BeatmapEditingMode.Objects)
+            if (
+                _activeViewMode.Mode == mode
+                || _beatmapState.editingMode != BeatmapEditingMode.Objects
+            )
                 return;
             _activeViewMode.LastMode = _activeViewMode.Mode;
             _activeViewMode.Mode = mode;
