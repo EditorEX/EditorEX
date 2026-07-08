@@ -1,63 +1,65 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using EditorEX.UI.Patches;
 using UnityEngine.UI;
 using Zenject;
 
-namespace EditorEX.UI.Cursor
+namespace EditorEX.UI.Cursor;
+
+internal class CursorUpdater : ITickable
 {
-    internal class CursorUpdater : ITickable
+    [DllImport("user32.dll", EntryPoint = "SetCursor")]
+    public static extern IntPtr SetCursor(IntPtr hCursor);
+
+    [DllImport("user32.dll", EntryPoint = "LoadCursor")]
+    public static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
+
+    private Dictionary<WindowsCursor, IntPtr> _cursors;
+
+    public void Tick()
     {
-        public enum WindowsCursor
+        bool any = false;
+        foreach (var selectable in Selectable.allSelectablesArray)
         {
-            StandardArrowAndSmallHourglass = 32650,
-            StandardArrow = 32512,
-            Crosshair = 32515,
-            Hand = 32649,
-            ArrowAndQuestionMark = 32651,
-            IBeam = 32513,
-
-            //Icon = 32641, // Obsolete for applications marked version 4.0 or later.
-            SlashedCircle = 32648,
-
-            //Size = 32640,  // Obsolete for applications marked version 4.0 or later. Use FourPointedArrowPointingNorthSouthEastAndWest
-            FourPointedArrowPointingNorthSouthEastAndWest = 32646,
-            DoublePointedArrowPointingNortheastAndSouthwest = 32643,
-            DoublePointedArrowPointingNorthAndSouth = 32645,
-            DoublePointedArrowPointingNorthwestAndSoutheast = 32642,
-            DoublePointedArrowPointingWestAndEast = 32644,
-            VerticalArrow = 32516,
-            Hourglass = 32514,
+            any |= selectable.IsHighlighted();
+        }
+        foreach (var selectable in SelectableCellsCursorPatches.SelectableCells)
+        {
+            any |= selectable.highlighted;
         }
 
-        [DllImport("user32.dll", EntryPoint = "SetCursor")]
-        public static extern IntPtr SetCursor(IntPtr hCursor);
+        ChangeCursor(any ? WindowsCursor.Hand : WindowsCursor.StandardArrow);
+    }
 
-        [DllImport("user32.dll", EntryPoint = "LoadCursor")]
-        public static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
-
-        private static void ChangeCursor(WindowsCursor cursor)
+    private void ChangeCursor(WindowsCursor cursor)
+    {
+        if (!_cursors.TryGetValue(cursor, out var cursorHandle))
         {
-            SetCursor(LoadCursor(IntPtr.Zero, (int)cursor));
+            cursorHandle = _cursors[cursor] = LoadCursor(IntPtr.Zero, (int)cursor);
         }
+        SetCursor(cursorHandle);
+    }
 
-        private bool? lastFrameValue = null;
+    private enum WindowsCursor
+    {
+        StandardArrowAndSmallHourglass = 32650,
+        StandardArrow = 32512,
+        Crosshair = 32515,
+        Hand = 32649,
+        ArrowAndQuestionMark = 32651,
+        IBeam = 32513,
 
-        public void Tick()
-        {
-            bool any = false;
-            foreach (var selectable in Selectable.allSelectablesArray)
-            {
-                any |= selectable.IsHighlighted();
-            }
-            foreach (var selectable in SelectableCellsCursorPatches.SelectableCells)
-            {
-                any |= selectable.highlighted;
-            }
-            if (lastFrameValue.HasValue && lastFrameValue.Value == any)
-                return;
-            ChangeCursor(any ? WindowsCursor.Hand : WindowsCursor.StandardArrow);
-            lastFrameValue = any;
-        }
+        //Icon = 32641, // Obsolete for applications marked version 4.0 or later.
+        SlashedCircle = 32648,
+
+        //Size = 32640,  // Obsolete for applications marked version 4.0 or later. Use FourPointedArrowPointingNorthSouthEastAndWest
+        FourPointedArrowPointingNorthSouthEastAndWest = 32646,
+        DoublePointedArrowPointingNortheastAndSouthwest = 32643,
+        DoublePointedArrowPointingNorthAndSouth = 32645,
+        DoublePointedArrowPointingNorthwestAndSoutheast = 32642,
+        DoublePointedArrowPointingWestAndEast = 32644,
+        VerticalArrow = 32516,
+        Hourglass = 32514,
     }
 }
