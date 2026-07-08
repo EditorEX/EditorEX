@@ -7,21 +7,6 @@ using UnityEngine;
 
 namespace EditorEX.Essentials.Visuals.ChainHead
 {
-    // Shared visual-root structure for a chain. For the head and each link we build a positioned ROOT
-    // object whose children are the original editor mesh ("Basic") and the gameplay clone ("Game"):
-    //
-    //   ChainHeadRoot (child of the chain root; rotated by the movement, position inherited from the
-    //                  chain root which the jump/basic movement drives)
-    //     +-- Basic  (the editor's head mesh, reparented here)
-    //     +-- Game   (EditorChainHeadGameVisuals clones the gameplay head cube here)
-    //   ChainLinkRoot_i (child of the chain root; positioned + rotated by the movement)
-    //     +-- Basic  (the editor's ChainElementNoteView, reparented here)
-    //     +-- Game   (the gameplay link clone)
-    //
-    // The movement drives the roots; the basic/game visuals each toggle (and, for game, populate) their
-    // own child. Roots are rebuilt when the chain's link set changes. The editor pools its native
-    // objects and reparents them on retime, so teardown reparents them back to the chain root before
-    // destroying a root (otherwise Destroy would take the pooled editor object with it).
     internal class ChainVisualRoots : MonoBehaviour
     {
         private static readonly FieldInfo _headNoteTransformField = AccessTools.Field(
@@ -67,8 +52,6 @@ namespace EditorEX.Essentials.Visuals.ChainHead
         private ChainNoteView _chainView;
         private Transform _headEditorMesh;
 
-        // (Re)build the head root and reconcile the per-link roots against the chain's current link set.
-        // Returns false if the chain view isn't ready.
         public bool EnsureBuilt()
         {
             if (_chainView == null)
@@ -83,10 +66,6 @@ namespace EditorEX.Essentials.Visuals.ChainHead
             BuildHead();
             ReconcileLinks();
 
-            // The head mesh is the head note transform itself; keep it parented under Basic and
-            // neutralised so the head root owns rotation. The editor pools its objects and rewrites
-            // _headNoteTransform's parent/rotation on its own Init (object respawn), so re-attach and
-            // re-zero it every build to avoid a doubled rotation or the mesh escaping to the chain root.
             if (_headEditorMesh != null && HeadBasic != null)
             {
                 if (_headEditorMesh.parent != HeadBasic)
@@ -117,8 +96,6 @@ namespace EditorEX.Essentials.Visuals.ChainHead
             HeadBasic = NewChild(_basicChildName, HeadRoot);
             HeadGame = NewChild(_gameChildName, HeadRoot);
 
-            // The head note transform *is* the editor's head mesh (a direct child of the note view).
-            // Reparent it under Basic so the head root owns rotation and the mesh is just a child.
             _headEditorMesh = headNoteTransform;
             headNoteTransform.SetParent(HeadBasic, false);
             headNoteTransform.localPosition = Vector3.zero;
@@ -167,10 +144,6 @@ namespace EditorEX.Essentials.Visuals.ChainHead
                 }
             }
 
-            // (Re)attach each editor element under its Basic slot and neutralise its local transform.
-            // The editor pools and reparents/repositions these on its own re-spawns, so even with an
-            // unchanged set they can escape back to the chain (head) origin between inits; this snaps
-            // them back under their positioned root.
             foreach (LinkRoot link in _links)
             {
                 if (link.Element == null)
@@ -190,12 +163,6 @@ namespace EditorEX.Essentials.Visuals.ChainHead
         {
             foreach (LinkRoot link in _links)
             {
-                // Pooling guard: hand back whatever editor objects are *physically* under our Basic slot
-                // right now (live children), NOT the stored element reference. The element pool can have
-                // reassigned that instance to another chain, in which case it's no longer our child and
-                // must not be touched -- otherwise we'd steal it and duplicate links. Anything still under
-                // Basic genuinely belongs to us, so move it back to the chain root before destroying the
-                // root (so Destroy doesn't take a pooled object with it).
                 if (link.Basic != null && _chainView != null)
                 {
                     for (int i = link.Basic.childCount - 1; i >= 0; i--)
@@ -231,7 +198,6 @@ namespace EditorEX.Essentials.Visuals.ChainHead
 
         protected void OnDestroy()
         {
-            // Return any pooled editor elements before this object (and our roots) are torn down.
             TeardownLinks();
         }
     }
