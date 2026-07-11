@@ -80,13 +80,30 @@ namespace EditorEX.MapData.SaveDataSavers
                 );
                 if (existing == null)
                 {
-                    int count = v4beatmaps.Count(x =>
-                        x.Key.Item1.serializedName == k.Item1.serializedName
-                        || x.Key.Item1.name == k.Item1.name
+                    var serName = k.Item1.serializedName;
+                    _levelCustomDataModel.CharacteristicCustomDataByName.TryGetValue(
+                        serName,
+                        out var preserved
                     );
+                    _levelCustomDataModel.CharacteristicDetailsByName.TryGetValue(
+                        serName,
+                        out var details
+                    );
+
+                    CustomData? setCustomData = null;
+                    if (preserved != null || details != null)
+                    {
+                        setCustomData = preserved ?? new CustomData();
+                        if (details != null)
+                            CharacteristicDetailsData.SerializeV2(setCustomData, details);
+                        if (setCustomData.Count == 0)
+                            setCustomData = null;
+                    }
+
                     existing = new SerializedDifficultyBeatmapSet(
                         k.Item1.serializedName,
-                        new SerializedDifficultyBeatmap[0]
+                        new SerializedDifficultyBeatmap[0],
+                        setCustomData
                     );
                     newSets.Add(existing);
                 }

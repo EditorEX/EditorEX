@@ -6,6 +6,7 @@ using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomDataModels;
 using EditorEX.CustomJSONData;
+using Newtonsoft.Json.Linq;
 using Zenject;
 
 namespace EditorEX.MapData.SaveDataLoaders
@@ -40,8 +41,9 @@ namespace EditorEX.MapData.SaveDataLoaders
         {
             CustomDataRepository.ClearAll();
 
+            string rawInfoDat = File.ReadAllText(Path.Combine(projectPath, "Info.dat"));
             CustomLevelInfoSaveData standardLevelInfoSaveData = CustomLevelInfoSaveData.Deserialize(
-                File.ReadAllText(Path.Combine(projectPath, "Info.dat"))
+                rawInfoDat
             );
             if (standardLevelInfoSaveData == null)
             {
@@ -131,6 +133,43 @@ namespace EditorEX.MapData.SaveDataLoaders
                 ).ToArray();
             }
 
+            // Parse per-set _customData from raw JSON since CustomLevelInfoSaveData
+            // does not expose a DifficultyBeatmapSet subclass with customData.
+            var setCustomDataByCharacteristic = new Dictionary<string, CustomData>();
+            try
+            {
+                var root = JObject.Parse(rawInfoDat);
+                var sets = root["_difficultyBeatmapSets"] as JArray;
+                if (sets != null)
+                {
+                    foreach (var setToken in sets)
+                    {
+                        string? charName = setToken["_beatmapCharacteristicName"]?.Value<string>();
+                        var cdToken = setToken["_customData"];
+                        if (
+                            charName != null
+                            && cdToken != null
+                            && cdToken.Type == JTokenType.Object
+                        )
+                        {
+                            var cd = new CustomData();
+                            foreach (var prop in ((JObject)cdToken).Properties())
+                            {
+                                cd[prop.Name] = prop.Value.ToObject<object>();
+                            }
+                            setCustomDataByCharacteristic[charName] = cd;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogWarning(ex);
+            }
+
+            var characteristicDetailsByName = new Dictionary<string, CharacteristicDetailsData>();
+            var characteristicCustomDataByName = new Dictionary<string, CustomData>();
+
             Dictionary<
                 ValueTuple<BeatmapCharacteristicSO, BeatmapDifficulty>,
                 DifficultyBeatmapData
@@ -149,6 +188,22 @@ namespace EditorEX.MapData.SaveDataLoaders
                     );
                 if (!(beatmapCharacteristicBySerializedName == null))
                 {
+                    if (
+                        setCustomDataByCharacteristic.TryGetValue(
+                            difficultyBeatmapSet.beatmapCharacteristicName,
+                            out var setCustomData
+                        )
+                    )
+                    {
+                        var details = CharacteristicDetailsData.DeserializeV2(setCustomData);
+                        if (details != null)
+                            characteristicDetailsByName[
+                                beatmapCharacteristicBySerializedName.serializedName
+                            ] = details;
+                        characteristicCustomDataByName[
+                            beatmapCharacteristicBySerializedName.serializedName
+                        ] = setCustomData;
+                    }
                     foreach (
                         StandardLevelInfoSaveData.DifficultyBeatmap difficultyBeatmap in difficultyBeatmapSet.difficultyBeatmaps
                     )
@@ -216,8 +271,10 @@ namespace EditorEX.MapData.SaveDataLoaders
                 standardLevelInfoSaveData.shuffle,
                 standardLevelInfoSaveData.shufflePeriod,
                 standardLevelInfoSaveData.customData,
-                beatmapCustomDatasByFilename
+                beatmapCustomDatasByFilename,
+                characteristicDetailsByName: characteristicDetailsByName
             );
+            _levelCustomDataModel.CharacteristicCustomDataByName = characteristicCustomDataByName;
             _beatmapLevelDataModel.UpdateWith(
                 standardLevelInfoSaveData.songName,
                 standardLevelInfoSaveData.songSubName,

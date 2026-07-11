@@ -11,6 +11,7 @@ using EditorEX.SDK.ReactiveComponents.Table;
 using EditorEX.Util;
 using HarmonyLib;
 using Reactive;
+using Reactive.Components;
 using Reactive.Components.Basic;
 using Reactive.Yoga;
 using SiraUtil.Affinity;
@@ -91,9 +92,13 @@ namespace EditorEX.UI.Patches
             int index
         )
         {
+            var scrollContext = new ScrollContext();
+
             _bindingsContainer!.Children.Add(
                 new ScrollArea
                 {
+                    ScrollContext = scrollContext,
+                    LineSize = 40f,
                     ScrollContent = new LayoutChildren
                     {
                         new EditorHeaderLabel { Text = bindingGroup.type.DisplayName() }.AsFlexItem(
@@ -103,10 +108,9 @@ namespace EditorEX.UI.Patches
                         .AsLayout()
                         .Export(out var groupLayout)
                         .AsFlexItem(size: "auto")
-                        .AsFlexGroup(FlexDirection.Column, gap: 20f),
+                        .AsFlexGroup(FlexDirection.Column, gap: 20f, constrainVertical: false),
                 }
-                    .WithRectExpand()
-                    .AsFlexItem(size: new YogaVector("auto", 100.pct))
+                    .AsFlexItem(flexGrow: 1f, size: new YogaVector("auto", "auto"))
                     .EnabledWithState(_selectedGroupIndex, index)
             );
 
@@ -118,6 +122,9 @@ namespace EditorEX.UI.Patches
                     commandToKeybind[bindingGroup.activator]
                 );
             }
+
+            scrollContext.ScrollTo(1f, true);
+            scrollContext.ScrollTo(0f, true);
 
             var button = new EditorLabelButton
             {
@@ -140,6 +147,8 @@ namespace EditorEX.UI.Patches
         {
             Object.Destroy(__instance.transform.GetChild(0).gameObject);
 
+            var keybindsScrollContext = new ScrollContext();
+
             new LayoutChildren
             {
                 new LayoutChildren
@@ -158,22 +167,20 @@ namespace EditorEX.UI.Patches
                     .Bind(ref _bindingsContainer),
                 new LayoutChildren
                 {
-                    new ScrollArea()
+                    new ScrollArea
                     {
-                        ScrollSize = -500f,
-                        ScrollContent = new Layout { }
-                            .Bind(ref _buttonContent)
+                        ScrollContext = keybindsScrollContext,
+                        LineSize = 40f,
+                        ScrollContent = new LayoutChildren { }
+                            .AsLayout()
                             .AsFlexItem()
-                            .AsFlexGroup(FlexDirection.Column, gap: 10f, constrainVertical: false),
-                    }
-                        .WithRectExpand()
-                        .Export(out var _buttonScrollArea),
-                    new EditorScrollbar()
-                        .AsFlexItem(
-                            size: new() { x = 7f, y = 100.pct },
-                            position: new() { right = -20f }
-                        )
-                        .With(x => _buttonScrollArea!.Scrollbar = x),
+                            .AsFlexGroup(FlexDirection.Column, gap: 10f, constrainVertical: false)
+                            .Bind(ref _buttonContent),
+                    }.WithRectExpand(),
+                    new EditorScrollbar { ScrollContext = keybindsScrollContext }.AsFlexItem(
+                        size: new() { x = 7f, y = 100.pct },
+                        position: new() { right = -20f }
+                    ),
                 }
                     .AsLayout()
                     .AsFlexItem(flex: 1)
@@ -200,9 +207,9 @@ namespace EditorEX.UI.Patches
                 CreateBindingGroupUI(bindingGroup, dictionary, i + 1);
             }
 
-            _buttonScrollArea.ScrollToStart(true);
+            keybindsScrollContext.ScrollTo(1f, true);
+            keybindsScrollContext.ScrollTo(0f, true);
             _siraLog.Info($"KeybindsView initialized.");
-            _siraLog.Info(_buttonScrollArea.ContentTransform.rect.size.y);
 
             return false;
         }

@@ -5,6 +5,7 @@ using EditorEX.Util;
 using Reactive;
 using Reactive.BeatSaber.Components;
 using Reactive.Components;
+using Reactive.Components.Basic;
 using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents.Dropdown
@@ -62,15 +63,14 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
         public void Select(TKey key)
         {
-            if (_modalOpened)
-            {
-                Table.ClearSelection();
-                Table.Select(new DropdownOption { key = key });
-            }
-
             SelectedKey = key;
 
             _previewCell.Init(_selectedKey!, _items[_selectedKey!]);
+
+            if (_modalOpened)
+            {
+                SelectModalKey(key);
+            }
         }
 
         private void RefreshSelection()
@@ -96,12 +96,11 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
         private bool _interactable = true;
 
-        private Reactive.Components.Basic.Table<DropdownOption, EditorDropdownCellWrapper> Table =>
-            _modal.Modal.Table;
         IModal IComponentHolder<IModal>.Component => _modal;
 
         private bool _modalOpened;
         private SharedModal<EditorDropdownOptionsModal> _modal = null!;
+        private EditorDropdownOptionsModal? _activeModal;
 
         private EditorBackgroundButton _button = null!;
         private TCell _previewCell = default!;
@@ -159,14 +158,14 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
         private void HandleBeforeModalOpened(IModal modal)
         {
-            var key = new DropdownOption { key = _selectedKey.Value! };
-            Table.Items.Clear();
-            Table.Items.AddRange(_options);
+            _activeModal = (EditorDropdownOptionsModal)modal;
+            Table.OnSelectedItemsChanged = null;
+            Table.Items = _options.ToArray();
+            SelectModalKey(_selectedKey.Value!);
+            Table.OnSelectedItemsChanged = HandleSelectedItemsChanged;
+            _activeModal.ScrollContext.ScrollTo(0f, true);
 
-            Table.Refresh();
-            Table.Select(key);
-
-            _modal.Modal.ApplyLayout(ContentTransform);
+            _activeModal.ApplyLayout(ContentTransform);
         }
 
         private void HandleModalOpened(IModal modal, bool finished)
@@ -176,7 +175,6 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 return;
             }
 
-            Table.WithListener(x => x.SelectedIndexes, HandleSelectedIndexesUpdated);
             _modalOpened = true;
         }
 
@@ -187,23 +185,35 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 return;
             }
 
-            Table.WithoutListener(x => x.SelectedIndexes, HandleSelectedIndexesUpdated);
+            _activeModal!.Table.OnSelectedItemsChanged = null;
+            _activeModal = null;
             _modalOpened = false;
         }
 
-        private void HandleSelectedIndexesUpdated(IReadOnlyCollection<int> indexes)
+        private void HandleSelectedItemsChanged(IReadOnlyCollection<DropdownOption> items)
         {
-            if (indexes.Count == 0)
+            if (items.Count == 0)
             {
                 return;
             }
 
-            var index = indexes.First();
-            var item = Table.FilteredItems[index];
-
+            var item = items.First();
             SelectedKey = item.key;
-
             _previewCell.Init(item.key, item.param);
+            _modal.Close(false);
+        }
+
+        private Table<DropdownOption, IReactiveComponent> Table =>
+            _activeModal?.Table
+            ?? throw new InvalidOperationException("Dropdown modal is not open");
+
+        private void SelectModalKey(TKey key)
+        {
+            // The current Table.SelectedItems setter appends, so clear through
+            // SelectionMode before assigning the single selected item.
+            Table.SelectionMode = SelectionMode.None;
+            Table.SelectionMode = SelectionMode.Single;
+            Table.SelectedItems = [new DropdownOption { key = key, param = _items[key] }];
         }
 
         private void HandleItemAdded(TKey key, TParam param)
@@ -214,8 +224,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
             if (_modalOpened)
             {
-                Table.Items.Add(option);
-                Table.Refresh(false);
+                Table.Items = _options.ToArray();
             }
 
             NotifyPropertyChanged(nameof(Items));
@@ -230,8 +239,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
             if (_modalOpened)
             {
-                Table.Items.Remove(option);
-                Table.Refresh();
+                Table.Items = _options.ToArray();
             }
 
             NotifyPropertyChanged(nameof(Items));
@@ -244,8 +252,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
             if (_modalOpened)
             {
-                Table.Items.Clear();
-                Table.Refresh();
+                Table.Items = Array.Empty<DropdownOption>();
             }
 
             NotifyPropertyChanged(nameof(Items));

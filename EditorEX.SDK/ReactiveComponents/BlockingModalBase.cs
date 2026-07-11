@@ -119,8 +119,10 @@ namespace EditorEX.SDK.ReactiveComponents
                 EssentialHelpers.GetOrAddComponent<GraphicRaycaster>(go);
             }
 
-            go.AddComponent<Touchable>();
-            go.AddComponent<UnityEngine.UI.Image>().color = new Color(0, 0, 0, 0f); // Invisible but blocks.
+            // A single Graphic both blocks raycasts and dims the background behind the modal.
+            // (Do NOT also add a Touchable: a GameObject may only hold one Graphic, so the
+            // Image add would fail and throw.)
+            go.AddComponent<UnityEngine.UI.Image>().color = new Color(0f, 0f, 0f, 0.5f);
             go.AddComponent<Button>()
                 .onClick.AddListener(new UnityAction(HandleBlockerButtonClicked));
             return go;
@@ -131,7 +133,10 @@ namespace EditorEX.SDK.ReactiveComponents
             BlockerClickedEvent?.Invoke();
             if (CloseOnBlockerClick)
             {
-                Close(false);
+                // Close immediately (immediate: true) so the modal disappears in sync with the
+                // blocker, which is destroyed synchronously in OnClose. A non-immediate close
+                // animates out over the close-animation duration, lagging behind the blocker.
+                Close(true);
             }
         }
     }

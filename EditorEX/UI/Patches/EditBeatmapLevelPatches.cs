@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
+using BeatmapEditor3D.Views;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.Contexts;
 using EditorEX.SDK.AddressableHelpers;
@@ -8,16 +9,16 @@ using EditorEX.SDK.Collectors;
 using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.ReactiveComponents.Dropdown;
 using EditorEX.SDK.ReactiveComponents.SegmentedControl;
+using EditorEX.UI.Components;
 using EditorEX.Util;
 using Reactive;
+using Reactive.Components;
 using Reactive.Yoga;
 using SiraUtil.Affinity;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-//:dread:
-//TODO: Clean this up dramatically... but how?
 namespace EditorEX.UI.Patches
 {
     internal class EditBeatmapLevelPatches : IAffinity
@@ -42,6 +43,9 @@ namespace EditorEX.UI.Patches
 
         private State<bool> V4Level = StateUtils.Remember(false);
         private State<int> MainTab = StateUtils.Remember(0);
+
+        private SharedModal<CharacteristicSettingsModal>? _charModal;
+        private EditorLabelButton? _charSettingsButton;
 
         private EditBeatmapLevelPatches(
             BeatmapLevelDataModel beatmapLevelDataModel,
@@ -114,7 +118,7 @@ namespace EditorEX.UI.Patches
                 }
                 else
                 {
-                    //_customPlatformDropdown.SelectCellWithIdx(customPlatIndex);
+                    //_customPlatformDropdown.Select();
                 }
             }
 
@@ -145,6 +149,9 @@ namespace EditorEX.UI.Patches
         {
             if (firstActivation)
             {
+                AddCustomCharacteristicTab(__instance, "Lawless");
+                AddCustomCharacteristicTab(__instance, "Lightshow");
+
                 var difficultyBeatmapSetContainer = __instance
                     .transform.Find("DifficultyBeatmapSetContainer")
                     .gameObject;
@@ -163,6 +170,14 @@ namespace EditorEX.UI.Patches
                         Values = ["Song Info", "Beatmaps"],
                         TabbingType = TabbingType.Alpha,
                     }.AsFlexItem(size: new YogaVector(300f, 30f)),
+                    new EditorLabelButton
+                    {
+                        Text = "Custom Characteristics",
+                        OnClick = () => ShowCharacteristicModal(),
+                    }
+                        .Bind(ref _charSettingsButton)
+                        .EnabledWithState(MainTab, 1)
+                        .AsFlexItem(size: new YogaVector(240f, 30f)),
                     new LayoutChildren
                     {
                         new LayoutChildren
@@ -440,6 +455,154 @@ namespace EditorEX.UI.Patches
 
                 __instance.gameObject.SetActive(true);
             }
+        }
+
+        private void ShowCharacteristicModal()
+        {
+            if (_charSettingsButton == null)
+                return;
+            if (_charModal?.ModalOpened ?? false)
+            {
+                _charModal?.Modal?.Destroy();
+            }
+
+            _charModal ??= new SharedModal<CharacteristicSettingsModal>();
+            _charModal.PresentEditor(_charSettingsButton.ContentTransform);
+
+            var content = _charModal.Modal.ContentLayout;
+            content.Children.Clear();
+
+            var folder = _beatmapProjectManager.Value._workingBeatmapProject ?? string.Empty;
+
+            var characteristics = _beatmapLevelDataModel
+                .difficultyBeatmaps.Keys.Select(k => k.Item1)
+                .Where(c => c != null)
+                .Distinct();
+
+            foreach (var characteristic in characteristics)
+            {
+                var name = characteristic.serializedName;
+                if (
+                    !_levelCustomDataModel.CharacteristicDetailsByName.TryGetValue(
+                        name,
+                        out var details
+                    )
+                )
+                {
+                    details = new CharacteristicDetailsData();
+                    _levelCustomDataModel.CharacteristicDetailsByName[name] = details;
+                }
+
+                // Default icon is the editor's "open" glyph, hinting the image is clickable.
+                string IconSource() =>
+                    string.IsNullOrWhiteSpace(details.IconFilename)
+                        ? "#IconOpen"
+                        : System.IO.Path.Combine(folder, details.IconFilename);
+
+                EditorImageButton? iconButton = null;
+
+                var labelInput = new EditorStringInput { Placeholder = name };
+                labelInput.InputField.SetTextWithoutNotify(details.Label ?? string.Empty);
+                labelInput.InputField.onEndEdit.AddListener(value =>
+                {
+                    details.Label = string.IsNullOrWhiteSpace(value) ? null : value;
+                });
+
+                content.Children.Add(
+                    new LayoutChildren
+                    {
+                        new EditorImageButton
+                        {
+                            Source = IconSource(),
+                            OnClick = () =>
+                            {
+                                var picked = BeatmapEditor3D.NativeFileDialogs.OpenFileDialog(
+                                    "Select Characteristic Icon",
+                                    "png",
+                                    folder
+                                );
+                                if (string.IsNullOrEmpty(picked))
+                                    return;
+                                // Store the bare filename when the image lives in the level
+                                // folder (SongCore convention), otherwise the full path.
+                                var fileName = System.IO.Path.GetFileName(picked);
+                                var inFolder = System.IO.Path.Combine(folder, fileName);
+                                details.IconFilename = System.IO.File.Exists(inFolder)
+                                    ? fileName
+                                    : picked;
+                                if (iconButton != null)
+                                    iconButton.Source = IconSource();
+                            },
+                        }
+                            .Bind(ref iconButton)
+                            .AsFlexItem(size: new YogaVector(44f, 44f)),
+                        labelInput.AsFlexItem(flexGrow: 1f, size: new YogaVector("auto", 40f)),
+                    }
+                        .AsLayout()
+                        .AsFlexGroup(FlexDirection.Row, gap: 10f, alignItems: Align.Center)
+                        .AsFlexItem(size: new YogaVector(100.pct, 50f))
+                );
+            }
+        }
+
+        private static BeatmapCharacteristicSO? GetCustomCharacteristic(string serializedName)
+        {
+            try
+            {
+                foreach (var so in SongCore.Collections.customCharacteristics)
+                {
+                    if (so != null && so.serializedName == serializedName)
+                        return so;
+                }
+            }
+            catch
+            {
+                // SongCore not present / not initialised — feature degrades gracefully.
+            }
+            return null;
+        }
+
+        private void AddCustomCharacteristicTab(
+            EditBeatmapLevelViewController controller,
+            string serializedName
+        )
+        {
+            var so = GetCustomCharacteristic(serializedName);
+            if (so == null)
+                return;
+
+            var existing = controller._difficultyBeatmapSetTabButtons;
+            if (existing == null || existing.Length == 0)
+                return;
+            if (existing.Any(b => b != null && b.beatmapCharacteristic == so))
+                return;
+
+            var template = existing[0];
+            // Instantiate through Zenject (NOT Object.Instantiate) so the button's
+            // [Inject] dependencies are populated on the clone. The tab's
+            // SelectableStateController._tweeningManager is injected; without injection it
+            // is null and the hover state transition (ColorGraphicStateTransition.StartTween)
+            // throws an NRE.
+            var clone = _instantiator.InstantiatePrefab(
+                template.gameObject,
+                template.transform.parent
+            );
+            clone.name = "DifficultyBeatmapSetTabButton_" + serializedName;
+            var cloneButton = clone.GetComponent<DifficultyBeatmapSetTabButton>();
+            if (cloneButton == null)
+            {
+                UnityEngine.Object.Destroy(clone);
+                return;
+            }
+            cloneButton._beatmapCharacteristic = so;
+
+            var label = clone.GetComponentInChildren<TMPro.TextMeshProUGUI>(true);
+            if (label != null)
+                label.text = serializedName;
+
+            var list = existing.ToList();
+            list.Add(cloneButton);
+            controller._difficultyBeatmapSetTabButtons = list.ToArray();
         }
     }
 }

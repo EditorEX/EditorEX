@@ -2,7 +2,7 @@ using System;
 using EditorEX.SDK.ReactiveComponents.Attachable;
 using EditorEX.Util;
 using Reactive;
-using Reactive.BeatSaber;
+using Reactive.Compiler;
 using Reactive.Components;
 using Reactive.Yoga;
 using UnityEngine;
@@ -10,56 +10,88 @@ using UnityEngine.UI;
 
 namespace EditorEX.SDK.ReactiveComponents.Table
 {
-    public class EditorScrollbar : ReactiveComponent, IScrollbar
+    public enum EditorScrollbarScrollMode
     {
-        float IScrollbar.PageHeight
+        Page,
+        Line,
+        Fixed,
+    }
+
+    public partial class EditorScrollbar : ReactiveComponent
+    {
+        [Required, RawState]
+        public ScrollContext ScrollContext
         {
+            get => _scrollContext!;
             set
             {
-                _normalizedPageHeight = Mathf.Clamp01(value);
-                RefreshHandle();
+                if (_scrollContext != null)
+                {
+                    _scrollContext.ValueChangedEvent -= HandleContextUpdated;
+                }
+
+                _scrollContext = value;
+                _scrollContext.ValueChangedEvent += HandleContextUpdated;
+
+                HandleContextUpdated(value);
             }
         }
 
-        float IScrollbar.Progress
+        /// <summary>
+        /// How buttons should affect the target scroll controller.
+        /// </summary>
+        public EditorScrollbarScrollMode ScrollMode { get; set; } = EditorScrollbarScrollMode.Page;
+
+        /// <summary>
+        /// Determines the scroll size when <see cref="ScrollMode"/> is set to Fixed.
+        /// </summary>
+        public float FixedScrollSize { get; set; } = 10f;
+
+        /// <summary>
+        /// Whether the scrollbar should be hidden when a controller has nothing to scroll.
+        /// </summary>
+        public bool HideIfNothingToScroll
         {
+            get => _hideIfNothingToScroll;
             set
             {
-                _progress = Mathf.Clamp01(value);
-                RefreshHandle();
+                _hideIfNothingToScroll = value;
+                UpdateVisibility();
             }
         }
 
-        bool IScrollbar.CanScrollUp
-        {
-            set => _ = value;
-        }
-
-        bool IScrollbar.CanScrollDown
-        {
-            set => _ = value;
-        }
-
-        public event Action? ScrollBackwardButtonPressedEvent;
-        public event Action? ScrollForwardButtonPressedEvent;
-
-        void IScrollbar.SetActive(bool active)
-        {
-            Enabled = active;
-        }
-
+        private bool _hideIfNothingToScroll;
+        private ScrollContext? _scrollContext;
         private float _padding = 0.25f;
-        private float _progress;
-        private float _normalizedPageHeight = 1f;
 
         private void RefreshHandle()
         {
-            var num = _handleContainerRect.rect.size.y - 2f * _padding;
-            _handleRect.sizeDelta = new Vector2(0f, _normalizedPageHeight * num);
+            if (_handleContainerRect == null || _handleRect == null)
+            {
+                return;
+            }
+
+            var pageHeight = _scrollContext?.NormalizedPageHeight ?? 1;
+
+            var areaHeight = _handleContainerRect.rect.size.y - 2f * _padding;
+            var pos = _scrollContext?.NormalizedScrollPos ?? 0;
+            _handleRect.sizeDelta = new Vector2(0f, pageHeight * areaHeight);
             _handleRect.anchoredPosition = new Vector2(
                 0f,
-                -_progress * (1f - _normalizedPageHeight) * num - _padding
+                -pos * (1f - pageHeight) * areaHeight - _padding
             );
+        }
+
+        private void HandleContextUpdated(ScrollContext context)
+        {
+            UpdateVisibility(context);
+            RefreshHandle();
+        }
+
+        private void UpdateVisibility(ScrollContext? context = null)
+        {
+            context ??= _scrollContext;
+            Enabled = !HideIfNothingToScroll || (context?.CanScroll ?? true);
         }
 
         private RectTransform _handleContainerRect = null!;
@@ -69,10 +101,8 @@ namespace EditorEX.SDK.ReactiveComponents.Table
         {
             return new LayoutChildren
             {
-                //handle container
                 new LayoutChildren
                 {
-                    //handle
                     new EditorImage
                     {
                         ContentTransform =

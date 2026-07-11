@@ -24,6 +24,52 @@ namespace EditorEX.SDK.ReactiveComponents
         public TMP_InputField InputField => _inputField;
         private TMP_InputField _inputField = null!;
         private EditorLabel _text = null!;
+        private TextMeshProUGUI? _placeholder;
+
+        /// <summary>
+        /// Grey hint text shown while the field is empty. Matches the input's own font and
+        /// size so typed text and the hint line up.
+        /// </summary>
+        public string Placeholder
+        {
+            set
+            {
+                EnsurePlaceholder();
+                _placeholder!.text = value;
+            }
+        }
+
+        private void EnsurePlaceholder()
+        {
+            if (_placeholder != null)
+                return;
+            var parent =
+                _inputField.textViewport != null ? _inputField.textViewport : _inputField.transform;
+            var go = new GameObject("Placeholder");
+            var rt = go.AddComponent<RectTransform>();
+            rt.SetParent(parent, false);
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.offsetMin = Vector2.zero;
+            rt.offsetMax = Vector2.zero;
+            _placeholder = go.AddComponent<TextMeshProUGUI>();
+            _placeholder.alignment = TextAlignmentOptions.Left;
+            var src = _inputField.textComponent;
+            if (src != null)
+            {
+                _placeholder.font = src.font;
+                _placeholder.fontSize = src.fontSize;
+                var c = src.color;
+                c.a = 0.4f;
+                _placeholder.color = c;
+            }
+            else
+            {
+                _placeholder.fontSize = 18f;
+                _placeholder.color = new Color(0.75f, 0.75f, 0.75f, 0.5f);
+            }
+            _inputField.placeholder = _placeholder;
+        }
 
         protected override GameObject Construct()
         {

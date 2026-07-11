@@ -127,13 +127,18 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Reactive.BeatSaber" Publicize="true">
-      <HintPath>$(BeatSaberDir)\Plugins\Reactive.BeatSaber.dll</HintPath>
+    <Reference Include="Reactive.Components">
+      <HintPath>$(BeatSaberDir)\Libs\Reactive.Components.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Reactive.Components">
-      <HintPath>$(BeatSaberDir)\Libs\Reactive.Components.dll</HintPath>
+    <Reference Include="Reactive.Compiler.Models">
+      <HintPath>$(BeatSaberDir)\Libs\Reactive.Compiler.Models.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Reactive.BeatSaber" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Plugins\Reactive.BeatSaber.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -171,8 +176,6 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-
-    <Analyzer Include="$(ReactiveDir)\src\reactive\Reactive.Compiler\bin\Release\netstandard2.0\Reactive.Compiler.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -182,5 +185,13 @@
   <ItemGroup>
     <None Remove="Resources\Background6px.png" />
     <EmbeddedResource Include="Resources\Background6px.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference
+      Include="$(ReactiveDir)\src\reactive\Reactive.Compiler\Reactive.Compiler.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false"
+    />
   </ItemGroup>
 </Project>

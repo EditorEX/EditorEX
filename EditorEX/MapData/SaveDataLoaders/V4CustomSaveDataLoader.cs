@@ -194,7 +194,10 @@ namespace EditorEX.MapData.SaveDataLoaders
                 null,
                 null,
                 customBeatmapLevelSaveData.customData,
-                beatmapCustomDatasByFilename
+                beatmapCustomDatasByFilename,
+                characteristicDetailsByName: CharacteristicDetailsData.DeserializeV4(
+                    customBeatmapLevelSaveData.customData
+                )
             );
             beatmapLevelDataModel.UpdateWith(
                 title,

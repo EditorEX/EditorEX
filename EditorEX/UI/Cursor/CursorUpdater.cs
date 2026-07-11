@@ -15,7 +15,7 @@ internal class CursorUpdater : ITickable
     [DllImport("user32.dll", EntryPoint = "LoadCursor")]
     public static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
 
-    private Dictionary<WindowsCursor, IntPtr> _cursors;
+    private Dictionary<WindowsCursor, IntPtr> _cursors = new();
 
     public void Tick()
     {

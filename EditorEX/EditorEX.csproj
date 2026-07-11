@@ -190,6 +190,11 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="SongCore" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Plugins\SongCore.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Transitions" Publicize="true">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Transitions.dll</HintPath>
@@ -309,8 +314,8 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Reactive.BeatSaber.Components" Publicize="true">
-      <HintPath>$(BeatSaberDir)\Plugins\Reactive.BeatSaber.Components.dll</HintPath>
+    <Reference Include="Reactive.BeatSaber" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Plugins\Reactive.BeatSaber.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
@@ -319,13 +324,16 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Reactive.Compiler.Models">
+      <HintPath>$(BeatSaberDir)\Libs\Reactive.Compiler.Models.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="Reactive">
       <HintPath>$(BeatSaberDir)\Libs\Reactive.dll</HintPath>
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-
-    <Analyzer Include="$(ReactiveDir)\src\reactive\Reactive.Compiler\bin\Release\netstandard2.0\Reactive.Compiler.dll" />
   </ItemGroup>
 
   <ItemGroup>

@@ -159,11 +159,13 @@ namespace EditorEX.MapData.SerializedSaveData
         {
             public SerializedDifficultyBeatmapSet(
                 string beatmapCharacteristicName,
-                SerializedDifficultyBeatmap[] difficultyBeatmaps
+                SerializedDifficultyBeatmap[] difficultyBeatmaps,
+                CustomData? customData = null
             )
             {
                 _beatmapCharacteristicName = beatmapCharacteristicName;
                 _difficultyBeatmaps = difficultyBeatmaps;
+                _customData = customData;
             }
 
             [JsonProperty]
@@ -171,6 +173,9 @@ namespace EditorEX.MapData.SerializedSaveData
 
             [JsonProperty]
             public SerializedDifficultyBeatmap[] _difficultyBeatmaps;
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public CustomData? _customData;
         }
     }
 }
