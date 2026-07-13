@@ -214,7 +214,7 @@ namespace EditorEX.UI.Patches
         // Maintains the proper index.
         [AffinityPatch(
             typeof(BeatmapsListViewController),
-            nameof(BeatmapsListViewController.HandleBeatmapListTableViewOpenBeatmap)
+            nameof(BeatmapsListViewController.HandleBeatmapListTableViewOpenBeatmapLevel)
         )]
         [AffinityPrefix]
         private void FixIndex(BeatmapsListViewController __instance, ref int idx)

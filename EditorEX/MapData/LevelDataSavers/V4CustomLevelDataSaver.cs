@@ -20,14 +20,16 @@ namespace EditorEX.MapData.LevelDataSavers
             if (
                 !projectManager._beatmapDataModelsSaver.NeedsSaving()
                 && !projectManager._bookmarkDataModelSaver.NeedsSaving()
+                && !projectManager._recordingsDataModel.isDirty
             )
             {
                 return;
             }
             if (projectManager._bookmarkDataModelSaver.NeedsSaving())
             {
-                BeatmapProjectFileHelper.CreateBookmarkSubdirectoryIfNotExists(
-                    projectManager._workingBeatmapProject
+                BeatmapProjectFileHelper.CreateSubdirectoryIfNotExists(
+                    projectManager._workingBeatmapProject,
+                    "Bookmarks"
                 );
                 var list = projectManager._bookmarkDataModelSaver.Save();
                 foreach (var valueTuple in list)

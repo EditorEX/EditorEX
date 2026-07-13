@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.Essentials.Patches;

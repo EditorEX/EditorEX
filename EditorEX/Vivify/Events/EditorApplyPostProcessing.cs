@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.Essentials.Patches;
@@ -92,12 +93,7 @@ namespace EditorEX.Vivify.Events
                 }
             }
 
-            List<MaterialData> effects = data.Order switch
-            {
-                PostProcessingOrder.BeforeMainEffect => _cameraEffectApplier.PreEffects,
-                PostProcessingOrder.AfterMainEffect => _cameraEffectApplier.PostEffects,
-                _ => throw new ArgumentOutOfRangeException(),
-            };
+            List<MaterialData> effects = _cameraEffectApplier.Effects[data.Order];
 
             if (duration == 0)
             {

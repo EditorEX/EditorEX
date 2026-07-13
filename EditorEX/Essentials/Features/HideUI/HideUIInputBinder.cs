@@ -1,6 +1,6 @@
 using System;
 using BeatmapEditor3D.InputSystem;
-using BeatmapEditor3D.Utils;
+using BGLib.DotnetExtension.Disposables;
 using Zenject;
 
 namespace EditorEX.Essentials.Features.HideUI

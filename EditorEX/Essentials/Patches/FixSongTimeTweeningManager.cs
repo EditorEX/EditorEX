@@ -1,4 +1,5 @@
 ﻿using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using HarmonyLib;
 using SiraUtil.Affinity;
 using Tweening;

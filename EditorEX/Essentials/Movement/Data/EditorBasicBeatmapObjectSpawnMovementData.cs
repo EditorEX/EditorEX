@@ -134,7 +134,8 @@ namespace EditorEX.Essentials.Movement.Data
             obstacleOffset.y += _jumpOffsetYProvider.jumpOffsetY;
             obstacleOffset.y = Mathf.Max(obstacleOffset.y, _verticalObstaclePosY);
             float height = Mathf.Min(
-                (float)obstacleData.height * StaticBeatmapObjectSpawnMovementData.layerHeight,
+                (float)obstacleData.height
+                    * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance,
                 _obstacleTopPosY - obstacleOffset.y
             );
             float width = (float)obstacleData.width * 0.6f;

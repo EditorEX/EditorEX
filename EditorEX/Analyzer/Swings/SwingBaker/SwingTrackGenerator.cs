@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using UnityEngine;
 
 namespace EditorEX.Analyzer.Swings.SwingBaker

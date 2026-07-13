@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -110,6 +110,14 @@ namespace EditorEX.UI.Patches
                         .AsFlexItem(size: "auto")
                         .AsFlexGroup(FlexDirection.Column, gap: 20f, constrainVertical: false),
                 }
+                    .With(x =>
+                    {
+                        var contentTransform = x.ScrollContent.ContentTransform;
+                        contentTransform.anchorMin = new Vector2(0f, 1f);
+                        contentTransform.anchorMax = Vector2.one;
+                        contentTransform.pivot = Vector2.one;
+                        contentTransform.localPosition = Vector3.zero;
+                    })
                     .AsFlexItem(flexGrow: 1f, size: new YogaVector("auto", "auto"))
                     .EnabledWithState(_selectedGroupIndex, index)
             );
@@ -122,9 +130,6 @@ namespace EditorEX.UI.Patches
                     commandToKeybind[bindingGroup.activator]
                 );
             }
-
-            scrollContext.ScrollTo(1f, true);
-            scrollContext.ScrollTo(0f, true);
 
             var button = new EditorLabelButton
             {
@@ -176,7 +181,16 @@ namespace EditorEX.UI.Patches
                             .AsFlexItem()
                             .AsFlexGroup(FlexDirection.Column, gap: 10f, constrainVertical: false)
                             .Bind(ref _buttonContent),
-                    }.WithRectExpand(),
+                    }
+                        .With(x =>
+                        {
+                            var contentTransform = x.ScrollContent.ContentTransform;
+                            contentTransform.anchorMin = new Vector2(0f, 1f);
+                            contentTransform.anchorMax = Vector2.one;
+                            contentTransform.pivot = Vector2.one;
+                            contentTransform.localPosition = Vector3.zero;
+                        })
+                        .WithRectExpand(),
                     new EditorScrollbar { ScrollContext = keybindsScrollContext }.AsFlexItem(
                         size: new() { x = 7f, y = 100.pct },
                         position: new() { right = -20f }
@@ -207,8 +221,6 @@ namespace EditorEX.UI.Patches
                 CreateBindingGroupUI(bindingGroup, dictionary, i + 1);
             }
 
-            keybindsScrollContext.ScrollTo(1f, true);
-            keybindsScrollContext.ScrollTo(0f, true);
             _siraLog.Info($"KeybindsView initialized.");
 
             return false;
@@ -324,3 +336,4 @@ namespace EditorEX.UI.Patches
         }
     }
 }
+*/

@@ -188,14 +188,25 @@ namespace EditorEX.CustomJSONData.Patches.Loading
                     return false;
                 }
             }
-            __instance._audioDataModel.UpdateWith(bpmData, __instance._audioDataModel.audioClip);
+            __instance._audioDataModel.ReplaceAllRegions(bpmData.regions);
             __instance._beatmapBasicEventsDataModel.SetBpmData(bpmData);
             return false;
         }
 
-        [AffinityPatch(typeof(AudioDataLoader), nameof(AudioDataLoader.Load))]
+        [AffinityPatch(typeof(AudioDataLoader), nameof(AudioDataLoader.LoadAsync))]
         [AffinityPrefix]
         private bool LoadLoadPatch(
+            AudioDataLoader __instance,
+            string projectPath,
+            string audioDataFilename,
+            ref Task __result
+        )
+        {
+            __result = LoadAudioDataAsync(__instance, projectPath, audioDataFilename);
+            return false;
+        }
+
+        private async Task LoadAudioDataAsync(
             AudioDataLoader __instance,
             string projectPath,
             string audioDataFilename
@@ -218,7 +229,7 @@ namespace EditorEX.CustomJSONData.Patches.Loading
                             LoadAudioDataResult.UnableToLoadAudioData
                         )
                     );
-                    return false;
+                    return;
                 }
             }
 
@@ -236,7 +247,7 @@ namespace EditorEX.CustomJSONData.Patches.Loading
                             LoadAudioDataResult.UnableToLoadAudioData
                         )
                     );
-                    return false;
+                    return;
                 }
 
                 bpmData = AudioDataLoader.LoadBpmData(
@@ -252,8 +263,13 @@ namespace EditorEX.CustomJSONData.Patches.Loading
                 setBpmDataWithClip = true;
             }
 
-            Task<AudioClip> audioClip = __instance._audioClipLoader.LoadAudioFile(
-                Path.Combine(projectPath, __instance._beatmapLevelDataModel.songFilename)
+            string audioClipFilePath = Path.Combine(
+                projectPath,
+                __instance._beatmapLevelDataModel.songFilename
+            );
+
+            AudioClip audioClip = await __instance._audioClipLoader.LoadAudioFile(
+                audioClipFilePath
             );
 
             if (audioClip == null)
@@ -266,65 +282,46 @@ namespace EditorEX.CustomJSONData.Patches.Loading
             }
             else
             {
-                audioClip.ContinueWith(
-                    task =>
+                if (setBpmDataWithClip)
+                {
+                    int startOffset = AudioTimeHelper.SecondsToSamples(
+                        __instance._beatmapLevelDataModel.songTimeOffset,
+                        audioClip.frequency
+                    );
+
+                    bpmData = new BpmData(
+                        __instance._beatmapLevelDataModel.beatsPerMinute,
+                        audioClip.samples,
+                        audioClip.frequency,
+                        startOffset
+                    );
+
+                    if (bpmData == null)
                     {
-                        var result = audioClip.Result;
-                        if (result == null)
-                        {
-                            __instance._signalBus.Fire(
-                                new BeatmapDataModelSignals.AudioDataLoadedResult(
-                                    LoadAudioDataResult.UnableToLoadAudio
-                                )
-                            );
-                        }
-                        else
-                        {
-                            if (setBpmDataWithClip)
-                            {
-                                int startOffset = AudioTimeHelper.SecondsToSamples(
-                                    __instance._beatmapLevelDataModel.songTimeOffset,
-                                    result.frequency
-                                );
+                        __instance._signalBus.Fire(
+                            new BeatmapDataModelSignals.AudioDataLoadedResult(
+                                LoadAudioDataResult.UnableToLoadAudioData
+                            )
+                        );
+                        return;
+                    }
+                }
 
-                                bpmData = new BpmData(
-                                    __instance._beatmapLevelDataModel.beatsPerMinute,
-                                    result.samples,
-                                    result.frequency,
-                                    startOffset
-                                );
+                __instance._audioDataModel.UpdateBpmData(bpmData);
+                __instance._audioDataModel.UpdateAudioClip(audioClipFilePath, audioClip);
 
-                                if (bpmData == null)
-                                {
-                                    __instance._signalBus.Fire(
-                                        new BeatmapDataModelSignals.AudioDataLoadedResult(
-                                            LoadAudioDataResult.UnableToLoadAudioData
-                                        )
-                                    );
-                                    return;
-                                }
-                            }
+                __instance._beatmapBasicEventsDataModel.SetBpmData(bpmData);
+                __instance._waveformDataModel.PrepareWaveformData(audioClip);
 
-                            __instance._audioDataModel.UpdateWith(bpmData, result);
-
-                            __instance._beatmapBasicEventsDataModel.SetBpmData(bpmData);
-                            __instance._waveformDataModel.PrepareWaveformData(result);
-
-                            __instance._signalBus.Fire(
-                                new BeatmapDataModelSignals.AudioDataLoadedResult(
-                                    LoadAudioDataResult.Success
-                                )
-                            );
-
-                            __instance._waveformDataModel._computeMonoSamples.Complete();
-                            __instance._waveformDataModel._computeMonoSamples.scheduled = true;
-                        }
-                    },
-                    TaskScheduler.FromCurrentSynchronizationContext()
+                __instance._signalBus.Fire(
+                    new BeatmapDataModelSignals.AudioDataLoadedResult(LoadAudioDataResult.Success)
                 );
+
+                __instance._waveformDataModel._computeMonoSamples.Complete();
+                __instance._waveformDataModel._computeMonoSamples.scheduled = true;
             }
 
-            return false;
+            return;
         }
     }
 }

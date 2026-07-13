@@ -100,13 +100,14 @@ namespace EditorEX.NoodleExtensions.Managers
             float obstacleHeight;
             if (height.HasValue)
             {
-                obstacleHeight = height.Value * StaticBeatmapObjectSpawnMovementData.layerHeight;
+                obstacleHeight =
+                    height.Value * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance;
             }
             else
             {
                 // _topObstaclePosY =/= _obstacleTopPosY
                 obstacleHeight = Mathf.Min(
-                    obstacleData.height * StaticBeatmapObjectSpawnMovementData.layerHeight,
+                    obstacleData.height * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance,
                     _movementData._obstacleTopPosY - obstacleOffset.y
                 );
             }

@@ -229,7 +229,8 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
 
             _trailPools[(assetName, trailProperties)] = trailPool = new TrailPool(
                 material,
-                trailProperties
+                trailProperties,
+                _instantiator
             );
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BeatmapEditor3D;
+using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
