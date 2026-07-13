@@ -398,5 +398,8 @@ FodyWeavers.xsd
 *.sln.iml
 
 
+.claude/
+.superpowers/
+AGENTS.md
 CLAUDE.md
 docs/
