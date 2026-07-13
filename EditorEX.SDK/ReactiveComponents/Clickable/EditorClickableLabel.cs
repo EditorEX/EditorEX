@@ -17,7 +17,7 @@ namespace EditorEX.SDK.ReactiveComponents
         protected override void Construct(RectTransform rect)
         {
             _text = rect.gameObject.AddComponent<EditorClickableText>();
-            _text.RegisterDirtyLayoutCallback(RequestLeafRecalculation);
+            _text.RegisterDirtyLayoutCallback(RequestLeafRecalculationOnDirty);
         }
 
         protected override void OnStart()

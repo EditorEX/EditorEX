@@ -185,7 +185,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             return new Reactive.Components.Basic.Table<T, IReactiveComponent>
             {
                 ScrollContext = _scrollContext,
-                Items = _items?.Keys.ToArray() ?? Array.Empty<T>(),
+                Items = _items?.Keys.ToArray() ?? [],
                 OnSelectedItemsChanged = HandleSelectedItemsChanged,
                 ConstructCell = CreateCell,
             }.AsFlexItem(size: new() { x = 200f, y = 200f });
@@ -252,7 +252,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                     Color = new Color(0.55f, 0.6f, 0.6f, 1f),
                     PreserveAspect = true,
                 }.AsFlexItem(size: 20f, aspectRatio: 1f),
-                new Modal
+                new EditorModal
                 {
                     sIsPushed = _modalOpened,
                     sPlacementAnchor = anchor,

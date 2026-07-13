@@ -329,12 +329,14 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Reactive.Compiler.Models">
+      <HintPath>$(BeatSaberDir)\Libs\Reactive.Compiler.Models.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(ReactiveDir)\src\reactive\Reactive.Compiler.Models\Reactive.Compiler.Models.csproj">
-      <Private>false</Private>
-    </ProjectReference>
     <ProjectReference
       Include="$(ReactiveDir)\src\reactive\Reactive.Compiler\Reactive.Compiler.csproj"
       OutputItemType="Analyzer"

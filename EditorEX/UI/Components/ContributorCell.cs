@@ -1,6 +1,5 @@
-﻿using Reactive;
-using Reactive.BeatSaber.Components;
-using Reactive.Compiler;
+﻿using EditorEX.SDK.ReactiveComponents;
+using Reactive;
 using UnityEngine;
 
 namespace EditorEX.UI.Components;
@@ -11,6 +10,6 @@ public class ContributorCell : ReactiveComponent
     {
         var value = Remember("Hello world!");
 
-        return new Label { sText = value }.Use();
+        return new EditorLabel { sText = value }.Use();
     }
 }

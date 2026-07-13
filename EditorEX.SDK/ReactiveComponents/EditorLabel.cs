@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using EditorEX.SDK.ReactiveComponents.Attachable;
 using HMUI;
 using Reactive;
@@ -181,11 +182,12 @@ namespace EditorEX.SDK.ReactiveComponents
         public CurvedTextMeshPro TextMesh => _text;
 
         protected CurvedTextMeshPro _text = null!;
+        private Vector2 _lastPreferredSize;
 
         protected override void Construct(RectTransform rect)
         {
             _text = rect.gameObject.AddComponent<CurvedTextMeshPro>();
-            _text.RegisterDirtyLayoutCallback(RequestLeafRecalculation);
+            _text.RegisterDirtyLayoutCallback(RequestLeafRecalculationOnDirty);
         }
 
         protected override void OnInitialize()
@@ -212,23 +214,55 @@ namespace EditorEX.SDK.ReactiveComponents
             MeasureMode heightMode
         )
         {
-            var measuredWidth = widthMode == MeasureMode.Undefined ? Mathf.Infinity : width;
-            var measuredHeight = heightMode == MeasureMode.Undefined ? Mathf.Infinity : height;
-
-            var textSize = _text.GetPreferredValues(measuredWidth, measuredHeight);
-
-            return new()
+            if (_text.fontSharedMaterial == null || _text.font == null)
             {
-                x = widthMode == MeasureMode.Exactly ? width : Mathf.Min(textSize.x, measuredWidth),
-                y =
-                    heightMode == MeasureMode.Exactly
-                        ? height
-                        : Mathf.Min(textSize.y, measuredHeight),
-            };
+                return LayoutTool.MeasureNode(
+                    new Vector2(0f, 0f),
+                    width,
+                    widthMode,
+                    height,
+                    heightMode
+                );
+            }
+            _lastPreferredSize = _text.GetPreferredValues();
+
+            return LayoutTool.MeasureNode(_lastPreferredSize, width, widthMode, height, heightMode);
         }
 
-        protected void RequestLeafRecalculation()
+        protected void RequestLeafRecalculationOnDirty()
         {
+            if (_text.fontSharedMaterial == null || _text.font == null)
+            {
+                return;
+            }
+            var size = _text.GetPreferredValues();
+
+            if (size == _lastPreferredSize)
+            {
+                // We didn't find a better way to track when the text got actually recalculated,
+                // so we use this workaround as a temporary fix
+                StartCoroutine(RequestLeafRecalculationNextFrame());
+            }
+            else
+            {
+                RequestLeafRecalculation();
+            }
+        }
+
+        private IEnumerator RequestLeafRecalculationNextFrame()
+        {
+            yield return new WaitForEndOfFrame();
+            RequestLeafRecalculation();
+        }
+
+        private void RequestLeafRecalculation()
+        {
+            if (_text.fontSharedMaterial == null || _text.font == null)
+            {
+                return;
+            }
+            _lastPreferredSize = _text.GetPreferredValues();
+
             LeafLayoutUpdatedEvent?.Invoke(this);
             ScheduleLayoutRecalculation();
         }

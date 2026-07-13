@@ -12,7 +12,7 @@ namespace EditorEX.SDK.ReactiveComponents
                 _textString = value;
                 _text.text = $"<uppercase>{value}</uppercase>";
                 NotifyPropertyChanged();
-                RequestLeafRecalculation();
+                RequestLeafRecalculationOnDirty();
             }
         }
         public override FontStyles FontStyle

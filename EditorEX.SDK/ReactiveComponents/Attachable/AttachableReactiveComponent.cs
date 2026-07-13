@@ -8,7 +8,7 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
     {
         public IReadOnlyList<IAttachable> Attachables => _attachables;
 
-        private readonly List<IAttachable> _attachables = new List<IAttachable>();
+        private readonly List<IAttachable> _attachables = new();
         private bool _isAttached;
 
         public T Attach<TAttachable, TValue>(TValue value)
