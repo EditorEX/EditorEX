@@ -12,6 +12,7 @@ using EditorEX.SDK.ReactiveComponents.SegmentedControl;
 using EditorEX.UI.Components;
 using EditorEX.Util;
 using Reactive;
+using Reactive.BeatSaber.Components;
 using Reactive.Components;
 using Reactive.Yoga;
 using SiraUtil.Affinity;
@@ -37,14 +38,14 @@ namespace EditorEX.UI.Patches
         private GameObject? _beatmapsRoot;
 
         private StringInputFieldValidator? _levelAuthorInputValidator;
-        private EditorTextDropdown<string>? _environmentDropdown;
-        private EditorTextDropdown<string>? _allDirectionsEnvironmentDropdown;
-        private EditorTextDropdown<string>? _customPlatformDropdown;
+        private EditorDropdown<string>? _environmentDropdown;
+        private EditorDropdown<string>? _allDirectionsEnvironmentDropdown;
+        private EditorDropdown<string>? _customPlatformDropdown;
 
         private State<bool> V4Level = StateUtils.Remember(false);
         private State<int> MainTab = StateUtils.Remember(0);
 
-        private SharedModal<CharacteristicSettingsModal>? _charModal;
+        private CharacteristicSettingsModal? _charModal;
         private EditorLabelButton? _charSettingsButton;
 
         private EditBeatmapLevelPatches(
@@ -91,11 +92,14 @@ namespace EditorEX.UI.Patches
                     clearModifiedState
                 );
                 if (_levelCustomDataModel.EnvironmentName != null)
-                    _environmentDropdown!.Select(_levelCustomDataModel.EnvironmentName);
+                {
+                    _environmentDropdown!.Key = _levelCustomDataModel.EnvironmentName;
+                }
                 if (_levelCustomDataModel.AllDirectionsEnvironmentName != null)
-                    _allDirectionsEnvironmentDropdown!.Select(
-                        _levelCustomDataModel.AllDirectionsEnvironmentName
-                    );
+                {
+                    _allDirectionsEnvironmentDropdown!.Key =
+                        _levelCustomDataModel.AllDirectionsEnvironmentName;
+                }
             }
 
             if (_levelCustomDataModel.CustomPlatformInfo != null)
@@ -161,6 +165,18 @@ namespace EditorEX.UI.Patches
                 infoContainer.gameObject.SetActive(false);
 
                 var secondaryTab = StateUtils.Remember(0);
+                var normalEnvironmentItems = _environmentsListModel
+                    .GetAllEnvironmentInfosWithType(EnvironmentType.Normal)
+                    .ToDictionary(
+                        info => info.serializedName,
+                        info => new BsDropdownItem(info.environmentName, null)
+                    );
+                var allDirectionsEnvironmentItems = _environmentsListModel
+                    .GetAllEnvironmentInfosWithType(EnvironmentType.Circle)
+                    .ToDictionary(
+                        info => info.serializedName,
+                        info => new BsDropdownItem(info.environmentName, null)
+                    );
 
                 new LayoutChildren
                 {
@@ -330,62 +346,35 @@ namespace EditorEX.UI.Patches
                             {
                                 new LayoutChildren // Environments
                                 {
-                                    new EditorTextDropdown<string>()
-                                        .With(x =>
-                                        {
-                                            x.Items.AddRange(
-                                                _environmentsListModel
-                                                    .GetAllEnvironmentInfosWithType(
-                                                        EnvironmentType.Normal
-                                                    )
-                                                    .Select(x =>
-                                                        (x.serializedName, x.environmentName)
-                                                    )
-                                                    .ToDictionary(
-                                                        x => x.serializedName,
-                                                        x => x.environmentName
-                                                    )
-                                            );
-                                        })
+                                    new EditorDropdown<string>
+                                    {
+                                        Items = normalEnvironmentItems,
+                                        Key = normalEnvironmentItems.Keys.First(),
+                                    }
                                         .EnabledWithState(V4Level, false)
                                         .Bind(ref _environmentDropdown)
-                                        .ExtractState(
-                                            out var normalEnvironmentValue,
-                                            _environmentDropdown!
-                                                .Items.First()
-                                                .ExtractTupleFromKVP()
-                                        )
+                                        .ExtractStateFromDropdown(out var normalEnvironmentValue)
                                         .DropdownWithState(normalEnvironmentValue)
                                         .On(
                                             normalEnvironmentValue,
                                             (x, v) =>
                                             {
-                                                Debug.Log($"Selected Normal Environment: {v}");
+                                                Debug.Log(
+                                                    $"Selected Normal Environment: {v.Item2.Text}"
+                                                );
                                             }
                                         )
                                         .AsFlexItem(size: new YogaVector(200f, 40f))
                                         .InEditorNamedRail("Environment", 18f),
-                                    new EditorTextDropdown<string>()
-                                        .With(x =>
-                                        {
-                                            x.Items.AddRange(
-                                                _environmentsListModel
-                                                    .GetAllEnvironmentInfosWithType(
-                                                        EnvironmentType.Circle
-                                                    )
-                                                    .ToDictionary(
-                                                        x => x.serializedName,
-                                                        x => x.environmentName
-                                                    )
-                                            );
-                                        })
+                                    new EditorDropdown<string>
+                                    {
+                                        Items = allDirectionsEnvironmentItems,
+                                        Key = allDirectionsEnvironmentItems.Keys.First(),
+                                    }
                                         .EnabledWithState(V4Level, false)
                                         .Bind(ref _allDirectionsEnvironmentDropdown)
-                                        .ExtractState(
-                                            out var allDirectionsEnvironmentValue,
-                                            _allDirectionsEnvironmentDropdown!
-                                                .Items.First()
-                                                .ExtractTupleFromKVP()
+                                        .ExtractStateFromDropdown(
+                                            out var allDirectionsEnvironmentValue
                                         )
                                         .DropdownWithState(allDirectionsEnvironmentValue)
                                         .On(
@@ -393,7 +382,7 @@ namespace EditorEX.UI.Patches
                                             (x, v) =>
                                             {
                                                 Debug.Log(
-                                                    $"Selected All Directions Environment: {v}"
+                                                    $"Selected All Directions Environment: {v.Item2.Text}"
                                                 );
                                             }
                                         )
@@ -422,7 +411,7 @@ namespace EditorEX.UI.Patches
                                     );
                                     x.UseScriptableObjectColors = true;
                                     x.Source = "#Background8px";
-                                    x.ImageType = Image.Type.Sliced;
+                                    x.ImageType = UnityEngine.UI.Image.Type.Sliced;
                                 })
                                 .AsFlexItem(minSize: new() { x = 800f, y = 800f }),
                         }
@@ -460,16 +449,14 @@ namespace EditorEX.UI.Patches
         private void ShowCharacteristicModal()
         {
             if (_charSettingsButton == null)
-                return;
-            if (_charModal?.ModalOpened ?? false)
             {
-                _charModal?.Modal?.Destroy();
+                return;
             }
 
-            _charModal ??= new SharedModal<CharacteristicSettingsModal>();
+            _charModal ??= new CharacteristicSettingsModal();
             _charModal.PresentEditor(_charSettingsButton.ContentTransform);
 
-            var content = _charModal.Modal.ContentLayout;
+            var content = _charModal.ContentLayout;
             content.Children.Clear();
 
             var folder = _beatmapProjectManager.Value._workingBeatmapProject ?? string.Empty;

@@ -12,10 +12,9 @@ namespace EditorEX.SDK.Components
 {
     public class ContextMenuComponent : MonoBehaviour
     {
-        public SharedModal<EditorContextMenu> Modal => _modal;
+        public EditorContextMenu? Modal => _modal;
         private List<IContextMenuProvider> _contextMenuProviders = null!;
-        private IEnumerable<IContextOption>? _contextOptions;
-        private SharedModal<EditorContextMenu> _modal = null!;
+        private EditorContextMenu? _modal;
         private ReactiveContainer? _reactiveContainer;
         private object? _linkedObject;
 
@@ -34,7 +33,7 @@ namespace EditorEX.SDK.Components
             var mainScreen = GameObject.Find("MainScreen");
             transform.SetParent(mainScreen.transform, false);
 
-            _modal = new SharedModal<EditorContextMenu>();
+            _modal = new EditorContextMenu();
 
             mainScreen.WithReactiveContainer(_reactiveContainer!);
         }
@@ -42,7 +41,12 @@ namespace EditorEX.SDK.Components
         private void CreateButtons<T>(IEnumerable<IContextOption> contextOptions, T data)
             where T : IContextMenuObject
         {
-            var layout = _modal.Modal.Layout;
+            if (_modal == null)
+            {
+                return;
+            }
+
+            var layout = _modal.Layout;
 
             foreach (var contextOption in contextOptions)
             {
@@ -71,18 +75,17 @@ namespace EditorEX.SDK.Components
 
             var contextOptions = providers.SelectMany(x => x.GetIContextOptions()).ToArray();
 
-            if (_contextOptions != contextOptions && _modal.ModalOpened)
+            if (_modal == null)
             {
-                _modal?.Modal?.Destroy();
-                _modal = new SharedModal<EditorContextMenu>();
+                return;
             }
-            _contextOptions = contextOptions;
 
             _modal.PresentEditor(transform);
 
+            _modal.Layout.Children.Clear();
             CreateButtons(contextOptions, data);
 
-            var rectTransform = _modal.Modal.ContentTransform.GetComponent<RectTransform>();
+            var rectTransform = _modal.ViewTransform.GetComponent<RectTransform>();
 
             position.x += rectTransform.sizeDelta.x / 2f;
             position.y -= rectTransform.sizeDelta.y / 2f;
@@ -95,7 +98,10 @@ namespace EditorEX.SDK.Components
         {
             if (_linkedObject == instance)
             {
-                _modal.Close(false);
+                if (_modal != null)
+                {
+                    _modal.IsPushed = false;
+                }
                 _linkedObject = null;
             }
         }

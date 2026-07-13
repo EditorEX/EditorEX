@@ -17,7 +17,7 @@ namespace EditorEX.UI.Components
             _content ?? throw new InvalidOperationException("Modal not initialized.");
         private Layout? _content;
 
-        protected override GameObject Construct()
+        public override IReactiveComponent ConstructContent()
         {
             return new LayoutChildren
             {
@@ -46,11 +46,9 @@ namespace EditorEX.UI.Components
                     .AsFlexItem(size: new YogaVector(560f, 420f)),
             }
                 .AsLayout()
-                .AsFlexGroup(constrainHorizontal: false, constrainVertical: false)
-                .Use();
+                .AsFlexGroup(constrainHorizontal: false, constrainVertical: false);
         }
 
-        // OnOpen/OnClose are handled by BlockingModalBase, which builds a dimming click-blocker
-        // that closes the modal when clicked outside.
+        // Outside-click handling is delegated to BlockingModalBase via ModalBase.OnClickOutside.
     }
 }

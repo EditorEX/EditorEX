@@ -1,9 +1,5 @@
 using System;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading;
-using System.Xml.Linq;
 using BeatSaberMarkupLanguage;
 using EditorEX.SDK.ReactiveComponents.Attachable;
 using EditorEX.Util;
@@ -16,13 +12,17 @@ namespace EditorEX.SDK.ReactiveComponents
 {
     public class EditorContextMenu : BlockingModalBase
     {
-        public bool IsShown => _opened;
+        public bool IsShown => IsPushed;
         public Layout Layout =>
             _layoutChildren ?? throw new InvalidOperationException("Layout not initialized.");
-        private bool _opened;
-        private Layout? _layoutChildren;
+        public Transform ViewTransform =>
+            _viewLayout?.ContentTransform
+            ?? throw new InvalidOperationException("View transform not initialized.");
 
-        protected override GameObject Construct()
+        private Layout? _layoutChildren;
+        private Layout? _viewLayout;
+
+        public override IReactiveComponent ConstructContent()
         {
             return new LayoutChildren
             {
@@ -88,22 +88,12 @@ namespace EditorEX.SDK.ReactiveComponents
                         x.ImageType = UnityEngine.UI.Image.Type.Sliced;
                     })
                     .With(x => x.WrappedImage.Attach<ColorSOAttachable>("Button/Text/Highlighted"))
+                    .Bind(ref _viewLayout)
                     .AsFlexGroup(padding: 2f)
                     .AsFlexItem(flexGrow: 1f),
             }
                 .AsLayout()
-                .AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false)
-                .Use();
-        }
-
-        protected override void OnOpen(bool opened)
-        {
-            _opened = opened;
-        }
-
-        protected override void OnClose(bool closed)
-        {
-            _opened = !closed;
+                .AsFlexGroup(gap: 2f, constrainHorizontal: false, constrainVertical: false);
         }
     }
 }

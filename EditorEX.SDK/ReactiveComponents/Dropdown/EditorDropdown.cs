@@ -1,262 +1,375 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EditorEX.SDK.ReactiveComponents.Table;
 using EditorEX.Util;
 using Reactive;
 using Reactive.BeatSaber.Components;
+using Reactive.Compiler;
 using Reactive.Components;
-using Reactive.Components.Basic;
+using Reactive.Yoga;
+using TMPro;
 using UnityEngine;
 
 namespace EditorEX.SDK.ReactiveComponents.Dropdown
 {
-    public partial class EditorDropdown<TKey, TParam, TCell>
-        : ReactiveComponent,
-            IComponentHolder<IModal>,
-            IKeyedControl<TKey, TParam>
-        where TCell : IReactiveComponent, IPreviewableCell, IKeyedControlCell<TKey, TParam>, new()
+    public partial class EditorDropdown<T> : ReactiveComponent
     {
-        private struct DropdownOption : IEquatable<DropdownOption>
+        [Required]
+        public IReadOnlyDictionary<T, BsDropdownItem> Items
         {
-            public TKey key;
-            public TParam param;
-
-            public override int GetHashCode()
-            {
-                return key?.GetHashCode() ?? 0;
-            }
-
-            public override bool Equals(object? obj)
-            {
-                return obj is DropdownOption opt && opt.key!.Equals(key);
-            }
-
-            public bool Equals(DropdownOption other)
-            {
-                return key?.Equals(other.key) ?? false;
-            }
-        }
-
-        public IDictionary<TKey, TParam> Items => _items;
-
-        public TKey SelectedKey
-        {
-            get =>
-                _selectedKey.Value
-                ?? throw new InvalidOperationException(
-                    "Key cannot be acquired when Items is empty"
-                );
-            private set
-            {
-                _selectedKey = value;
-
-                SelectedKeyChangedEvent?.Invoke(value);
-                NotifyPropertyChanged();
-            }
-        }
-
-        public event Action<TKey>? SelectedKeyChangedEvent;
-
-        private readonly ObservableDictionary<TKey, TParam> _items = new();
-        private readonly HashSet<DropdownOption> _options = new();
-        private Optional<TKey> _selectedKey;
-
-        public void Select(TKey key)
-        {
-            SelectedKey = key;
-
-            _previewCell.Init(_selectedKey!, _items[_selectedKey!]);
-
-            if (_modalOpened)
-            {
-                SelectModalKey(key);
-            }
-        }
-
-        private void RefreshSelection()
-        {
-            if (_selectedKey.HasValue || Items.Count <= 0)
-            {
-                return;
-            }
-
-            Select(Items.Keys.First());
-        }
-
-        public bool Interactable
-        {
-            get => _interactable;
+            get => _items!;
             set
             {
-                _interactable = value;
-                _canvasGroup.alpha = value ? 1f : 0.25f;
-                _button.Interactable = value;
+                _items = value ?? throw new ArgumentNullException(nameof(value));
+
+                if (_tableHost != null)
+                {
+                    RebuildTable();
+
+                    if (_initialized)
+                    {
+                        var currentKey = _key!;
+                        if (ContainsKey(currentKey))
+                        {
+                            _keyState.Value = currentKey;
+                            SynchronizeTableSelection(currentKey);
+                        }
+                        else
+                        {
+                            ResetSelection();
+                        }
+                    }
+                }
+
+                DoInitialUpdate();
             }
         }
 
-        private bool _interactable = true;
+        [Required]
+        public T Key
+        {
+            get => _key!;
+            set
+            {
+                if (_items != null)
+                {
+                    ValidateKey(value);
+                }
 
-        IModal IComponentHolder<IModal>.Component => _modal;
+                if (_initialized)
+                {
+                    SetKey(value, true);
+                }
+                else
+                {
+                    _key = value;
+                    _keyAssigned = true;
+                    DoInitialUpdate();
+                }
+            }
+        }
 
-        private bool _modalOpened;
-        private SharedModal<EditorDropdownOptionsModal> _modal = null!;
-        private EditorDropdownOptionsModal? _activeModal;
+        public Action<T>? OnKeyChanged { get; set; }
 
-        private EditorBackgroundButton _button = null!;
-        private TCell _previewCell = default!;
-        private CanvasGroup _canvasGroup = null!;
+        private bool _initialized;
+        private bool _keyAssigned;
+        private bool _suppressTableSelectionChanged;
+        private IReadOnlyDictionary<T, BsDropdownItem>? _items;
+        private T? _key;
+        private State<T?> _keyState = null!;
+        private State<bool> _modalOpened = null!;
+        private ScrollContext _scrollContext = null!;
+        private Layout _tableHost = null!;
+        private Reactive.Components.Basic.Table<T, IReactiveComponent> _table = null!;
+        private EditorScrollbar _scrollbar = null!;
+        private EditorLabel _previewLabel = null!;
+        private EditorImage _previewIcon = null!;
+
+        private void DoInitialUpdate()
+        {
+            if (
+                !_initialized
+                && _keyAssigned
+                && _items != null
+                && _keyState != null
+                && _table != null
+            )
+            {
+                SetKey(_key!, true);
+            }
+        }
+
+        private void SetKey(T value, bool updateTable)
+        {
+            ValidateKey(value);
+
+            _key = value;
+            _keyAssigned = true;
+            _initialized = true;
+            _keyState.Value = value;
+
+            if (updateTable)
+            {
+                SynchronizeTableSelection(value);
+            }
+
+            OnKeyChanged?.Invoke(value);
+        }
+
+        private void ValidateKey(T value)
+        {
+            if (!ContainsKey(value))
+            {
+                throw new ArgumentException("Dropdown key must exist in Items.", nameof(value));
+            }
+        }
+
+        private bool ContainsKey(T value)
+        {
+            if (_items == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                return _items.ContainsKey(value);
+            }
+            catch (ArgumentNullException)
+            {
+                return false;
+            }
+        }
+
+        private void ResetSelection()
+        {
+            _initialized = false;
+            _keyAssigned = false;
+            _key = default;
+            _keyState.Value = default;
+            ClearTableSelection();
+        }
+
+        private void ClearTableSelection()
+        {
+            _suppressTableSelectionChanged = true;
+            try
+            {
+                _table.SelectionMode = Reactive.Components.Basic.SelectionMode.None;
+                _table.SelectionMode = Reactive.Components.Basic.SelectionMode.Single;
+            }
+            finally
+            {
+                _suppressTableSelectionChanged = false;
+            }
+        }
+
+        private void SynchronizeTableSelection(T value)
+        {
+            _suppressTableSelectionChanged = true;
+            try
+            {
+                _table.SelectionMode = Reactive.Components.Basic.SelectionMode.None;
+                _table.SelectionMode = Reactive.Components.Basic.SelectionMode.Single;
+                _table.SelectedItems = [value];
+            }
+            finally
+            {
+                _suppressTableSelectionChanged = false;
+            }
+        }
+
+        private Reactive.Components.Basic.Table<T, IReactiveComponent> CreateTable()
+        {
+            return new Reactive.Components.Basic.Table<T, IReactiveComponent>
+            {
+                ScrollContext = _scrollContext,
+                Items = _items?.Keys.ToArray() ?? Array.Empty<T>(),
+                OnSelectedItemsChanged = HandleSelectedItemsChanged,
+                ConstructCell = CreateCell,
+            }.AsFlexItem(size: new() { x = 200f, y = 200f });
+        }
+
+        private void RebuildTable()
+        {
+            var oldTable = _table;
+            _tableHost.Children.Remove(oldTable);
+            oldTable.OnSelectedItemsChanged = null;
+            oldTable.Destroy();
+
+            _scrollContext = new ScrollContext();
+            var replacementTable = CreateTable().Bind(ref _table);
+            _scrollbar.ScrollContext = _scrollContext;
+            _tableHost.Children.Add(replacementTable);
+        }
 
         protected override GameObject Construct()
         {
-            new SharedModal<EditorDropdownOptionsModal>()
-                .With(x => x.BuildImmediate())
-                .WithJumpAnimation()
-                .WithOpenListener(HandleModalOpened)
-                .WithCloseListener(HandleModalClosed)
-                .WithBeforeOpenListener(HandleBeforeModalOpened)
-                .Bind(ref _modal);
+            _keyState = Remember<T?>(default);
+            _modalOpened = Remember(false);
 
-            return new LayoutChildren
+            var anchor = Remember<RectTransform?>(null);
+            _scrollContext = new ScrollContext();
+            _previewLabel = new EditorLabel
             {
-                new TCell { UsedAsPreview = true }
-                    .AsFlexItem(flexGrow: 1f)
-                    .Bind(ref _previewCell),
-                // Icon
+                Alignment = TextAlignmentOptions.Left,
+                FontSize = 18f,
+            };
+            _previewIcon = new EditorImage { PreserveAspect = true };
+
+            void RefreshPreview(T? value)
+            {
+                if (
+                    _initialized
+                    && _items != null
+                    && _items.TryGetValue(value!, out var dropdownItem)
+                )
+                {
+                    _previewLabel.Text = dropdownItem.Text ?? string.Empty;
+                    _previewLabel.Enabled = dropdownItem.Text != null;
+                    _previewIcon.Sprite = dropdownItem.Icon;
+                    _previewIcon.Enabled = dropdownItem.Icon != null;
+                    return;
+                }
+
+                _previewLabel.Text = string.Empty;
+                _previewLabel.Enabled = false;
+                _previewIcon.Sprite = null;
+                _previewIcon.Enabled = false;
+            }
+
+            _keyState.ValueChangedEvent += RefreshPreview;
+            RefreshPreview(_keyState.Value);
+
+            var root = new LayoutChildren
+            {
+                _previewLabel.AsFlexItem(flexGrow: 1f),
+                _previewIcon.AsFlexItem(size: 20f, aspectRatio: 1f),
                 new EditorImage
                 {
                     Source = "#IconDropdown",
-                    Color = new Color(0.55f, 0.6f, 0.6f, 1f), //Use a color collector later, its annoying to use in Construct atm
+                    Color = new Color(0.55f, 0.6f, 0.6f, 1f),
                     PreserveAspect = true,
                 }.AsFlexItem(size: 20f, aspectRatio: 1f),
+                new Modal
+                {
+                    sIsPushed = _modalOpened,
+                    sPlacementAnchor = anchor,
+                    OnClickOutside = () => _modalOpened.Value = false,
+                    PlacementData = new()
+                    {
+                        Placement = RelativePlacement.BottomCenter,
+                        Clip = true,
+                    },
+                    FlexController = { FlexDirection = FlexDirection.Row, Gap = 1f },
+                    Children =
+                    {
+                        new LayoutChildren
+                        {
+                            new Layout { Children = { CreateTable().Bind(ref _table) } }
+                                .AsFlexGroup()
+                                .AsFlexItem(size: new() { x = 200f, y = 200f })
+                                .Bind(ref _tableHost),
+                            new EditorScrollbar
+                            {
+                                ScrollContext = _scrollContext,
+                                HideIfNothingToScroll = true,
+                            }
+                                .AsFlexItem(size: new() { x = 7f, y = "auto" })
+                                .Bind(ref _scrollbar),
+                        }
+                            .As<EditorBackground>(x =>
+                            {
+                                x.Source = "#Background4px";
+                                x.ImageType = UnityEngine.UI.Image.Type.Sliced;
+                                x.Color = new Color(0.11f, 0.13f, 0.14f, 1f);
+                            })
+                            .AsFlexGroup(
+                                direction: FlexDirection.Row,
+                                alignItems: Align.Stretch,
+                                gap: 1f,
+                                padding: 2f
+                            ),
+                    },
+                },
             }
                 .As<EditorBackgroundButton>(x =>
                 {
                     x.OnClick = () =>
                     {
-                        if (Items.Count == 0 || _modal.ModalOpened)
+                        if (_items?.Count > 0)
                         {
-                            return;
+                            _modalOpened.Value = true;
                         }
-
-                        _modal.PresentEditor(ContentTransform);
                     };
                 })
-                .WithNativeComponent(out _canvasGroup)
-                .AsFlexGroup(alignContent: Reactive.Yoga.Align.Center)
-                .Bind(ref _button)
-                .Use();
+                .AsFlexGroup(alignItems: Align.Center, padding: 8f)
+                .With(x => anchor.Value = x.ContentTransform);
+
+            var gameObject = root.Use();
+            DoInitialUpdate();
+            return gameObject;
         }
 
-        protected override void OnInitialize()
+        private IReactiveComponent CreateCell(Reactive.Components.CellContext<T> context)
         {
-            this.AsFlexItem(size: new() { x = 36f, y = 40f });
+            var label = new EditorLabel
+            {
+                Alignment = TextAlignmentOptions.Left,
+                FontSize = 18f,
+                RaycastTarget = false,
+            };
 
-            _items.ItemAddedEvent += HandleItemAdded;
-            _items.ItemRemovedEvent += HandleItemRemoved;
-            _items.AllItemsRemovedEvent += HandleAllItemsRemoved;
+            var icon = new EditorImage { PreserveAspect = true, RaycastTarget = false };
+
+            var background = new LayoutChildren
+            {
+                label.AsFlexItem(flexGrow: 1f),
+                icon.AsFlexItem(size: 20f, aspectRatio: 1f),
+            }
+                .As<EditorBackground>(x =>
+                {
+                    x.Source = "#Background4px";
+                    x.ImageType = UnityEngine.UI.Image.Type.Sliced;
+                    x.RaycastTarget = true;
+                })
+                .AsFlexGroup(alignItems: Align.Center, gap: 4f, padding: 8f)
+                .AsFlexItem(size: new() { x = 200f, y = 40f });
+
+            void Update(Reactive.Components.CellContext<T> value)
+            {
+                var dropdownItem = Items[value.Item];
+                label.Text = dropdownItem.Text ?? string.Empty;
+                label.Enabled = dropdownItem.Text != null;
+                icon.Sprite = dropdownItem.Icon;
+                icon.Enabled = dropdownItem.Icon != null;
+                background.Color = value.Selected ? new Color(0.2f, 0.28f, 0.32f, 1f) : Color.clear;
+            }
+
+            context.ValueChangedEvent += Update;
+            Update(context);
+            background.WrappedImage.WithPointerEvents(onDown: _ => context.Selected = true);
+
+            return background;
         }
 
-        private void HandleBeforeModalOpened(IModal modal)
+        private void HandleSelectedItemsChanged(IReadOnlyCollection<T> items)
         {
-            _activeModal = (EditorDropdownOptionsModal)modal;
-            Table.OnSelectedItemsChanged = null;
-            Table.Items = _options.ToArray();
-            SelectModalKey(_selectedKey.Value!);
-            Table.OnSelectedItemsChanged = HandleSelectedItemsChanged;
-            _activeModal.ScrollContext.ScrollTo(0f, true);
-
-            _activeModal.ApplyLayout(ContentTransform);
-        }
-
-        private void HandleModalOpened(IModal modal, bool finished)
-        {
-            if (finished)
+            if (_suppressTableSelectionChanged || items.Count == 0)
             {
                 return;
             }
 
-            _modalOpened = true;
-        }
-
-        private void HandleModalClosed(IModal modal, bool finished)
-        {
-            if (finished)
+            var selectedKey = items.First();
+            if (_initialized && EqualityComparer<T>.Default.Equals(selectedKey, _key!))
             {
+                _modalOpened.Value = false;
                 return;
             }
 
-            _activeModal!.Table.OnSelectedItemsChanged = null;
-            _activeModal = null;
-            _modalOpened = false;
-        }
-
-        private void HandleSelectedItemsChanged(IReadOnlyCollection<DropdownOption> items)
-        {
-            if (items.Count == 0)
-            {
-                return;
-            }
-
-            var item = items.First();
-            SelectedKey = item.key;
-            _previewCell.Init(item.key, item.param);
-            _modal.Close(false);
-        }
-
-        private Table<DropdownOption, IReactiveComponent> Table =>
-            _activeModal?.Table
-            ?? throw new InvalidOperationException("Dropdown modal is not open");
-
-        private void SelectModalKey(TKey key)
-        {
-            // The current Table.SelectedItems setter appends, so clear through
-            // SelectionMode before assigning the single selected item.
-            Table.SelectionMode = SelectionMode.None;
-            Table.SelectionMode = SelectionMode.Single;
-            Table.SelectedItems = [new DropdownOption { key = key, param = _items[key] }];
-        }
-
-        private void HandleItemAdded(TKey key, TParam param)
-        {
-            var option = new DropdownOption { key = key, param = param };
-
-            _options.Add(option);
-
-            if (_modalOpened)
-            {
-                Table.Items = _options.ToArray();
-            }
-
-            NotifyPropertyChanged(nameof(Items));
-            RefreshSelection();
-        }
-
-        private void HandleItemRemoved(TKey key, TParam param)
-        {
-            var option = new DropdownOption { key = key };
-
-            _options.Remove(option);
-
-            if (_modalOpened)
-            {
-                Table.Items = _options.ToArray();
-            }
-
-            NotifyPropertyChanged(nameof(Items));
-            RefreshSelection();
-        }
-
-        private void HandleAllItemsRemoved()
-        {
-            _options.Clear();
-
-            if (_modalOpened)
-            {
-                Table.Items = Array.Empty<DropdownOption>();
-            }
-
-            NotifyPropertyChanged(nameof(Items));
-            RefreshSelection();
+            SetKey(selectedKey, false);
+            _modalOpened.Value = false;
         }
     }
 }

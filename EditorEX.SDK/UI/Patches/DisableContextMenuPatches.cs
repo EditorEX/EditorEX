@@ -26,13 +26,20 @@ namespace EditorEX.SDK.UI.Patches
         )]
         private void PatchExecute(IPointerClickHandler handler, BaseEventData eventData)
         {
-            if (
-                _contextMenuComponent.Modal.ModalOpened
-                && handler is Component component
-                && !component.transform.IsChildOf(_contextMenuComponent.Modal.ContentTransform)
-            )
+            var modal = _contextMenuComponent.Modal;
+            if (modal == null || !modal.IsPushed)
             {
-                _contextMenuComponent.Modal.Close(false);
+                return;
+            }
+
+            if (handler is not Component component)
+            {
+                return;
+            }
+
+            if (!component.transform.IsChildOf(modal.ViewTransform))
+            {
+                modal.IsPushed = false;
             }
         }
 
@@ -43,9 +50,13 @@ namespace EditorEX.SDK.UI.Patches
         )]
         private void PatchScoll(Vector2 __result)
         {
+            var modal = _contextMenuComponent.Modal;
             if (__result.magnitude > 0.001f)
             {
-                _contextMenuComponent.Modal.Close(false);
+                if (modal != null)
+                {
+                    modal.IsPushed = false;
+                }
             }
         }
     }

@@ -17,8 +17,16 @@ namespace EditorEX.Util
         public static T WithReactiveContainer<T>(this T component, ReactiveContainer container)
             where T : IReactiveComponent
         {
-            component.WithNativeComponent<T, ReactiveContainerHolder>(out var comp);
-            comp.ReactiveContainer = container;
+            var content = component.Content;
+            if (content.GetComponent<Composition>() == null)
+            {
+                content.AddComponent<Composition>();
+            }
+
+            var holder =
+                content.GetComponent<ReactiveContainerHolder>()
+                ?? content.AddComponent<ReactiveContainerHolder>();
+            holder.ReactiveContainer = container;
             return component;
         }
 
@@ -27,7 +35,14 @@ namespace EditorEX.Util
             ReactiveContainer container
         )
         {
-            var comp = gameObject.AddComponent<ReactiveContainerHolder>();
+            if (gameObject.GetComponent<Composition>() == null)
+            {
+                gameObject.AddComponent<Composition>();
+            }
+
+            var comp =
+                gameObject.GetComponent<ReactiveContainerHolder>()
+                ?? gameObject.AddComponent<ReactiveContainerHolder>();
             comp.ReactiveContainer = container;
             return gameObject;
         }
@@ -269,19 +284,41 @@ namespace EditorEX.Util
         }
 
         /// <summary>
-        /// Presents a modal editor UI component with proper parent transform handling.
+        /// Presents a modal by attaching it to the nearest composition and pushing it.
         /// </summary>
-        /// <param name="comp">The modal component to present</param>
+        /// <param name="modal">The modal component to present</param>
         /// <param name="child">The child transform used to find the parent container</param>
-        /// <param name="animated">Whether to animate the presentation</param>
-        public static void PresentEditor(this IModal comp, Transform child, bool animated = true)
+        /// <param name="animated">Unused legacy parameter kept for call-site compatibility</param>
+        public static void PresentEditor(
+            this ModalBase modal,
+            Transform child,
+            bool animated = true
+        )
         {
-            Transform transform = child.GetComponentInParent<ReactiveContainerHolder>().transform;
-            ModalSystem<Reactive.Components.Basic.ModalSystem>.PresentModal(
-                comp,
-                transform,
-                animated
-            );
+            var holder = child.GetComponentInParent<ReactiveContainerHolder>();
+            if (holder == null)
+            {
+                throw new InvalidOperationException(
+                    "Unable to present modal: no ReactiveContainerHolder found in parent hierarchy."
+                );
+            }
+
+            var composition = holder.GetComponentInParent<Composition>();
+            if (composition == null)
+            {
+                composition = holder.gameObject.AddComponent<Composition>();
+            }
+
+            if (!modal.IsInitialized)
+            {
+                modal.Use(composition.transform);
+            }
+            else if (modal.ContentTransform.parent != composition.transform)
+            {
+                modal.ContentTransform.SetParent(composition.transform, false);
+            }
+
+            modal.IsPushed = true;
         }
 
         /// <summary>
@@ -289,16 +326,16 @@ namespace EditorEX.Util
         /// </summary>
         /// <typeparam name="T">The type of the dropdown key</typeparam>
         /// <param name="component">The dropdown component</param>
-        /// <param name="state">The output state containing the selected key and text</param>
+        /// <param name="state">The output state containing the selected key and item</param>
         /// <returns>The dropdown for chaining</returns>
-        public static EditorTextDropdown<T> ExtractStateFromDropdown<T>(
-            this EditorTextDropdown<T> component,
-            out State<(T, string)> state
+        public static EditorDropdown<T> ExtractStateFromDropdown<T>(
+            this EditorDropdown<T> component,
+            out State<(T, BsDropdownItem)> state
         )
         {
             return component.ExtractState(
                 out state,
-                (component.SelectedKey, component.Items[component.SelectedKey])
+                (component.Key, component.Items[component.Key])
             );
         }
 
@@ -326,27 +363,28 @@ namespace EditorEX.Util
         /// <param name="component">The dropdown component to bind</param>
         /// <param name="state">The state to bind to</param>
         /// <returns>The dropdown for chaining</returns>
-        public static EditorTextDropdown<T> DropdownWithState<T>(
-            this EditorTextDropdown<T> component,
-            State<(T, string)> state
+        public static EditorDropdown<T> DropdownWithState<T>(
+            this EditorDropdown<T> component,
+            State<(T, BsDropdownItem)> state
         )
         {
-            component.WithListener(
-                "SelectedKey",
-                (T x) =>
-                {
-                    if (state?.Value.Item1?.Equals(x) ?? false)
-                    {
-                        return;
-                    }
-                    state?.Value = (x, component.Items[x]);
-                }
-            );
-            state.ValueChangedEvent += (value) =>
+            component.OnKeyChanged += key =>
             {
-                if (component.Items.ContainsKey(value.Item1))
+                if (EqualityComparer<T>.Default.Equals(state.Value.Item1, key))
                 {
-                    component.Select(value.Item1);
+                    return;
+                }
+
+                state.Value = (key, component.Items[key]);
+            };
+            state.ValueChangedEvent += value =>
+            {
+                if (
+                    component.Items.ContainsKey(value.Item1)
+                    && !EqualityComparer<T>.Default.Equals(component.Key, value.Item1)
+                )
+                {
+                    component.Key = value.Item1;
                 }
             };
             return component;
