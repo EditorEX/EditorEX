@@ -6,7 +6,7 @@ namespace EditorEX.SDK.ReactiveComponents
     /// <summary>
     /// A ModalBase helper that handles outside-click behavior with optional auto-close.
     /// </summary>
-    public abstract class BlockingModalBase : ModalBase
+    public abstract class BlockingModalBase : EditorModalBase
     {
         /// <summary>Whether a blocker should be created when the modal opens.</summary>
         public bool UseBlocker { get; set; } = true;

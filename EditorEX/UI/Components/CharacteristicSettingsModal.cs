@@ -17,7 +17,7 @@ namespace EditorEX.UI.Components
             _content ?? throw new InvalidOperationException("Modal not initialized.");
         private Layout? _content;
 
-        public override IReactiveComponent ConstructContent()
+        protected override IReactiveComponent ConstructContent()
         {
             return new LayoutChildren
             {

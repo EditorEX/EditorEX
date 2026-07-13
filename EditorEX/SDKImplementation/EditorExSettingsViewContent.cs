@@ -1,9 +1,12 @@
-﻿using EditorEX.SDK.ReactiveComponents;
+﻿using System.Collections.Generic;
+using System.Linq;
+using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.ReactiveComponents.Dropdown;
 using EditorEX.SDK.Settings;
 using EditorEX.SDK.ViewContent;
 using EditorEX.Util;
 using Reactive;
+using Reactive.BeatSaber.Components;
 using Reactive.Yoga;
 using UnityEngine;
 
@@ -27,21 +30,23 @@ namespace EditorEX.SDKImplementation
                         Debug.Log($"Toggle: {x}");
                     },
                 }.InEditorNamedRail("Toggle", 18f),
-                new EditorTextDropdown<string>
+                new EditorDropdown<string>
                 {
-                    Items =
+                    Items = new Dictionary<string, BsDropdownItem>
                     {
-                        { "Option 1", "Option 1" },
-                        { "Option 2", "Option 2" },
-                        { "Option 3", "Option 3" },
-                        { "Option 4", "Option 4" },
-                        { "Option 5", "Option 5" },
-                        { "Option 6", "Option 6" },
-                        { "Option 7", "Option 7" },
-                        { "Option 8", "Option 8" },
-                        { "Option 9", "Option 9" },
-                        { "Option 10", "Option 10" },
+                        { "Option 1", new BsDropdownItem("Option 1", null) },
+                        { "Option 2", new BsDropdownItem("Option 2", null) },
+                        { "Option 3", new BsDropdownItem("Option 3", null) },
+                        { "Option 4", new BsDropdownItem("Option 4", null) },
+                        { "Option 5", new BsDropdownItem("Option 5", null) },
+                        { "Option 6", new BsDropdownItem("Option 6", null) },
+                        { "Option 7", new BsDropdownItem("Option 7", null) },
+                        { "Option 8", new BsDropdownItem("Option 8", null) },
+                        { "Option 9", new BsDropdownItem("Option 9", null) },
+                        { "Option 10", new BsDropdownItem("Option 10", null) },
                     },
+                    Key = "Option 1",
+                    OnKeyChanged = key => Debug.Log($"Dropdown: {key}"),
                 }
                     .AsFlexItem(size: new YogaVector(350f, 40f))
                     .InEditorNamedRail("Dropdown", 18f),

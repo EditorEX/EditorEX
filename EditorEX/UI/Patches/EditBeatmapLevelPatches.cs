@@ -454,7 +454,7 @@ namespace EditorEX.UI.Patches
             }
 
             _charModal ??= new CharacteristicSettingsModal();
-            _charModal.PresentEditor(_charSettingsButton.ContentTransform);
+            _charModal.IsPushed = true;
 
             var content = _charModal.ContentLayout;
             content.Children.Clear();

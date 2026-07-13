@@ -80,7 +80,7 @@ namespace EditorEX.SDK.Components
                 return;
             }
 
-            _modal.PresentEditor(transform);
+            _modal.IsPushed = true;
 
             _modal.Layout.Children.Clear();
             CreateButtons(contextOptions, data);

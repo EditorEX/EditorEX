@@ -22,7 +22,7 @@ namespace EditorEX.SDK.ReactiveComponents
         private Layout? _layoutChildren;
         private Layout? _viewLayout;
 
-        public override IReactiveComponent ConstructContent()
+        protected override IReactiveComponent ConstructContent()
         {
             return new LayoutChildren
             {

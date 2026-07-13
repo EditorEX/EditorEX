@@ -18,8 +18,6 @@ namespace EditorEX.SDK.Collectors
             _container = container;
         }
 
-        public void Initialize()
-        {
-        }
+        public void Initialize() { }
     }
 }
