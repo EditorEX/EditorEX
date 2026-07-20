@@ -11,5 +11,12 @@ namespace EditorEX.Util
         {
             return (pair.Key, pair.Value);
         }
+
+        public static Type GetChildType(this Type type, string name)
+        {
+            return type.Assembly.GetTypes()
+                    .FirstOrDefault(x => x.Name == name && x.IsSubclassOf(type))
+                ?? throw new Exception($"Child type {name} not found in {type.Name}");
+        }
     }
 }
