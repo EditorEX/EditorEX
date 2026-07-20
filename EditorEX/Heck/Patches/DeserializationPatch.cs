@@ -9,7 +9,7 @@ using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.Heck.Deserialize;
 using EditorEX.MapData.Contexts;
-using EditorEX.Util;
+using EditorEX.SDK.Util;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
 

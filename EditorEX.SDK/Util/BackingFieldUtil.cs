@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 
 //https://stackoverflow.com/a/14210097
-namespace EditorEX.Util
+namespace EditorEX.SDK.Util
 {
     public static class BackingFieldUtil
     {
