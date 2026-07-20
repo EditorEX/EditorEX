@@ -102,6 +102,10 @@ namespace EditorEX.SDK.ReactiveComponents
 
         private void AddBindings()
         {
+            if (TabbingType == TabbingType.None)
+            {
+                return;
+            }
             bool qwerty = TabbingType == TabbingType.Qwerty;
             for (
                 int i = 0;
