@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using HMUI;
 using UnityEngine.EventSystems;
 
@@ -12,7 +13,9 @@ namespace EditorEX.SDK.Components
             IPointerEnterHandler,
             IPointerExitHandler
     {
-        public SelectionState state { get; private set; } = SelectionState.Normal;
+        public static List<EditorClickableText> ClickableTexts { get; } = new();
+
+        public SelectionState State { get; private set; } = SelectionState.Normal;
 
         public event Action<PointerEventData> OnClickEvent;
 
@@ -38,7 +41,7 @@ namespace EditorEX.SDK.Components
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (state == SelectionState.Highlighted)
+            if (State == SelectionState.Highlighted)
             {
                 SetState(SelectionState.Normal);
             }
@@ -49,10 +52,30 @@ namespace EditorEX.SDK.Components
             SetState(SelectionState.Highlighted);
         }
 
-        private void SetState(SelectionState state)
+        private void SetState(SelectionState newState)
         {
-            this.state = state;
-            selectionStateDidChangeEvent?.Invoke(this.state);
+            State = newState;
+            selectionStateDidChangeEvent.Invoke(State);
+        }
+
+        public override void OnEnable()
+        {
+            if (!ClickableTexts.Contains(this))
+            {
+                ClickableTexts.Add(this);
+            }
+
+            base.OnEnable();
+        }
+
+        public override void OnDisable()
+        {
+            if (ClickableTexts.Contains(this))
+            {
+                ClickableTexts.Remove(this);
+            }
+
+            base.OnDisable();
         }
 
         public enum SelectionState

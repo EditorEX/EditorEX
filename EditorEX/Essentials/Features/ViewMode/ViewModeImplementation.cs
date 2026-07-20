@@ -36,7 +36,6 @@ namespace EditorEX.Essentials.Features.ViewMode
 
         private void SetMode(ViewMode mode)
         {
-            Plugin.Logger.Info($"SetMode: {mode.DisplayName}");
             if (
                 _activeViewMode.Mode == mode
                 || _beatmapState.editingMode != BeatmapEditingMode.Objects

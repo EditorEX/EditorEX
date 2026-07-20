@@ -74,9 +74,6 @@ namespace EditorEX.Essentials.Patches
             {
                 movementPreviousPosition = __instance._uiCameraMovementTransform.localPosition;
                 __instance._uiCameraMovementTransform.localPosition = toSetPosition.Value;
-                Plugin.Logger.Info(
-                    $"CameraControllerUpdate: {_activeViewMode.Mode.LockCamera} {toSetPosition.Value}"
-                );
                 toSetPosition = null;
             }
             if (toSetCameraRotation.HasValue)
@@ -104,52 +101,71 @@ namespace EditorEX.Essentials.Patches
                 );
                 Vector3 vector = __instance._uiCameraMovementTransform.localPosition;
                 Vector3 vector2 = Vector3.zero;
-                if (Input.GetKey(KeyCode.W))
+                if (
+                    __instance._movementDirection.HasFlag(
+                        BeatmapEditor360CameraController.Direction.Forward
+                    )
+                )
                 {
                     vector2 = __instance._uiCameraTransform.forward;
                 }
-                if (Input.GetKey(KeyCode.S))
+                if (
+                    __instance._movementDirection.HasFlag(
+                        BeatmapEditor360CameraController.Direction.Backward
+                    )
+                )
                 {
                     vector2 = -__instance._uiCameraTransform.forward;
                 }
                 vector2 = __instance.transform.parent.InverseTransformVector(vector2);
 
                 Vector3 vector3 = Vector3.zero;
-                if (Input.GetKey(KeyCode.D))
+                if (
+                    __instance._movementDirection.HasFlag(
+                        BeatmapEditor360CameraController.Direction.Right
+                    )
+                )
                 {
                     vector3 = __instance._uiCameraTransform.right;
                 }
-                if (Input.GetKey(KeyCode.A))
+                if (
+                    __instance._movementDirection.HasFlag(
+                        BeatmapEditor360CameraController.Direction.Left
+                    )
+                )
                 {
                     vector3 = -__instance._uiCameraTransform.right;
                 }
                 vector3 = __instance.transform.parent.InverseTransformVector(vector3);
 
                 Vector3 vector4 = Vector3.zero;
-                if (Input.GetKey(KeyCode.Space))
+                if (
+                    __instance._movementDirection.HasFlag(
+                        BeatmapEditor360CameraController.Direction.Up
+                    )
+                )
                 {
                     vector4 = __instance.transform.up;
                 }
-                if (Input.GetKey(KeyCode.LeftControl))
+                if (
+                    __instance._movementDirection.HasFlag(
+                        BeatmapEditor360CameraController.Direction.Down
+                    )
+                )
                 {
                     vector4 = -__instance.transform.up;
                 }
                 vector4 = __instance.transform.parent.InverseTransformVector(vector4);
 
-                if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+                if (__instance._movementIntensityIncreased)
                 {
                     __instance._currentMoveIntensity = __instance._fastMoveIntensity;
                 }
-                if (Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt))
+                else if (__instance._movementIntensityDecreased)
                 {
                     __instance._currentMoveIntensity = __instance._slowMoveIntensity;
                 }
-                if (
-                    Input.GetKeyUp(KeyCode.LeftShift)
-                    || Input.GetKeyUp(KeyCode.RightShift)
-                    || Input.GetKeyUp(KeyCode.LeftAlt)
-                    || Input.GetKeyUp(KeyCode.RightAlt)
-                )
+                else
                 {
                     __instance._currentMoveIntensity = __instance._defaultMoveIntensity;
                 }

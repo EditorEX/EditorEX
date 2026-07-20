@@ -7,7 +7,7 @@
         {
             _component.selectionStateDidChangeEvent +=
                 HandleNoTransitionButtonSelectionStateDidChange;
-            ResolveSelectionState(_component.state, false);
+            ResolveSelectionState(_component.State, false);
         }
 
         protected void OnDisable()

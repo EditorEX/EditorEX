@@ -7,7 +7,7 @@
         {
             _component.selectionStateDidChangeEvent +=
                 HandleNoTransitionButtonSelectionStateDidChange;
-            ResolveSelectionState(_component.state, false);
+            ResolveSelectionState(_component.State, false);
         }
 
         protected void OnDisable()
@@ -28,6 +28,7 @@
             bool animated = true
         )
         {
+            _component.useScriptableObjectColors = false;
             switch (state)
             {
                 case EditorClickableText.SelectionState.Highlighted:

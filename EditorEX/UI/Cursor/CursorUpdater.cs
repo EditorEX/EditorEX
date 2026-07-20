@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using EditorEX.SDK.Components;
+using EditorEX.SDK.ReactiveComponents;
 using EditorEX.UI.Patches;
 using UnityEngine.UI;
 using Zenject;
@@ -27,6 +29,14 @@ internal class CursorUpdater : ITickable
         foreach (var selectable in SelectableCellsCursorPatches.SelectableCells)
         {
             any |= selectable.highlighted;
+        }
+        foreach (var clickable in EditorNativeClickableImage.ClickableImages)
+        {
+            any |= clickable.State == EditorNativeClickableImage.SelectionState.Highlighted;
+        }
+        foreach (var clickable in EditorClickableText.ClickableTexts)
+        {
+            any |= clickable.State == EditorClickableText.SelectionState.Highlighted;
         }
 
         ChangeCursor(any ? WindowsCursor.Hand : WindowsCursor.StandardArrow);

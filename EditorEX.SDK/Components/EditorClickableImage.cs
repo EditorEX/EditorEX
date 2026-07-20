@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Reactive.BeatSaber.Components;
 using UnityEngine.EventSystems;
 
@@ -12,7 +13,9 @@ namespace EditorEX.SDK.Components
             IPointerEnterHandler,
             IPointerExitHandler
     {
-        public SelectionState state { get; private set; } = SelectionState.Normal;
+        public static List<EditorNativeClickableImage> ClickableImages { get; } = new();
+
+        public SelectionState State { get; private set; } = SelectionState.Normal;
 
         public event Action<PointerEventData> OnClickEvent;
 
@@ -38,7 +41,7 @@ namespace EditorEX.SDK.Components
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (state == SelectionState.Highlighted)
+            if (State == SelectionState.Highlighted)
             {
                 SetState(SelectionState.Normal);
             }
@@ -51,8 +54,26 @@ namespace EditorEX.SDK.Components
 
         private void SetState(SelectionState state)
         {
-            this.state = state;
-            selectionStateDidChangeEvent?.Invoke(this.state);
+            this.State = state;
+            selectionStateDidChangeEvent?.Invoke(this.State);
+        }
+
+        public override void OnEnable()
+        {
+            if (!ClickableImages.Contains(this))
+            {
+                ClickableImages.Add(this);
+            }
+            base.OnEnable();
+        }
+
+        protected override void OnDisable()
+        {
+            if (ClickableImages.Contains(this))
+            {
+                ClickableImages.Remove(this);
+            }
+            base.OnDisable();
         }
 
         public enum SelectionState
