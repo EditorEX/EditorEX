@@ -290,7 +290,7 @@ namespace EditorEX.Util
         /// <param name="child">The child transform used to find the parent container</param>
         /// <param name="animated">Unused legacy parameter kept for call-site compatibility</param>
         public static void PresentEditor(
-            this ModalBase modal,
+            this EditorModalBase modal,
             Transform child,
             bool animated = true
         )

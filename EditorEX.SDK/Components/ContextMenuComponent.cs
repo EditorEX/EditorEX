@@ -17,6 +17,7 @@ namespace EditorEX.SDK.Components
         private EditorContextMenu? _modal;
         private ReactiveContainer? _reactiveContainer;
         private object? _linkedObject;
+        private RectTransform _clickAnchor = null!;
 
         [Inject]
         private void Construct(
@@ -34,6 +35,11 @@ namespace EditorEX.SDK.Components
             transform.SetParent(mainScreen.transform, false);
 
             _modal = new EditorContextMenu();
+
+            var anchorObject = new GameObject("ContextMenuClickAnchor");
+            _clickAnchor = anchorObject.AddComponent<RectTransform>();
+            _clickAnchor.SetParent(mainScreen.transform, false);
+            _clickAnchor.sizeDelta = Vector2.zero;
 
             mainScreen.WithReactiveContainer(_reactiveContainer!);
         }
@@ -80,16 +86,37 @@ namespace EditorEX.SDK.Components
                 return;
             }
 
-            _modal.IsPushed = true;
+            var parentRect = (RectTransform)_clickAnchor.parent;
+            var canvas = parentRect.GetComponentInParent<Canvas>();
+            var camera =
+                canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+                    ? canvas.worldCamera
+                    : null;
+
+            if (
+                RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                    parentRect,
+                    position,
+                    camera,
+                    out var world
+                )
+            )
+            {
+                _clickAnchor.position = world;
+            }
+
+            // IsPushed=true is a no-op when already open, so pop first to re-run PlacementTool.
+            _modal.IsPushed = false;
+            _modal.PlacementAnchor = _clickAnchor;
+            _modal.PlacementData = new PlacementData
+            {
+                Placement = RelativePlacement.BottomLeft,
+                Clip = true,
+            };
+            _modal.PresentEditor(transform);
 
             _modal.Layout.Children.Clear();
             CreateButtons(contextOptions, data);
-
-            var rectTransform = _modal.ViewTransform.GetComponent<RectTransform>();
-
-            position.x += rectTransform.sizeDelta.x / 2f;
-            position.y -= rectTransform.sizeDelta.y / 2f;
-            rectTransform.position = position;
 
             _linkedObject = linkedObject;
         }
