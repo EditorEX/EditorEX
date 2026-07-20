@@ -23,6 +23,11 @@ namespace EditorEX.Essentials.Features.ViewMode
             return ViewModes.FirstOrDefault(x => x.ID == id);
         }
 
+        public static IReadOnlyList<ViewMode> GetAll()
+        {
+            return ViewModes.ToList();
+        }
+
         public static ViewMode GetNextViewMode(ViewMode currentViewMode)
         {
             return ViewModes.Find(currentViewMode)?.Next?.Value ?? ViewModes.First.Value;
