@@ -40,23 +40,28 @@ namespace EditorEX.SDK.Input
                 GroupID = (modName + "_" + groupName).ToLowerInvariant().Replace(" ", "_");
             }
 
-            public GroupBuilding AddKeybinding(string keybindingName, InputKey[] defaultKeys)
+            public GroupBuilding AddKeybinding(
+                string keybindingName,
+                bool strict,
+                InputKey[] defaultKeys
+            )
             {
                 CheckKeybindingInputs(keybindingName, defaultKeys);
 
-                actions.Add(MakeKeybinding(keybindingName, defaultKeys));
+                actions.Add(MakeKeybinding(keybindingName, strict, defaultKeys));
                 return this;
             }
 
             public GroupBuilding AddKeybinding(
                 string keybindingName,
                 InputKey[] defaultKeys,
-                ref CustomInputAction? keybindingReference
+                ref CustomInputAction? keybindingReference,
+                bool strict = false
             )
             {
                 CheckKeybindingInputs(keybindingName, defaultKeys);
 
-                keybindingReference = MakeKeybinding(keybindingName, defaultKeys);
+                keybindingReference = MakeKeybinding(keybindingName, strict, defaultKeys);
                 actions.Add(keybindingReference);
                 return this;
             }
@@ -103,9 +108,13 @@ namespace EditorEX.SDK.Input
                     throw new ArgumentException($"Keybinding '{keybindingName}' already exists.");
             }
 
-            private CustomInputAction MakeKeybinding(string keybindingName, InputKey[] defaultKeys)
+            private CustomInputAction MakeKeybinding(
+                string keybindingName,
+                bool strict,
+                InputKey[] defaultKeys
+            )
             {
-                return new CustomInputAction(keybindingName, defaultKeys);
+                return new CustomInputAction(keybindingName, strict, defaultKeys);
             }
         }
     }

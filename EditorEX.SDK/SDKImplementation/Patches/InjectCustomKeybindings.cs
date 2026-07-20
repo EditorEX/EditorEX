@@ -56,6 +56,7 @@ namespace EditorEX.SDKImplementation.Patches
                                 .Select(a => new InputActionBinding
                                 {
                                     inputAction = a.GetInputAction(),
+                                    strictCombination = a.Strict,
                                     keysCombination = a.Keys.ToList(),
                                 }),
                         ]

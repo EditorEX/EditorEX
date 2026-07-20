@@ -22,6 +22,7 @@ namespace EditorEX.Essentials.Features.HideUI
                     .FindObjectsOfTypeAll<BeatmapEditorScreenSystem>()
                     .FirstOrDefault();
             }
+
             _screenSystem?.gameObject.SetActive((!_screenSystem?.gameObject?.activeSelf) ?? true);
         }
     }

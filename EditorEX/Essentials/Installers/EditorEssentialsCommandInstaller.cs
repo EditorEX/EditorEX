@@ -9,7 +9,8 @@ namespace EditorEX.Essentials.Installers
         public override void InstallBindings()
         {
             Container.DeclareSignal<HideUIFeatureToggledSignal>().OptionalSubscriber();
-            Container.DeclareSignal<ViewModeSwitchedSignal>().OptionalSubscriber();
+            Container.DeclareSignal<ShiftNextViewingModeSignal>().OptionalSubscriber();
+            Container.DeclareSignal<ShiftPreviousViewingModeSignal>().OptionalSubscriber();
         }
     }
 }

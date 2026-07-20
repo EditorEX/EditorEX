@@ -29,7 +29,18 @@ namespace EditorEX.Essentials.Installers
             CustomInputBuilder
                 .StartGroup("EditorEX", "Essentials")
                 .AddKeybinding("Toggle Editor GUI", [InputKey.l], ref InputRef.ToggleEditorGUI)
-                .AddViewModeBindings()
+                .AddKeybinding(
+                    "Shift Next Viewing Mode",
+                    [InputKey.ctrl, InputKey.rightArrow],
+                    ref InputRef.ShiftNextViewingMode,
+                    true
+                )
+                .AddKeybinding(
+                    "Shift Previous Viewing Mode",
+                    [InputKey.ctrl, InputKey.leftArrow],
+                    ref InputRef.ShiftPreviousViewingMode,
+                    true
+                )
                 .Build(ref InputRef.EssentialsGroup, Container);
         }
     }

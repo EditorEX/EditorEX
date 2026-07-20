@@ -5,41 +5,41 @@ using Zenject;
 
 namespace EditorEX.Essentials.Features.ViewMode
 {
-    public class ViewModeInputBinder
+    public class ViewModeInputBinder : IDisposable
     {
         private readonly SingleDisposable _singleDisposable = new();
 
-        private ViewModeInputBinder(
+        public ViewModeInputBinder(
             SignalBus signalBus,
             InputActionsStreamContainer inputActionsStreamContainer
         )
         {
             var streamForBindingGroup = inputActionsStreamContainer.GetStreamForBindingGroup(
-                InputRef.EssentialsGroup.GetKeyBindingGroupType()
+                InputRef.EssentialsGroup!.GetKeyBindingGroupType()
             );
 
             var compositeDisposable = new CompositeDisposable();
             _singleDisposable.disposable = compositeDisposable;
 
-            for (int i = 0; i < InputRef.ViewModeBindings.Count; i++)
-            {
-                int index = i;
-                streamForBindingGroup
-                    .Subscribe(
-                        InputRef.ViewModeBindings[i].GetInputAction(),
-                        InputEventType.KeyDown,
-                        () =>
-                            signalBus.Fire(
-                                new ViewModeSwitchedSignal(ViewModeRepository.GetViewModes()[index])
-                            )
-                    )
-                    .AddTo(compositeDisposable);
-            }
+            streamForBindingGroup
+                .Subscribe(
+                    InputRef.ShiftNextViewingMode!.GetInputAction(),
+                    InputEventType.KeyDown,
+                    () => signalBus.Fire(new ShiftNextViewingModeSignal())
+                )
+                .AddTo(compositeDisposable);
+            streamForBindingGroup
+                .Subscribe(
+                    InputRef.ShiftPreviousViewingMode!.GetInputAction(),
+                    InputEventType.KeyDown,
+                    () => signalBus.Fire(new ShiftPreviousViewingModeSignal())
+                )
+                .AddTo(compositeDisposable);
         }
 
         public void Dispose()
         {
-            _singleDisposable?.Dispose();
+            _singleDisposable.Dispose();
         }
     }
 }

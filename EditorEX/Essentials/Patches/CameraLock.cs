@@ -74,6 +74,9 @@ namespace EditorEX.Essentials.Patches
             {
                 movementPreviousPosition = __instance._uiCameraMovementTransform.localPosition;
                 __instance._uiCameraMovementTransform.localPosition = toSetPosition.Value;
+                Plugin.Logger.Info(
+                    $"CameraControllerUpdate: {_activeViewMode.Mode.LockCamera} {toSetPosition.Value}"
+                );
                 toSetPosition = null;
             }
             if (toSetCameraRotation.HasValue)
@@ -157,22 +160,6 @@ namespace EditorEX.Essentials.Patches
             }
 
             return false;
-        }
-
-        [AffinityPatch(
-            typeof(BeatmapEditor360CameraController),
-            nameof(BeatmapEditor360CameraController.Update)
-        )]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var result = new CodeMatcher(instructions)
-                .MatchForward(true, new CodeMatch(OpCodes.Callvirt, _oldPosition))
-                .Set(OpCodes.Callvirt, _newLocalPosition)
-                .MatchForward(true, new CodeMatch(OpCodes.Callvirt, _oldSetPosition))
-                .Set(OpCodes.Callvirt, _newSetLocalPosition)
-                .InstructionEnumeration();
-            return result;
         }
     }
 }

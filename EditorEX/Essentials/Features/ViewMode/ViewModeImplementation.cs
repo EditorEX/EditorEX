@@ -1,4 +1,4 @@
-using System.Linq;
+using System;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Types;
@@ -12,7 +12,7 @@ namespace EditorEX.Essentials.Features.ViewMode
         private BeatmapObjectsView _beatmapObjectsView;
         private IReadonlyBeatmapState _beatmapState;
 
-        private ViewModeImplementation(
+        public ViewModeImplementation(
             SignalBus signalBus,
             ActiveViewMode activeViewMode,
             BeatmapObjectsView beatmapObjectsView,
@@ -20,17 +20,23 @@ namespace EditorEX.Essentials.Features.ViewMode
         )
         {
             _activeViewMode = activeViewMode;
-            _activeViewMode.Mode = ViewModeRepository
-                .GetViewModes()
-                .FirstOrDefault(x => x.ID == "normal");
+            _activeViewMode.Mode =
+                ViewModeRepository.ViewMode("normal")
+                ?? throw new Exception("Normal view mode not found");
             _activeViewMode.LastMode = _activeViewMode.Mode;
             _beatmapObjectsView = beatmapObjectsView;
             _beatmapState = beatmapState;
-            signalBus.Subscribe<ViewModeSwitchedSignal>(x => SetMode(x.ViewMode));
+            signalBus.Subscribe<ShiftNextViewingModeSignal>(_ =>
+                SetMode(ViewModeRepository.GetNextViewMode(_activeViewMode.Mode))
+            );
+            signalBus.Subscribe<ShiftPreviousViewingModeSignal>(_ =>
+                SetMode(ViewModeRepository.GetPreviousViewMode(_activeViewMode.Mode))
+            );
         }
 
         private void SetMode(ViewMode mode)
         {
+            Plugin.Logger.Info($"SetMode: {mode.DisplayName}");
             if (
                 _activeViewMode.Mode == mode
                 || _beatmapState.editingMode != BeatmapEditingMode.Objects
@@ -38,7 +44,7 @@ namespace EditorEX.Essentials.Features.ViewMode
                 return;
             _activeViewMode.LastMode = _activeViewMode.Mode;
             _activeViewMode.Mode = mode;
-            _activeViewMode?.ModeChanged();
+            _activeViewMode.ModeChanged?.Invoke();
             _beatmapObjectsView._notesBeatmapObjectsView.ClearObjects();
             _beatmapObjectsView._notesBeatmapObjectsView.ClearPool();
             _beatmapObjectsView.gameObject.SetActive(false);

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using BeatmapEditor3D.InputSystem;
 using BGLib.DotnetExtension.Disposables;
 using Zenject;
@@ -15,7 +16,7 @@ namespace EditorEX.Essentials.Features.HideUI
         )
         {
             var streamForBindingGroup = inputActionsStreamContainer.GetStreamForBindingGroup(
-                InputRef.EssentialsGroup.GetKeyBindingGroupType()
+                InputRef.EssentialsGroup!.GetKeyBindingGroupType()
             );
 
             var compositeDisposable = new CompositeDisposable();
@@ -23,7 +24,7 @@ namespace EditorEX.Essentials.Features.HideUI
 
             streamForBindingGroup
                 .Subscribe(
-                    InputRef.ToggleEditorGUI.GetInputAction(),
+                    InputRef.ToggleEditorGUI!.GetInputAction(),
                     InputEventType.KeyDown,
                     signalBus.Fire<HideUIFeatureToggledSignal>
                 )
@@ -32,7 +33,7 @@ namespace EditorEX.Essentials.Features.HideUI
 
         public void Dispose()
         {
-            _singleDisposable?.Dispose();
+            _singleDisposable.Dispose();
         }
     }
 }

@@ -7,6 +7,7 @@ namespace EditorEX.Essentials
     {
         public static CustomInputGroup? EssentialsGroup;
         public static CustomInputAction? ToggleEditorGUI;
-        public static List<CustomInputAction> ViewModeBindings = new();
+        public static CustomInputAction? ShiftNextViewingMode;
+        public static CustomInputAction? ShiftPreviousViewingMode;
     }
 }
