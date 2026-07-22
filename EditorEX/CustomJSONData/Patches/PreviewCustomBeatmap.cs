@@ -20,7 +20,7 @@ namespace EditorEX.CustomJSONData.Patches
         );
         private readonly MethodInfo _createCustomBeatmapData = AccessTools.Method(
             typeof(PreviewCustomBeatmap),
-            "CreateBeatmapData"
+            nameof(CreateBeatmapData)
         );
 
         private readonly MethodInfo _bindLivePreviewDataModel = AccessTools.Method(
@@ -31,7 +31,7 @@ namespace EditorEX.CustomJSONData.Patches
         );
         private readonly MethodInfo _bindCustomLivePreviewModel = AccessTools.Method(
             typeof(PreviewCustomBeatmap),
-            "BindCustomLivePreviewModel"
+            nameof(BindCustomLivePreviewModel)
         );
 
         [AffinityPatch(
@@ -46,7 +46,6 @@ namespace EditorEX.CustomJSONData.Patches
                     false,
                     new CodeMatch[] { new(new OpCode?(OpCodes.Newobj), _beatmapDataCtor) }
                 )
-                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
                 .Set(OpCodes.Call, _createCustomBeatmapData)
                 .MatchForward(
                     false,
@@ -62,10 +61,11 @@ namespace EditorEX.CustomJSONData.Patches
             return result;
         }
 
-        private static CustomBeatmapData CreateBeatmapData(int numberOfLines, DiContainer container)
+        // Called while Bind<BeatmapData>().FromInstance(...) is still open — no Resolve/FlushBindings.
+        private static CustomBeatmapData CreateBeatmapData(int numberOfLines)
         {
             var beatmapData = new CustomBeatmapData(numberOfLines, null, null, null, null);
-            container.Resolve<ICustomDataRepository>().SetBeatmapData(beatmapData);
+            LivePreviewBeatmapDataBuffer.Pending = beatmapData;
             return beatmapData;
         }
 

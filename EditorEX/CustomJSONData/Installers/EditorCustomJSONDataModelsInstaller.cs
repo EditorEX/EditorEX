@@ -14,7 +14,7 @@ namespace EditorEX.CustomJSONData.Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<CustomDataRepository>().AsSingle();
+            Container.Bind<PendingLivePreviewBeatmapDataRegistrar>().AsSingle().NonLazy();
 
             Container.Bind<ICustomSaveDataLoader>().To<V2CustomSaveDataLoader>().AsSingle();
             Container.Bind<ICustomSaveDataLoader>().To<V4CustomSaveDataLoader>().AsSingle();

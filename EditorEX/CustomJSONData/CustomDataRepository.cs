@@ -134,6 +134,15 @@ namespace EditorEX.CustomJSONData
 
         public CustomBeatmapData GetBeatmapData()
         {
+            if (_repoData.customLivePreviewBeatmapData == null)
+            {
+                var pending = LivePreviewBeatmapDataBuffer.Consume();
+                if (pending != null)
+                {
+                    _repoData.customLivePreviewBeatmapData = pending;
+                }
+            }
+
             return _repoData.customLivePreviewBeatmapData;
         }
 
