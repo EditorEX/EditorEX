@@ -15,13 +15,13 @@ namespace EditorEX.CustomJSONData.Patches.Loading
     {
         private readonly SiraLog _siraLog;
         private List<ICustomSaveDataLoader> _loaders;
-        private LevelCustomDataModel _levelCustomDataModel;
+        private ILevelCustomDataModel _levelCustomDataModel;
         private SignalBus _signalBus;
 
         private BeatmapLevelDataModelLoaderPatch(
             SiraLog siraLog,
             List<ICustomSaveDataLoader> saveDataLoaders,
-            LevelCustomDataModel levelCustomDataModel,
+            ILevelCustomDataModel levelCustomDataModel,
             SignalBus signalBus
         )
         {

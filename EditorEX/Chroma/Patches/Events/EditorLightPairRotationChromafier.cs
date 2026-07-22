@@ -12,14 +12,17 @@ namespace EditorEX.Chroma.Patches.Events
     internal class EditorLightPairRotationChromafier : IAffinity
     {
         private readonly EditorDeserializedData _editorDeserializedData;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private BasicBeatmapEventData? _lastData;
 
         private EditorLightPairRotationChromafier(
-            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData
+            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData,
+            ICustomDataRepository customDataRepository
         )
         {
             _editorDeserializedData = deserializedData;
+            _customDataRepository = customDataRepository;
         }
 
         // Laser rotation
@@ -70,7 +73,7 @@ namespace EditorEX.Chroma.Patches.Events
             if (
                 _lastData == null
                 || !_editorDeserializedData.Resolve(
-                    CustomDataRepository.GetBasicEventConversion(_lastData),
+                    _customDataRepository.GetBasicEventConversion(_lastData),
                     out EditorChromaEventData? chromaData
                 )
             )

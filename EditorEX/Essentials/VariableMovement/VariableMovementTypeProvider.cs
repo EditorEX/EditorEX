@@ -5,7 +5,7 @@ using EditorEX.MapData.Contexts;
 using SiraUtil.Logging;
 using Zenject;
 
-namespace EditorEX.Essentials.Movement
+namespace EditorEX.Essentials.VariableMovement
 {
     public class VariableMovementTypeProvider : ITypeProvider
     {

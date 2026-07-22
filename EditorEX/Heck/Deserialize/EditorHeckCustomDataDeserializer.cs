@@ -21,13 +21,15 @@ namespace EditorEX.Heck.Deserialize
         private readonly Dictionary<string, Track> _tracks;
         private readonly Dictionary<string, List<object>> _pointDefinitions;
         private bool _v2;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorHeckCustomDataDeserializer(
             SiraLog siraLog,
             BeatmapObjectsDataModel beatmapObjectsDataModel,
             Dictionary<string, Track> beatmapTracks,
             Dictionary<string, List<object>> pointDefinitions,
-            bool v2
+            bool v2,
+            ICustomDataRepository customDataRepository
         )
         {
             _siraLog = siraLog;
@@ -35,6 +37,7 @@ namespace EditorEX.Heck.Deserialize
             _tracks = beatmapTracks;
             _pointDefinitions = pointDefinitions;
             _v2 = v2;
+            _customDataRepository = customDataRepository;
         }
 
         public Dictionary<BaseEditorData?, IObjectCustomData> DeserializeObjects()
@@ -45,7 +48,7 @@ namespace EditorEX.Heck.Deserialize
             {
                 if (dictionary.ContainsKey(baseEditorData))
                     continue;
-                CustomData customData = CustomDataRepository.GetCustomData(baseEditorData);
+                CustomData customData = _customDataRepository.GetCustomData(baseEditorData);
                 if (customData == null)
                 {
                     //Plugin.Log.Info(baseEditorData.GetType().Name);
@@ -66,7 +69,7 @@ namespace EditorEX.Heck.Deserialize
             Dictionary<CustomEventEditorData, ICustomEventCustomData> dictionary =
                 new Dictionary<CustomEventEditorData, ICustomEventCustomData>();
             foreach (
-                CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents()
+                CustomEventEditorData customEventData in _customDataRepository.GetCustomEvents()
             )
             {
                 bool v2 = customEventData.version2_6_0AndEarlier;

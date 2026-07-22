@@ -15,6 +15,7 @@ using EditorEX.NoodleExtensions.Installers;
 using EditorEX.SDK.Installers;
 using EditorEX.UI.Installers;
 using EditorEX.Vivify.Deserializer;
+using EditorEX.Vivify.Installers;
 using HarmonyLib;
 using IPA;
 using IPA.Config.Stores;

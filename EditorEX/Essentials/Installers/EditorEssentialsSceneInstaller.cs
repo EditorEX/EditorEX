@@ -26,7 +26,7 @@ namespace EditorEX.Essentials.Installers
     public class EditorEssentialsSceneInstaller : Installer
     {
         [Inject]
-        private PopulateBeatmap populateBeatmap = null!;
+        private IEditorBeatmapModels populateBeatmap = null!;
 
         public override void InstallBindings()
         {
@@ -87,7 +87,11 @@ namespace EditorEX.Essentials.Installers
                 .WithId("Movement")
                 .FromInstance((["preview", "preview-lock-cam"], typeof(EditorArcGameMovement)));
 
-            Container.Bind<MovementTypeProvider>().AsSingle();
+            Container
+                .Bind<ITypeProvider>()
+                .WithId("Movement")
+                .To<MovementTypeProvider>()
+                .AsSingle();
 
             // VARIABLE MOVEMENT
 
@@ -100,7 +104,11 @@ namespace EditorEX.Essentials.Installers
                 .WithId("VariableMovement")
                 .FromInstance(("Noodle", typeof(EditorNoodleMovementDataProvider)));
 
-            Container.Bind<VariableMovementTypeProvider>().AsSingle();
+            Container
+                .Bind<ITypeProvider>()
+                .WithId("VariableMovement")
+                .To<VariableMovementTypeProvider>()
+                .AsSingle();
 
             Container
                 .BindMemoryPool<
@@ -111,7 +119,12 @@ namespace EditorEX.Essentials.Installers
 
             // VISUALS
 
-            Container.Bind<VisualsTypeProvider>().AsSingle().NonLazy();
+            Container
+                .Bind<ITypeProvider>()
+                .WithId("Visuals")
+                .To<VisualsTypeProvider>()
+                .AsSingle()
+                .NonLazy();
             Container
                 .Bind<VisualAssetProvider>()
                 .FromNewComponentOnNewGameObject()

@@ -7,7 +7,7 @@ using Vivify.HarmonyPatches;
 using Vivify.Managers;
 using Zenject;
 
-namespace EditorEX.Chroma.Installers
+namespace EditorEX.Vivify.Installers
 {
     public class EditorVivifySceneInstaller : Installer
     {

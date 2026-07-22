@@ -46,10 +46,11 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
         private EditorMaterialsManager(
             EnvironmentMaterialsManager environmentMaterialsManager,
             Dictionary<string, Track> beatmapTracks,
-            LazyInject<MaterialColorAnimator> materialColorAnimator
+            LazyInject<MaterialColorAnimator> materialColorAnimator,
+            ICustomDataRepository customDataRepository
         )
         {
-            var beatmapData = CustomDataRepository.GetBeatmapData();
+            var beatmapData = customDataRepository.GetBeatmapData();
             _v2 = MapContext.Version.Major == 2;
             _environmentMaterialsManager = environmentMaterialsManager;
             _beatmapTracks = beatmapTracks;

@@ -30,6 +30,7 @@ namespace EditorEX.Vivify.Events
         private readonly CoroutineDummy _coroutineDummy;
         private readonly EditorDeserializedData _deserializedData;
         private readonly AudioDataModel _audioDataModel;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private readonly List<ResettableProperty> _resettableProperties = [];
 
@@ -39,7 +40,8 @@ namespace EditorEX.Vivify.Events
             IAudioTimeSource audioTimeSource,
             IBpmController bpmController,
             CoroutineDummy coroutineDummy,
-            PopulateBeatmap populateBeatmap
+            IEditorBeatmapModels populateBeatmap,
+            ICustomDataRepository customDataRepository
         )
         {
             _assetBundleManager = assetBundleManager;
@@ -47,7 +49,8 @@ namespace EditorEX.Vivify.Events
             _audioTimeSource = audioTimeSource;
             _bpmController = bpmController;
             _coroutineDummy = coroutineDummy;
-            _audioDataModel = populateBeatmap._audioDataModel;
+            _audioDataModel = populateBeatmap.AudioDataModel;
+            _customDataRepository = customDataRepository;
         }
 
         public void Initialize()
@@ -155,7 +158,7 @@ namespace EditorEX.Vivify.Events
         {
             if (
                 !_deserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out SetGlobalPropertyData? data
                 )
             )

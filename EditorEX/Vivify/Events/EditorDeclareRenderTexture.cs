@@ -18,23 +18,26 @@ namespace EditorEX.Vivify.Events
         private readonly SiraLog _log;
         private readonly EditorDeserializedData _deserializedData;
         private readonly CameraEffectApplier _cameraEffectApplier;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorDeclareRenderTexture(
             SiraLog log,
             [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
-            CameraEffectApplier cameraEffectApplier
+            CameraEffectApplier cameraEffectApplier,
+            ICustomDataRepository customDataRepository
         )
         {
             _log = log;
             _deserializedData = deserializedData;
             _cameraEffectApplier = cameraEffectApplier;
+            _customDataRepository = customDataRepository;
         }
 
         public void Callback(CustomEventData customEventData)
         {
             if (
                 !_deserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out CreateScreenTextureData? data
                 )
             )

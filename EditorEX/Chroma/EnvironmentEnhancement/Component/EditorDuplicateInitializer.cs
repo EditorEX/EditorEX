@@ -4,7 +4,7 @@ using System.Linq;
 using Chroma.EnvironmentEnhancement;
 using Chroma.EnvironmentEnhancement.Component;
 using Chroma.HarmonyPatches.EnvironmentComponent;
-using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
+using EditorEX.Chroma.Patches.Colorizer.Initialize;
 using HarmonyLib;
 using Heck.Animation.Transform;
 using IPA.Utilities;

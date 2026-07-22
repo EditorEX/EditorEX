@@ -20,15 +20,18 @@ namespace EditorEX.Chroma.Events
         private readonly EditorDeserializedData _editorDeserializedData;
 
         private readonly BloomFogEnvironmentParams _transitionFogParams;
+        private readonly ICustomDataRepository _customDataRepository;
         private Track? _track;
 
         private EditorFogAnimatorV2(
             BloomFogSO bloomFog,
-            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData
+            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData,
+            ICustomDataRepository customDataRepository
         )
         {
             _bloomFog = bloomFog;
             _editorDeserializedData = deserializedData;
+            _customDataRepository = customDataRepository;
 
             _transitionFogParams = ScriptableObject.CreateInstance<BloomFogEnvironmentParams>();
             BloomFogEnvironmentParams defaultParams = bloomFog.defaultForParams;
@@ -43,7 +46,7 @@ namespace EditorEX.Chroma.Events
         {
             if (
                 _editorDeserializedData?.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out ChromaAssignFogEventData? chromaData
                 )
                 ?? false

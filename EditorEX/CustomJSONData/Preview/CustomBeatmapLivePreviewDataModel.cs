@@ -14,6 +14,15 @@ namespace EditorEX.CustomJSONData.Preview
             CustomEventData
         > _livePreviewCustomEvents = new();
 
+        private readonly ICustomDataRepository _customDataRepository;
+
+        public CustomBeatmapLivePreviewDataModel(ICustomDataRepository customDataRepository)
+        {
+            _customDataRepository = customDataRepository;
+        }
+
+        public ICustomDataRepository CustomDataRepository => _customDataRepository;
+
         public void AddLivePreviewCustomEvent(CustomEventEditorData evt)
         {
             CustomEventData customEventData = new CustomEventData(
@@ -22,7 +31,7 @@ namespace EditorEX.CustomJSONData.Preview
                 evt.customData,
                 null
             );
-            CustomDataRepository.AddCustomEventConversion(evt, customEventData);
+            _customDataRepository.AddCustomEventConversion(evt, customEventData);
             _livePreviewCustomEvents[evt.id] = customEventData;
             (_livePreviewBeatmapData as CustomBeatmapData).InsertCustomEventData(customEventData);
         }
@@ -30,7 +39,7 @@ namespace EditorEX.CustomJSONData.Preview
         public void RemoveLivePreviewCustomEvent(CustomEventEditorData evt)
         {
             var beatmapData = _livePreviewBeatmapData as CustomBeatmapData;
-            CustomDataRepository.RemoveCustomEventConversion(evt);
+            _customDataRepository.RemoveCustomEventConversion(evt);
             beatmapData.RemoveBeatmapCustomEventData(_livePreviewCustomEvents[evt.id]);
             _livePreviewEvents.Remove(evt.id);
         }

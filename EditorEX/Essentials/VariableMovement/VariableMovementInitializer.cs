@@ -12,12 +12,12 @@ namespace EditorEX.Essentials.VariableMovement
         [Inject]
         public void Construct(
             IVariableMovementDataProvider originalVariableMovementDataProvider,
-            PopulateBeatmap populateBeatmap,
+            IEditorBeatmapModels populateBeatmap,
             EditorBasicBeatmapObjectSpawnMovementData editorBasicBeatmapObjectSpawnMovementData
         )
         {
             var num = populateBeatmap
-                ._beatmapObjectsDataModel.noteJumpSpeedEvents.Cast<NoteJumpSpeedEditorData>()
+                .BeatmapObjectsDataModel.noteJumpSpeedEvents.Cast<NoteJumpSpeedEditorData>()
                 .Aggregate(
                     0f,
                     (current, noteJumpSpeedEventData) =>
@@ -28,7 +28,7 @@ namespace EditorEX.Essentials.VariableMovement
                 editorBasicBeatmapObjectSpawnMovementData._maxHalfJumpDistance,
                 editorBasicBeatmapObjectSpawnMovementData.noteJumpMovementSpeed,
                 num,
-                populateBeatmap._beatmapLevelDataModel.beatsPerMinute,
+                populateBeatmap.BeatmapLevelDataModel.beatsPerMinute,
                 editorBasicBeatmapObjectSpawnMovementData._noteJumpValueType,
                 editorBasicBeatmapObjectSpawnMovementData._noteJumpValue,
                 editorBasicBeatmapObjectSpawnMovementData.centerPos,

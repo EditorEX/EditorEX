@@ -34,6 +34,7 @@ namespace EditorEX.Vivify.Events
         private readonly CameraEffectApplier _cameraEffectApplier;
         private readonly CoroutineDummy _coroutineDummy;
         private readonly AudioDataModel _audioDataModel;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorApplyPostProcessing(
             SiraLog log,
@@ -44,7 +45,8 @@ namespace EditorEX.Vivify.Events
             EditorSetMaterialProperty setMaterialProperty,
             CameraEffectApplier cameraEffectApplier,
             CoroutineDummy coroutineDummy,
-            PopulateBeatmap populateBeatmap
+            IEditorBeatmapModels populateBeatmap,
+            ICustomDataRepository customDataRepository
         )
         {
             _log = log;
@@ -55,14 +57,15 @@ namespace EditorEX.Vivify.Events
             _setMaterialProperty = setMaterialProperty;
             _cameraEffectApplier = cameraEffectApplier;
             _coroutineDummy = coroutineDummy;
-            _audioDataModel = populateBeatmap._audioDataModel;
+            _audioDataModel = populateBeatmap.AudioDataModel;
+            _customDataRepository = customDataRepository;
         }
 
         public void Callback(CustomEventData customEventData)
         {
             if (
                 !_deserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out ApplyPostProcessingData? data
                 )
             )

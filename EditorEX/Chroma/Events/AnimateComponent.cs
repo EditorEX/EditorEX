@@ -27,25 +27,28 @@ namespace EditorEX.Chroma.Events
         private readonly CoroutineDummy _coroutineDummy;
         private readonly EditorDeserializedData _editorDeserializedData;
         private readonly Dictionary<string, Dictionary<Track, Coroutine>> _allCoroutines = new();
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorAnimateComponent(
             IBpmController bpmController,
             IAudioTimeSource audioTimeSource,
             CoroutineDummy coroutineDummy,
-            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData
+            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData,
+            ICustomDataRepository customDataRepository
         )
         {
             _bpmController = bpmController;
             _audioTimeSource = audioTimeSource;
             _coroutineDummy = coroutineDummy;
             _editorDeserializedData = deserializedData;
+            _customDataRepository = customDataRepository;
         }
 
         public void Callback(CustomEventData customEventData)
         {
             if (
                 !_editorDeserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out ChromaAnimateComponentData? chromaData
                 )
             )

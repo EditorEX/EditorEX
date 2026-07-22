@@ -1,34 +1,37 @@
-﻿using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.Movement.Data;
 using UnityEngine;
 using Zenject;
 
-public class LevelUtils
+namespace EditorEX.Analyzer.Swings
 {
-    private EditorBasicBeatmapObjectSpawnMovementData _spawnMovementData = null!;
-
-    [Inject]
-    private void Construct(EditorBasicBeatmapObjectSpawnMovementData spawnMovementData)
+    public class LevelUtils
     {
-        _spawnMovementData = spawnMovementData;
-    }
+        private EditorBasicBeatmapObjectSpawnMovementData _spawnMovementData = null!;
 
-    public static Vector2 GetCellSize()
-    {
-        return Vector2.one;
-    }
+        [Inject]
+        private void Construct(EditorBasicBeatmapObjectSpawnMovementData spawnMovementData)
+        {
+            _spawnMovementData = spawnMovementData;
+        }
 
-    public Vector2 GetWorldXYFromBeatmapCoords(int x, int y)
-    {
-        var _gravity = _spawnMovementData.NoteJumpGravityForLineLayer(
-            (NoteLineLayer)y,
-            NoteLineLayer.Base
-        );
-        var _startVerticalVelocity = _gravity * _spawnMovementData._jumpDuration * 0.5f;
-        var yPos = _startVerticalVelocity * 0.75f - _gravity * 0.75f * 0.75f * 0.5f;
+        public static Vector2 GetCellSize()
+        {
+            return Vector2.one;
+        }
 
-        float num = (float)-(float)(4 - 1) * 0.5f;
-        num = (num + x) * 0.8f;
+        public Vector2 GetWorldXYFromBeatmapCoords(int x, int y)
+        {
+            var _gravity = _spawnMovementData.NoteJumpGravityForLineLayer(
+                (NoteLineLayer)y,
+                NoteLineLayer.Base
+            );
+            var _startVerticalVelocity = _gravity * _spawnMovementData._jumpDuration * 0.5f;
+            var yPos = _startVerticalVelocity * 0.75f - _gravity * 0.75f * 0.75f * 0.5f;
 
-        return new Vector2(num, yPos);
+            float num = (float)-(float)(4 - 1) * 0.5f;
+            num = (num + x) * 0.8f;
+
+            return new Vector2(num, yPos);
+        }
     }
 }

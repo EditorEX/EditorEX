@@ -24,12 +24,15 @@ namespace EditorEX.Chroma.Patches.Events
         private readonly CodeInstruction _getPrecisionStep;
         private readonly CodeInstruction _getPrecisionSpeed;
         private readonly EditorDeserializedData _editorDeserializedData;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorRingStepChromafier(
-            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData
+            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData,
+            ICustomDataRepository customDataRepository
         )
         {
             _editorDeserializedData = deserializedData;
+            _customDataRepository = customDataRepository;
             _getPrecisionStep = InstanceTranspilers.EmitInstanceDelegate<
                 Func<float, BasicBeatmapEventData, float>
             >(GetPrecisionStep);
@@ -72,7 +75,7 @@ namespace EditorEX.Chroma.Patches.Events
         private float GetPrecisionStep(float @default, BasicBeatmapEventData beatmapEventData)
         {
             _editorDeserializedData.Resolve(
-                CustomDataRepository.GetBasicEventConversion(beatmapEventData),
+                _customDataRepository.GetBasicEventConversion(beatmapEventData),
                 out EditorChromaEventData? chromaData
             );
             return chromaData is { Step: not null } ? chromaData.Step.Value : @default;
@@ -81,7 +84,7 @@ namespace EditorEX.Chroma.Patches.Events
         private float GetPrecisionSpeed(float @default, BasicBeatmapEventData beatmapEventData)
         {
             _editorDeserializedData.Resolve(
-                CustomDataRepository.GetBasicEventConversion(beatmapEventData),
+                _customDataRepository.GetBasicEventConversion(beatmapEventData),
                 out EditorChromaEventData? chromaData
             );
             return chromaData is { Speed: not null } ? chromaData.Speed.Value : @default;

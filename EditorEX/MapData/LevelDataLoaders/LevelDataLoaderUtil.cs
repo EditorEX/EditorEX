@@ -12,7 +12,8 @@ namespace EditorEX.MapData.LevelDataLoaders
         public static IEnumerable<U> GetEditorData<T, U>(
             IEnumerable<T> list,
             Func<T, BeatmapEditorRotationProcessor_v2, U> convert,
-            BeatmapEditorRotationProcessor_v2 rotationProcessor
+            BeatmapEditorRotationProcessor_v2 rotationProcessor,
+            ICustomDataRepository customDataRepository
         )
             where U : BaseEditorData
             where T : ICustomData
@@ -21,7 +22,7 @@ namespace EditorEX.MapData.LevelDataLoaders
             {
                 var customData = obj.customData;
                 var editorData = convert(obj, rotationProcessor);
-                CustomDataRepository.AddCustomData(editorData, customData);
+                customDataRepository.AddCustomData(editorData, customData);
 
                 yield return editorData;
             }
@@ -30,7 +31,8 @@ namespace EditorEX.MapData.LevelDataLoaders
         public static IEnumerable<U> GetEditorData<T, U>(
             IEnumerable<T> list,
             Func<T, BeatmapEditorRotationProcessor_v3, U> convert,
-            BeatmapEditorRotationProcessor_v3 rotationProcessor
+            BeatmapEditorRotationProcessor_v3 rotationProcessor,
+            ICustomDataRepository customDataRepository
         )
             where U : BaseEditorData
             where T : ICustomData
@@ -39,13 +41,17 @@ namespace EditorEX.MapData.LevelDataLoaders
             {
                 var customData = obj.customData;
                 var editorData = convert(obj, rotationProcessor);
-                CustomDataRepository.AddCustomData(editorData, customData);
+                customDataRepository.AddCustomData(editorData, customData);
 
                 yield return editorData;
             }
         }
 
-        public static IEnumerable<U> GetEditorData<T, U>(IEnumerable<T> list, Func<T, U> convert)
+        public static IEnumerable<U> GetEditorData<T, U>(
+            IEnumerable<T> list,
+            Func<T, U> convert,
+            ICustomDataRepository customDataRepository
+        )
             where U : BaseEditorData
             where T : ICustomData
         {
@@ -53,7 +59,7 @@ namespace EditorEX.MapData.LevelDataLoaders
             {
                 var customData = obj.customData;
                 var editorData = convert(obj);
-                CustomDataRepository.AddCustomData(editorData, customData);
+                customDataRepository.AddCustomData(editorData, customData);
 
                 yield return editorData;
             }

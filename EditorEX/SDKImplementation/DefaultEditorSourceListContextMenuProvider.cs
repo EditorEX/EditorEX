@@ -12,18 +12,18 @@ namespace EditorEX.SDKImplementation
         : ContextMenuProvider<SourceListContextMenuObject>
     {
         private SourcesConfig _sourcesConfig = null!;
-        private BeatmapsListViewControllerPatches _beatmapsListViewControllerPatches = null!;
+        private IBeatmapsListRefresh _beatmapsListRefresh = null!;
         private StringInputDialogModal _stringInputDialogModal = null!;
 
         [Inject]
         private void Construct(
             SourcesConfig sourcesConfig,
-            BeatmapsListViewControllerPatches beatmapsListViewControllerPatches,
+            IBeatmapsListRefresh beatmapsListRefresh,
             StringInputDialogModal stringInputDialogModal
         )
         {
             _sourcesConfig = sourcesConfig;
-            _beatmapsListViewControllerPatches = beatmapsListViewControllerPatches;
+            _beatmapsListRefresh = beatmapsListRefresh;
             _stringInputDialogModal = stringInputDialogModal;
         }
 
@@ -46,7 +46,7 @@ namespace EditorEX.SDKImplementation
                 null
             );
 
-            _beatmapsListViewControllerPatches.ReloadCells();
+            _beatmapsListRefresh.ReloadCells();
         }
 
         private void Delete(SourceListContextMenuObject contextObject)
@@ -58,7 +58,7 @@ namespace EditorEX.SDKImplementation
             }
             _sourcesConfig.Sources.Remove(contextObject.SourceName);
 
-            _beatmapsListViewControllerPatches.ReloadCells();
+            _beatmapsListRefresh.ReloadCells();
         }
     }
 }

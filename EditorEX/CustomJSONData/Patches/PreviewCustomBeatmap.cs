@@ -46,6 +46,7 @@ namespace EditorEX.CustomJSONData.Patches
                     false,
                     new CodeMatch[] { new(new OpCode?(OpCodes.Newobj), _beatmapDataCtor) }
                 )
+                .InsertAndAdvance(new CodeInstruction(OpCodes.Ldarg_0))
                 .Set(OpCodes.Call, _createCustomBeatmapData)
                 .MatchForward(
                     false,
@@ -61,10 +62,10 @@ namespace EditorEX.CustomJSONData.Patches
             return result;
         }
 
-        private static CustomBeatmapData CreateBeatmapData(int numberOfLines)
+        private static CustomBeatmapData CreateBeatmapData(int numberOfLines, DiContainer container)
         {
             var beatmapData = new CustomBeatmapData(numberOfLines, null, null, null, null);
-            CustomDataRepository.SetBeatmapData(beatmapData);
+            container.Resolve<ICustomDataRepository>().SetBeatmapData(beatmapData);
             return beatmapData;
         }
 

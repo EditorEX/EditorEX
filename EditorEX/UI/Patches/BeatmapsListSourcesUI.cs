@@ -16,7 +16,11 @@ using UnityEngine.UI;
 
 namespace EditorEX.UI.Patches
 {
-    internal class BeatmapsListViewControllerPatches : IAffinity
+    /// <summary>
+    /// Builds the segmented source-tab control and the "New Map Source" add-source form on the
+    /// beatmaps list, and reloads the list's cells/tabs when the underlying sources change.
+    /// </summary>
+    internal class BeatmapsListSourcesUI : IAffinity, IBeatmapsListRefresh
     {
         private readonly IReactiveContainer _reactiveContainer;
         private readonly SourcesConfig _sourcesConfig;
@@ -26,7 +30,7 @@ namespace EditorEX.UI.Patches
         private EditorSegmentedControl? _segmentedControl;
         private EditorStringInput? _filterInput;
 
-        private BeatmapsListViewControllerPatches(
+        private BeatmapsListSourcesUI(
             IReactiveContainer reactiveContainer,
             SourcesConfig sourcesConfig,
             BeatmapsCollectionDataModel beatmapsCollectionDataModel
@@ -36,6 +40,8 @@ namespace EditorEX.UI.Patches
             _sourcesConfig = sourcesConfig;
             _beatmapsCollectionDataModel = beatmapsCollectionDataModel;
         }
+
+        public string FilterText => _filterInput?.InputField.text ?? string.Empty;
 
         [AffinityPostfix]
         [AffinityPatch(
@@ -177,53 +183,6 @@ namespace EditorEX.UI.Patches
             _segmentedControl!.Values = SetupSources().ToArray();
 
             _beatmapsCollectionDataModel.RefreshCollection();
-        }
-
-        private void ApplyFilter(BeatmapsListViewController instance)
-        {
-            var filteredMaps = BeatmapFilterUtil.Filter(
-                instance._beatmapsCollectionDataModel._beatmapInfos,
-                _filterInput!.InputField.text
-            );
-            instance._beatmapsListTableView.SetData(filteredMaps);
-        }
-
-        [AffinityPatch(
-            typeof(BeatmapsListViewController),
-            nameof(BeatmapsListViewController.DidActivate)
-        )]
-        [AffinityPostfix]
-        private void Filter(BeatmapsListViewController __instance, bool firstActivation)
-        {
-            if (!firstActivation)
-            {
-                ApplyFilter(__instance);
-            }
-        }
-
-        [AffinityPatch(
-            typeof(BeatmapsListViewController),
-            nameof(BeatmapsListViewController.HandleBeatmapsCollectionDataModelUpdated)
-        )]
-        [AffinityPrefix]
-        private bool KeepFilter(BeatmapsListViewController __instance)
-        {
-            ApplyFilter(__instance);
-            return false;
-        }
-
-        // Maintains the proper index.
-        [AffinityPatch(
-            typeof(BeatmapsListViewController),
-            nameof(BeatmapsListViewController.HandleBeatmapListTableViewOpenBeatmapLevel)
-        )]
-        [AffinityPrefix]
-        private void FixIndex(BeatmapsListViewController __instance, ref int idx)
-        {
-            var filteredMaps = __instance._beatmapsListTableView._beatmapInfos;
-            idx = __instance
-                ._beatmapsCollectionDataModel.beatmapInfos.ToList()
-                .IndexOf(filteredMaps[idx]);
         }
     }
 }

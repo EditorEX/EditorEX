@@ -3,6 +3,7 @@ using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.VariableMovement;
+using EditorEX.Essentials.VariableMovement;
 using EditorEX.Essentials.Visuals;
 using SiraUtil.Logging;
 using UnityEngine;
@@ -17,9 +18,9 @@ namespace EditorEX.Essentials.Movement.Obstacle
         private IVariableMovementDataProvider? _variableMovementDataProvider;
 
         private IReadonlyBeatmapState _state = null!;
-        private MovementTypeProvider _movementTypeProvider = null!;
-        private VisualsTypeProvider _visualsTypeProvider = null!;
-        private VariableMovementTypeProvider _variableMovementTypeProvider = null!;
+        private ITypeProvider _movementTypeProvider = null!;
+        private ITypeProvider _visualsTypeProvider = null!;
+        private ITypeProvider _variableMovementTypeProvider = null!;
         private ActiveViewMode _activeViewMode = null!;
         private EditorBasicBeatmapObjectSpawnMovementData _movementData = null!;
         private SiraLog _siraLog = null!;
@@ -30,9 +31,9 @@ namespace EditorEX.Essentials.Movement.Obstacle
         private void Construct(
             IReadonlyBeatmapState state,
             ActiveViewMode activeViewMode,
-            MovementTypeProvider movementTypeProvider,
-            VisualsTypeProvider visualsTypeProvider,
-            VariableMovementTypeProvider variableMovementTypeProvider,
+            [Inject(Id = "Movement")] ITypeProvider movementTypeProvider,
+            [Inject(Id = "Visuals")] ITypeProvider visualsTypeProvider,
+            [Inject(Id = "VariableMovement")] ITypeProvider variableMovementTypeProvider,
             EditorBasicBeatmapObjectSpawnMovementData movementData,
             SiraLog siraLog
         )

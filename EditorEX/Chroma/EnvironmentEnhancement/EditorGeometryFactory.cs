@@ -4,7 +4,7 @@ using Chroma.EnvironmentEnhancement;
 using Chroma.Extras;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using CustomJSONData.CustomBeatmap;
-using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
+using EditorEX.Chroma.Patches.Colorizer.Initialize;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Zenject;

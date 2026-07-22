@@ -24,11 +24,14 @@ namespace EditorEX.NoodleExtensions.Events
         private readonly EditorDeserializedData _editorDeserializedData;
         private readonly Dictionary<PlayerObject, PlayerTrack> _playerTracks = new();
         private readonly BeatmapEditor360CameraController _beatmapEditor360CameraController;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorAssignPlayerToTrack(
             IInstantiator container,
             PlayerTransforms playerTransforms,
-            [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData editorDeserializedData
+            [InjectOptional(Id = NoodleController.ID)]
+                EditorDeserializedData editorDeserializedData,
+            ICustomDataRepository customDataRepository
         )
         {
             _container = container;
@@ -37,6 +40,7 @@ namespace EditorEX.NoodleExtensions.Events
             _beatmapEditor360CameraController = Resources
                 .FindObjectsOfTypeAll<BeatmapEditor360CameraController>()
                 .FirstOrDefault();
+            _customDataRepository = customDataRepository;
         }
 
         public void Callback(CustomEventData customEventData)
@@ -44,7 +48,7 @@ namespace EditorEX.NoodleExtensions.Events
             if (
                 !(
                     _editorDeserializedData?.Resolve(
-                        CustomDataRepository.GetCustomEventConversion(customEventData),
+                        _customDataRepository.GetCustomEventConversion(customEventData),
                         out NoodlePlayerTrackEventData? noodlePlayerData
                     )
                     ?? false

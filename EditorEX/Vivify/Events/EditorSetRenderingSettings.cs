@@ -34,6 +34,7 @@ namespace EditorEX.Vivify.Events
         private readonly EditorDeserializedData _deserializedData;
         private readonly AudioDataModel _audioDataModel;
         private readonly SiraLog _log;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private readonly Dictionary<string, ISettingHandler> _settings = new()
         {
@@ -255,7 +256,8 @@ namespace EditorEX.Vivify.Events
             CoroutineDummy coroutineDummy,
             EditorAssetBundleManager assetBundleManager,
             PrefabManager prefabManager,
-            PopulateBeatmap populateBeatmap
+            IEditorBeatmapModels populateBeatmap,
+            ICustomDataRepository customDataRepository
         )
         {
             _log = log;
@@ -263,7 +265,8 @@ namespace EditorEX.Vivify.Events
             _audioTimeSource = audioTimeSource;
             _bpmController = bpmController;
             _coroutineDummy = coroutineDummy;
-            _audioDataModel = populateBeatmap._audioDataModel;
+            _audioDataModel = populateBeatmap.AudioDataModel;
+            _customDataRepository = customDataRepository;
             _settings.Add(
                 "skybox",
                 new ClassSettingHandler<string, Material>(
@@ -317,7 +320,7 @@ namespace EditorEX.Vivify.Events
         {
             if (
                 !_deserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out SetRenderingSettingsData? data
                 )
             )

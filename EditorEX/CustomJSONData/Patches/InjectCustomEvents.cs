@@ -20,7 +20,9 @@ namespace EditorEX.CustomJSONData.Patches
         {
             if (self is CustomBeatmapLivePreviewDataModel customBeatmapLivePreviewDataModel)
             {
-                foreach (var evt in CustomDataRepository.GetCustomEvents())
+                foreach (
+                    var evt in customBeatmapLivePreviewDataModel.CustomDataRepository.GetCustomEvents()
+                )
                 {
                     customBeatmapLivePreviewDataModel.AddLivePreviewCustomEvent(evt);
                 }

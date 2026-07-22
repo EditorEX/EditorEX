@@ -18,16 +18,18 @@ namespace EditorEX.MapData.SaveDataLoaders
         private EnvironmentsListModel _environmentsListModel = null!;
         private BeatmapCharacteristicCollection _beatmapCharacteristicCollection = null!;
         private BeatmapLevelDataModel _beatmapLevelDataModel = null!;
-        private LevelCustomDataModel _levelCustomDataModel = null!;
+        private ILevelCustomDataModel _levelCustomDataModel = null!;
         private CustomLevelLoader _customLevelLoader = null!;
+        private ICustomDataRepository _customDataRepository = null!;
 
         [Inject]
         private void Construct(
             EnvironmentsListModel environmentsListModel,
             BeatmapCharacteristicCollection beatmapCharacteristicCollection,
             BeatmapLevelDataModel beatmapLevelDataModel,
-            LevelCustomDataModel levelCustomDataModel,
-            CustomLevelLoader customLevelLoader
+            ILevelCustomDataModel levelCustomDataModel,
+            CustomLevelLoader customLevelLoader,
+            ICustomDataRepository customDataRepository
         )
         {
             _environmentsListModel = environmentsListModel;
@@ -35,6 +37,7 @@ namespace EditorEX.MapData.SaveDataLoaders
             _beatmapLevelDataModel = beatmapLevelDataModel;
             _levelCustomDataModel = levelCustomDataModel;
             _customLevelLoader = customLevelLoader;
+            _customDataRepository = customDataRepository;
         }
 
         public bool IsVersion(Version version)
@@ -54,7 +57,7 @@ namespace EditorEX.MapData.SaveDataLoaders
 
         public void Load(string projectPath)
         {
-            CustomDataRepository.ClearAll();
+            _customDataRepository.ClearAll();
 
             SerializedCustomBeatmapLevelSaveData? customBeatmapLevelSaveData =
                 JsonConvert.DeserializeObject<SerializedCustomBeatmapLevelSaveData>(

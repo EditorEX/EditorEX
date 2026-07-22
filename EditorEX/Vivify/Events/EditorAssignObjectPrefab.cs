@@ -27,6 +27,7 @@ namespace EditorEX.Vivify.Events
         private readonly EditorDeserializedData _editorDeserializedData;
         private readonly SiraLog _log;
         private readonly EditorVivifyNotePrefabManager _notePrefabManager;
+        private readonly ICustomDataRepository _customDataRepository;
 
         //private readonly SaberPrefabManager _saberPrefabManager;
 
@@ -34,7 +35,8 @@ namespace EditorEX.Vivify.Events
             SiraLog log,
             [Inject(Id = ID)] EditorDeserializedData editorDeserializedData,
             EditorBeatmapObjectPrefabManager beatmapObjectPrefabManager,
-            EditorVivifyNotePrefabManager notePrefabManager
+            EditorVivifyNotePrefabManager notePrefabManager,
+            ICustomDataRepository customDataRepository
         )
         //DebrisPrefabManager debrisPrefabManager,
         //SaberPrefabManager saberPrefabManager)
@@ -43,6 +45,7 @@ namespace EditorEX.Vivify.Events
             _editorDeserializedData = editorDeserializedData;
             _beatmapObjectPrefabManager = beatmapObjectPrefabManager;
             _notePrefabManager = notePrefabManager;
+            _customDataRepository = customDataRepository;
             //_debrisPrefabManager = debrisPrefabManager;
             //_saberPrefabManager = saberPrefabManager;
         }
@@ -99,7 +102,7 @@ namespace EditorEX.Vivify.Events
         {
             if (
                 !_editorDeserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out AssignObjectPrefabData? data
                 )
             )

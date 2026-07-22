@@ -3,7 +3,7 @@ using System.Linq;
 using BeatmapEditor3D.DataModels;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.Contexts;
-using EditorEX.MapData.SaveDataLoaders;
+using EditorEX.MapData.LevelDataSavers;
 using EditorEX.MapData.SaveDataSavers;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
@@ -15,13 +15,13 @@ namespace EditorEX.CustomJSONData.Patches.Saving
         private readonly SiraLog _siraLog;
         private readonly List<ICustomSaveDataSaver> _saveDataSavers;
         private readonly List<ICustomLevelDataSaver> _levelDataSavers;
-        private readonly LevelCustomDataModel _levelCustomDataModel;
+        private readonly ILevelCustomDataModel _levelCustomDataModel;
 
         private BeatmapProjectManagerSaverPatch(
             SiraLog siraLog,
             List<ICustomSaveDataSaver> saveDataSavers,
             List<ICustomLevelDataSaver> levelDataSavers,
-            LevelCustomDataModel levelCustomDataModel
+            ILevelCustomDataModel levelCustomDataModel
         )
         {
             _siraLog = siraLog;

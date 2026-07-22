@@ -36,6 +36,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
         private TransformControllerFactory _controllerFactory = null!;
         private SavedEnvironmentLoader _savedEnvironmentLoader = null!;
         private bool _usingOverrideEnvironment;
+        private ICustomDataRepository _customDataRepository = null!;
 
         [Inject]
         private void Construct(
@@ -49,7 +50,8 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             EditorComponentCustomizer componentCustomizer,
             TransformControllerFactory controllerFactory,
             SavedEnvironmentLoader savedEnvironmentLoader,
-            EnvironmentSceneSetupData sceneSetupData
+            EnvironmentSceneSetupData sceneSetupData,
+            ICustomDataRepository customDataRepository
         )
         {
             _log = log;
@@ -63,6 +65,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             _controllerFactory = controllerFactory;
             _savedEnvironmentLoader = savedEnvironmentLoader;
             _usingOverrideEnvironment = sceneSetupData.hideBranding;
+            _customDataRepository = customDataRepository;
         }
 
         private void Start()
@@ -100,7 +103,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                 gradientBackground.SetActive(false);
             }
 
-            environmentData = CustomDataRepository
+            environmentData = _customDataRepository
                 .GetBeatmapData()
                 .customData.Get<List<object>>(v2 ? V2_ENVIRONMENT : ENVIRONMENT)
                 ?.Cast<CustomData>();
@@ -109,7 +112,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             {
                 try
                 {
-                    if (LegacyEnvironmentRemoval.Init(CustomDataRepository.GetBeatmapData()))
+                    if (LegacyEnvironmentRemoval.Init(_customDataRepository.GetBeatmapData()))
                     {
                         yield break;
                     }

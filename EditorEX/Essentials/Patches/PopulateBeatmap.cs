@@ -6,12 +6,13 @@ using Zenject;
 namespace EditorEX.Essentials.Patches
 {
     [AffinityPatch]
-    public class PopulateBeatmap : IAffinity
+    public class PopulateBeatmap : IAffinity, IEditorBeatmapModels
     {
-        internal BeatmapObjectsDataModel _beatmapObjectsDataModel;
-        internal BeatmapLevelDataModel _beatmapLevelDataModel;
-        internal BeatmapDataModel _beatmapDataModel;
-        internal AudioDataModel _audioDataModel;
+        public BeatmapObjectsDataModel BeatmapObjectsDataModel { get; private set; }
+        public BeatmapLevelDataModel BeatmapLevelDataModel { get; private set; }
+        public BeatmapDataModel BeatmapDataModel { get; private set; }
+        public AudioDataModel AudioDataModel { get; private set; }
+
         internal DiContainer _Container;
 
         [AffinityPatch(
@@ -22,10 +23,10 @@ namespace EditorEX.Essentials.Patches
         private void Postfix(DiContainer Container)
         {
             _Container = Container;
-            _beatmapDataModel = Container.Resolve<BeatmapDataModel>();
-            _audioDataModel = Container.Resolve<AudioDataModel>();
-            _beatmapLevelDataModel = Container.Resolve<BeatmapLevelDataModel>();
-            _beatmapObjectsDataModel = Container.Resolve<BeatmapObjectsDataModel>();
+            BeatmapDataModel = Container.Resolve<BeatmapDataModel>();
+            AudioDataModel = Container.Resolve<AudioDataModel>();
+            BeatmapLevelDataModel = Container.Resolve<BeatmapLevelDataModel>();
+            BeatmapObjectsDataModel = Container.Resolve<BeatmapObjectsDataModel>();
         }
     }
 }

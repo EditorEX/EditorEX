@@ -29,7 +29,7 @@ namespace EditorEX.Essentials.VariableMovement
 
         private EditorNoodleMovementDataProvider(
             IVariableMovementDataProvider original,
-            PopulateBeatmap populateBeatmap,
+            IEditorBeatmapModels populateBeatmap,
             EditorBasicBeatmapObjectSpawnMovementData editorBasicBeatmapObjectSpawnMovementData,
             [Inject(Id = NoodleController.ID)] EditorDeserializedData deserializedData
         )
@@ -39,7 +39,7 @@ namespace EditorEX.Essentials.VariableMovement
             _movementData = editorBasicBeatmapObjectSpawnMovementData;
             _noteJumpStartBeatOffset = editorBasicBeatmapObjectSpawnMovementData._noteJumpValue;
             _oneBeatDuration =
-                populateBeatmap._beatmapLevelDataModel.beatsPerMinute.OneBeatDuration();
+                populateBeatmap.BeatmapLevelDataModel.beatsPerMinute.OneBeatDuration();
             _noteJumpValueType = editorBasicBeatmapObjectSpawnMovementData._noteJumpValueType;
         }
 

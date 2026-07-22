@@ -30,6 +30,7 @@ namespace EditorEX.Vivify.Events
         private readonly SiraLog _log;
         private readonly PrefabManager _prefabManager;
         private readonly AudioDataModel _audioDataModel;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorSetAnimatorProperty(
             SiraLog log,
@@ -38,7 +39,8 @@ namespace EditorEX.Vivify.Events
             IAudioTimeSource audioTimeSource,
             IBpmController bpmController,
             CoroutineDummy coroutineDummy,
-            PopulateBeatmap populateBeatmap
+            IEditorBeatmapModels populateBeatmap,
+            ICustomDataRepository customDataRepository
         )
         {
             _log = log;
@@ -47,14 +49,15 @@ namespace EditorEX.Vivify.Events
             _audioTimeSource = audioTimeSource;
             _bpmController = bpmController;
             _coroutineDummy = coroutineDummy;
-            _audioDataModel = populateBeatmap._audioDataModel;
+            _audioDataModel = populateBeatmap.AudioDataModel;
+            _customDataRepository = customDataRepository;
         }
 
         public void Callback(CustomEventData customEventData)
         {
             if (
                 !_deserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out SetAnimatorPropertyData? data
                 )
             )

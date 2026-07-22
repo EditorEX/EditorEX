@@ -8,9 +8,9 @@ namespace EditorEX.UI.Patches
 {
     internal class SaveCustomDataPatch : IAffinity
     {
-        private readonly LevelCustomDataModel _levelCustomDataModel;
+        private readonly ILevelCustomDataModel _levelCustomDataModel;
 
-        private SaveCustomDataPatch(LevelCustomDataModel levelCustomDataModel)
+        private SaveCustomDataPatch(ILevelCustomDataModel levelCustomDataModel)
         {
             _levelCustomDataModel = levelCustomDataModel;
         }

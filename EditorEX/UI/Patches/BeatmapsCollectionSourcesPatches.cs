@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,12 +10,17 @@ using SiraUtil.Logging;
 
 namespace EditorEX.UI.Patches
 {
-    internal class BeatmapsCollectionDataModelPatches : IAffinity
+    /// <summary>
+    /// Scans the configured (possibly multiple) map sources into
+    /// <see cref="BeatmapsCollectionDataModel"/> and resolves relative project paths against
+    /// whichever configured source directory contains them.
+    /// </summary>
+    internal class BeatmapsCollectionSourcesPatches : IAffinity
     {
         private readonly SiraLog _siraLog;
         private readonly SourcesConfig _sourcesConfig;
 
-        private BeatmapsCollectionDataModelPatches(SiraLog siraLog, SourcesConfig sourcesConfig)
+        private BeatmapsCollectionSourcesPatches(SiraLog siraLog, SourcesConfig sourcesConfig)
         {
             _siraLog = siraLog;
             _sourcesConfig = sourcesConfig;

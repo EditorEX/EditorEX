@@ -14,6 +14,8 @@ namespace EditorEX.CustomJSONData.Installers
     {
         public override void InstallBindings()
         {
+            Container.BindInterfacesAndSelfTo<CustomDataRepository>().AsSingle();
+
             Container.Bind<ICustomSaveDataLoader>().To<V2CustomSaveDataLoader>().AsSingle();
             Container.Bind<ICustomSaveDataLoader>().To<V4CustomSaveDataLoader>().AsSingle();
             Container
@@ -40,7 +42,7 @@ namespace EditorEX.CustomJSONData.Installers
             Container.Bind<LevelDataLoaderV3>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapDataModelsLoaderPatch>().AsSingle().NonLazy();
 
-            Container.Bind<LevelCustomDataModel>().AsSingle();
+            Container.BindInterfacesAndSelfTo<LevelCustomDataModel>().AsSingle();
             Container.BindInterfacesAndSelfTo<CustomPlatformsListModel>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<DisableConversion>().AsSingle().NonLazy();

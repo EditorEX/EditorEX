@@ -21,13 +21,15 @@ namespace EditorEX.NoodleExtensions.Events
             IReadonlyBeatmapData beatmapData,
             [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData deserializedData,
             [Inject(Id = "leftHanded")] bool leftHanded,
-            TransformControllerFactory transformControllerFactory
+            TransformControllerFactory transformControllerFactory,
+            ICustomDataRepository customDataRepository
         )
         {
             _version = ((CustomBeatmapData)beatmapData).version;
             _editorDeserializedData = deserializedData;
             _leftHanded = leftHanded;
             _transformControllerFactory = transformControllerFactory;
+            _customDataRepository = customDataRepository;
         }
 
         public void Callback(CustomEventData customEventData)
@@ -36,7 +38,7 @@ namespace EditorEX.NoodleExtensions.Events
             if (
                 !(
                     _editorDeserializedData?.Resolve(
-                        CustomDataRepository.GetCustomEventConversion(customEventData),
+                        _customDataRepository.GetCustomEventConversion(customEventData),
                         out noodleData
                     )
                     ?? false
@@ -67,6 +69,8 @@ namespace EditorEX.NoodleExtensions.Events
         private readonly bool _leftHanded;
 
         private readonly TransformControllerFactory _transformControllerFactory;
+
+        private readonly ICustomDataRepository _customDataRepository;
 
         private readonly HashSet<EditorParentObject> _parentObjects = new();
     }

@@ -40,6 +40,7 @@ namespace EditorEX.Vivify.Events
         private readonly AudioDataModel _audioDataModel;
         private readonly TransformControllerFactory _transformControllerFactory;
         private readonly bool _leftHanded;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private readonly Dictionary<InstantiatePrefabData, GameObject> _loadedPrefabs = new();
 
@@ -52,9 +53,10 @@ namespace EditorEX.Vivify.Events
             PrefabManager prefabManager,
             [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
             IAudioTimeSource audioTimeSource,
-            PopulateBeatmap populateBeatmap,
+            IEditorBeatmapModels populateBeatmap,
             TransformControllerFactory transformControllerFactory,
-            [InjectOptional] ReLoader? reLoader
+            [InjectOptional] ReLoader? reLoader,
+            ICustomDataRepository customDataRepository
         )
         {
             _log = log;
@@ -63,9 +65,10 @@ namespace EditorEX.Vivify.Events
             _prefabManager = prefabManager;
             _deserializedData = deserializedData;
             _audioTimeSource = audioTimeSource;
-            _audioDataModel = populateBeatmap._audioDataModel;
+            _audioDataModel = populateBeatmap.AudioDataModel;
             _transformControllerFactory = transformControllerFactory;
             _reLoader = reLoader;
+            _customDataRepository = customDataRepository;
             if (reLoader != null)
             {
                 reLoader.Rewinded += OnRewind;
@@ -85,7 +88,7 @@ namespace EditorEX.Vivify.Events
         public void Initialize()
         {
             foreach (
-                CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents()
+                CustomEventEditorData customEventEditorData in _customDataRepository.GetCustomEvents()
             )
             {
                 if (
@@ -122,7 +125,7 @@ namespace EditorEX.Vivify.Events
         {
             if (
                 !_deserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out InstantiatePrefabData? data
                 )
             )
@@ -188,7 +191,7 @@ namespace EditorEX.Vivify.Events
         {
             float currentBeat = _audioDataModel.bpmData.SecondsToBeat(_audioTimeSource.songTime);
             foreach (
-                CustomEventEditorData customEventEditorData in CustomDataRepository.GetCustomEvents()
+                CustomEventEditorData customEventEditorData in _customDataRepository.GetCustomEvents()
             )
             {
                 if (
@@ -203,7 +206,7 @@ namespace EditorEX.Vivify.Events
                 }
                 bool isDestroyed = false;
                 foreach (
-                    CustomEventEditorData customEventEditorData2 in CustomDataRepository.GetCustomEvents()
+                    CustomEventEditorData customEventEditorData2 in _customDataRepository.GetCustomEvents()
                 )
                 {
                     if (
@@ -237,7 +240,7 @@ namespace EditorEX.Vivify.Events
                     && !_prefabManager._prefabs.ContainsKey(data!.Id!)
                 )
                 {
-                    Callback(CustomDataRepository.GetCustomEventConversion(customEventEditorData));
+                    Callback(_customDataRepository.GetCustomEventConversion(customEventEditorData));
                 }
             }
         }

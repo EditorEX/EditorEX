@@ -20,18 +20,21 @@ namespace EditorEX.Heck.Deserialize
         private BeatmapObjectsDataModel _objectDataModel;
         private BeatmapBasicEventsDataModel _eventsDataModel;
         private BeatmapLevelDataModel _beatmapLevelDataModel;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorDeserializerManager(
             SiraLog log,
             BeatmapObjectsDataModel objectDataModel,
             BeatmapBasicEventsDataModel eventsDataModel,
-            PopulateBeatmap populateBeatmap
+            IEditorBeatmapModels populateBeatmap,
+            ICustomDataRepository customDataRepository
         )
         {
             _log = log;
             _objectDataModel = objectDataModel;
             _eventsDataModel = eventsDataModel;
-            _beatmapLevelDataModel = populateBeatmap._beatmapLevelDataModel;
+            _beatmapLevelDataModel = populateBeatmap.BeatmapLevelDataModel;
+            _customDataRepository = customDataRepository;
         }
 
         internal static EditorDataDeserializer Register<T>(string id)
@@ -93,10 +96,10 @@ namespace EditorEX.Heck.Deserialize
             foreach (
                 BaseEditorData? baseEditorData in baseObjectDatas
                     .Concat(basicEventDatas)
-                    .Concat(CustomDataRepository.GetCustomEvents())
+                    .Concat(_customDataRepository.GetCustomEvents())
             )
             {
-                CustomData customData = CustomDataRepository.GetCustomData(baseEditorData);
+                CustomData customData = _customDataRepository.GetCustomData(baseEditorData);
 
                 // for epic tracks thing
                 object? trackNameRaw = customData.Get<object>(
@@ -128,7 +131,7 @@ namespace EditorEX.Heck.Deserialize
 
             if (v2)
             {
-                IEnumerable<CustomData>? pointDefinitionsRaw = CustomDataRepository
+                IEnumerable<CustomData>? pointDefinitionsRaw = _customDataRepository
                     .GetCustomBeatmapSaveData()
                     .customData.Get<List<object>>(Constants.V2_POINT_DEFINITIONS)
                     ?.Cast<CustomData>();
@@ -146,7 +149,7 @@ namespace EditorEX.Heck.Deserialize
             }
             else
             {
-                CustomData? pointDefinitionsRaw = CustomDataRepository
+                CustomData? pointDefinitionsRaw = _customDataRepository
                     .GetCustomBeatmapSaveData()
                     .customData.Get<CustomData>(Constants.POINT_DEFINITIONS);
                 if (pointDefinitionsRaw != null)
@@ -168,7 +171,7 @@ namespace EditorEX.Heck.Deserialize
 
             if (!v2)
             {
-                IEnumerable<CustomData>? eventDefinitionsRaw = CustomDataRepository
+                IEnumerable<CustomData>? eventDefinitionsRaw = _customDataRepository
                     .GetCustomBeatmapSaveData()
                     .customData.Get<List<object>>(Constants.EVENT_DEFINITIONS)
                     ?.Cast<CustomData>();
@@ -212,12 +215,13 @@ namespace EditorEX.Heck.Deserialize
                 _log,
                 _objectDataModel,
                 _eventsDataModel,
-                CustomDataRepository.GetBeatmapData(),
+                _customDataRepository.GetBeatmapData(),
                 trackManager,
                 pointDefinitions,
                 trackManager.Tracks,
                 v2,
                 bpm,
+                _customDataRepository,
             };
 
             EditorDataDeserializer[] deserializers = _customDataDeserializers

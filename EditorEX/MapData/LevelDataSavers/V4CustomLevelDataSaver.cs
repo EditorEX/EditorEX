@@ -1,6 +1,5 @@
 using System;
 using BeatmapEditor3D.DataModels;
-using EditorEX.MapData.SaveDataLoaders;
 
 namespace EditorEX.MapData.LevelDataSavers
 {

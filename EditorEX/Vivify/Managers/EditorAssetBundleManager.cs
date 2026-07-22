@@ -16,12 +16,12 @@ public class EditorAssetBundleManager : IDisposable
     private readonly SiraLog _log;
     private readonly AssetBundle? _mainBundle;
 
-    private EditorAssetBundleManager(SiraLog log, PopulateBeatmap populateBeatmap)
+    private EditorAssetBundleManager(SiraLog log, IEditorBeatmapModels populateBeatmap)
     {
         _log = log;
 
         string path = Path.Combine(
-            Path.GetDirectoryName(populateBeatmap._beatmapLevelDataModel.songFilePath)!,
+            Path.GetDirectoryName(populateBeatmap.BeatmapLevelDataModel.songFilePath)!,
             BUNDLE_FILE
         );
 

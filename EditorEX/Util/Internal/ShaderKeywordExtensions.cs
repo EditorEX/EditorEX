@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace BetterEditor.Util
+namespace EditorEX.Util
 {
     public static class ShaderKeywordExtensions
     {

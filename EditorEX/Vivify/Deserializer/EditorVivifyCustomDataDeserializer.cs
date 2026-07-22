@@ -24,13 +24,15 @@ namespace EditorEX.Vivify.Deserializer
         private readonly Dictionary<string, Track> _tracks;
         private readonly Dictionary<string, List<object>> _pointDefinitions;
         private readonly TrackBuilder _trackBuilder;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorVivifyCustomDataDeserializer(
             SiraLog siraLog,
             BeatmapObjectsDataModel beatmapObjectsDataModel,
             Dictionary<string, Track> beatmapTracks,
             Dictionary<string, List<object>> pointDefinitions,
-            TrackBuilder trackBuilder
+            TrackBuilder trackBuilder,
+            ICustomDataRepository customDataRepository
         )
         {
             _siraLog = siraLog;
@@ -38,12 +40,13 @@ namespace EditorEX.Vivify.Deserializer
             _tracks = beatmapTracks;
             _pointDefinitions = pointDefinitions;
             _trackBuilder = trackBuilder;
+            _customDataRepository = customDataRepository;
         }
 
         public void DeserializeEarly()
         {
             foreach (
-                CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents()
+                CustomEventEditorData customEventData in _customDataRepository.GetCustomEvents()
             )
             {
                 try
@@ -73,7 +76,7 @@ namespace EditorEX.Vivify.Deserializer
         {
             var dictionary = new Dictionary<CustomEventEditorData, ICustomEventCustomData>();
             foreach (
-                CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents()
+                CustomEventEditorData customEventData in _customDataRepository.GetCustomEvents()
             )
             {
                 try
@@ -174,7 +177,7 @@ namespace EditorEX.Vivify.Deserializer
                     continue;
                 try
                 {
-                    CustomData customData = CustomDataRepository.GetCustomData(beatmapObjectData);
+                    CustomData customData = _customDataRepository.GetCustomData(beatmapObjectData);
                     dictionary.Add(beatmapObjectData, new VivifyObjectData(customData, _tracks));
                 }
                 catch (Exception e)

@@ -32,6 +32,7 @@ namespace EditorEX.Chroma.Deserializer
         private readonly Dictionary<string, List<object>> _pointDefinitions;
         private readonly TrackBuilder _trackBuilder;
         private readonly bool _v2;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorChromaCustomDataDeserializer(
             SiraLog siraLog,
@@ -40,7 +41,8 @@ namespace EditorEX.Chroma.Deserializer
             Dictionary<string, Track> beatmapTracks,
             Dictionary<string, List<object>> pointDefinitions,
             TrackBuilder trackBuilder,
-            bool v2
+            bool v2,
+            ICustomDataRepository customDataRepository
         )
         {
             _siraLog = siraLog;
@@ -50,11 +52,12 @@ namespace EditorEX.Chroma.Deserializer
             _pointDefinitions = pointDefinitions;
             _trackBuilder = trackBuilder;
             _v2 = v2;
+            _customDataRepository = customDataRepository;
         }
 
         public void DeserializeEarly()
         {
-            var beatmapData = CustomDataRepository.GetBeatmapData().customData;
+            var beatmapData = _customDataRepository.GetBeatmapData().customData;
             IEnumerable<CustomData>? environmentData = beatmapData
                 .Get<List<object>>(_v2 ? V2_ENVIRONMENT : ENVIRONMENT)
                 ?.Cast<CustomData>();
@@ -95,7 +98,7 @@ namespace EditorEX.Chroma.Deserializer
             }
 
             foreach (
-                CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents()
+                CustomEventEditorData customEventData in _customDataRepository.GetCustomEvents()
             )
             {
                 try
@@ -121,7 +124,7 @@ namespace EditorEX.Chroma.Deserializer
         {
             var dictionary = new Dictionary<CustomEventEditorData, ICustomEventCustomData>();
             foreach (
-                CustomEventEditorData customEventData in CustomDataRepository.GetCustomEvents()
+                CustomEventEditorData customEventData in _customDataRepository.GetCustomEvents()
             )
             {
                 bool v2 = customEventData.version2_6_0AndEarlier;
@@ -183,7 +186,7 @@ namespace EditorEX.Chroma.Deserializer
                     continue;
                 try
                 {
-                    CustomData customData = beatmapObjectData.GetCustomData();
+                    CustomData customData = beatmapObjectData.GetCustomData(_customDataRepository);
                     if (customData == null)
                     {
                         _siraLog.Warn("Chroma | customData is null...");
@@ -251,7 +254,12 @@ namespace EditorEX.Chroma.Deserializer
                 {
                     dictionary.Add(
                         beatmapEventData,
-                        new EditorChromaEventData(beatmapEventData, legacyLightHelper, _v2)
+                        new EditorChromaEventData(
+                            beatmapEventData,
+                            legacyLightHelper,
+                            _v2,
+                            _customDataRepository
+                        )
                     );
                 }
                 catch (Exception e)

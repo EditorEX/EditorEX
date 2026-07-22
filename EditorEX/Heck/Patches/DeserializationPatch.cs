@@ -20,6 +20,7 @@ namespace EditorEX.Heck.Patches
         private readonly EditorDeserializerManager _editorDeserializerManager;
 
         private readonly SiraLog _siraLog;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private static readonly FieldInfo _customBeatmapDataV2 =
             BackingFieldUtil.GetBackingField<CustomBeatmapData>("version");
@@ -30,11 +31,13 @@ namespace EditorEX.Heck.Patches
 
         private DeserializationPatch(
             EditorDeserializerManager editorDeserializerManager,
-            SiraLog siraLog
+            SiraLog siraLog,
+            ICustomDataRepository customDataRepository
         )
         {
             _siraLog = siraLog;
             _editorDeserializerManager = editorDeserializerManager;
+            _customDataRepository = customDataRepository;
         }
 
         [AffinityPatch(
@@ -63,8 +66,8 @@ namespace EditorEX.Heck.Patches
             var standardLevelInfoSaveData = CustomLevelInfoSaveData.Deserialize(
                 File.ReadAllText(Path.Combine(projectPath, "Info.dat"))
             );
-            var customBeatmapSaveData = CustomDataRepository.GetCustomBeatmapSaveData();
-            var beatmapData = CustomDataRepository.GetBeatmapData();
+            var customBeatmapSaveData = _customDataRepository.GetCustomBeatmapSaveData();
+            var beatmapData = _customDataRepository.GetBeatmapData();
 
             _customBeatmapDataV2?.SetValue(beatmapData, beatmapVersion);
             _customBeatmapDataCustomData?.SetValue(beatmapData, customBeatmapSaveData.customData);

@@ -2,7 +2,7 @@
 using System.Linq;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.Chroma.Colorizer;
-using EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize;
+using EditorEX.Chroma.Patches.Colorizer.Initialize;
 using SiraUtil.Logging;
 using static Chroma.EnvironmentEnhancement.Component.ComponentConstants;
 

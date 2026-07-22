@@ -28,6 +28,7 @@ namespace EditorEX.Chroma.Lighting
         private readonly ColorManager _colorManager;
         private readonly EditorDeserializedData _editorDeserializedData;
         private readonly EditorChromaGradientController? _gradientController;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private readonly BeatmapDataCallbackWrapper _basicCallbackWrapper;
         private readonly BeatmapDataCallbackWrapper _boostCallbackWrapper;
@@ -56,7 +57,8 @@ namespace EditorEX.Chroma.Lighting
             BeatmapCallbacksController callbacksController,
             ColorManager colorManager,
             [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData,
-            [InjectOptional] EditorChromaGradientController? gradientController
+            [InjectOptional] EditorChromaGradientController? gradientController,
+            ICustomDataRepository customDataRepository
         )
         {
             LightSwitchEventEffect = lightSwitchEventEffect;
@@ -68,6 +70,7 @@ namespace EditorEX.Chroma.Lighting
             _colorManager = colorManager;
             _editorDeserializedData = deserializedData;
             _gradientController = gradientController;
+            _customDataRepository = customDataRepository;
 
             EventType = lightSwitchEventEffect._event;
             LightsID = lightSwitchEventEffect._lightsID;
@@ -353,7 +356,7 @@ namespace EditorEX.Chroma.Lighting
                 void CheckNextEventForFadeBetter()
                 {
                     _editorDeserializedData.Resolve(
-                        CustomDataRepository.GetBasicEventConversion(previousEvent),
+                        _customDataRepository.GetBasicEventConversion(previousEvent),
                         out EditorChromaEventData? eventData
                     );
 
@@ -370,20 +373,20 @@ namespace EditorEX.Chroma.Lighting
                     )
                     {
                         nextSameTypeEvent =
-                            CustomDataRepository.GetBasicEventConversion(value)
+                            _customDataRepository.GetBasicEventConversion(value)
                             as BasicBeatmapEventData;
                     }
                     else if (nextSameTypesDict.TryGetValue(-1, out BasicEventEditorData? nullVal))
                     {
                         nextSameTypeEvent =
-                            CustomDataRepository.GetBasicEventConversion(nullVal)
+                            _customDataRepository.GetBasicEventConversion(nullVal)
                             as BasicBeatmapEventData;
                     }
 
                     if (
                         nextSameTypeEvent == null
                         || !HasLightFadeEventDataValue(
-                            CustomDataRepository.GetBasicEventConversion(nextSameTypeEvent)
+                            _customDataRepository.GetBasicEventConversion(nextSameTypeEvent)
                         )
                     )
                     {
@@ -399,7 +402,7 @@ namespace EditorEX.Chroma.Lighting
                     Color nextColor;
 
                     _editorDeserializedData.Resolve(
-                        CustomDataRepository.GetBasicEventConversion(nextSameTypeEvent),
+                        _customDataRepository.GetBasicEventConversion(nextSameTypeEvent),
                         out EditorChromaEventData? nextEventData
                     );
                     Color? nextColorData = nextEventData?.ColorData;
@@ -439,7 +442,7 @@ namespace EditorEX.Chroma.Lighting
                     }
                     else if (
                         !HasFixedDurationLightSwitchEventDataValue(
-                            CustomDataRepository.GetBasicEventConversion(previousEvent)
+                            _customDataRepository.GetBasicEventConversion(previousEvent)
                         )
                     )
                     {
@@ -519,7 +522,7 @@ namespace EditorEX.Chroma.Lighting
 
             if (
                 _editorDeserializedData.Resolve(
-                    CustomDataRepository.GetBasicEventConversion(beatmapEventData),
+                    _customDataRepository.GetBasicEventConversion(beatmapEventData),
                     out EditorChromaEventData? chromaData
                 )
             )

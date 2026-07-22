@@ -4,6 +4,7 @@ using System.Linq;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Types;
 using CustomJSONData.CustomBeatmap;
+using EditorEX.CustomJSONData;
 using EditorEX.Essentials.Patches;
 using EditorEX.Heck.Deserialize;
 using EditorEX.MapData.Contexts;
@@ -23,6 +24,7 @@ namespace EditorEX.Essentials.SpawnProcessing
     public class EditorBeatmapObjectsInTimeRowProcessor
     {
         private SiraLog _siraLog = null!;
+        private ICustomDataRepository _customDataRepository = null!;
         public EditorDeserializedData editorDeserializedData = null!;
 
         public EditorBeatmapObjectsInTimeRowProcessor()
@@ -66,15 +68,17 @@ namespace EditorEX.Essentials.SpawnProcessing
         [Inject]
         public void Construct(
             SiraLog siraLog,
+            ICustomDataRepository customDataRepository,
             [InjectOptional(Id = NoodleController.ID)] EditorDeserializedData deserializedData,
-            PopulateBeatmap populateBeatmap
+            IEditorBeatmapModels populateBeatmap
         )
         {
             _siraLog = siraLog;
+            _customDataRepository = customDataRepository;
             editorDeserializedData = deserializedData;
 
             IEnumerable<BaseEditorData?> objects =
-                populateBeatmap._beatmapObjectsDataModel.allBeatmapObjects.Cast<BaseEditorData>();
+                populateBeatmap.BeatmapObjectsDataModel.allBeatmapObjects.Cast<BaseEditorData>();
             foreach (var obj in objects)
             {
                 if (obj is NoteEditorData noteData)
@@ -229,7 +233,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                 Dictionary<float, List<NoteEditorData>> notesInColumns = new();
                 foreach (NoteEditorData noteData in notesInTimeRow)
                 {
-                    CustomData customData = noteData.GetCustomData();
+                    CustomData customData = noteData.GetCustomData(_customDataRepository);
                     if (customData == null)
                     {
                         continue;
@@ -250,7 +254,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                     for (int k = 0; k < list.Count; k++)
                     {
                         IEnumerable<float?>? listPosition = list[k]
-                            .GetCustomData()
+                            .GetCustomData(_customDataRepository)
                             .GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET);
                         float listLineLayer =
                             listPosition?.ElementAtOrDefault(1) ?? (float)list[k].row;
@@ -316,7 +320,8 @@ namespace EditorEX.Essentials.SpawnProcessing
                     List<NoteEditorData> list2 = keyValue.Value;
                     for (int m = 0; m < list2.Count; m++)
                     {
-                        list2[m].GetCustomData()[INTERNAL_STARTNOTELINELAYER] = m;
+                        list2[m].GetCustomData(_customDataRepository)[INTERNAL_STARTNOTELINELAYER] =
+                            m;
                     }
                 }
 
@@ -326,13 +331,13 @@ namespace EditorEX.Essentials.SpawnProcessing
                 foreach (BaseSliderEditorData sliderData in slidersInTimeRow)
                 {
                     IEnumerable<float?>? headPosition = sliderData
-                        .GetCustomData()
+                        .GetCustomData(_customDataRepository)
                         .GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)
                         ?.ToList();
                     float headX = headPosition?.ElementAtOrDefault(0) + offset ?? sliderData.column;
                     float headY = headPosition?.ElementAtOrDefault(1) ?? (float)sliderData.row;
                     IEnumerable<float?>? tailPosition = sliderData
-                        .GetCustomData()
+                        .GetCustomData(_customDataRepository)
                         .GetNullableFloats(TAIL_NOTE_OFFSET)
                         ?.ToList();
                     float tailX =
@@ -341,12 +346,12 @@ namespace EditorEX.Essentials.SpawnProcessing
 
                     foreach (NoteEditorData noteData in notesInTimeRow)
                     {
-                        if (noteData.GetCustomData() == null)
+                        if (noteData.GetCustomData(_customDataRepository) == null)
                         {
                             continue;
                         }
                         IEnumerable<float?>? notePosition = noteData
-                            .GetCustomData()
+                            .GetCustomData(_customDataRepository)
                             .GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)
                             ?.ToList();
                         float noteX =
@@ -361,8 +366,11 @@ namespace EditorEX.Essentials.SpawnProcessing
                         }
 
                         sliderData.SetHasHeadNote(true);
-                        sliderData.GetCustomData()[INTERNAL_STARTNOTELINELAYER] =
-                            noteData.GetCustomData()[INTERNAL_STARTNOTELINELAYER];
+                        sliderData.GetCustomData(_customDataRepository)[
+                            INTERNAL_STARTNOTELINELAYER
+                        ] = noteData.GetCustomData(_customDataRepository)[
+                            INTERNAL_STARTNOTELINELAYER
+                        ];
                         if (sliderData is ChainEditorData)
                         {
                             noteData.ChangeToBurstSliderHead();
@@ -392,7 +400,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                 {
                     BaseSliderEditorData? sliderData = sliderTailData.slider;
                     IEnumerable<float?>? tailPosition = sliderData
-                        .GetCustomData()
+                        .GetCustomData(_customDataRepository)
                         .GetNullableFloats(TAIL_NOTE_OFFSET)
                         ?.ToList();
                     float tailX =
@@ -401,7 +409,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                     foreach (NoteEditorData noteData in notesInTimeRow)
                     {
                         IEnumerable<float?>? notePosition = noteData
-                            .GetCustomData()
+                            .GetCustomData(_customDataRepository)
                             .GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)
                             ?.ToList();
                         float noteX =
@@ -416,8 +424,11 @@ namespace EditorEX.Essentials.SpawnProcessing
                         }
 
                         sliderData.SetHasTailNote(true);
-                        sliderData.GetCustomData()[INTERNAL_TAILSTARTNOTELINELAYER] =
-                            noteData.GetCustomData()[INTERNAL_STARTNOTELINELAYER];
+                        sliderData.GetCustomData(_customDataRepository)[
+                            INTERNAL_TAILSTARTNOTELINELAYER
+                        ] = noteData.GetCustomData(_customDataRepository)[
+                            INTERNAL_STARTNOTELINELAYER
+                        ];
                         sliderData.SetTailBeforeJumpLineLayer(
                             EditorSpawnDataRepository.GetSpawnData(noteData).beforeJumpNoteLineLayer
                         );
@@ -525,7 +536,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                         continue;
                     }
 
-                    CustomData customData = noteData.GetCustomData();
+                    CustomData customData = noteData.GetCustomData(_customDataRepository);
                     IEnumerable<float?>? position = customData
                         .GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)
                         ?.ToList();
@@ -560,7 +571,7 @@ namespace EditorEX.Essentials.SpawnProcessing
 
                     // apparently I can use customData to store my own variables in noteData, neat
                     // ^ comment from a very young and naive aero
-                    CustomData customData = noteData.GetCustomData();
+                    CustomData customData = noteData.GetCustomData(_customDataRepository);
                     customData[INTERNAL_FLIPLINEINDEX] = lineIndexes[1 - i];
 
                     float flipYSide = (lineIndexes[i] > lineIndexes[1 - i]) ? 1 : -1;

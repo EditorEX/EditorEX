@@ -24,20 +24,23 @@ namespace EditorEX.Heck.Events
         private readonly AudioDataModel _audioDataModel;
         private readonly CoroutineDummy _coroutineDummy;
         private readonly EditorDeserializedData _editorDeserializedData;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorCoroutineEvent(
             IBpmController bpmController,
             IAudioTimeSource audioTimeSource,
-            PopulateBeatmap populateBeatmap,
+            IEditorBeatmapModels populateBeatmap,
             CoroutineDummy coroutineDummy,
-            [InjectOptional(Id = "Heck")] EditorDeserializedData deserializedData
+            [InjectOptional(Id = "Heck")] EditorDeserializedData deserializedData,
+            ICustomDataRepository customDataRepository
         )
         {
             _bpmController = bpmController;
             _audioTimeSource = audioTimeSource;
-            _audioDataModel = populateBeatmap._audioDataModel;
+            _audioDataModel = populateBeatmap.AudioDataModel;
             _coroutineDummy = coroutineDummy;
             _editorDeserializedData = deserializedData;
+            _customDataRepository = customDataRepository;
         }
 
         public void Callback(CustomEventData customEventData)
@@ -62,7 +65,7 @@ namespace EditorEX.Heck.Events
             if (
                 !(
                     _editorDeserializedData?.Resolve(
-                        CustomDataRepository.GetCustomEventConversion(customEventData),
+                        _customDataRepository.GetCustomEventConversion(customEventData),
                         out EditorCoroutineEventData? heckData
                     )
                     ?? false

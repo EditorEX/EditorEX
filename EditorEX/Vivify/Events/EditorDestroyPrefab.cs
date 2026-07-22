@@ -20,25 +20,28 @@ namespace EditorEX.Vivify.Events
         private readonly SiraLog _log;
         private readonly PrefabManager _prefabManager;
         private readonly CameraEffectApplier _cameraEffectApplier;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorDestroyPrefab(
             SiraLog log,
             PrefabManager prefabManager,
             CameraEffectApplier cameraEffectApplier,
-            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
+            ICustomDataRepository customDataRepository
         )
         {
             _log = log;
             _prefabManager = prefabManager;
             _cameraEffectApplier = cameraEffectApplier;
             _deserializedData = deserializedData;
+            _customDataRepository = customDataRepository;
         }
 
         public void Callback(CustomEventData customEventData)
         {
             if (
                 !_deserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out DestroyObjectData? data
                 )
             )

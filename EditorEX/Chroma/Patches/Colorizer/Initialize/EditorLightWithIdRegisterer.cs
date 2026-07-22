@@ -5,7 +5,7 @@ using SiraUtil.Affinity;
 using UnityEngine;
 
 // Based from https://github.com/Aeroluna/Heck
-namespace EditorEX.Chroma.HarmonyPatches.Colorizer.Initialize
+namespace EditorEX.Chroma.Patches.Colorizer.Initialize
 {
     internal class EditorLightWithIdRegisterer : IAffinity
     {

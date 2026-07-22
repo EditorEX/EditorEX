@@ -25,15 +25,15 @@ namespace EditorEX.Essentials.Movement.Data
         private void Construct(
             EditorSpawnDataManager editorSpawnDataManager,
             PlayerDataModel playerDataModel,
-            PopulateBeatmap populateBeatmap
+            IEditorBeatmapModels populateBeatmap
         )
         {
             _editorSpawnDataManager = editorSpawnDataManager;
 
-            var difficultyBeatmap = populateBeatmap._beatmapLevelDataModel.difficultyBeatmaps[
+            var difficultyBeatmap = populateBeatmap.BeatmapLevelDataModel.difficultyBeatmaps[
                 (
-                    populateBeatmap._beatmapDataModel.beatmapCharacteristic,
-                    populateBeatmap._beatmapDataModel.beatmapDifficulty
+                    populateBeatmap.BeatmapDataModel.beatmapCharacteristic,
+                    populateBeatmap.BeatmapDataModel.beatmapDifficulty
                 )
             ];
 
@@ -54,7 +54,7 @@ namespace EditorEX.Essentials.Movement.Data
             Init(
                 4,
                 difficultyBeatmap.noteJumpMovementSpeed,
-                populateBeatmap._beatmapLevelDataModel.beatsPerMinute,
+                populateBeatmap.BeatmapLevelDataModel.beatsPerMinute,
                 jumpValueType,
                 jumpValue,
                 offsetProvider,

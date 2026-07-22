@@ -17,21 +17,24 @@ namespace EditorEX.Vivify.Events
     {
         private readonly CameraPropertyManager _cameraPropertyManager;
         private readonly EditorDeserializedData _deserializedData;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorSetCameraProperty(
             CameraPropertyManager cameraPropertyManager,
-            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
+            ICustomDataRepository customDataRepository
         )
         {
             _cameraPropertyManager = cameraPropertyManager;
             _deserializedData = deserializedData;
+            _customDataRepository = customDataRepository;
         }
 
         public void Callback(CustomEventData customEventData)
         {
             if (
                 !_deserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out SetCameraPropertyData? eventData
                 )
             )

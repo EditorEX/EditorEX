@@ -6,6 +6,7 @@ using Chroma;
 using Chroma.Lighting;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.Chroma.Lighting;
+using EditorEX.CustomJSONData;
 using EditorEX.Util;
 using Heck.Animation;
 using Heck.Deserialize;
@@ -22,10 +23,11 @@ namespace EditorEX.Chroma.Events
         internal EditorChromaEventData(
             BasicEventEditorData beatmapEventData,
             EditorLegacyLightHelper legacyLightHelper,
-            bool v2
+            bool v2,
+            ICustomDataRepository customDataRepository
         )
         {
-            CustomData customData = beatmapEventData.GetCustomData();
+            CustomData customData = beatmapEventData.GetCustomData(customDataRepository);
 
             Color? color = CustomDataDeserializer.GetColorFromData(customData, v2);
             if (legacyLightHelper != null)

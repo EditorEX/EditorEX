@@ -2,11 +2,11 @@
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Visuals;
-using BetterEditor.Util;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
+using EditorEX.Util;
 using NoodleExtensions.Animation;
 using UnityEngine;
 using Zenject;

@@ -1,7 +1,7 @@
 ﻿using System;
 using BeatmapEditor3D.DataModels;
 
-namespace EditorEX.MapData.SaveDataLoaders
+namespace EditorEX.MapData.LevelDataSavers
 {
     public interface ICustomLevelDataSaver
     {

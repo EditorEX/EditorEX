@@ -19,25 +19,28 @@ namespace EditorEX.Vivify.Events
         private readonly EditorSetCameraProperty _setCameraProperty;
         private readonly CameraEffectApplier _cameraEffectApplier;
         private readonly EditorDeserializedData _deserializedData;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorDeclareCullingTexture(
             SiraLog log,
             EditorSetCameraProperty setCameraProperty,
             CameraEffectApplier cameraEffectApplier,
-            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData
+            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
+            ICustomDataRepository customDataRepository
         )
         {
             _log = log;
             _setCameraProperty = setCameraProperty;
             _cameraEffectApplier = cameraEffectApplier;
             _deserializedData = deserializedData;
+            _customDataRepository = customDataRepository;
         }
 
         public void Callback(CustomEventData customEventData)
         {
             if (
                 !_deserializedData.Resolve(
-                    CustomDataRepository.GetCustomEventConversion(customEventData),
+                    _customDataRepository.GetCustomEventConversion(customEventData),
                     out CreateCameraData? data
                 )
             )

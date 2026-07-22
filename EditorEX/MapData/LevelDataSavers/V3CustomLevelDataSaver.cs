@@ -8,7 +8,6 @@ using BeatmapSaveDataVersion3;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.VersionedSaveData;
 using EditorEX.MapData.Contexts;
-using EditorEX.MapData.SaveDataLoaders;
 using SiraUtil.Logging;
 using Zenject;
 using static EditorEX.CustomJSONData.VersionedSaveData.Custom2_6_0AndEarlierBeatmapSaveDataVersioned;
@@ -20,6 +19,9 @@ namespace EditorEX.MapData.LevelDataSavers
     {
         [Inject]
         private SiraLog? _siraLog = null!;
+
+        [Inject]
+        private ICustomDataRepository _customDataRepository = null!;
 
         public bool IsVersion(Version version)
         {
@@ -42,25 +44,29 @@ namespace EditorEX.MapData.LevelDataSavers
                 .Concat(
                     basicEventsModel
                         .GetAllDataIn(BasicBeatmapEventType.Event14)
-                        .Select(V3Converters.CreateRotationEventSaveData)
+                        .Select(x =>
+                            V3Converters.CreateRotationEventSaveData(x, _customDataRepository)
+                        )
                 )
                 .Concat(
                     basicEventsModel
                         .GetAllDataIn(BasicBeatmapEventType.Event15)
-                        .Select(V3Converters.CreateRotationEventSaveData)
+                        .Select(x =>
+                            V3Converters.CreateRotationEventSaveData(x, _customDataRepository)
+                        )
                 )
                 .ToList();
             var basicEvents = basicEventsModel
                 .GetAllEventsAsList()
-                .Select(V3Converters.CreateBasicEventSaveData)
+                .Select(x => V3Converters.CreateBasicEventSaveData(x, _customDataRepository))
                 .ToList();
-            var customEvents = CustomDataRepository
+            var customEvents = _customDataRepository
                 .GetCustomEvents()
                 .Select(V3Converters.CreateCustomEventSaveData)
                 .ToList();
             var colorBoostEvents = basicEventsModel
                 .GetAllDataIn(BasicBeatmapEventType.Event5)
-                .Select(V3Converters.CreateColorBoostSaveEventData)
+                .Select(x => V3Converters.CreateColorBoostSaveEventData(x, _customDataRepository))
                 .ToList();
             var colorNotes = new List<ColorNoteData>();
             var bombNotes = new List<BombNoteData>();
@@ -82,32 +88,49 @@ namespace EditorEX.MapData.LevelDataSavers
                             {
                                 if (allBeatmapObject is ArcEditorData a)
                                 {
-                                    sliders.Add(V3Converters.CreateSliderSaveData(a));
+                                    sliders.Add(
+                                        V3Converters.CreateSliderSaveData(a, _customDataRepository)
+                                    );
                                 }
                             }
                             else
                             {
-                                colorNotes.Add(V3Converters.CreateColorNoteSaveDataFromChains(c));
-                                burstSliders.Add(V3Converters.CreateBurstSliderSaveData(c));
+                                colorNotes.Add(
+                                    V3Converters.CreateColorNoteSaveDataFromChains(
+                                        c,
+                                        _customDataRepository
+                                    )
+                                );
+                                burstSliders.Add(
+                                    V3Converters.CreateBurstSliderSaveData(c, _customDataRepository)
+                                );
                             }
                         }
                         else
                         {
-                            obstacles.Add(V3Converters.CreateObstacleSaveData(o));
+                            obstacles.Add(
+                                V3Converters.CreateObstacleSaveData(o, _customDataRepository)
+                            );
                         }
                     }
                     else
                     {
-                        waypoints.Add(V3Converters.CreateWaypointSaveData(w));
+                        waypoints.Add(
+                            V3Converters.CreateWaypointSaveData(w, _customDataRepository)
+                        );
                     }
                 }
                 else if (noteEditorData.noteType == NoteType.Note)
                 {
-                    colorNotes.Add(V3Converters.CreateColorNoteSaveData(noteEditorData));
+                    colorNotes.Add(
+                        V3Converters.CreateColorNoteSaveData(noteEditorData, _customDataRepository)
+                    );
                 }
                 else
                 {
-                    bombNotes.Add(V3Converters.CreateBombNoteSaveData(noteEditorData));
+                    bombNotes.Add(
+                        V3Converters.CreateBombNoteSaveData(noteEditorData, _customDataRepository)
+                    );
                 }
             }
             bpmChanges.Sort(LegacySavingUtil.SortByBeat);
@@ -130,7 +153,8 @@ namespace EditorEX.MapData.LevelDataSavers
                     V3Converters.CreateEventBoxGroupSaveDataWithFxCollection(
                         x,
                         vfxCollection,
-                        eventBoxGroupsDataModel
+                        eventBoxGroupsDataModel,
+                        _customDataRepository
                     )
                 )
                 .Aggregate(
@@ -154,17 +178,17 @@ namespace EditorEX.MapData.LevelDataSavers
                         .ToList()
                 );
 
-            _siraLog.Info($"Saving 1: {CustomDataRepository.GetBeatmapData() == null}");
-            _siraLog.Info($"Saving 2: {CustomDataRepository.GetBeatmapData().customData == null}");
+            _siraLog.Info($"Saving 1: {_customDataRepository.GetBeatmapData() == null}");
+            _siraLog.Info($"Saving 2: {_customDataRepository.GetBeatmapData().customData == null}");
 
-            var customData = CustomDataRepository.GetBeatmapData().customData;
+            var customData = _customDataRepository.GetBeatmapData().customData;
 
-            _siraLog.Info($"Saving 3: {CustomDataRepository.GetCustomEvents() == null}");
+            _siraLog.Info($"Saving 3: {_customDataRepository.GetCustomEvents() == null}");
             _siraLog.Info(
-                $"Saving 3: {CustomDataRepository.GetCustomEvents().Select(x => new CustomEventDataSerialized(x)) == null}"
+                $"Saving 3: {_customDataRepository.GetCustomEvents().Select(x => new CustomEventDataSerialized(x)) == null}"
             );
 
-            customData["customEvents"] = CustomDataRepository
+            customData["customEvents"] = _customDataRepository
                 .GetCustomEvents()
                 .Select(x => new CustomEventDataSerialized(x));
 

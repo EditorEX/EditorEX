@@ -20,14 +20,17 @@ namespace EditorEX.Chroma.Patches.Events
 
         private readonly ChromaRingsRotationEffect.Factory _factory;
         private readonly EditorDeserializedData _editorDeserializedData;
+        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorRingRotationChromafier(
             ChromaRingsRotationEffect.Factory factory,
-            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData
+            [InjectOptional(Id = ChromaController.ID)] EditorDeserializedData deserializedData,
+            ICustomDataRepository customDataRepository
         )
         {
             _factory = factory;
             _editorDeserializedData = deserializedData;
+            _customDataRepository = customDataRepository;
         }
 
         [AffinityPrefix]
@@ -99,7 +102,7 @@ namespace EditorEX.Chroma.Patches.Events
         {
             if (
                 !_editorDeserializedData.Resolve(
-                    CustomDataRepository.GetBasicEventConversion(basicBeatmapEventData),
+                    _customDataRepository.GetBasicEventConversion(basicBeatmapEventData),
                     out EditorChromaEventData? chromaData
                 )
             )

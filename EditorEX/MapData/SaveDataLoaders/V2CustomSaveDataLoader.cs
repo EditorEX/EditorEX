@@ -15,21 +15,24 @@ namespace EditorEX.MapData.SaveDataLoaders
     {
         private BeatmapCharacteristicCollection _beatmapCharacteristicCollection = null!;
         private BeatmapLevelDataModel _beatmapLevelDataModel = null!;
-        private LevelCustomDataModel _levelCustomDataModel = null!;
+        private ILevelCustomDataModel _levelCustomDataModel = null!;
         private CustomLevelLoader _customLevelLoader = null!;
+        private ICustomDataRepository _customDataRepository = null!;
 
         [Inject]
         private void Construct(
             BeatmapCharacteristicCollection beatmapCharacteristicCollection,
             BeatmapLevelDataModel beatmapLevelDataModel,
-            LevelCustomDataModel levelCustomDataModel,
-            CustomLevelLoader customLevelLoader
+            ILevelCustomDataModel levelCustomDataModel,
+            CustomLevelLoader customLevelLoader,
+            ICustomDataRepository customDataRepository
         )
         {
             _beatmapCharacteristicCollection = beatmapCharacteristicCollection;
             _beatmapLevelDataModel = beatmapLevelDataModel;
             _levelCustomDataModel = levelCustomDataModel;
             _customLevelLoader = customLevelLoader;
+            _customDataRepository = customDataRepository;
         }
 
         public bool IsVersion(Version version)
@@ -39,7 +42,7 @@ namespace EditorEX.MapData.SaveDataLoaders
 
         public void Load(string projectPath)
         {
-            CustomDataRepository.ClearAll();
+            _customDataRepository.ClearAll();
 
             string rawInfoDat = File.ReadAllText(Path.Combine(projectPath, "Info.dat"));
             CustomLevelInfoSaveData standardLevelInfoSaveData = CustomLevelInfoSaveData.Deserialize(

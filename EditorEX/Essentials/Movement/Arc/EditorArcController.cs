@@ -3,6 +3,7 @@ using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.VariableMovement;
+using EditorEX.Essentials.VariableMovement;
 using UnityEngine;
 using Zenject;
 
@@ -11,8 +12,8 @@ namespace EditorEX.Essentials.Movement.Arc
     internal class EditorArcController : MonoBehaviour, IDisposable
     {
         private IReadonlyBeatmapState _state = null!;
-        private MovementTypeProvider _movementTypeProvider = null!;
-        private VariableMovementTypeProvider _variableMovementTypeProvider = null!;
+        private ITypeProvider _movementTypeProvider = null!;
+        private ITypeProvider _variableMovementTypeProvider = null!;
         private ActiveViewMode _activeViewMode = null!;
         private EditorBasicBeatmapObjectSpawnMovementData _movementData = null!;
 
@@ -24,8 +25,8 @@ namespace EditorEX.Essentials.Movement.Arc
         private void Construct(
             IReadonlyBeatmapState state,
             ActiveViewMode activeViewMode,
-            MovementTypeProvider movementTypeProvider,
-            VariableMovementTypeProvider variableMovementTypeProvider,
+            [Inject(Id = "Movement")] ITypeProvider movementTypeProvider,
+            [Inject(Id = "VariableMovement")] ITypeProvider variableMovementTypeProvider,
             EditorBasicBeatmapObjectSpawnMovementData movementData
         )
         {

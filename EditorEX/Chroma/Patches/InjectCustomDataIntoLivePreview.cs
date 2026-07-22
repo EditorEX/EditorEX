@@ -22,6 +22,13 @@ namespace EditorEX.Chroma.Patches
             "ConvertBasicEvent"
         );
 
+        private readonly ICustomDataRepository _customDataRepository;
+
+        private InjectCustomDataIntoLivePreview(ICustomDataRepository customDataRepository)
+        {
+            _customDataRepository = customDataRepository;
+        }
+
         BeatmapEventData ConvertBasicEvent(BasicEventEditorData? e)
         {
             BeatmapEventData result;
@@ -30,7 +37,7 @@ namespace EditorEX.Chroma.Patches
                 result = new CustomColorBoostBeatmapEventData(
                     e.beat,
                     e.value == 1,
-                    CustomDataRepository.GetCustomData(e),
+                    _customDataRepository.GetCustomData(e),
                     MapContext.Version
                 );
             }
@@ -41,11 +48,11 @@ namespace EditorEX.Chroma.Patches
                     e.type,
                     e.value,
                     e.floatValue,
-                    CustomDataRepository.GetCustomData(e),
+                    _customDataRepository.GetCustomData(e),
                     MapContext.Version
                 );
             }
-            CustomDataRepository.AddBasicEventConversion(e, result);
+            _customDataRepository.AddBasicEventConversion(e, result);
             return result;
         }
 

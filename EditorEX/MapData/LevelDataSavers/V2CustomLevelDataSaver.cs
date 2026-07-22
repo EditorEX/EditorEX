@@ -6,7 +6,6 @@ using BeatmapSaveDataVersion2_6_0AndEarlier;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.VersionedSaveData;
 using EditorEX.MapData.Contexts;
-using EditorEX.MapData.SaveDataLoaders;
 using static EditorEX.CustomJSONData.VersionedSaveData.Custom2_6_0AndEarlierBeatmapSaveDataVersioned;
 using V2 = BeatmapSaveDataVersion2_6_0AndEarlier;
 
@@ -14,6 +13,13 @@ namespace EditorEX.MapData.LevelDataSavers
 {
     public class V2CustomLevelDataSaver : ICustomLevelDataSaver
     {
+        private readonly ICustomDataRepository _customDataRepository;
+
+        private V2CustomLevelDataSaver(ICustomDataRepository customDataRepository)
+        {
+            _customDataRepository = customDataRepository;
+        }
+
         public bool IsVersion(Version version)
         {
             return version.Major == 2;
@@ -31,7 +37,13 @@ namespace EditorEX.MapData.LevelDataSavers
             bool supportFloatValue = MapContext.Version >= new Version(2, 5, 0);
             List<V2.EventData> events = basicEventsModel
                 .GetAllEventsAsList()
-                .Select(x => V2Converters.CreateBasicEventSaveData(x, supportFloatValue))
+                .Select(x =>
+                    V2Converters.CreateBasicEventSaveData(
+                        x,
+                        supportFloatValue,
+                        _customDataRepository
+                    )
+                )
                 .ToList();
             List<V2.SpecialEventsForKeyword> specialEvents = basicEventsModel
                 .GetBasicEventTypesForKeywordData()
@@ -56,7 +68,9 @@ namespace EditorEX.MapData.LevelDataSavers
                             {
                                 if (allBeatmapObject is ArcEditorData a)
                                 {
-                                    sliders.Add(V2Converters.CreateSliderSaveData(a));
+                                    sliders.Add(
+                                        V2Converters.CreateSliderSaveData(a, _customDataRepository)
+                                    );
                                 }
                             }
                             else
@@ -66,17 +80,23 @@ namespace EditorEX.MapData.LevelDataSavers
                         }
                         else
                         {
-                            obstacles.Add(V2Converters.CreateObstacleSaveData(o));
+                            obstacles.Add(
+                                V2Converters.CreateObstacleSaveData(o, _customDataRepository)
+                            );
                         }
                     }
                     else
                     {
-                        waypoints.Add(V2Converters.CreateWaypointSaveData(w));
+                        waypoints.Add(
+                            V2Converters.CreateWaypointSaveData(w, _customDataRepository)
+                        );
                     }
                 }
                 else if (noteEditorData.noteType == BeatmapEditor3D.Types.NoteType.Note)
                 {
-                    notes.Add(V2Converters.CreateNoteSaveData(noteEditorData));
+                    notes.Add(
+                        V2Converters.CreateNoteSaveData(noteEditorData, _customDataRepository)
+                    );
                 }
             }
             events.Sort(LegacySavingUtil.SortByEventTypeAndBeat);
@@ -85,9 +105,9 @@ namespace EditorEX.MapData.LevelDataSavers
             obstacles.Sort(LegacySavingUtil.SortByBeat);
             sliders.Sort(LegacySavingUtil.SortByBeat);
 
-            var customData = CustomDataRepository.GetBeatmapData().beatmapCustomData;
+            var customData = _customDataRepository.GetBeatmapData().beatmapCustomData;
 
-            customData["_customEvents"] = CustomDataRepository
+            customData["_customEvents"] = _customDataRepository
                 .GetCustomEvents()
                 .Select(x => new CustomEventDataSerialized(x));
 
