@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace EditorEX.HierarchyTraverser.Modifiers
+namespace EditorEX.SDK.Hierarchy.Modifiers
 {
     public class SizeDeltaModifier(float? width, float? height) : IModifier
     {

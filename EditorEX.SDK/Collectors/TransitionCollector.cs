@@ -6,14 +6,14 @@ using Zenject;
 
 namespace EditorEX.SDK.Collectors
 {
-    public class TransitionCollector : IInitializable
+    public class TransitionCollector : ITransitionCollector, IInitializable
     {
         internal Dictionary<string, BaseTransitionSO> _transitions = new();
 
-        private ColorCollector _colorCollector = null!;
+        private IColorCollector _colorCollector = null!;
 
         [Inject]
-        private void Construct(ColorCollector colorCollector)
+        private void Construct(IColorCollector colorCollector)
         {
             _colorCollector = colorCollector;
         }

@@ -1,6 +1,6 @@
 using Reactive;
 
-namespace EditorEX.HierarchyTraverser.Modifiers
+namespace EditorEX.SDK.Hierarchy.Modifiers
 {
     public class ReactiveComponentModifier(ReactiveComponent component) : IModifier
     {

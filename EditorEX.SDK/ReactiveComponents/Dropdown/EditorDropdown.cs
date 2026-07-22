@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EditorEX.SDK.Extensions;
 using EditorEX.SDK.ReactiveComponents.Table;
-using EditorEX.Util;
 using Reactive;
 using Reactive.BeatSaber.Components;
 using Reactive.Compiler;

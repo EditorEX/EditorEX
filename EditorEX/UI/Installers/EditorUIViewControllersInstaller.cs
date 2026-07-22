@@ -33,6 +33,11 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<SelectableCellsCursorPatches>().AsSingle();
 
             Container
+                .Bind<IAddressableCollectorItem>()
+                .To<DefaultAddressableCollectorItem<Material>>()
+                .FromInstance(new("rounded-corners", "Visuals/Materials/UI/UINoGlowRoundEdge.mat"));
+
+            Container
                 .Bind<IContextMenuProvider>()
                 .To<DefaultEditorBeatmapListContextMenuProvider>()
                 .AsSingle();

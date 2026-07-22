@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData.CustomEvents;
-using EditorEX.Util;
+using EditorEX.SDK.Util;
 
 namespace EditorEX.CustomJSONData
 {

@@ -5,7 +5,7 @@ using Zenject;
 
 namespace EditorEX.SDK.Collectors
 {
-    public class FontCollector : IInitializable
+    public class FontCollector : IFontCollector, IInitializable
     {
         private TMP_FontAsset _font;
         private Material _material;

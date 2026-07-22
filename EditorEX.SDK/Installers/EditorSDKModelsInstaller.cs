@@ -1,7 +1,7 @@
-﻿using EditorEX.SDK.AddressableHelpers;
+using EditorEX.SDK.AddressableHelpers;
 using EditorEX.SDK.Collectors;
+using EditorEX.SDK.Integration.Patches;
 using EditorEX.SDK.Signals;
-using EditorEX.SDKImplementation.Patches;
 using UnityEngine;
 using Zenject;
 

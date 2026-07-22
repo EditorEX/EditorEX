@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
 using EditorEX.Essentials.Features.HideUI;
+using EditorEX.SDK.Extensions;
 using EditorEX.SDK.ReactiveComponents;
-using EditorEX.Util;
 using Reactive;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +15,7 @@ namespace EditorEX.Essentials.Features.ViewMode
         private const float AutoHideSeconds = 1.2f;
 
         private ActiveViewMode _activeViewMode = null!;
-        private ReactiveContainer _reactiveContainer = null!;
+        private IReactiveContainer _reactiveContainer = null!;
         private ViewModeToast? _toast;
         private GameObject? _canvasObject;
         private Coroutine? _hideCoroutine;
@@ -27,7 +27,7 @@ namespace EditorEX.Essentials.Features.ViewMode
         [Inject]
         private void Construct(
             ActiveViewMode activeViewMode,
-            ReactiveContainer reactiveContainer,
+            IReactiveContainer reactiveContainer,
             HideUIImplementation hideUiImplementation
         )
         {

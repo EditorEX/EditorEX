@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace EditorEX.Util
+namespace EditorEX.SDK.Util
 {
     public static class Utils
     {

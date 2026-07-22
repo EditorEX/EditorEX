@@ -1,9 +1,9 @@
-﻿using BeatmapEditor3D.InputSystem;
+using BeatmapEditor3D.InputSystem;
 using SiraUtil.Affinity;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.UI;
 
-namespace EditorEX.SDKImplementation.Patches
+namespace EditorEX.SDK.Integration.Patches
 {
     public class FixUnityExplorerInputError : IAffinity
     {

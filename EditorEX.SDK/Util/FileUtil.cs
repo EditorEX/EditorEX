@@ -1,4 +1,4 @@
-﻿namespace EditorEX.Util
+namespace EditorEX.SDK.Util
 {
     public static class FileUtil
     {

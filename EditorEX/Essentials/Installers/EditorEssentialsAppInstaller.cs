@@ -1,8 +1,7 @@
-﻿using BeatmapEditor3D.InputSystem;
+using BeatmapEditor3D.InputSystem;
 using EditorEX.Essentials.Patches;
 using EditorEX.Essentials.Patches.Movement;
 using EditorEX.SDK.Input;
-using EditorEX.Util;
 using Zenject;
 
 namespace EditorEX.Essentials.Installers

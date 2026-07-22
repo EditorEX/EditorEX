@@ -1,73 +1,31 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Reflection.Emit;
 using BeatmapEditor3D.InputSystem;
 using BeatmapEditor3D.InputSystem.SerializedData;
 using BeatmapEditor3D.SerializedData;
 using EditorEX.SDK.Input;
-using EditorEX.SDK.Util;
-using HarmonyLib;
 using Newtonsoft.Json;
 using SiraUtil.Affinity;
-using SiraUtil.Logging;
 
-namespace EditorEX.SDKImplementation.Patches
+namespace EditorEX.SDK.Integration.Patches
 {
-    public class InjectCustomKeybindings : IAffinity
+    /// <summary>
+    /// Display-name and save/load redirects for custom keybindings.
+    /// Static <see cref="_instance"/> bridges Harmony static call sites (e.g. <see cref="LoadCustomKeybindsPatch"/>).
+    /// </summary>
+    public class CustomKeybindingPersistencePatches : IAffinity
     {
-        private static readonly FieldInfo _extendedBindingGroups = AccessTools.Field(
-            typeof(KeyBindings),
-            "extendedBindingGroups"
-        );
+        // Harmony static prefixes and LoadCustomKeybindsPatch need registry access without DI.
+        internal static CustomKeybindingPersistencePatches _instance = null!;
+        internal CustomInputActionRegistry _customInputActionRegistry = null!;
 
-        private static readonly MethodInfo _redirect = AccessTools.Method(
-            typeof(InjectCustomKeybindings),
-            "Redirect"
-        );
-
-        private SiraLog _siraLog;
-        internal static InjectCustomKeybindings _instance;
-        internal CustomInputActionRegistry _customInputActionRegistry;
-
-        private InjectCustomKeybindings(
-            SiraLog siraLog,
+        private CustomKeybindingPersistencePatches(
             CustomInputActionRegistry customInputActionRegistry
         )
         {
-            _siraLog = siraLog;
             _customInputActionRegistry = customInputActionRegistry;
             _instance = this;
-        }
-
-        BindingGroup[] InjectBindingGroups(BindingGroup[] originalBindingGroups)
-        {
-            _siraLog.Info("Injecting custom keybindings...");
-            var bindingsList = originalBindingGroups.ToList();
-            bindingsList.AddRange(
-                _customInputActionRegistry
-                    .GetGroups()
-                    .Select(x => new BindingGroup(
-                        x.GetKeyBindingGroupType(),
-                        [
-                            .. x.GetKeybindings()
-                                .Select(a => new InputActionBinding
-                                {
-                                    inputAction = a.GetInputAction(),
-                                    strictCombination = a.Strict,
-                                    keysCombination = a.Keys.ToList(),
-                                }),
-                        ]
-                    ))
-            );
-            return bindingsList.ToArray();
-        }
-
-        public static BindingGroup[] Redirect(BindingGroup[] originalBindingGroups)
-        {
-            return _instance.InjectBindingGroups(originalBindingGroups);
         }
 
         public static string RedirectSave(Type type, InputAction inputAction)
@@ -80,18 +38,6 @@ namespace EditorEX.SDKImplementation.Patches
                 || enumName == string.Empty
                 ? fallbackName
                 : enumName;
-        }
-
-        [AffinityPatch(typeof(KeyBindings), "GetDefault")]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-        {
-            var result = new CodeMatcher(instructions)
-                .End()
-                .MatchStartBackwards(new CodeMatch(OpCodes.Stfld, _extendedBindingGroups))
-                .Insert(new CodeInstruction(OpCodes.Call, _redirect))
-                .InstructionEnumeration();
-            return result;
         }
 
         public static InputAction RedirectLoad(string inputActionName)

@@ -1,3 +1,4 @@
+using System;
 using EditorEX.SDK.Components;
 using EditorEX.SDK.ReactiveComponents.Native;
 using UnityEngine;
@@ -6,6 +7,11 @@ namespace EditorEX.SDK.ReactiveComponents
 {
     public class EditorClickableImage : EditorImage
     {
+        public Action OnClick
+        {
+            set => ((EditorNativeClickableImage)ImageView).OnClickEvent += _ => value?.Invoke();
+        }
+
         protected override void Construct(RectTransform rect)
         {
             _image = rect.gameObject.AddComponent<EditorNativeClickableImage>();

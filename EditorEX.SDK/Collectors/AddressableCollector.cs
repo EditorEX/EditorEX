@@ -8,7 +8,7 @@ using Zenject;
 
 namespace EditorEX.SDK.Collectors
 {
-    public class AddressableCollector : IInitializable
+    public class AddressableCollector : IAddressableCollector, IInitializable
     {
         private List<IAddressableCollectorItemLoadedSignal> _signals = new();
         private List<IAddressableCollectorItem> _collectingItems = null!;

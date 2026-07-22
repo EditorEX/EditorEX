@@ -5,8 +5,8 @@ using BeatmapEditor3D.Views;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.Contexts;
+using EditorEX.SDK.Extensions;
 using EditorEX.SDK.ReactiveComponents;
-using EditorEX.Util;
 using Reactive;
 using Reactive.Yoga;
 using SiraUtil.Affinity;
@@ -22,7 +22,7 @@ namespace EditorEX.UI.Patches
     {
         private LazyInject<BeatmapProjectManager> _beatmapProjectManager;
         private readonly LevelCustomDataModel _levelCustomDataModel;
-        private readonly ReactiveContainer _reactiveContainer;
+        private readonly IReactiveContainer _reactiveContainer;
 
         private readonly Dictionary<DifficultyBeatmapView, EditorStringInput> _labelInputs = new();
         private readonly Dictionary<DifficultyBeatmapView, string> _activeFilenameByView = new();
@@ -32,7 +32,7 @@ namespace EditorEX.UI.Patches
         public EditDifficultyBeatmapPatches(
             LazyInject<BeatmapProjectManager> beatmapProjectManager,
             LevelCustomDataModel levelCustomDataModel,
-            ReactiveContainer reactiveContainer
+            IReactiveContainer reactiveContainer
         )
         {
             _beatmapProjectManager = beatmapProjectManager;
@@ -204,8 +204,6 @@ namespace EditorEX.UI.Patches
             if (labelTmp != null)
                 labelTmp.gameObject.SetActive(true);
             RefreshLabelDisplay(__instance);
-
-            //button!.interactable = __instance._beatmapData != null;
         }
     }
 

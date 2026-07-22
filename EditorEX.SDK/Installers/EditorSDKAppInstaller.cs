@@ -1,4 +1,4 @@
-﻿using EditorEX.SDKImplementation.Patches;
+using EditorEX.SDK.Integration.Patches;
 using Zenject;
 
 namespace EditorEX.SDK.Installers
@@ -8,6 +8,10 @@ namespace EditorEX.SDK.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<InjectCustomKeybindings>().AsSingle().NonLazy();
+            Container
+                .BindInterfacesAndSelfTo<CustomKeybindingPersistencePatches>()
+                .AsSingle()
+                .NonLazy();
         }
     }
 }

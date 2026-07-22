@@ -1,4 +1,4 @@
-﻿using EditorEX.SDK.Components;
+﻿using EditorEX.SDK.ContextMenu;
 using EditorEX.SDK.ContextMenu.Objects;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,12 +8,12 @@ namespace EditorEX.UI.Components.ContextMenu
 {
     public class SourceListContextMenu : MonoBehaviour, IPointerClickHandler
     {
-        private ContextMenuComponent _contextMenu = null!;
+        private IContextMenuService _contextMenu = null!;
 
         private string _source;
 
         [Inject]
-        private void Construct(ContextMenuComponent contextMenu)
+        private void Construct(IContextMenuService contextMenu)
         {
             _contextMenu = contextMenu;
         }

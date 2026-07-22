@@ -5,7 +5,7 @@ using Zenject;
 
 namespace EditorEX.SDK.Collectors
 {
-    public class ColorCollector : IInitializable
+    public class ColorCollector : IColorCollector, IInitializable
     {
         internal Dictionary<string, SimpleColorSO> _colors = new();
 

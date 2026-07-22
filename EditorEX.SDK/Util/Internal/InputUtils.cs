@@ -1,8 +1,8 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace EditorEX.Util
+namespace EditorEX.SDK.Util
 {
     internal static class InputUtils
     {

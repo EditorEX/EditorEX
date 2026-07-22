@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace EditorEX.Util
+namespace EditorEX.SDK.Util
 {
     public class ReversibleDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
     {

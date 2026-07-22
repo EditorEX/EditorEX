@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;

@@ -4,7 +4,7 @@ using System.Reflection;
 using BeatmapEditor3D.InputSystem;
 using HarmonyLib;
 
-namespace EditorEX.SDKImplementation.Patches;
+namespace EditorEX.SDK.Integration.Patches;
 
 [HarmonyPatch]
 public class LoadCustomKeybindsPatch
@@ -25,25 +25,10 @@ public class LoadCustomKeybindsPatch
             .MakeGenericMethod(typeof(InputAction));
     }
 
-    public static InputAction RedirectLoad(string inputActionName)
-    {
-        if (!Enum.TryParse(inputActionName, out InputAction inputAction))
-        {
-            return InjectCustomKeybindings
-                    ._instance._customInputActionRegistry.GetGroups()
-                    .SelectMany(x => x.GetKeybindings())
-                    .FirstOrDefault(x => x.Name == inputActionName)
-                    ?.GetInputAction()
-                ?? InputAction.None;
-        }
-
-        return inputAction;
-    }
-
     [HarmonyPrefix]
     static bool Prefix(string value, bool ignoreCase, ref InputAction __result)
     {
-        __result = RedirectLoad(value);
+        __result = CustomKeybindingPersistencePatches.RedirectLoad(value);
         return false;
     }
 }

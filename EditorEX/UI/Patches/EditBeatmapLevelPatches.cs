@@ -1,20 +1,25 @@
-﻿using System.Linq;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Views;
+using BeatSaberMarkupLanguage;
 using EditorEX.CustomDataModels;
 using EditorEX.MapData.Contexts;
 using EditorEX.SDK.AddressableHelpers;
 using EditorEX.SDK.Collectors;
+using EditorEX.SDK.Extensions;
 using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.ReactiveComponents.Dropdown;
 using EditorEX.SDK.ReactiveComponents.SegmentedControl;
 using EditorEX.UI.Components;
-using EditorEX.Util;
+using HMUI;
 using Reactive;
 using Reactive.BeatSaber.Components;
 using Reactive.Components;
 using Reactive.Yoga;
+using SFB;
 using SiraUtil.Affinity;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,10 +34,10 @@ namespace EditorEX.UI.Patches
         private readonly IInstantiator _instantiator;
         private readonly AddressableSignalBus _addressableSignalBus;
         private readonly LazyInject<BeatmapProjectManager> _beatmapProjectManager;
-        private readonly ColorCollector _colorCollector;
+        private readonly IColorCollector _colorCollector;
         private readonly EnvironmentsListModel _environmentsListModel;
         private readonly CustomPlatformsListModel _customPlatformsListModel;
-        private readonly ReactiveContainer _reactiveContainer;
+        private readonly IReactiveContainer _reactiveContainer;
 
         private GameObject? _songInfoRoot;
         private GameObject? _beatmapsRoot;
@@ -47,6 +52,9 @@ namespace EditorEX.UI.Patches
 
         private CharacteristicSettingsModal? _charModal;
         private EditorLabelButton? _charSettingsButton;
+        private EditorClickableImage? _coverImage;
+
+        private const int CoverMinResolution = 256;
 
         private EditBeatmapLevelPatches(
             BeatmapLevelDataModel beatmapLevelDataModel,
@@ -54,10 +62,10 @@ namespace EditorEX.UI.Patches
             IInstantiator instantiator,
             AddressableSignalBus addressableSignalBus,
             LazyInject<BeatmapProjectManager> beatmapProjectManager,
-            ColorCollector colorCollector,
+            IColorCollector colorCollector,
             EnvironmentsListModel environmentsListModel,
             CustomPlatformsListModel customPlatformsListModel,
-            ReactiveContainer reactiveContainer
+            IReactiveContainer reactiveContainer
         )
         {
             _beatmapLevelDataModel = beatmapLevelDataModel;
@@ -126,6 +134,9 @@ namespace EditorEX.UI.Patches
                 }
             }
 
+            // Same binding as EditBeatmapLevelViewController.RefreshData → CoverImageInputView.SetCoverImagePath
+            LoadCoverImage(_beatmapLevelDataModel.coverImageFilePath, triggerUpdate: false);
+
             //ReloadContributors();
         }
 
@@ -154,7 +165,7 @@ namespace EditorEX.UI.Patches
             if (firstActivation)
             {
                 AddCustomCharacteristicTab(__instance, "Lawless");
-                AddCustomCharacteristicTab(__instance, "Lightshow");
+                AddCustomCharacteristicTab(__instance, "Lightshow", true);
 
                 var difficultyBeatmapSetContainer = __instance
                     .transform.Find("DifficultyBeatmapSetContainer")
@@ -200,10 +211,13 @@ namespace EditorEX.UI.Patches
                         {
                             new LayoutChildren
                             {
-                                new EditorImage
+                                new EditorClickableImage
                                 {
-                                    Source = __instance._beatmapLevelDataModel.coverImageFilePath,
-                                }.AsFlexItem(size: 200f),
+                                    PreserveAspect = true,
+                                    OnClick = () => PickCoverImage(__instance),
+                                }
+                                    .Bind(ref _coverImage)
+                                    .AsFlexItem(size: 200f),
                                 new LayoutChildren()
                                     .AsLayout()
                                     .AsFlexItem()
@@ -446,6 +460,74 @@ namespace EditorEX.UI.Patches
             }
         }
 
+        private void PickCoverImage(EditBeatmapLevelViewController controller)
+        {
+            var folder = _beatmapProjectManager.Value._workingBeatmapProject ?? string.Empty;
+            var picked = NativeFileDialogs.OpenFileDialog(
+                "Select Cover Image",
+                new ExtensionFilter[] { new ExtensionFilter("Image Files", "png", "jpg", "jpeg") },
+                folder
+            );
+            if (string.IsNullOrEmpty(picked))
+            {
+                return;
+            }
+
+            LoadCoverImage(picked, triggerUpdate: true, controller);
+        }
+
+        /// <summary>
+        /// Loads a cover the same way <see cref="CoverImageInputView"/> does:
+        /// <see cref="MediaAsyncLoader.LoadSpriteAsync"/>, square + min-resolution checks,
+        /// then optionally fires <see cref="BeatmapDataModelSignals.UpdateBeatmapCoverImageSignal"/>.
+        /// </summary>
+        private async void LoadCoverImage(
+            string? path,
+            bool triggerUpdate,
+            EditBeatmapLevelViewController? controller = null
+        )
+        {
+            if (_coverImage == null)
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            {
+                _coverImage.Sprite = null;
+                return;
+            }
+
+            var sprite = await MediaAsyncLoader.LoadSpriteAsync(path, CancellationToken.None);
+            if (_coverImage == null)
+            {
+                return;
+            }
+
+            if (sprite == null)
+            {
+                return;
+            }
+
+            var tex = sprite.texture;
+            var notSquare = tex.width != tex.height;
+            var tooSmall = tex.width < CoverMinResolution || tex.height < CoverMinResolution;
+            if (notSquare || tooSmall)
+            {
+                return;
+            }
+
+            _coverImage.Sprite = sprite;
+            _coverImage.Color = Color.white;
+
+            if (triggerUpdate && controller != null)
+            {
+                controller._signalBus.Fire(
+                    new BeatmapDataModelSignals.UpdateBeatmapCoverImageSignal(path)
+                );
+            }
+        }
+
         private void ShowCharacteristicModal()
         {
             if (_charSettingsButton == null)
@@ -551,7 +633,8 @@ namespace EditorEX.UI.Patches
 
         private void AddCustomCharacteristicTab(
             EditBeatmapLevelViewController controller,
-            string serializedName
+            string serializedName,
+            bool end = false
         )
         {
             var so = GetCustomCharacteristic(serializedName);
@@ -564,7 +647,7 @@ namespace EditorEX.UI.Patches
             if (existing.Any(b => b != null && b.beatmapCharacteristic == so))
                 return;
 
-            var template = existing[0];
+            var template = end ? existing[4] : existing[1];
             // Instantiate through Zenject (NOT Object.Instantiate) so the button's
             // [Inject] dependencies are populated on the clone. The tab's
             // SelectableStateController._tweeningManager is injected; without injection it
@@ -590,6 +673,13 @@ namespace EditorEX.UI.Patches
             var list = existing.ToList();
             list.Add(cloneButton);
             controller._difficultyBeatmapSetTabButtons = list.ToArray();
+            if (end)
+            {
+                existing[4]
+                    .transform.Find("Background8px/Background")
+                    .GetComponent<ImageView>()
+                    .SetImageAsync("#WhitePixel", false);
+            }
         }
     }
 }

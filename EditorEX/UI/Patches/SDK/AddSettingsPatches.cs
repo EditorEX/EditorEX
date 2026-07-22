@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using BeatmapEditor3D;
+using EditorEX.SDK.Extensions;
 using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.Settings;
 using EditorEX.SDK.ViewContent;
-using EditorEX.Util;
 using Reactive;
 using Reactive.Yoga;
 using SiraUtil.Affinity;
@@ -17,11 +17,11 @@ namespace EditorEX.UI.Patches.SDK
     {
         private readonly List<IViewContent<SettingsViewData>> _viewContents;
         private readonly List<string> _viewNames;
-        private readonly ReactiveContainer _reactiveContainer;
+        private readonly IReactiveContainer _reactiveContainer;
 
         private AddSettingsPatches(
             List<IViewContent<SettingsViewData>> viewContents,
-            ReactiveContainer reactiveContainer
+            IReactiveContainer reactiveContainer
         )
         {
             _viewContents = viewContents;

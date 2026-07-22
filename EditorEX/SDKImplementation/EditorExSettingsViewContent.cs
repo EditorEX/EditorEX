@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
+using EditorEX.SDK.Extensions;
 using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.ReactiveComponents.Dropdown;
 using EditorEX.SDK.Settings;
 using EditorEX.SDK.ViewContent;
-using EditorEX.Util;
 using Reactive;
 using Reactive.BeatSaber.Components;
 using Reactive.Yoga;

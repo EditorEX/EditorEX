@@ -1,4 +1,4 @@
-﻿using EditorEX.Essentials.Features.HideUI;
+using EditorEX.Essentials.Features.HideUI;
 using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.SDK.Collectors;
 using EditorEX.SDK.ReactiveComponents;
@@ -15,22 +15,22 @@ namespace EditorEX.Essentials.Installers
 
             // Toast needs ReactiveContainer; collectors live in the view-controllers
             // context. Bind locally only if this container cannot already resolve them.
-            if (!Container.HasBinding<ColorCollector>())
+            if (!Container.HasBinding<IColorCollector>())
             {
                 Container.BindInterfacesAndSelfTo<ColorCollector>().AsSingle();
             }
 
-            if (!Container.HasBinding<FontCollector>())
+            if (!Container.HasBinding<IFontCollector>())
             {
                 Container.BindInterfacesAndSelfTo<FontCollector>().AsSingle();
             }
 
-            if (!Container.HasBinding<TransitionCollector>())
+            if (!Container.HasBinding<ITransitionCollector>())
             {
                 Container.BindInterfacesAndSelfTo<TransitionCollector>().AsSingle();
             }
 
-            if (!Container.HasBinding<ReactiveContainer>())
+            if (!Container.HasBinding<IReactiveContainer>())
             {
                 Container.BindInterfacesAndSelfTo<ReactiveContainer>().AsSingle();
             }

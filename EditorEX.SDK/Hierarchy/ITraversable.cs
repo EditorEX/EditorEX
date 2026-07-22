@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace EditorEX.HierarchyTraverser
+namespace EditorEX.SDK.Hierarchy
 {
     public interface ITraversable
     {

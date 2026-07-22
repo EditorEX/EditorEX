@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
-using EditorEX.HierarchyTraverser.Modifiers;
+using EditorEX.SDK.Hierarchy.Modifiers;
 using UnityEngine;
 
-namespace EditorEX.HierarchyTraverser
+namespace EditorEX.SDK.Hierarchy
 {
     public class TraverserNode<T> : ITraversable
         where T : TraverserNode<T>

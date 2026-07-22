@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Config;
+using EditorEX.SDK.Extensions;
 using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.ReactiveComponents.SegmentedControl;
 using EditorEX.Util;
@@ -17,7 +18,7 @@ namespace EditorEX.UI.Patches
 {
     internal class BeatmapsListViewControllerPatches : IAffinity
     {
-        private readonly ReactiveContainer _reactiveContainer;
+        private readonly IReactiveContainer _reactiveContainer;
         private readonly SourcesConfig _sourcesConfig;
         private readonly BeatmapsCollectionDataModel _beatmapsCollectionDataModel;
 
@@ -26,7 +27,7 @@ namespace EditorEX.UI.Patches
         private EditorStringInput? _filterInput;
 
         private BeatmapsListViewControllerPatches(
-            ReactiveContainer reactiveContainer,
+            IReactiveContainer reactiveContainer,
             SourcesConfig sourcesConfig,
             BeatmapsCollectionDataModel beatmapsCollectionDataModel
         )

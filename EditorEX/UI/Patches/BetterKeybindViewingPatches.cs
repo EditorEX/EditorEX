@@ -8,7 +8,8 @@ using BeatmapEditor3D.Views;
 using EditorEX.SDK.ReactiveComponents;
 using EditorEX.SDK.ReactiveComponents.Native;
 using EditorEX.SDK.ReactiveComponents.Table;
-using EditorEX.Util;
+using EditorEX.SDK.Extensions;
+using EditorEX.SDK.Util;
 using HarmonyLib;
 using Reactive;
 using Reactive.Components;
@@ -24,7 +25,7 @@ namespace EditorEX.UI.Patches
     internal class BetterKeybindViewingPatches : IAffinity
     {
         private SiraLog _siraLog = null!;
-        private ReactiveContainer _reactiveContainer = null!;
+        private IReactiveContainer _reactiveContainer = null!;
 
         private Layout? _buttonContent;
         private Layout? _bindingsContainer;
@@ -32,7 +33,7 @@ namespace EditorEX.UI.Patches
         private Dictionary<InputActionBinding, EditorNamedRail> _keyBindingViews = new();
         private State<int> _selectedGroupIndex = StateUtils.Remember(0);
 
-        private BetterKeybindViewingPatches(SiraLog siraLog, ReactiveContainer reactiveContainer)
+        private BetterKeybindViewingPatches(SiraLog siraLog, IReactiveContainer reactiveContainer)
         {
             _siraLog = siraLog;
             _reactiveContainer = reactiveContainer;

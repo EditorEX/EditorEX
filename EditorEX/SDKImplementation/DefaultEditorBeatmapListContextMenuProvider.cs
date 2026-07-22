@@ -1,6 +1,6 @@
-﻿using EditorEX.SDK.ContextMenu;
+using EditorEX.SDK.ContextMenu;
 using EditorEX.SDK.ContextMenu.Objects;
-using EditorEX.Util;
+using EditorEX.SDK.Util;
 
 namespace EditorEX.SDKImplementation
 {

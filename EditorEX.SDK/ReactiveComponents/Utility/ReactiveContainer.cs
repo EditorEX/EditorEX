@@ -3,12 +3,12 @@ using Zenject;
 
 namespace EditorEX.SDK.ReactiveComponents
 {
-    public class ReactiveContainer
+    public class ReactiveContainer : IReactiveContainer
     {
         public ReactiveContainer(
-            ColorCollector colorCollector,
-            FontCollector fontCollector,
-            TransitionCollector transitionCollector,
+            IColorCollector colorCollector,
+            IFontCollector fontCollector,
+            ITransitionCollector transitionCollector,
             IInstantiator instantiator
         )
         {
@@ -18,9 +18,9 @@ namespace EditorEX.SDK.ReactiveComponents
             Instantiator = instantiator;
         }
 
-        public ColorCollector ColorCollector { get; private set; }
-        public FontCollector FontCollector { get; private set; }
-        public TransitionCollector TransitionCollector { get; private set; }
-        public IInstantiator Instantiator { get; private set; }
+        public IColorCollector ColorCollector { get; }
+        public IFontCollector FontCollector { get; }
+        public ITransitionCollector TransitionCollector { get; }
+        public IInstantiator Instantiator { get; }
     }
 }

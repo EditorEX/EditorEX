@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using SiraUtil.Affinity;
 using Zenject;
 
-namespace EditorEX.SDKImplementation.Patches
+namespace EditorEX.SDK.Integration.Patches
 {
     internal class AllowSignalInterfacesPatches : IAffinity
     {

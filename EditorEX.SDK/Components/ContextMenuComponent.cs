@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using EditorEX.SDK.ContextMenu;
+using EditorEX.SDK.Extensions;
 using EditorEX.SDK.ReactiveComponents;
-using EditorEX.Util;
 using Reactive;
 using Reactive.Components;
 using UnityEngine;
@@ -10,19 +10,19 @@ using Zenject;
 
 namespace EditorEX.SDK.Components
 {
-    public class ContextMenuComponent : MonoBehaviour
+    public class ContextMenuComponent : MonoBehaviour, IContextMenuService
     {
         public EditorContextMenu? Modal => _modal;
         private List<IContextMenuProvider> _contextMenuProviders = null!;
         private EditorContextMenu? _modal;
-        private ReactiveContainer? _reactiveContainer;
+        private IReactiveContainer? _reactiveContainer;
         private object? _linkedObject;
         private RectTransform _clickAnchor = null!;
 
         [Inject]
         private void Construct(
             List<IContextMenuProvider> contextMenuProviders,
-            ReactiveContainer reactiveContainer
+            IReactiveContainer reactiveContainer
         )
         {
             _contextMenuProviders = contextMenuProviders;
