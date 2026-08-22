@@ -42,7 +42,7 @@ namespace EditorEX.SDK.Collectors
         {
             AddSimpleColor("ClickableImage/Default", Color.white);
             AddSimpleColor("ClickableImage/Disabled", Color.white.ColorWithAlpha(0.6f));
-            AddSimpleColor("ClickableImage/Hover", new Color(0.8f, 0.85f, 0.8f));
+            AddSimpleColor("ClickableImage/Hover", new Color(0.8f, 0.8f, 0.8f));
         }
 
         private void AddSimpleColor(string colorName, Color color)

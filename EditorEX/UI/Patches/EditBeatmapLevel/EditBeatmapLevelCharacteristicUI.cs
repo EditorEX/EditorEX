@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
+using BGLib.Polyglot;
 using EditorEX.CustomDataModels;
 using EditorEX.SDK.Extensions;
 using EditorEX.SDK.ReactiveComponents;
@@ -9,6 +10,7 @@ using EditorEX.UI.Components;
 using Reactive;
 using Reactive.Components;
 using Reactive.Yoga;
+using UnityEngine;
 using Zenject;
 
 namespace EditorEX.UI.Patches.EditBeatmapLevel
@@ -37,10 +39,10 @@ namespace EditorEX.UI.Patches.EditBeatmapLevel
             _beatmapProjectManager = beatmapProjectManager;
         }
 
-        public void Show()
+        public void Show(Transform child)
         {
             _charModal ??= new CharacteristicSettingsModal();
-            _charModal.IsPushed = true;
+            _charModal.PresentEditor(child);
 
             var content = _charModal.ContentLayout;
             content.Children.Clear();
@@ -66,16 +68,27 @@ namespace EditorEX.UI.Patches.EditBeatmapLevel
                     _levelCustomDataModel.CharacteristicDetailsByName[name] = details;
                 }
 
-                // Default icon is the editor's "open" glyph, hinting the image is clickable.
-                string IconSource() =>
-                    string.IsNullOrWhiteSpace(details.IconFilename)
-                        ? "#IconOpen"
-                        : Path.Combine(folder, details.IconFilename);
+                var localized = Localization.Get(characteristic.characteristicNameLocalizationKey);
+                var displayName = string.IsNullOrWhiteSpace(localized) ? name : localized;
 
-                EditorImageButton? iconButton = null;
+                EditorClickableImage? iconImage = null;
 
-                var labelInput = new EditorStringInput { Placeholder = name };
-                labelInput.InputField.SetTextWithoutNotify(details.Label ?? string.Empty);
+                void ApplyIcon()
+                {
+                    if (iconImage == null)
+                        return;
+                    if (!string.IsNullOrWhiteSpace(details.IconFilename))
+                        iconImage.Source = Path.Combine(folder, details.IconFilename);
+                    else
+                        iconImage.Sprite = characteristic.icon;
+                }
+
+                var labelInput = new EditorStringInput();
+                labelInput.Placeholder = displayName;
+                if (!string.IsNullOrWhiteSpace(details.Label))
+                {
+                    labelInput.InputField.SetTextWithoutNotify(details.Label);
+                }
                 labelInput.InputField.onEndEdit.AddListener(value =>
                 {
                     details.Label = string.IsNullOrWhiteSpace(value) ? null : value;
@@ -84,9 +97,9 @@ namespace EditorEX.UI.Patches.EditBeatmapLevel
                 content.Children.Add(
                     new LayoutChildren
                     {
-                        new EditorImageButton
+                        new EditorClickableImage
                         {
-                            Source = IconSource(),
+                            PreserveAspect = true,
                             OnClick = () =>
                             {
                                 var picked = NativeFileDialogs.OpenFileDialog(
@@ -96,18 +109,22 @@ namespace EditorEX.UI.Patches.EditBeatmapLevel
                                 );
                                 if (string.IsNullOrEmpty(picked))
                                     return;
-                                // Store the bare filename when the image lives in the level
-                                // folder (SongCore convention), otherwise the full path.
-                                var fileName = Path.GetFileName(picked);
-                                var inFolder = Path.Combine(folder, fileName);
-                                details.IconFilename = File.Exists(inFolder) ? fileName : picked;
-                                if (iconButton != null)
-                                    iconButton.Source = IconSource();
+
+                                var ext = Path.GetExtension(picked);
+                                if (string.IsNullOrEmpty(ext))
+                                    ext = ".png";
+
+                                var fileName = $"{name}_icon{ext}";
+                                var dest = Path.Combine(folder, fileName);
+                                File.Copy(picked, dest, overwrite: true);
+                                details.IconFilename = fileName;
+                                ApplyIcon();
                             },
                         }
-                            .Bind(ref iconButton)
+                            .Bind(ref iconImage)
+                            .With(_ => ApplyIcon())
                             .AsFlexItem(size: new YogaVector(44f, 44f)),
-                        labelInput.AsFlexItem(flexGrow: 1f, size: new YogaVector("auto", 40f)),
+                        labelInput.AsFlexItem(flexGrow: 1f, size: new YogaVector("auto", 30f)),
                     }
                         .AsLayout()
                         .AsFlexGroup(FlexDirection.Row, gap: 10f, alignItems: Align.Center)

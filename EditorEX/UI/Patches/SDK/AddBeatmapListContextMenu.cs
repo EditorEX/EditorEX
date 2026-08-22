@@ -21,11 +21,11 @@ namespace EditorEX.UI.Patches.SDK
         private void SetData(BeatmapsListTableCell __instance, BeatmapInfoData beatmapInfo)
         {
             BeatmapListContextMenu contextMenu =
-                __instance.gameObject.GetComponent<BeatmapListContextMenu>();
-            if (__instance.gameObject.GetComponent<BeatmapListContextMenu>() == null)
+                __instance._openBeatmapButton.gameObject.GetComponent<BeatmapListContextMenu>();
+            if (contextMenu == null)
             {
                 contextMenu = _instantiator.InstantiateComponent<BeatmapListContextMenu>(
-                    __instance.gameObject
+                    __instance._openBeatmapButton.gameObject
                 );
             }
             contextMenu.SetData(beatmapInfo);
@@ -37,7 +37,7 @@ namespace EditorEX.UI.Patches.SDK
         {
             BeatmapListContextMenu contextMenu =
                 __instance.gameObject.GetComponent<BeatmapListContextMenu>();
-            if (__instance.gameObject.GetComponent<BeatmapListContextMenu>() == null)
+            if (contextMenu == null)
             {
                 contextMenu = _instantiator.InstantiateComponent<BeatmapListContextMenu>(
                     __instance.gameObject

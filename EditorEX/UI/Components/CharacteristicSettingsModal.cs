@@ -39,9 +39,7 @@ namespace EditorEX.UI.Components
                         x.Source = "#Background8px";
                         x.ImageType = Image.Type.Sliced;
                     })
-                    .With(x =>
-                        x.WrappedImage.Attach<ColorSOAttachable>("VerticalList/Background/Pressed")
-                    )
+                    .With(x => x.WrappedImage.Attach<ColorSOAttachable>("Navbar/Background/Normal"))
                     .AsFlexGroup(FlexDirection.Column, padding: 12f, gap: 10f)
                     .AsFlexItem(size: new YogaVector(560f, 420f)),
             }

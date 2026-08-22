@@ -124,6 +124,7 @@ namespace EditorEX.UI.Patches.EditBeatmapLevel
             infoContainer.gameObject.SetActive(false);
 
             var secondaryTab = StateUtils.Remember(0);
+            EditorLabelButton? characteristicsButton = null;
             var normalEnvironmentItems = _environmentsListModel
                 .GetAllEnvironmentInfosWithType(EnvironmentType.Normal)
                 .ToDictionary(
@@ -148,8 +149,9 @@ namespace EditorEX.UI.Patches.EditBeatmapLevel
                 new EditorLabelButton
                 {
                     Text = "Custom Characteristics",
-                    OnClick = () => _characteristicUI.Show(),
+                    OnClick = () => _characteristicUI.Show(characteristicsButton!.ContentTransform),
                 }
+                    .Bind(ref characteristicsButton)
                     .EnabledWithState(MainTab, 1)
                     .AsFlexItem(size: new YogaVector(240f, 30f)),
                 new LayoutChildren
