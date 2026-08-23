@@ -83,8 +83,8 @@ namespace EditorEX.UI.Patches
                 float markerX = RectTransformUtility
                     .WorldToScreenPoint(null, marker.rectTransform.position)
                     .x;
-                float distance = Mathf.Abs(markerX - clickX);
-                if (distance >= bestDistance)
+                float distance = clickX - markerX;
+                if (distance >= bestDistance || distance < 0)
                 {
                     continue;
                 }
