@@ -32,6 +32,7 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<CursorUpdater>().AsSingle();
             //Container.BindInterfacesAndSelfTo<BetterKeybindViewingPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<SelectableCellsCursorPatches>().AsSingle();
+            Container.BindInterfacesAndSelfTo<SnapToBookmarkTimePatches>().AsSingle().NonLazy();
 
             Container
                 .Bind<IAddressableCollectorItem>()
