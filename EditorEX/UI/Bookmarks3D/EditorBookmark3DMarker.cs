@@ -97,7 +97,7 @@ namespace EditorEX.UI.Bookmarks3D
             var labelObject = new GameObject("Label");
             labelObject.transform.SetParent(transform, false);
             labelObject.transform.localPosition = new Vector3(labelX, 0.35f, 0f);
-            labelObject.transform.localRotation = Quaternion.Euler(0f, 180f, 0f);
+            labelObject.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
 
             _label = labelObject.AddComponent<TextMeshPro>();
             _label.font = font;

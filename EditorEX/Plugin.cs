@@ -1,20 +1,16 @@
 ﻿using System.Reflection;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
-using EditorEX.Chroma.Deserializer;
 using EditorEX.Chroma.Installers;
 using EditorEX.Config;
 using EditorEX.Config.Installers;
 using EditorEX.CustomJSONData.Installers;
 using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.Essentials.Installers;
-using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.Installers;
-using EditorEX.NoodleExtensions.Deserialize;
 using EditorEX.NoodleExtensions.Installers;
 using EditorEX.SDK.Installers;
 using EditorEX.UI.Installers;
-using EditorEX.Vivify.Deserializer;
 using EditorEX.Vivify.Installers;
 using HarmonyLib;
 using IPA;
@@ -68,18 +64,10 @@ namespace EditorEX
             zenjector.Install<EditorCustomJSONDataAppInstaller>(Location.App);
             zenjector.Install<EditorEssentialsAppInstaller>(Location.App);
             zenjector.Install<EditorConfigAppInstaller>(Location.App, config);
-
-            EditorDeserializerManager
-                .Register<EditorNoodleCustomDataDeserializer>("NoodleExtensions")
-                .Enabled = true;
-            EditorDeserializerManager.Register<EditorHeckCustomDataDeserializer>("Heck").Enabled =
-                true;
-            EditorDeserializerManager
-                .Register<EditorChromaCustomDataDeserializer>("Chroma")
-                .Enabled = true;
-            EditorDeserializerManager
-                .Register<EditorVivifyCustomDataDeserializer>("Vivify")
-                .Enabled = true;
+            zenjector.Install<EditorHeckAppInstaller>(Location.App);
+            zenjector.Install<EditorNoodleAppInstaller>(Location.App);
+            zenjector.Install<EditorChromaAppInstaller>(Location.App);
+            zenjector.Install<EditorVivifyAppInstaller>(Location.App);
 
             ViewModeRepository.RegisterViewMode(
                 new ViewMode("Normal", "normal", false, true, false)

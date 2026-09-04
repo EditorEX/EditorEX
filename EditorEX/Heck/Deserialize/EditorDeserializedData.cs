@@ -10,6 +10,13 @@ namespace EditorEX.Heck.Deserialize
 {
     public class EditorDeserializedData
     {
+        internal EditorDeserializedData()
+            : this(
+                new Dictionary<CustomEventEditorData, ICustomEventCustomData>(),
+                new Dictionary<BasicEventEditorData, IEventCustomData>(),
+                new Dictionary<BaseEditorData, IObjectCustomData>()
+            ) { }
+
         internal EditorDeserializedData(
             Dictionary<CustomEventEditorData, ICustomEventCustomData> customEventCustomDatas,
             Dictionary<BasicEventEditorData, IEventCustomData> eventCustomDatas,
@@ -105,12 +112,43 @@ namespace EditorEX.Heck.Deserialize
             return Resolve(_objectCustomDatas, beatmapObjectData, out result);
         }
 
+        internal void Clear()
+        {
+            CustomEventCustomDatas.Clear();
+            _eventCustomDatas.Clear();
+            _objectCustomDatas.Clear();
+        }
+
         internal void RegisterNewObject(
             BaseEditorData beatmapObjectData,
             IObjectCustomData objectCustomData
         )
         {
-            _objectCustomDatas.Add(beatmapObjectData, objectCustomData);
+            SetObject(beatmapObjectData, objectCustomData);
+        }
+
+        internal void SetObject(
+            BaseEditorData beatmapObjectData,
+            IObjectCustomData objectCustomData
+        )
+        {
+            _objectCustomDatas[beatmapObjectData] = objectCustomData;
+        }
+
+        internal void SetEvent(
+            BasicEventEditorData beatmapEventData,
+            IEventCustomData eventCustomData
+        )
+        {
+            _eventCustomDatas[beatmapEventData.id] = eventCustomData;
+        }
+
+        internal void SetCustomEvent(
+            CustomEventEditorData customEventData,
+            ICustomEventCustomData customEventCustomData
+        )
+        {
+            CustomEventCustomDatas[customEventData] = customEventCustomData;
         }
 
         internal void Remap(EditorDeserializedData source)

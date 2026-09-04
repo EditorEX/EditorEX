@@ -10,16 +10,25 @@ using HarmonyLib;
 using Heck.Animation;
 using SiraUtil.Affinity;
 using UnityEngine;
+using Zenject;
 
 // Heavily based on https://github.com/Aeroluna/Heck/blob/master/Heck/HarmonyPatches/GameObjectTracker.cs
 namespace EditorEX.Heck.Patches
 {
     public class EditorGameObjectTracker : IAffinity
     {
+        private static EditorDeserializedData? _heckCache;
+
         private static readonly MethodInfo _addObject = AccessTools.Method(
             typeof(EditorGameObjectTracker),
             "AddObject"
         );
+
+        private EditorGameObjectTracker([Inject(Id = "Heck")] EditorDeserializedData heckCache)
+        {
+            _heckCache = heckCache;
+        }
+
         private static readonly MethodInfo _removeObject = AccessTools.Method(
             typeof(EditorGameObjectTracker),
             "RemoveObject"
@@ -76,9 +85,8 @@ namespace EditorEX.Heck.Patches
         private static bool TryGetTrack(BaseEditorData? objectData, out List<Track> track)
         {
             if (
-                !EditorDeserializedDataContainer
-                    .GetDeserializedData("Heck")
-                    .Resolve(objectData, out EditorHeckObjectData? heckData)
+                _heckCache == null
+                || !_heckCache.Resolve(objectData, out EditorHeckObjectData? heckData)
                 || heckData?.Track == null
             )
             {

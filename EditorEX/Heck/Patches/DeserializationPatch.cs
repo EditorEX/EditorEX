@@ -7,9 +7,10 @@ using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.SerializedData;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
-using EditorEX.Heck.Deserialize;
+using EditorEX.Heck.Codecs;
 using EditorEX.MapData.Contexts;
 using EditorEX.SDK.Util;
+using Heck.Animation;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
 
@@ -17,10 +18,12 @@ namespace EditorEX.Heck.Patches
 {
     internal class DeserializationPatch : IAffinity
     {
-        private readonly EditorDeserializerManager _editorDeserializerManager;
-
+        private readonly CustomDataCodecRegistry _registry;
         private readonly SiraLog _siraLog;
         private readonly ICustomDataRepository _customDataRepository;
+        private readonly BeatmapObjectsDataModel _objectsModel;
+        private readonly BeatmapBasicEventsDataModel _eventsModel;
+        private readonly Dictionary<string, Track> _tracks;
 
         private static readonly FieldInfo _customBeatmapDataV2 =
             BackingFieldUtil.GetBackingField<CustomBeatmapData>("version");
@@ -30,14 +33,20 @@ namespace EditorEX.Heck.Patches
             BackingFieldUtil.GetBackingField<CustomBeatmapData>("beatmapCustomData");
 
         private DeserializationPatch(
-            EditorDeserializerManager editorDeserializerManager,
+            CustomDataCodecRegistry registry,
             SiraLog siraLog,
-            ICustomDataRepository customDataRepository
+            ICustomDataRepository customDataRepository,
+            BeatmapObjectsDataModel objectsModel,
+            BeatmapBasicEventsDataModel eventsModel,
+            Dictionary<string, Track> tracks
         )
         {
+            _registry = registry;
             _siraLog = siraLog;
-            _editorDeserializerManager = editorDeserializerManager;
             _customDataRepository = customDataRepository;
+            _objectsModel = objectsModel;
+            _eventsModel = eventsModel;
+            _tracks = tracks;
         }
 
         [AffinityPatch(
@@ -61,7 +70,10 @@ namespace EditorEX.Heck.Patches
             MapContext.Version = beatmapVersion;
 
             if (beatmapVersion >= new Version(4, 0, 0))
+            {
+                _registry.Clear();
                 return;
+            }
 
             var standardLevelInfoSaveData = CustomLevelInfoSaveData.Deserialize(
                 File.ReadAllText(Path.Combine(projectPath, "Info.dat"))
@@ -79,24 +91,16 @@ namespace EditorEX.Heck.Patches
             )?.customData;
             _customBeatmapDataBeatmapCustomData?.SetValue(beatmapData, beatmapCustomData);
 
-            var v2 = beatmapVersion < __instance._version300;
-
-            _editorDeserializerManager.DeserializeBeatmapData(
-                v2,
-                false,
-                out var beatmapTracks,
-                out HashSet<ValueTuple<object, EditorDeserializedData>> deserializedDatas
-            );
-
-            EditorDeserializedDataContainer.DeserializeDatas = deserializedDatas.ToDictionary(
-                x => x.Item1,
-                x => x.Item2
-            );
-            _siraLog.Info(
-                $"Deserialized {EditorDeserializedDataContainer.DeserializeDatas.Count} custom data objects."
-            );
-            EditorDeserializedDataContainer.Tracks = beatmapTracks;
-            EditorDeserializedDataContainer.Ready = true;
+            var ctx = new CustomDataCodecContext
+            {
+                SourceVersion = beatmapVersion,
+                TargetVersion = beatmapVersion,
+                Tracks = _tracks,
+                TrackBuilder = new TrackBuilder(),
+                Repository = _customDataRepository,
+            };
+            _registry.LoadMap(_objectsModel, _eventsModel, ctx);
+            _siraLog.Info("Loaded custom data codecs into the App preview cache.");
         }
     }
 }
