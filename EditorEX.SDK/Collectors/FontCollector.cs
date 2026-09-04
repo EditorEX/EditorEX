@@ -17,6 +17,7 @@ namespace EditorEX.SDK.Collectors
                 .FirstOrDefault(x => x.font.name.StartsWith("NotoSans-Medium"));
             _font = Object.Instantiate(text.font);
             _material = Object.Instantiate(text.fontSharedMaterial);
+            TMP_Settings.defaultFontAsset = _font;
         }
 
         public TMP_FontAsset GetFontAsset()

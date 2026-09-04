@@ -16,7 +16,7 @@ namespace EditorEX.CustomJSONData.VersionedSaveData
         public List<V2.NoteData> _notes { get; }
         public List<V2.SliderData> _sliders { get; }
         public List<V2.WaypointData> _waypoints { get; }
-        public List<CustomObstacleDataSerialized> _obstacles { get; }
+        public List<V2.ObstacleData> _obstacles { get; }
         public SpecialEventKeywordFiltersData _specialEventsKeywordFilters { get; }
         public CustomData _customData { get; }
 
@@ -26,7 +26,7 @@ namespace EditorEX.CustomJSONData.VersionedSaveData
             List<V2.NoteData> notes,
             List<V2.SliderData> sliders,
             List<V2.WaypointData> waypoints,
-            List<CustomObstacleDataSerialized> obstacles,
+            List<V2.ObstacleData> obstacles,
             SpecialEventKeywordFiltersData specialEventsKeywordFilters,
             CustomData customData
         )
@@ -55,40 +55,6 @@ namespace EditorEX.CustomJSONData.VersionedSaveData
             public string _type { get; }
 
             public CustomData _data { get; }
-        }
-
-        public class CustomObstacleDataSerialized : IBeat
-        {
-            internal CustomObstacleDataSerialized(
-                Version2_6_0AndEarlierCustomBeatmapSaveData.ObstacleSaveData customEventData
-            )
-            {
-                _time = customEventData.time;
-                _lineIndex = customEventData.lineIndex;
-                _type = customEventData.type;
-                _duration = customEventData.duration;
-                _width = customEventData.width;
-                _customData = customEventData.customData;
-            }
-
-            public CustomData _customData { get; }
-
-            public float _time { get; }
-
-            public int _lineIndex { get; }
-
-            public ObstacleType _type { get; }
-
-            public float _duration { get; }
-
-            public int _width { get; }
-
-            public float beat => _time;
-
-            int IComparable<IBeat>.CompareTo(IBeat other)
-            {
-                return beat.CompareTo(other.beat);
-            }
         }
     }
 }

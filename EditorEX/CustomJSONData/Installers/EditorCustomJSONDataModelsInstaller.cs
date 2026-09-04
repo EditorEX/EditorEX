@@ -2,6 +2,7 @@
 using EditorEX.CustomJSONData.Patches;
 using EditorEX.CustomJSONData.Patches.Loading;
 using EditorEX.CustomJSONData.Patches.Saving;
+using EditorEX.MapData.Bookmarks;
 using EditorEX.MapData.LevelDataLoaders;
 using EditorEX.MapData.LevelDataSavers;
 using EditorEX.MapData.SaveDataLoaders;
@@ -44,6 +45,8 @@ namespace EditorEX.CustomJSONData.Installers
 
             Container.BindInterfacesAndSelfTo<LevelCustomDataModel>().AsSingle();
             Container.BindInterfacesAndSelfTo<CustomPlatformsListModel>().AsSingle();
+            Container.Bind<CustomBookmarksController>().AsSingle();
+            Container.BindInterfacesAndSelfTo<CustomBookmarksLoadPatch>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<DisableConversion>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<InjectCustomEvents>().AsSingle().NonLazy();

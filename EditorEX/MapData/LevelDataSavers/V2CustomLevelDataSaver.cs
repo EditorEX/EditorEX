@@ -5,6 +5,7 @@ using BeatmapEditor3D.DataModels;
 using BeatmapSaveDataVersion2_6_0AndEarlier;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.VersionedSaveData;
+using EditorEX.MapData.Bookmarks;
 using EditorEX.MapData.Contexts;
 using static EditorEX.CustomJSONData.VersionedSaveData.Custom2_6_0AndEarlierBeatmapSaveDataVersioned;
 using V2 = BeatmapSaveDataVersion2_6_0AndEarlier;
@@ -51,7 +52,7 @@ namespace EditorEX.MapData.LevelDataSavers
                 .SelectMany(x => x)
                 .ToList();
             List<V2.NoteData> notes = new List<V2.NoteData>();
-            List<CustomObstacleDataSerialized> obstacles = new List<CustomObstacleDataSerialized>();
+            List<V2.ObstacleData> obstacles = new List<V2.ObstacleData>();
             List<V2.SliderData> sliders = new List<V2.SliderData>();
             List<V2.WaypointData> waypoints = new List<V2.WaypointData>();
             foreach (
@@ -105,11 +106,34 @@ namespace EditorEX.MapData.LevelDataSavers
             obstacles.Sort(LegacySavingUtil.SortByBeat);
             sliders.Sort(LegacySavingUtil.SortByBeat);
 
-            var customData = _customDataRepository.GetBeatmapData().beatmapCustomData;
+            var customData = _customDataRepository.GetBeatmapData().customData;
 
-            customData["_customEvents"] = _customDataRepository
+            /*customData["_customEvents"] = _customDataRepository
                 .GetCustomEvents()
                 .Select(x => new CustomEventDataSerialized(x));
+
+            CustomDataBookmarkCodec.Write(
+                customData,
+                projectManager._bookmarksDataModel,
+                v3: false
+            );
+            var liveCustomData = _customDataRepository.GetBeatmapData()?.customData;
+            if (liveCustomData != null && !ReferenceEquals(liveCustomData, customData))
+            {
+                CustomDataBookmarkCodec.Write(
+                    liveCustomData,
+                    projectManager._bookmarksDataModel,
+                    v3: false
+                );
+            }*/
+
+            Plugin.Logger.Info($"Note count: {notes.Count}");
+            Plugin.Logger.Info($"Slider count: {sliders.Count}");
+            Plugin.Logger.Info($"Waypoint count: {waypoints.Count}");
+            Plugin.Logger.Info($"Obstacle count: {obstacles.Count}");
+            Plugin.Logger.Info($"Event count: {events.Count}");
+            Plugin.Logger.Info($"Special event count: {specialEvents.Count}");
+            Plugin.Logger.Info($"Custom data count: {customData.Count}");
 
             return new Custom2_6_0AndEarlierBeatmapSaveDataVersioned(
                 MapContext.Version.ToString(),
@@ -129,7 +153,8 @@ namespace EditorEX.MapData.LevelDataSavers
             bool clearDirty
         )
         {
-            if (!projectManager._beatmapDataModelsSaver.NeedsSaving())
+            bool bookmarksDirty = projectManager._bookmarkDataModelSaver.NeedsSaving();
+            if (!projectManager._beatmapDataModelsSaver.NeedsSaving() && !bookmarksDirty)
             {
                 return;
             }
@@ -137,6 +162,7 @@ namespace EditorEX.MapData.LevelDataSavers
             if (
                 projectManager._beatmapDataModelsSaver.BeatmapNeedSaving()
                 || projectManager._beatmapDataModelsSaver.LightshowNeedsSaving()
+                || bookmarksDirty
             )
             {
                 var beatmapSaveData = GetSaveData(projectManager, difficultyBeatmapData);
@@ -150,6 +176,7 @@ namespace EditorEX.MapData.LevelDataSavers
                     projectManager._beatmapObjectsDataModel.ClearDirty();
                     projectManager._beatmapBasicEventsDataModel.ClearDirty();
                     projectManager._beatmapEventBoxGroupsDataModel.ClearDirty();
+                    projectManager._bookmarksDataModel.ClearDirty();
                 }
             }
             if (clearDirty)

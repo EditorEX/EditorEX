@@ -7,6 +7,7 @@ using BeatmapSaveDataCommon;
 using BeatmapSaveDataVersion3;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.VersionedSaveData;
+using EditorEX.MapData.Bookmarks;
 using EditorEX.MapData.Contexts;
 using SiraUtil.Logging;
 using Zenject;
@@ -192,6 +193,8 @@ namespace EditorEX.MapData.LevelDataSavers
                 .GetCustomEvents()
                 .Select(x => new CustomEventDataSerialized(x));
 
+            CustomDataBookmarkCodec.Write(customData, projectManager._bookmarksDataModel, v3: true);
+
             return new CustomBeatmapSaveDataVersioned(
                 MapContext.Version.ToString(),
                 bpmChanges,
@@ -221,7 +224,8 @@ namespace EditorEX.MapData.LevelDataSavers
             bool clearDirty
         )
         {
-            if (!projectManager._beatmapDataModelsSaver.NeedsSaving())
+            bool bookmarksDirty = projectManager._bookmarkDataModelSaver.NeedsSaving();
+            if (!projectManager._beatmapDataModelsSaver.NeedsSaving() && !bookmarksDirty)
             {
                 return;
             }
@@ -229,6 +233,7 @@ namespace EditorEX.MapData.LevelDataSavers
             if (
                 projectManager._beatmapDataModelsSaver.BeatmapNeedSaving()
                 || projectManager._beatmapDataModelsSaver.LightshowNeedsSaving()
+                || bookmarksDirty
             )
             {
                 var beatmapSaveData = GetSaveData(projectManager, difficultyBeatmapData);
@@ -242,6 +247,7 @@ namespace EditorEX.MapData.LevelDataSavers
                     projectManager._beatmapObjectsDataModel.ClearDirty();
                     projectManager._beatmapBasicEventsDataModel.ClearDirty();
                     projectManager._beatmapEventBoxGroupsDataModel.ClearDirty();
+                    projectManager._bookmarksDataModel.ClearDirty();
                 }
             }
             if (clearDirty)

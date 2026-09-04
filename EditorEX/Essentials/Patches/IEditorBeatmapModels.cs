@@ -1,3 +1,4 @@
+using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 
 namespace EditorEX.Essentials.Patches
@@ -11,5 +12,9 @@ namespace EditorEX.Essentials.Patches
         BeatmapObjectsDataModel BeatmapObjectsDataModel { get; }
 
         BeatmapDataModel BeatmapDataModel { get; }
+
+        BookmarksDataModel BookmarksDataModel { get; }
+
+        BeatmapObjectsHoverState BeatmapObjectsHoverState { get; }
     }
 }

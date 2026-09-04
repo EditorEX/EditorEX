@@ -33,6 +33,10 @@ namespace EditorEX.UI.Installers
             //Container.BindInterfacesAndSelfTo<BetterKeybindViewingPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<SelectableCellsCursorPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<SnapToBookmarkTimePatches>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<BookmarkListWrapPatches>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<BookmarkManagementViewPatches>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<CreateBookmarkDialogPatches>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<CustomBookmarkCommandPatches>().AsSingle().NonLazy();
 
             Container
                 .Bind<IAddressableCollectorItem>()

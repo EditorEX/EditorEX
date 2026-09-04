@@ -12,6 +12,8 @@ namespace EditorEX.Essentials.Patches
         public BeatmapLevelDataModel BeatmapLevelDataModel { get; private set; }
         public BeatmapDataModel BeatmapDataModel { get; private set; }
         public AudioDataModel AudioDataModel { get; private set; }
+        public BookmarksDataModel BookmarksDataModel { get; private set; }
+        public BeatmapObjectsHoverState BeatmapObjectsHoverState { get; private set; }
 
         internal DiContainer _Container;
 
@@ -27,6 +29,8 @@ namespace EditorEX.Essentials.Patches
             AudioDataModel = Container.Resolve<AudioDataModel>();
             BeatmapLevelDataModel = Container.Resolve<BeatmapLevelDataModel>();
             BeatmapObjectsDataModel = Container.Resolve<BeatmapObjectsDataModel>();
+            BookmarksDataModel = Container.Resolve<BookmarksDataModel>();
+            BeatmapObjectsHoverState = Container.Resolve<BeatmapObjectsHoverState>();
         }
     }
 }

@@ -6,6 +6,7 @@ using BeatmapEditor3D.DataModels;
 using BeatmapSaveDataCommon;
 using BeatmapSaveDataVersion3;
 using BeatSaber.TrackDefinitions.DataModels;
+using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
 using EditorEX.Util;
@@ -24,10 +25,19 @@ namespace EditorEX.MapData.LevelDataSavers
     {
         public static bool SaveCustom(
             BaseEditorData data,
-            ICustomDataRepository customDataRepository
+            ICustomDataRepository customDataRepository,
+            out CustomData customData
         )
         {
-            var customData = data.GetCustomData(customDataRepository);
+            customData = data.GetCustomData(customDataRepository);
+            if (customData != null)
+            {
+                customData = new CustomData(
+                    customData
+                        .Where(x => !x.Key.StartsWith("NE_"))
+                        .ToDictionary(x => x.Key, x => x.Value)
+                );
+            }
             return customData != null && !customData.IsEmpty;
         }
 
@@ -36,7 +46,7 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(a, customDataRepository)
+            return SaveCustom(a, customDataRepository, out var customData)
                 ? new V3CustomSaveData.SliderSaveData(
                     (a.colorType == ColorType.ColorA) ? NoteColorType.ColorA : NoteColorType.ColorB,
                     a.beat,
@@ -50,7 +60,7 @@ namespace EditorEX.MapData.LevelDataSavers
                     a.tailControlPointLengthMultiplier,
                     (BeatmapSaveDataCommon.NoteCutDirection)a.tailCutDirection,
                     (BeatmapSaveDataCommon.SliderMidAnchorMode)a.midAnchorMode,
-                    a.GetCustomData(customDataRepository)
+                    customData
                 )
                 : new V3.SliderData(
                     (a.colorType == ColorType.ColorA) ? NoteColorType.ColorA : NoteColorType.ColorB,
@@ -73,7 +83,7 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(n, customDataRepository)
+            return SaveCustom(n, customDataRepository, out var customData)
                 ? new V3CustomSaveData.ColorNoteSaveData(
                     n.beat,
                     n.column,
@@ -81,7 +91,7 @@ namespace EditorEX.MapData.LevelDataSavers
                     (n.type == ColorType.ColorA) ? NoteColorType.ColorA : NoteColorType.ColorB,
                     (BeatmapSaveDataCommon.NoteCutDirection)n.cutDirection,
                     n.angle,
-                    n.GetCustomData(customDataRepository)
+                    customData
                 )
                 : new ColorNoteData(
                     n.beat,
@@ -98,13 +108,8 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(n, customDataRepository)
-                ? new V3CustomSaveData.BombNoteSaveData(
-                    n.beat,
-                    n.column,
-                    n.row,
-                    n.GetCustomData(customDataRepository)
-                )
+            return SaveCustom(n, customDataRepository, out var customData)
+                ? new V3CustomSaveData.BombNoteSaveData(n.beat, n.column, n.row, customData)
                 : new BombNoteData(n.beat, n.column, n.row);
         }
 
@@ -114,13 +119,13 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(e, customDataRepository)
+            return SaveCustom(e, customDataRepository, out var customData)
                 ? new V3CustomSaveData.BasicEventSaveData(
                     e.beat,
                     (BeatmapEventType)e.type,
                     e.value,
                     e.floatValue,
-                    e.GetCustomData(customDataRepository)
+                    customData
                 )
                 : new BasicEventData(
                     e.beat,
@@ -135,7 +140,7 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(o, customDataRepository)
+            return SaveCustom(o, customDataRepository, out var customData)
                 ? new V3CustomSaveData.ObstacleSaveData(
                     o.beat,
                     o.column,
@@ -143,7 +148,7 @@ namespace EditorEX.MapData.LevelDataSavers
                     o.duration,
                     o.width,
                     o.height,
-                    o.GetCustomData(customDataRepository)
+                    customData
                 )
                 : new V3.ObstacleData(o.beat, o.column, o.row, o.duration, o.width, o.height);
         }
@@ -153,13 +158,13 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(w, customDataRepository)
+            return SaveCustom(w, customDataRepository, out var customData)
                 ? new V3CustomSaveData.WaypointSaveData(
                     w.beat,
                     w.column,
                     w.row,
                     (BeatmapSaveDataCommon.OffsetDirection)w.offsetDirection,
-                    w.GetCustomData(customDataRepository)
+                    customData
                 )
                 : new V3.WaypointData(
                     w.beat,
@@ -174,7 +179,7 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(c, customDataRepository)
+            return SaveCustom(c, customDataRepository, out var customData)
                 ? new V3CustomSaveData.ColorNoteSaveData(
                     c.beat,
                     c.column,
@@ -182,7 +187,7 @@ namespace EditorEX.MapData.LevelDataSavers
                     (c.colorType == ColorType.ColorA) ? NoteColorType.ColorA : NoteColorType.ColorB,
                     (BeatmapSaveDataCommon.NoteCutDirection)c.cutDirection,
                     0,
-                    c.GetCustomData(customDataRepository)
+                    customData
                 )
                 : new ColorNoteData(
                     c.beat,
@@ -199,7 +204,7 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(c, customDataRepository)
+            return SaveCustom(c, customDataRepository, out var customData)
                 ? new V3CustomSaveData.BurstSliderSaveData(
                     (c.colorType == ColorType.ColorA) ? NoteColorType.ColorA : NoteColorType.ColorB,
                     c.beat,
@@ -211,7 +216,7 @@ namespace EditorEX.MapData.LevelDataSavers
                     c.tailRow,
                     c.sliceCount,
                     c.squishAmount,
-                    c.GetCustomData(customDataRepository)
+                    customData
                 )
                 : new BurstSliderData(
                     (c.colorType == ColorType.ColorA) ? NoteColorType.ColorA : NoteColorType.ColorB,
@@ -237,14 +242,14 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(e, customDataRepository)
+            return SaveCustom(e, customDataRepository, out var customData)
                 ? new V3CustomSaveData.RotationEventSaveData(
                     e.beat,
                     (e.type == BasicBeatmapEventType.Event14)
                         ? ExecutionTime.Early
                         : ExecutionTime.Late,
                     (float)e.value,
-                    e.GetCustomData(customDataRepository)
+                    customData
                 )
                 : new RotationEventData(
                     e.beat,
@@ -260,12 +265,8 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(e, customDataRepository)
-                ? new V3CustomSaveData.ColorBoostEventSaveData(
-                    e.beat,
-                    e.value == 1,
-                    e.GetCustomData(customDataRepository)
-                )
+            return SaveCustom(e, customDataRepository, out var customData)
+                ? new V3CustomSaveData.ColorBoostEventSaveData(e.beat, e.value == 1, customData)
                 : new ColorBoostEventData(e.beat, e.value == 1);
         }
 
@@ -274,13 +275,13 @@ namespace EditorEX.MapData.LevelDataSavers
             ICustomDataRepository customDataRepository
         )
         {
-            return SaveCustom(e, customDataRepository)
+            return SaveCustom(e, customDataRepository, out var customData)
                 ? new V3CustomSaveData.BasicEventSaveData(
                     e.beat,
                     (BeatmapEventType)e.type,
                     e.value,
                     e.floatValue,
-                    e.GetCustomData(customDataRepository)
+                    customData
                 )
                 : new BasicEventData(e.beat, (BeatmapEventType)e.type, e.value, e.floatValue);
         }
