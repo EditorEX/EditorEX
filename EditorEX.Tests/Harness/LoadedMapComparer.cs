@@ -39,6 +39,7 @@ namespace EditorEX.Tests.Harness
             );
             CompareList(errors, "bookmarks", expected.Bookmarks, actual.Bookmarks, CompareBookmarks);
             CompareList(errors, "bpmChanges", expected.BpmChanges, actual.BpmChanges, CompareBpm);
+            CompareList(errors, "njsEvents", expected.NjsEvents, actual.NjsEvents, CompareNjs);
             CompareList(
                 errors,
                 "eventBoxGroups",
@@ -53,11 +54,18 @@ namespace EditorEX.Tests.Harness
                 return null;
             }
 
+            const int maxErrors = 40;
             var builder = new StringBuilder();
             builder.AppendLine("Loaded map snapshots differ:");
-            foreach (string error in errors)
+            int shown = Math.Min(errors.Count, maxErrors);
+            for (int i = 0; i < shown; i++)
             {
-                builder.AppendLine("  - " + error);
+                builder.AppendLine("  - " + errors[i]);
+            }
+
+            if (errors.Count > maxErrors)
+            {
+                builder.AppendLine($"  ... and {errors.Count - maxErrors} more");
             }
 
             return builder.ToString();
@@ -79,7 +87,7 @@ namespace EditorEX.Tests.Harness
             if (expected.Count != actual.Count)
             {
                 errors.Add($"{name} count expected {expected.Count} but was {actual.Count}");
-                int limit = Math.Min(expected.Count, actual.Count);
+                int limit = Math.Min(Math.Min(expected.Count, actual.Count), 8);
                 for (int i = 0; i < limit; i++)
                 {
                     compareItem(errors, $"{name}[{i}]", expected[i], actual[i]);
@@ -260,6 +268,29 @@ namespace EditorEX.Tests.Harness
             CompareFloat(errors, path + ".bpm", expected.Bpm, actual.Bpm);
         }
 
+        private static void CompareNjs(
+            List<string> errors,
+            string path,
+            LoadedMapSnapshot.NjsEventRecord expected,
+            LoadedMapSnapshot.NjsEventRecord actual
+        )
+        {
+            CompareFloat(errors, path + ".beat", expected.Beat, actual.Beat);
+            CompareFloat(
+                errors,
+                path + ".noteJumpSpeedDelta",
+                expected.NoteJumpSpeedDelta,
+                actual.NoteJumpSpeedDelta
+            );
+            Compare(errors, path + ".easeType", expected.EaseType, actual.EaseType);
+            Compare(
+                errors,
+                path + ".usePreviousValue",
+                expected.UsePreviousValue,
+                actual.UsePreviousValue
+            );
+        }
+
         private static void CompareEventBoxGroups(
             List<string> errors,
             string path,
@@ -348,8 +379,16 @@ namespace EditorEX.Tests.Harness
         {
             if (!JToken.DeepEquals(expected, actual))
             {
-                errors.Add($"{path} expected {expected} but was {actual}");
+                errors.Add(
+                    $"{path} expected {TruncateToken(expected)} but was {TruncateToken(actual)}"
+                );
             }
+        }
+
+        private static string TruncateToken(JToken token)
+        {
+            string text = token.ToString(Formatting.None);
+            return text.Length <= 160 ? text : text.Substring(0, 160) + "...";
         }
     }
 }

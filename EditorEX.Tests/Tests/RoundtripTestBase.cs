@@ -32,11 +32,13 @@ namespace EditorEX.Tests.Tests
         protected static void AssertSnapshotsEqual(
             LoadedMapSnapshot expected,
             LoadedMapSnapshot actual,
+            MapFixture? fixture = null,
             [CallerMemberName] string? testName = null
         )
         {
             string? diff = LoadedMapComparer.Diff(expected, actual);
-            Assert.True(diff == null, testName + Environment.NewLine + diff);
+            string label = (testName ?? "snapshot") + (fixture == null ? "" : " (" + fixture + ")");
+            Assert.True(diff == null, label + Environment.NewLine + diff);
         }
     }
 }

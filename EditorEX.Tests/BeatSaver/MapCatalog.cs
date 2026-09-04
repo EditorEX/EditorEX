@@ -34,11 +34,22 @@ namespace EditorEX.Tests.BeatSaver
             4
         );
 
+        public static IEnumerable<object[]> AllTheoryData
+        {
+            get
+            {
+                foreach (MapFixture fixture in All)
+                {
+                    yield return new object[] { fixture };
+                }
+            }
+        }
+
         public static IEnumerable<MapFixture> All
         {
             get
             {
-                yield return V3VanillaExpertPlus; 
+                yield return V3VanillaExpertPlus;
                 yield return V3NoodleChromaExpertPlus;
                 yield return V2NoodleChromaExpertPlus;
                 yield return V4VanillaExpertPlus;

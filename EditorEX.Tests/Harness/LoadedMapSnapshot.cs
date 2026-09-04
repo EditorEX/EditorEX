@@ -12,6 +12,7 @@ using EditorEX.CustomJSONData.CustomEvents;
 using EditorEX.MapData.Bookmarks;
 using EditorEX.MapData.LevelDataLoaders;
 using EditorEX.MapData.Objects;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace EditorEX.Tests.Harness
@@ -36,6 +37,8 @@ namespace EditorEX.Tests.Harness
 
         public List<BpmRecord> BpmChanges { get; } = new();
 
+        public List<NjsEventRecord> NjsEvents { get; } = new();
+
         public List<EventBoxGroupRecord> EventBoxGroups { get; } = new();
 
         public List<KeywordRecord> Keywords { get; } = new();
@@ -44,7 +47,8 @@ namespace EditorEX.Tests.Harness
 
         public static LoadedMapSnapshot Capture(
             DifficultyLoadResult loaded,
-            ICustomDataRepository repo
+            ICustomDataRepository repo,
+            Version? version = null
         )
         {
             var snapshot = new LoadedMapSnapshot
@@ -176,7 +180,10 @@ namespace EditorEX.Tests.Harness
 
             CustomData? beatmapCustom =
                 repo.GetBeatmapData()?.customData ?? repo.GetCustomBeatmapSaveData()?.customData;
-            foreach (CustomDataBookmark bookmark in CustomDataBookmarkCodec.Read(beatmapCustom, true))
+            bool v3Bookmarks = version == null || version.Major >= 3;
+            foreach (
+                CustomDataBookmark bookmark in CustomDataBookmarkCodec.Read(beatmapCustom, v3Bookmarks)
+            )
             {
                 snapshot.Bookmarks.Add(
                     new BookmarkRecord
@@ -194,6 +201,19 @@ namespace EditorEX.Tests.Harness
             foreach (BpmChangeEventData bpm in loaded.BpmChanges)
             {
                 snapshot.BpmChanges.Add(new BpmRecord { Beat = bpm.beat, Bpm = bpm.bpm });
+            }
+
+            foreach (NoteJumpSpeedEditorData njs in loaded.NjsEvents)
+            {
+                snapshot.NjsEvents.Add(
+                    new NjsEventRecord
+                    {
+                        Beat = njs.beat,
+                        NoteJumpSpeedDelta = njs.noteJumpSpeedDelta,
+                        EaseType = njs.easeType.ToString(),
+                        UsePreviousValue = njs.usePreviousValue,
+                    }
+                );
             }
 
             foreach (BeatmapEditorEventBoxGroupInput group in loaded.EventBoxGroups)
@@ -230,6 +250,7 @@ namespace EditorEX.Tests.Harness
             CustomEvents.Sort((a, b) => CompareRecord(a.Beat, a.Key, b.Beat, b.Key));
             Bookmarks.Sort((a, b) => CompareRecord(a.Beat, a.Key, b.Beat, b.Key));
             BpmChanges.Sort((a, b) => CompareRecord(a.Beat, a.Key, b.Beat, b.Key));
+            NjsEvents.Sort((a, b) => CompareRecord(a.Beat, a.Key, b.Beat, b.Key));
             EventBoxGroups.Sort((a, b) => CompareRecord(a.Beat, a.Key, b.Beat, b.Key));
             Keywords.Sort((a, b) => string.CompareOrdinal(a.Keyword, b.Keyword));
         }
@@ -435,7 +456,8 @@ namespace EditorEX.Tests.Harness
                     NoteType,
                     ColorType,
                     CutDirection,
-                    Angle
+                    Angle,
+                    CustomData.ToString(Formatting.None)
                 );
         }
 
@@ -466,7 +488,8 @@ namespace EditorEX.Tests.Harness
                     Rotation,
                     Duration.ToString("0.###", CultureInfo.InvariantCulture),
                     Width,
-                    Height
+                    Height,
+                    CustomData.ToString(Formatting.None)
                 );
         }
 
@@ -511,7 +534,8 @@ namespace EditorEX.Tests.Harness
                     Row,
                     TailColumn,
                     TailRow,
-                    ColorType
+                    ColorType,
+                    CustomData.ToString(Formatting.None)
                 );
         }
 
@@ -550,7 +574,8 @@ namespace EditorEX.Tests.Harness
                     TailBeat.ToString("0.###", CultureInfo.InvariantCulture),
                     Column,
                     Row,
-                    SliceCount
+                    SliceCount,
+                    CustomData.ToString(Formatting.None)
                 );
         }
 
@@ -574,7 +599,8 @@ namespace EditorEX.Tests.Harness
                     Beat.ToString("0.###", CultureInfo.InvariantCulture),
                     Column,
                     Row,
-                    OffsetDirection
+                    OffsetDirection,
+                    CustomData.ToString(Formatting.None)
                 );
         }
 
@@ -596,7 +622,8 @@ namespace EditorEX.Tests.Harness
                     Beat.ToString("0.###", CultureInfo.InvariantCulture),
                     Type,
                     Value,
-                    FloatValue.ToString("0.###", CultureInfo.InvariantCulture)
+                    FloatValue.ToString("0.###", CultureInfo.InvariantCulture),
+                    CustomData.ToString(Formatting.None)
                 );
         }
 
@@ -609,7 +636,12 @@ namespace EditorEX.Tests.Harness
             public JToken Data { get; set; } = new JObject();
 
             public string Key =>
-                string.Join("|", Beat.ToString("0.###", CultureInfo.InvariantCulture), Type);
+                string.Join(
+                    "|",
+                    Beat.ToString("0.###", CultureInfo.InvariantCulture),
+                    Type,
+                    Data.ToString(Formatting.None)
+                );
         }
 
         public sealed class BookmarkRecord
@@ -641,6 +673,26 @@ namespace EditorEX.Tests.Harness
                     "|",
                     Beat.ToString("0.###", CultureInfo.InvariantCulture),
                     Bpm.ToString("0.###", CultureInfo.InvariantCulture)
+                );
+        }
+
+        public sealed class NjsEventRecord
+        {
+            public float Beat { get; set; }
+
+            public float NoteJumpSpeedDelta { get; set; }
+
+            public string EaseType { get; set; } = "";
+
+            public bool UsePreviousValue { get; set; }
+
+            public string Key =>
+                string.Join(
+                    "|",
+                    Beat.ToString("0.###", CultureInfo.InvariantCulture),
+                    NoteJumpSpeedDelta.ToString("0.###", CultureInfo.InvariantCulture),
+                    EaseType,
+                    UsePreviousValue
                 );
         }
 

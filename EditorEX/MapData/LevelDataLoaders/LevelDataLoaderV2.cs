@@ -18,7 +18,7 @@ namespace EditorEX.MapData.LevelDataLoaders
     {
         private readonly ICustomDataRepository _customDataRepository;
 
-        private LevelDataLoaderV2(ICustomDataRepository customDataRepository)
+        internal LevelDataLoaderV2(ICustomDataRepository customDataRepository)
         {
             _customDataRepository = customDataRepository;
         }
@@ -133,18 +133,19 @@ namespace EditorEX.MapData.LevelDataLoaders
                 )
             );
             _customDataRepository.SetCustomEvents(customEvents);
+            _ = loader;
 
-            if (
-                beatmapSaveData.specialEventsKeywordFilters != null
-                && beatmapSaveData.specialEventsKeywordFilters.keywords != null
+            result.BasicEventTypesForKeyword = (
+                beatmapSaveData.specialEventsKeywordFilters?.keywords
+                ?? Enumerable.Empty<SpecialEventsForKeyword>()
             )
-            {
-                result.BasicEventTypesForKeyword = beatmapSaveData
-                    .specialEventsKeywordFilters.keywords.Select(
-                        loader.CreateBasicEventTypesForKeywordData_v2
+                .Select(d =>
+                    BasicEventTypesForKeywordEditorData.CreateNew(
+                        d.keyword,
+                        d.specialEvents.Select(e => (BasicBeatmapEventType)e).ToList()
                     )
-                    .ToList();
-            }
+                )
+                .ToList();
 
             return result;
         }

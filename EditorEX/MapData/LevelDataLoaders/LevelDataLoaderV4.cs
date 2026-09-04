@@ -22,7 +22,7 @@ namespace EditorEX.MapData.LevelDataLoaders
     {
         private readonly ICustomDataRepository _customDataRepository;
 
-        private LevelDataLoaderV4(ICustomDataRepository customDataRepository)
+        internal LevelDataLoaderV4(ICustomDataRepository customDataRepository)
         {
             _customDataRepository = customDataRepository;
         }

@@ -18,7 +18,7 @@ namespace EditorEX.MapData.LevelDataSavers
     {
         private readonly ICustomDataRepository _customDataRepository;
 
-        private V4CustomLevelDataSaver(ICustomDataRepository customDataRepository)
+        internal V4CustomLevelDataSaver(ICustomDataRepository customDataRepository)
         {
             _customDataRepository = customDataRepository;
         }
@@ -121,9 +121,11 @@ namespace EditorEX.MapData.LevelDataSavers
             LevelDataSaveOps.BackupAndSaveTemp(projectManager, clearDirty);
         }
 
-        private CustomBeatmapSaveDataV4 SaveBeatmapObjects(BeatmapProjectManager projectManager)
+        internal static CustomBeatmapSaveDataV4 BuildBeatmap(
+            DifficultySaveInput input,
+            ICustomDataRepository repo
+        )
         {
-            var objects = projectManager._beatmapObjectsDataModel;
             var colorNotes = new V4IndexStore<V4.ColorNote>();
             var bombNotes = new V4IndexStore<V4.BombNote>();
             var obstacles = new V4IndexStore<V4.Obstacle>();
@@ -137,112 +139,98 @@ namespace EditorEX.MapData.LevelDataSavers
             var arcIndices = new List<CustomArcBeatIndex>();
             var njsIndices = new List<CustomBeatIndex>();
 
-            foreach (BaseEditorData njs in objects.noteJumpSpeedEvents)
+            foreach (NoteJumpSpeedEditorData njsEditor in input.NjsEvents)
             {
-                if (njs is not NoteJumpSpeedEditorData njsEditor)
-                {
-                    continue;
-                }
-
                 int index = njsEvents.GetIndex(NjsEventCodec.SaveV4Data(njsEditor));
                 njsIndices.Add(
                     new CustomBeatIndex
                     {
                         b = njsEditor.beat,
                         i = index,
-                        customData = PlacementCustomData(njsEditor),
+                        customData = PlacementCustomData(njsEditor, repo),
                     }
                 );
             }
 
             njsIndices.Sort((a, b) => a.b.CompareTo(b.b));
 
-            HashSet<BeatmapEditorObjectId> seen = new HashSet<BeatmapEditorObjectId>();
-            foreach (BaseEditorData allBeatmapObject in objects.allBeatmapObjects)
+            foreach (NoteEditorData note in input.Notes)
             {
-                if (!seen.Add(allBeatmapObject.id))
+                if (note.noteType == NoteType.Note)
+                {
+                    int index = colorNotes.GetIndex(ColorNoteCodec.SaveV4Data(note));
+                    colorNoteIndices.Add(Placement(note.beat, note.rotation, index, note, repo));
+                }
+                else if (note.noteType == NoteType.Bomb)
+                {
+                    int index = bombNotes.GetIndex(BombNoteCodec.SaveV4Data(note));
+                    bombNoteIndices.Add(Placement(note.beat, note.rotation, index, note, repo));
+                }
+            }
+
+            foreach (ObstacleEditorData obstacle in input.Obstacles)
+            {
+                if (!ObstacleCodec.CanSaveV4(obstacle))
                 {
                     continue;
                 }
 
-                switch (allBeatmapObject)
-                {
-                    case NoteEditorData note when note.noteType == NoteType.Note:
-                    {
-                        int index = colorNotes.GetIndex(ColorNoteCodec.SaveV4Data(note));
-                        colorNoteIndices.Add(Placement(note.beat, note.rotation, index, note));
-                        break;
-                    }
-                    case NoteEditorData bomb when bomb.noteType == NoteType.Bomb:
-                    {
-                        int index = bombNotes.GetIndex(BombNoteCodec.SaveV4Data(bomb));
-                        bombNoteIndices.Add(Placement(bomb.beat, bomb.rotation, index, bomb));
-                        break;
-                    }
-                    case ObstacleEditorData obstacle when ObstacleCodec.CanSaveV4(obstacle):
-                    {
-                        int index = obstacles.GetIndex(ObstacleCodec.SaveV4Data(obstacle));
-                        obstacleIndices.Add(
-                            Placement(obstacle.beat, obstacle.rotation, index, obstacle)
-                        );
-                        break;
-                    }
-                    case ChainEditorData chain:
-                    {
-                        int noteIndex = colorNotes.GetIndex(
-                            ColorNoteCodec.SaveV4DataFromChain(chain)
-                        );
-                        colorNoteIndices.Add(
-                            Placement(chain.beat, chain.rotation, noteIndex, chain)
-                        );
-                        int chainIndex = chains.GetIndex(ChainCodec.SaveV4Data(chain));
-                        chainIndices.Add(
-                            new CustomChainBeatIndex
-                            {
-                                hb = chain.beat,
-                                hr = chain.rotation,
-                                i = noteIndex,
-                                tb = chain.tailBeat,
-                                tr = chain.tailRotation,
-                                ci = chainIndex,
-                                customData = PlacementCustomData(chain),
-                            }
-                        );
-                        break;
-                    }
-                    case ArcEditorData arc:
-                    {
-                        int headIndex = colorNotes.GetIndex(
-                            ColorNoteCodec.SaveV4DataFromArcHead(arc)
-                        );
-                        int tailIndex = colorNotes.GetIndex(
-                            ColorNoteCodec.SaveV4DataFromArcTail(arc)
-                        );
-                        int arcIndex = arcs.GetIndex(ArcCodec.SaveV4Data(arc));
-                        arcIndices.Add(
-                            new CustomArcBeatIndex
-                            {
-                                hb = arc.beat,
-                                hi = headIndex,
-                                hr = arc.rotation,
-                                tb = arc.tailBeat,
-                                ti = tailIndex,
-                                tr = arc.tailRotation,
-                                ai = arcIndex,
-                                customData = PlacementCustomData(arc),
-                            }
-                        );
-                        break;
-                    }
-                }
+                int index = obstacles.GetIndex(ObstacleCodec.SaveV4Data(obstacle));
+                obstacleIndices.Add(
+                    Placement(obstacle.beat, obstacle.rotation, index, obstacle, repo)
+                );
             }
 
-            var customData = _customDataRepository.GetBeatmapData()?.customData ?? new CustomData();
-            CustomEventCodec.Write(customData, _customDataRepository.GetCustomEvents(), v3: true);
+            foreach (ChainEditorData chain in input.Chains)
+            {
+                int noteIndex = colorNotes.GetIndex(ColorNoteCodec.SaveV4DataFromChain(chain));
+                int chainIndex = chains.GetIndex(ChainCodec.SaveV4Data(chain));
+                chainIndices.Add(
+                    new CustomChainBeatIndex
+                    {
+                        hb = chain.beat,
+                        hr = chain.rotation,
+                        i = noteIndex,
+                        tb = chain.tailBeat,
+                        tr = chain.tailRotation,
+                        ci = chainIndex,
+                        customData = PlacementCustomData(chain, repo),
+                    }
+                );
+            }
+
+            foreach (ArcEditorData arc in input.Arcs)
+            {
+                int headIndex = colorNotes.GetIndex(ColorNoteCodec.SaveV4DataFromArcHead(arc));
+                int tailIndex = colorNotes.GetIndex(ColorNoteCodec.SaveV4DataFromArcTail(arc));
+                int arcIndex = arcs.GetIndex(ArcCodec.SaveV4Data(arc));
+                arcIndices.Add(
+                    new CustomArcBeatIndex
+                    {
+                        hb = arc.beat,
+                        hi = headIndex,
+                        hr = arc.rotation,
+                        tb = arc.tailBeat,
+                        ti = tailIndex,
+                        tr = arc.tailRotation,
+                        ai = arcIndex,
+                        customData = PlacementCustomData(arc, repo),
+                    }
+                );
+            }
+
+            var sourceCustomData =
+                repo.GetBeatmapData()?.customData ?? repo.GetCustomBeatmapSaveData()?.customData;
+            var customData =
+                sourceCustomData == null ? new CustomData() : new CustomData(sourceCustomData);
+            CustomEventCodec.Write(customData, repo.GetCustomEvents(), v3: true);
 
             return new CustomBeatmapSaveDataV4
             {
-                version = MapContext.Version?.ToString() ?? CustomBeatmapSaveDataV4.CurrentVersion,
+                version =
+                    input.MapVersion?.ToString()
+                    ?? MapContext.Version?.ToString()
+                    ?? CustomBeatmapSaveDataV4.CurrentVersion,
                 colorNotes = colorNoteIndices.ToArray(),
                 bombNotes = bombNoteIndices.ToArray(),
                 obstacles = obstacleIndices.ToArray(),
@@ -259,6 +247,121 @@ namespace EditorEX.MapData.LevelDataSavers
             };
         }
 
+        internal static CustomLightshowSaveDataV4 BuildLightshow(
+            DifficultySaveInput input,
+            ICustomDataRepository repo
+        )
+        {
+            var waypoints = new V4IndexStore<V4.Waypoint>();
+            var basicEvents = new V4IndexStore<V4.BasicEvent>();
+            var colorBoostEvents = new V4IndexStore<V4.ColorBoostEvent>();
+            var waypointIndices = new List<CustomBeatmapBeatIndex>();
+            var basicEventIndices = new List<CustomBeatIndex>();
+            var colorBoostIndices = new List<CustomBeatIndex>();
+
+            foreach (WaypointEditorData waypoint in input.Waypoints)
+            {
+                int index = waypoints.GetIndex(WaypointCodec.SaveV4Data(waypoint));
+                waypointIndices.Add(Placement(waypoint.beat, 0, index, waypoint, repo));
+            }
+
+            foreach (BasicEventEditorData evt in input.BasicEvents)
+            {
+                if (evt.type == BasicBeatmapEventType.Event5)
+                {
+                    int index = colorBoostEvents.GetIndex(ColorBoostEventCodec.SaveV4Data(evt));
+                    colorBoostIndices.Add(
+                        new CustomBeatIndex
+                        {
+                            b = evt.beat,
+                            i = index,
+                            customData = PlacementCustomData(evt, repo),
+                        }
+                    );
+                    continue;
+                }
+
+                int basicIndex = basicEvents.GetIndex(BasicEventCodec.SaveV4Data(evt));
+                basicEventIndices.Add(
+                    new CustomBeatIndex
+                    {
+                        b = evt.beat,
+                        i = basicIndex,
+                        customData = PlacementCustomData(evt, repo),
+                    }
+                );
+            }
+
+            var lightshow = new CustomLightshowSaveDataV4
+            {
+                version = CustomLightshowSaveDataV4.CurrentVersion,
+                waypoints = waypointIndices.ToArray(),
+                waypointsData = waypoints.Data.ToArray(),
+                basicEvents = basicEventIndices.ToArray(),
+                basicEventsData = basicEvents.Data.ToArray(),
+                colorBoostEvents = colorBoostIndices.ToArray(),
+                colorBoostEventsData = colorBoostEvents.Data.ToArray(),
+                useNormalEventsAsCompatibleEvents = input.UseNormalEventsAsCompatibleEvents,
+                basicEventTypesWithKeywords = new BasicEventTypesWithKeywords(
+                    input.BasicEventTypesForKeyword.Select(BasicEventCodec.SaveKeywordV3).ToList()
+                ),
+            };
+
+            var vanilla = lightshow.ToVanilla();
+            EventBoxGroupCodec.SaveV4FromInput(input.EventBoxGroups, vanilla);
+            lightshow.eventBoxGroups = vanilla.eventBoxGroups;
+            lightshow.indexFilters = vanilla.indexFilters;
+            lightshow.lightColorEventBoxes = vanilla.lightColorEventBoxes;
+            lightshow.lightColorEvents = vanilla.lightColorEvents;
+            lightshow.lightRotationEventBoxes = vanilla.lightRotationEventBoxes;
+            lightshow.lightRotationEvents = vanilla.lightRotationEvents;
+            lightshow.lightTranslationEventBoxes = vanilla.lightTranslationEventBoxes;
+            lightshow.lightTranslationEvents = vanilla.lightTranslationEvents;
+            lightshow.fxEventBoxes = vanilla.fxEventBoxes;
+            lightshow.floatFxEvents = vanilla.floatFxEvents;
+            return lightshow;
+        }
+
+        private CustomBeatmapSaveDataV4 SaveBeatmapObjects(BeatmapProjectManager projectManager)
+        {
+            var objects = projectManager._beatmapObjectsDataModel;
+            var input = new DifficultySaveInput { MapVersion = MapContext.Version };
+            foreach (BaseEditorData njs in objects.noteJumpSpeedEvents)
+            {
+                if (njs is NoteJumpSpeedEditorData njsEditor)
+                {
+                    input.NjsEvents.Add(njsEditor);
+                }
+            }
+
+            HashSet<BeatmapEditorObjectId> seen = new HashSet<BeatmapEditorObjectId>();
+            foreach (BaseEditorData allBeatmapObject in objects.allBeatmapObjects)
+            {
+                if (!seen.Add(allBeatmapObject.id))
+                {
+                    continue;
+                }
+
+                switch (allBeatmapObject)
+                {
+                    case NoteEditorData note:
+                        input.Notes.Add(note);
+                        break;
+                    case ObstacleEditorData obstacle:
+                        input.Obstacles.Add(obstacle);
+                        break;
+                    case ChainEditorData chain:
+                        input.Chains.Add(chain);
+                        break;
+                    case ArcEditorData arc:
+                        input.Arcs.Add(arc);
+                        break;
+                }
+            }
+
+            return BuildBeatmap(input, _customDataRepository);
+        }
+
         private CustomLightshowSaveDataV4 SaveLightshow(BeatmapProjectManager projectManager)
         {
             var basicEventsModel = projectManager._beatmapBasicEventsDataModel;
@@ -272,7 +375,9 @@ namespace EditorEX.MapData.LevelDataSavers
             foreach (WaypointEditorData waypoint in basicEventsModel.waypoints)
             {
                 int index = waypoints.GetIndex(WaypointCodec.SaveV4Data(waypoint));
-                waypointIndices.Add(Placement(waypoint.beat, 0, index, waypoint));
+                waypointIndices.Add(
+                    Placement(waypoint.beat, 0, index, waypoint, _customDataRepository)
+                );
             }
 
             foreach (BasicEventEditorData evt in basicEventsModel.GetAllEventsAsList())
@@ -283,7 +388,7 @@ namespace EditorEX.MapData.LevelDataSavers
                     {
                         b = evt.beat,
                         i = index,
-                        customData = PlacementCustomData(evt),
+                        customData = PlacementCustomData(evt, _customDataRepository),
                     }
                 );
             }
@@ -300,7 +405,7 @@ namespace EditorEX.MapData.LevelDataSavers
                     {
                         b = evt.beat,
                         i = index,
-                        customData = PlacementCustomData(evt),
+                        customData = PlacementCustomData(evt, _customDataRepository),
                     }
                 );
             }
@@ -339,11 +444,12 @@ namespace EditorEX.MapData.LevelDataSavers
             return lightshow;
         }
 
-        private CustomBeatmapBeatIndex Placement(
+        private static CustomBeatmapBeatIndex Placement(
             float beat,
             int rotation,
             int index,
-            BaseEditorData data
+            BaseEditorData data,
+            ICustomDataRepository repo
         )
         {
             return new CustomBeatmapBeatIndex
@@ -351,15 +457,16 @@ namespace EditorEX.MapData.LevelDataSavers
                 b = beat,
                 r = rotation,
                 i = index,
-                customData = PlacementCustomData(data),
+                customData = PlacementCustomData(data, repo),
             };
         }
 
-        private CustomData? PlacementCustomData(BaseEditorData data)
+        private static CustomData? PlacementCustomData(
+            BaseEditorData data,
+            ICustomDataRepository repo
+        )
         {
-            return CustomDataUtil.SaveCustom(data, _customDataRepository, out var customData)
-                ? customData
-                : null;
+            return CustomDataUtil.SaveCustom(data, repo, out var customData) ? customData : null;
         }
     }
 }

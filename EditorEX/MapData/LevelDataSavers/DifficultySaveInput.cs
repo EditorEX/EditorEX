@@ -30,15 +30,23 @@ namespace EditorEX.MapData.LevelDataSavers
 
         public List<BpmChangeEventData> BpmChanges { get; set; } = new();
 
+        public List<NoteJumpSpeedEditorData> NjsEvents { get; set; } = new();
+
         public List<CustomDataBookmark> Bookmarks { get; set; } = new();
 
         public bool UseNormalEventsAsCompatibleEvents { get; set; }
 
         public Version? MapVersion { get; set; }
 
+        public static bool BookmarksAreV3(Version? version)
+        {
+            return version == null || version.Major >= 3;
+        }
+
         public static DifficultySaveInput FromLoadResult(
             DifficultyLoadResult loaded,
-            ICustomDataRepository repo
+            ICustomDataRepository repo,
+            Version? mapVersion = null
         )
         {
             var customData =
@@ -54,8 +62,10 @@ namespace EditorEX.MapData.LevelDataSavers
                 EventBoxGroups = loaded.EventBoxGroups,
                 BasicEventTypesForKeyword = loaded.BasicEventTypesForKeyword,
                 BpmChanges = loaded.BpmChanges,
-                Bookmarks = CustomDataBookmarkCodec.Read(customData, v3: true),
+                NjsEvents = loaded.NjsEvents,
+                Bookmarks = CustomDataBookmarkCodec.Read(customData, BookmarksAreV3(mapVersion)),
                 UseNormalEventsAsCompatibleEvents = loaded.UseNormalEventsAsCompatibleEvents,
+                MapVersion = mapVersion,
             };
         }
     }

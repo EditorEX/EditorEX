@@ -1,3 +1,4 @@
+using System;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Scripts.SerializedData;
 using BeatmapEditor3D.SerializedData;
@@ -15,6 +16,14 @@ namespace EditorEX.MapData.Objects
 {
     public static class ColorNoteCodec
     {
+        public static bool OccupiesChainHead(NoteEditorData note, ChainEditorData chain)
+        {
+            return note.noteType == NoteType.Note
+                && note.column == chain.column
+                && note.row == chain.row
+                && Math.Abs(note.beat - chain.beat) <= 1e-4f;
+        }
+
         public static NoteEditorData LoadV2(
             V2CustomSaveData.NoteSaveData data,
             BeatmapEditorRotationProcessor_v2 rotationProcessor

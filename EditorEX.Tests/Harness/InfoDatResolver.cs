@@ -43,6 +43,40 @@ namespace EditorEX.Tests.Harness
             return filename!;
         }
 
+        public static string? ResolveLightshowFilename(
+            string projectPath,
+            string characteristic,
+            string difficulty
+        )
+        {
+            JObject info = JObject.Parse(File.ReadAllText(FindInfoDat(projectPath)));
+            if (info["difficultyBeatmaps"] is not JArray diffs)
+            {
+                return null;
+            }
+
+            foreach (JToken diff in diffs)
+            {
+                bool characteristicMatch = string.Equals(
+                    diff["characteristic"]?.ToString(),
+                    characteristic,
+                    StringComparison.OrdinalIgnoreCase
+                );
+                bool difficultyMatch = string.Equals(
+                    diff["difficulty"]?.ToString(),
+                    difficulty,
+                    StringComparison.OrdinalIgnoreCase
+                );
+                if (characteristicMatch && difficultyMatch)
+                {
+                    string? filename = diff["lightshowDataFilename"]?.ToString();
+                    return string.IsNullOrEmpty(filename) ? null : filename;
+                }
+            }
+
+            return null;
+        }
+
         public static Version ReadDifficultyVersion(string projectPath, string beatmapFilename)
         {
             JObject difficulty = JObject.Parse(

@@ -67,7 +67,7 @@ namespace EditorEX.MapData.Objects
                     {
                         ["b"] = evt.beat,
                         ["t"] = evt.eventType,
-                        ["data"] = CustomDataUtil.Filter(evt.customData),
+                        ["d"] = CustomDataUtil.Filter(evt.customData),
                     };
                     list.Add(entry);
                 }

@@ -7,24 +7,26 @@ namespace EditorEX.Tests.Tests
 {
     public class IdentityRoundtripTests : RoundtripTestBase
     {
-        [SkippableFact]
-        public async Task LoadSaveReload_PreservesV3StandardExpertPlus()
+        [SkippableTheory]
+        [MemberData(nameof(MapCatalog.AllTheoryData), MemberType = typeof(MapCatalog))]
+        public async Task LoadSaveReload_PreservesDifficulty(MapFixture fixture)
         {
-            MapFixture fixture = MapCatalog.V3VanillaExpertPlus;
             string project = await EnsureMapAsync(fixture);
             LoadedDifficulty original = DifficultyRoundtripHarness.Load(project, fixture);
             LoadedMapSnapshot expected = LoadedMapSnapshot.Capture(
                 original.Result,
-                original.Repository
+                original.Repository,
+                original.Version
             );
 
             LoadedDifficulty reloaded = DifficultyRoundtripHarness.Roundtrip(original);
             LoadedMapSnapshot actual = LoadedMapSnapshot.Capture(
                 reloaded.Result,
-                reloaded.Repository
+                reloaded.Repository,
+                reloaded.Version
             );
 
-            AssertSnapshotsEqual(expected, actual);
+            AssertSnapshotsEqual(expected, actual, fixture);
         }
     }
 }

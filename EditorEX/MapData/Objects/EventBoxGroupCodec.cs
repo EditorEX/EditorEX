@@ -441,6 +441,46 @@ namespace EditorEX.MapData.Objects
             V4.LightshowSaveData lightshow
         )
         {
+            var inputs = new List<BeatmapEditorEventBoxGroupInput>();
+            foreach (
+                EventBoxGroupEditorData group in beatmapEventBoxGroupsDataModel.GetAllEventBoxGroups()
+            )
+            {
+                IReadOnlyList<EventBoxEditorData> boxes =
+                    beatmapEventBoxGroupsDataModel.GetEventBoxesByEventBoxGroupId(group.id);
+                var baseLists = new List<(BeatmapEditorObjectId, List<BaseEditorData>)>();
+                foreach (EventBoxEditorData box in boxes)
+                {
+                    baseLists.Add(
+                        (
+                            box.id,
+                            GetBaseEventsFromModel(
+                                beatmapEventBoxGroupsDataModel,
+                                group.type,
+                                box.id
+                            )
+                        )
+                    );
+                }
+
+                inputs.Add(
+                    new BeatmapEditorEventBoxGroupInput
+                    {
+                        eventBoxGroup = group,
+                        eventBoxes = boxes,
+                        baseLists = baseLists,
+                    }
+                );
+            }
+
+            SaveV4FromInput(inputs, lightshow);
+        }
+
+        public static void SaveV4FromInput(
+            IEnumerable<BeatmapEditorEventBoxGroupInput> groups,
+            V4.LightshowSaveData lightshow
+        )
+        {
             List<V4.EventBoxGroup> list = new List<V4.EventBoxGroup>();
             var (map, list2) = BeatmapSaverUtils.CreateEventsStorage<V4.IndexFilter>();
             var (lightColorEventBoxesMap, lightColorEventBoxesData) =
@@ -460,15 +500,21 @@ namespace EditorEX.MapData.Objects
             var (floatFxEventsMap, floatFxEventsData) =
                 BeatmapSaverUtils.CreateEventsStorage<V4.FloatFxEvent>();
 
-            foreach (
-                EventBoxGroupEditorData allEventBoxGroup in beatmapEventBoxGroupsDataModel.GetAllEventBoxGroups()
-            )
+            foreach (BeatmapEditorEventBoxGroupInput input in groups)
             {
+                EventBoxGroupEditorData allEventBoxGroup = input.eventBoxGroup;
+                var baseById = new Dictionary<BeatmapEditorObjectId, List<BaseEditorData>>();
+                if (input.baseLists != null)
+                {
+                    foreach (var (id, events) in input.baseLists)
+                    {
+                        baseById[id] = events;
+                    }
+                }
+
                 List<V4.EventBox> list3 = new List<V4.EventBox>();
                 foreach (
-                    EventBoxEditorData item in beatmapEventBoxGroupsDataModel.GetEventBoxesByEventBoxGroupId(
-                        allEventBoxGroup.id
-                    )
+                    EventBoxEditorData item in input.eventBoxes ?? Array.Empty<EventBoxEditorData>()
                 )
                 {
                     int index = BeatmapSaverUtils.GetIndex(
@@ -497,6 +543,70 @@ namespace EditorEX.MapData.Objects
                         e = list3.ToArray(),
                     }
                 );
+
+                V4.BeatIndex[] GetBaseEventsBeatIndexes(
+                    EventBoxGroupType type,
+                    BeatmapEditorObjectId id
+                )
+                {
+                    IEnumerable<BaseEditorData> bases = baseById.TryGetValue(id, out var events)
+                        ? events
+                        : Enumerable.Empty<BaseEditorData>();
+                    return type switch
+                    {
+                        EventBoxGroupType.Color => bases
+                            .OfType<LightColorBaseEditorData>()
+                            .Select(lightColorBaseEditorData => new V4.BeatIndex
+                            {
+                                b = lightColorBaseEditorData.beat,
+                                i = BeatmapSaverUtils.GetIndex(
+                                    ConvertLightColorBaseEvent(lightColorBaseEditorData),
+                                    lightColorEventsMap,
+                                    lightColorEventsData
+                                ),
+                            })
+                            .ToArray(),
+                        EventBoxGroupType.Rotation => bases
+                            .OfType<LightRotationBaseEditorData>()
+                            .Select(lightRotationBaseEditorData => new V4.BeatIndex
+                            {
+                                b = lightRotationBaseEditorData.beat,
+                                i = BeatmapSaverUtils.GetIndex(
+                                    ConvertLightRotationBaseEvent(lightRotationBaseEditorData),
+                                    lightRotationEventsMap,
+                                    lightRotationEventsData
+                                ),
+                            })
+                            .ToArray(),
+                        EventBoxGroupType.Translation => bases
+                            .OfType<LightTranslationBaseEditorData>()
+                            .Select(lightTranslationBaseEditorData => new V4.BeatIndex
+                            {
+                                b = lightTranslationBaseEditorData.beat,
+                                i = BeatmapSaverUtils.GetIndex(
+                                    ConvertLightTranslationBaseEvent(
+                                        lightTranslationBaseEditorData
+                                    ),
+                                    lightTranslationEventsMap,
+                                    lightTranslationEventsData
+                                ),
+                            })
+                            .ToArray(),
+                        EventBoxGroupType.FloatFx => bases
+                            .OfType<FloatFxBaseEditorData>()
+                            .Select(floatFxBaseEditorData => new V4.BeatIndex
+                            {
+                                b = floatFxBaseEditorData.beat,
+                                i = BeatmapSaverUtils.GetIndex(
+                                    ConvertFloatFxBaseEvent(floatFxBaseEditorData),
+                                    floatFxEventsMap,
+                                    floatFxEventsData
+                                ),
+                            })
+                            .ToArray(),
+                        _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
+                    };
+                }
             }
 
             lightshow.eventBoxGroups = list.ToArray();
@@ -509,65 +619,6 @@ namespace EditorEX.MapData.Objects
             lightshow.lightTranslationEvents = lightTranslationEventsData.ToArray();
             lightshow.fxEventBoxes = fxEventBoxesData.ToArray();
             lightshow.floatFxEvents = floatFxEventsData.ToArray();
-
-            V4.BeatIndex[] GetBaseEventsBeatIndexes(
-                EventBoxGroupType type,
-                BeatmapEditorObjectId id
-            )
-            {
-                return type switch
-                {
-                    EventBoxGroupType.Color => beatmapEventBoxGroupsDataModel
-                        .GetBaseEventsListByEventBoxId<LightColorBaseEditorData>(id)
-                        .Select(lightColorBaseEditorData => new V4.BeatIndex
-                        {
-                            b = lightColorBaseEditorData.beat,
-                            i = BeatmapSaverUtils.GetIndex(
-                                ConvertLightColorBaseEvent(lightColorBaseEditorData),
-                                lightColorEventsMap,
-                                lightColorEventsData
-                            ),
-                        })
-                        .ToArray(),
-                    EventBoxGroupType.Rotation => beatmapEventBoxGroupsDataModel
-                        .GetBaseEventsListByEventBoxId<LightRotationBaseEditorData>(id)
-                        .Select(lightRotationBaseEditorData => new V4.BeatIndex
-                        {
-                            b = lightRotationBaseEditorData.beat,
-                            i = BeatmapSaverUtils.GetIndex(
-                                ConvertLightRotationBaseEvent(lightRotationBaseEditorData),
-                                lightRotationEventsMap,
-                                lightRotationEventsData
-                            ),
-                        })
-                        .ToArray(),
-                    EventBoxGroupType.Translation => beatmapEventBoxGroupsDataModel
-                        .GetBaseEventsListByEventBoxId<LightTranslationBaseEditorData>(id)
-                        .Select(lightTranslationBaseEditorData => new V4.BeatIndex
-                        {
-                            b = lightTranslationBaseEditorData.beat,
-                            i = BeatmapSaverUtils.GetIndex(
-                                ConvertLightTranslationBaseEvent(lightTranslationBaseEditorData),
-                                lightTranslationEventsMap,
-                                lightTranslationEventsData
-                            ),
-                        })
-                        .ToArray(),
-                    EventBoxGroupType.FloatFx => beatmapEventBoxGroupsDataModel
-                        .GetBaseEventsListByEventBoxId<FloatFxBaseEditorData>(id)
-                        .Select(floatFxBaseEditorData => new V4.BeatIndex
-                        {
-                            b = floatFxBaseEditorData.beat,
-                            i = BeatmapSaverUtils.GetIndex(
-                                ConvertFloatFxBaseEvent(floatFxBaseEditorData),
-                                floatFxEventsMap,
-                                floatFxEventsData
-                            ),
-                        })
-                        .ToArray(),
-                    _ => throw new ArgumentOutOfRangeException(nameof(type), type, null),
-                };
-            }
 
             int GetEventBoxIndex(EventBoxEditorData eventBox)
             {

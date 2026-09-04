@@ -7,6 +7,7 @@ using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.CustomEvents;
 using EditorEX.MapData.Bookmarks;
+using EditorEX.MapData.Contexts;
 using EditorEX.MapData.LevelDataLoaders;
 using EditorEX.Tests.Harness;
 
@@ -87,6 +88,20 @@ namespace EditorEX.Tests.Transforms
             loaded.BpmChanges = loaded
                 .BpmChanges.Select(b => new BpmChangeEventData(b.beat + delta, b.bpm))
                 .ToList();
+            loaded.NjsEvents = loaded
+                .NjsEvents.Select(n =>
+                    Rebind(
+                        repo,
+                        n,
+                        NoteJumpSpeedEditorData.CreateNew(
+                            n.beat + delta,
+                            n.noteJumpSpeedDelta,
+                            n.easeType,
+                            n.usePreviousValue
+                        )
+                    )
+                )
+                .ToList();
 
             var shiftedEvents = new List<CustomEventEditorData>();
             foreach (CustomEventEditorData evt in repo.GetCustomEvents() ?? new())
@@ -107,16 +122,17 @@ namespace EditorEX.Tests.Transforms
                 repo.GetBeatmapData()?.customData ?? repo.GetCustomBeatmapSaveData()?.customData;
             if (beatmapCustom != null)
             {
+                bool v3 = MapContext.Version == null || MapContext.Version.Major >= 3;
                 List<CustomDataBookmark> bookmarks = CustomDataBookmarkCodec.Read(
                     beatmapCustom,
-                    v3: true
+                    v3
                 );
                 foreach (CustomDataBookmark bookmark in bookmarks)
                 {
                     bookmark.Beat += delta;
                 }
 
-                CustomDataBookmarkCodec.Write(beatmapCustom, bookmarks, v3: true);
+                CustomDataBookmarkCodec.Write(beatmapCustom, bookmarks, v3);
             }
         }
 

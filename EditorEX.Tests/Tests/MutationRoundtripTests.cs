@@ -11,65 +11,85 @@ namespace EditorEX.Tests.Tests
 {
     public class MutationRoundtripTests : RoundtripTestBase
     {
-        [SkippableFact]
-        public async Task ShiftBeats_IsPreservedAfterSaveReload()
+        [SkippableTheory]
+        [MemberData(nameof(MapCatalog.AllTheoryData), MemberType = typeof(MapCatalog))]
+        public async Task ShiftBeats_IsPreservedAfterSaveReload(MapFixture fixture)
         {
-            await RoundtripMutation(loaded =>
-            {
-                MapTransforms.ShiftBeats(loaded.Result, loaded.Repository, 1f);
-            });
+            await RoundtripMutation(
+                fixture,
+                loaded =>
+                {
+                    MapTransforms.ShiftBeats(loaded.Result, loaded.Repository, 1f);
+                }
+            );
         }
 
-        [SkippableFact]
-        public async Task AddColorNote_IsPreservedAfterSaveReload()
+        [SkippableTheory]
+        [MemberData(nameof(MapCatalog.AllTheoryData), MemberType = typeof(MapCatalog))]
+        public async Task AddColorNote_IsPreservedAfterSaveReload(MapFixture fixture)
         {
-            await RoundtripMutation(loaded =>
-            {
-                MapTransforms.AddColorNote(loaded.Result, loaded.Repository);
-            });
+            await RoundtripMutation(
+                fixture,
+                loaded =>
+                {
+                    MapTransforms.AddColorNote(loaded.Result, loaded.Repository);
+                }
+            );
         }
 
-        [SkippableFact]
-        public async Task RemoveOneNote_IsPreservedAfterSaveReload()
+        [SkippableTheory]
+        [MemberData(nameof(MapCatalog.AllTheoryData), MemberType = typeof(MapCatalog))]
+        public async Task RemoveOneNote_IsPreservedAfterSaveReload(MapFixture fixture)
         {
-            await RoundtripMutation(loaded =>
-            {
-                NoteEditorData? removed = MapTransforms.RemoveOneNote(loaded.Result);
-                Assert.NotNull(removed);
-            });
+            await RoundtripMutation(
+                fixture,
+                loaded =>
+                {
+                    NoteEditorData? removed = MapTransforms.RemoveOneNote(loaded.Result);
+                    Assert.NotNull(removed);
+                }
+            );
         }
 
-        [SkippableFact]
-        public async Task CustomDataAddAndStrip_IsPreservedAfterSaveReload()
+        [SkippableTheory]
+        [MemberData(nameof(MapCatalog.AllTheoryData), MemberType = typeof(MapCatalog))]
+        public async Task CustomDataAddAndStrip_IsPreservedAfterSaveReload(MapFixture fixture)
         {
-            await RoundtripMutation(loaded =>
-            {
-                MapTransforms.AddAndStripCustomData(loaded.Result, loaded.Repository);
-                NoteEditorData? note = loaded.Result.Notes.FirstOrDefault(n =>
-                    n.noteType == NoteType.Note
-                );
-                Assert.NotNull(note);
-            });
+            await RoundtripMutation(
+                fixture,
+                loaded =>
+                {
+                    MapTransforms.AddAndStripCustomData(loaded.Result, loaded.Repository);
+                    NoteEditorData? note = loaded.Result.Notes.FirstOrDefault(n =>
+                        n.noteType == NoteType.Note
+                    );
+                    Assert.NotNull(note);
+                }
+            );
         }
 
-        private static async Task RoundtripMutation(System.Action<LoadedDifficulty> mutate)
+        private static async Task RoundtripMutation(
+            MapFixture fixture,
+            System.Action<LoadedDifficulty> mutate
+        )
         {
-            MapFixture fixture = MapCatalog.V3VanillaExpertPlus;
             string project = await EnsureMapAsync(fixture);
             LoadedDifficulty original = DifficultyRoundtripHarness.Load(project, fixture);
             mutate(original);
             LoadedMapSnapshot expected = LoadedMapSnapshot.Capture(
                 original.Result,
-                original.Repository
+                original.Repository,
+                original.Version
             );
 
             LoadedDifficulty reloaded = DifficultyRoundtripHarness.Roundtrip(original);
             LoadedMapSnapshot actual = LoadedMapSnapshot.Capture(
                 reloaded.Result,
-                reloaded.Repository
+                reloaded.Repository,
+                reloaded.Version
             );
 
-            AssertSnapshotsEqual(expected, actual);
+            AssertSnapshotsEqual(expected, actual, fixture);
         }
     }
 }
