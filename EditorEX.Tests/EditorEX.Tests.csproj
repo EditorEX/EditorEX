@@ -1,0 +1,100 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\EditorEX\EditorEX.csproj.user" Condition="Exists('..\EditorEX\EditorEX.csproj.user')" />
+
+  <PropertyGroup>
+    <!-- testhost must be CoreCLR: desktop net48 rejects BeatmapSaveDataCommon.IBeat (DIM). -->
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Xunit.SkippableFact" Version="1.5.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EditorEX\EditorEX.csproj">
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <Reference Include="EditorEX">
+      <HintPath>..\EditorEX\bin\$(Configuration)\net48\EditorEX.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="EditorEX.SDK">
+      <HintPath>..\EditorEX.SDK\bin\$(Configuration)\net48\EditorEX.SDK.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BeatmapCore" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatmapCore.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="BeatSaber.BeatmapEditor" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatSaber.BeatmapEditor.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="BeatSaber.TrackDefinitions" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatSaber.TrackDefinitions.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="BGLib.JsonExtension">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BGLib.JsonExtension.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="BGLib.DotnetExtension">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BGLib.DotnetExtension.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="CustomJSONData" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Plugins\CustomJSONData.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="DataModels" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\DataModels.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(BeatSaberDir)\Libs\Newtonsoft.Json.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Tweening" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Tweening.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="HMLib">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMLib.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="IntervalTree" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\IntervalTree.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Colors" Publicize="true">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Colors.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -23,6 +23,18 @@ namespace EditorEX.MapData.Objects
 {
     public static class EventBoxGroupCodec
     {
+        public static TransitionType SaveLightColorTransition(LightColorBaseEditorData data)
+        {
+            if (data.usePreviousValue)
+            {
+                return TransitionType.Extend;
+            }
+
+            return data.easeLeadType == EaseLeadType.InOut
+                ? TransitionType.Interpolate
+                : TransitionType.Instant;
+        }
+
         public static V3.IndexFilter CreateIndexFilter(IndexFilterEditorData f)
         {
             return new V3.IndexFilter(
@@ -156,9 +168,7 @@ namespace EditorEX.MapData.Objects
                                                     (LightColorBaseEditorData data) =>
                                                         new V3.LightColorBaseData(
                                                             data.beat,
-                                                            data.easeLeadType == EaseLeadType.InOut
-                                                                ? TransitionType.Interpolate
-                                                                : TransitionType.Extend,
+                                                            SaveLightColorTransition(data),
                                                             (BeatmapSaveDataCommon.EnvironmentColorType)
                                                                 data.colorType,
                                                             data.brightness,

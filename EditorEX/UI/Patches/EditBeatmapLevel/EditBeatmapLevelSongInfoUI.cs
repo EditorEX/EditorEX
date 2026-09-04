@@ -74,25 +74,33 @@ namespace EditorEX.UI.Patches.EditBeatmapLevel
                 {
                     _environmentDropdown!.Key = _levelCustomDataModel.EnvironmentName;
                 }
-                if (_levelCustomDataModel.AllDirectionsEnvironmentName != null)
+                string? allDirectionsEnvironmentName =
+                    _levelCustomDataModel.AllDirectionsEnvironmentName;
+                if (
+                    allDirectionsEnvironmentName != null
+                    && !string.IsNullOrEmpty(allDirectionsEnvironmentName)
+                )
                 {
-                    _allDirectionsEnvironmentDropdown!.Key =
-                        _levelCustomDataModel.AllDirectionsEnvironmentName;
+                    _allDirectionsEnvironmentDropdown!.Key = allDirectionsEnvironmentName;
                 }
             }
 
-            if (_levelCustomDataModel.CustomPlatformInfo != null)
+            var customPlatformInfo = _levelCustomDataModel.CustomPlatformInfo;
+            if (
+                customPlatformInfo != null
+                && (customPlatformInfo.FilePath != null || customPlatformInfo.Hash != null)
+            )
             {
                 var customPlatIndex = _customPlatformsListModel
                     .CustomPlatforms.Select(x => x.FilePath)
                     .ToList()
-                    .IndexOf(_levelCustomDataModel.CustomPlatformInfo.FilePath);
+                    .IndexOf(customPlatformInfo.FilePath);
                 customPlatIndex =
                     customPlatIndex == -1
                         ? _customPlatformsListModel
                             .CustomPlatforms.Select(x => x.Hash)
                             .ToList()
-                            .IndexOf(_levelCustomDataModel.CustomPlatformInfo.Hash)
+                            .IndexOf(customPlatformInfo.Hash)
                         : customPlatIndex;
 
                 if (customPlatIndex == -1)

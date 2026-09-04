@@ -66,17 +66,19 @@ namespace EditorEX.MapData.Objects
             ICustomDataRepository customDataRepository
         )
         {
+            int layer = o.row * 2;
+            int height = o.height * 2 - 1;
             return CustomDataUtil.SaveCustom(o, customDataRepository, out var customData)
                 ? new V3CustomSaveData.ObstacleSaveData(
                     o.beat,
                     o.column,
-                    o.row,
+                    layer,
                     o.duration,
                     o.width,
-                    o.height,
+                    height,
                     customData
                 )
-                : new V3.ObstacleData(o.beat, o.column, o.row, o.duration, o.width, o.height);
+                : new V3.ObstacleData(o.beat, o.column, layer, o.duration, o.width, height);
         }
 
         public static bool CanSaveV4(ObstacleEditorData o)

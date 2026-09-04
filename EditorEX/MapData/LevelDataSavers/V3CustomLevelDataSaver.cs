@@ -85,7 +85,11 @@ namespace EditorEX.MapData.LevelDataSavers
 
             foreach (ChainEditorData chain in input.Chains)
             {
-                colorNotes.Add(ColorNoteCodec.SaveV3FromChain(chain, repo));
+                if (!HasColorNoteAtChainHead(input.Notes, chain))
+                {
+                    colorNotes.Add(ColorNoteCodec.SaveV3FromChain(chain, repo));
+                }
+
                 burstSliders.Add(ChainCodec.SaveV3(chain, repo));
             }
 
@@ -243,6 +247,27 @@ namespace EditorEX.MapData.LevelDataSavers
             }
 
             return Build(input, _customDataRepository);
+        }
+
+        private static bool HasColorNoteAtChainHead(
+            IReadOnlyList<NoteEditorData> notes,
+            ChainEditorData chain
+        )
+        {
+            foreach (NoteEditorData note in notes)
+            {
+                if (
+                    note.noteType == NoteType.Note
+                    && note.column == chain.column
+                    && note.row == chain.row
+                    && Math.Abs(note.beat - chain.beat) <= 1e-4f
+                )
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void Save(

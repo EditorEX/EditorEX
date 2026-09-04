@@ -403,3 +403,6 @@ FodyWeavers.xsd
 AGENTS.md
 CLAUDE.md
 docs/
+
+# BeatSaver map cache for EditorEX.Tests (audio is copyrighted)
+EditorEX.Tests/.cache/

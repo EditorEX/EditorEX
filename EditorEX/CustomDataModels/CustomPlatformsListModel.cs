@@ -53,22 +53,22 @@ namespace EditorEX.CustomDataModels
                 Hash = sb.ToString();
             }
 
-            public CustomPlatformInfo(string filePath, string hash)
+            public CustomPlatformInfo(string? filePath, string? hash)
             {
                 FilePath = filePath;
                 Hash = hash;
             }
 
-            public string FilePath { get; set; }
-            public string Hash { get; set; }
+            public string? FilePath { get; set; }
+            public string? Hash { get; set; }
 
             public static CustomPlatformInfo? DeserializeV2(CustomData? customData)
             {
                 if (customData == null)
                     return null;
                 return new CustomPlatformInfo(
-                    customData?.Get<string>("_customEnvironment") ?? "",
-                    customData?.Get<string>("_customEnvironmentHash") ?? ""
+                    customData.Get<string>("_customEnvironment"),
+                    customData.Get<string>("_customEnvironmentHash")
                 );
             }
 
@@ -77,8 +77,8 @@ namespace EditorEX.CustomDataModels
                 if (customData == null)
                     return null;
                 return new CustomPlatformInfo(
-                    customData?.Get<string>("customEnvironment") ?? "",
-                    customData?.Get<string>("customEnvironmentHash") ?? ""
+                    customData.Get<string>("customEnvironment"),
+                    customData.Get<string>("customEnvironmentHash")
                 );
             }
 
