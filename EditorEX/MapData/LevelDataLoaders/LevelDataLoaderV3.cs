@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Scripts.SerializedData;
 using BeatmapEditor3D.SerializedData;
 using BeatmapSaveDataCommon;
@@ -14,7 +15,7 @@ namespace EditorEX.MapData.LevelDataLoaders
     {
         private readonly ICustomDataRepository _customDataRepository;
 
-        private LevelDataLoaderV3(ICustomDataRepository customDataRepository)
+        internal LevelDataLoaderV3(ICustomDataRepository customDataRepository)
         {
             _customDataRepository = customDataRepository;
         }
@@ -31,6 +32,7 @@ namespace EditorEX.MapData.LevelDataLoaders
             string? lightshowFilename
         )
         {
+            _ = loader;
             _customDataRepository.ClearAll();
 
             var result = new DifficultyLoadResult();
@@ -128,10 +130,17 @@ namespace EditorEX.MapData.LevelDataLoaders
             _customDataRepository.SetCustomBeatmapSaveData(beatmapSaveData);
             _customDataRepository.SetCustomEvents(customEvents);
 
+            result.BpmChanges = beatmapSaveData.bpmEvents?.ToList() ?? new();
             result.EventBoxGroups = EventBoxGroupCodec.LoadV3(beatmapSaveData);
-            result.BasicEventTypesForKeyword = beatmapSaveData
-                .basicEventTypesWithKeywords.data.Select(
-                    loader.CreateBasicEventTypesForKeywordData_v3
+            result.BasicEventTypesForKeyword = (
+                beatmapSaveData.basicEventTypesWithKeywords?.data
+                ?? Enumerable.Empty<BasicEventTypesWithKeywords.BasicEventTypesForKeyword>()
+            )
+                .Select(d =>
+                    BasicEventTypesForKeywordEditorData.CreateNew(
+                        d.keyword,
+                        d.eventTypes.Select(t => (BasicBeatmapEventType)t).ToList()
+                    )
                 )
                 .ToList();
             result.UseNormalEventsAsCompatibleEvents =

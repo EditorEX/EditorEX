@@ -45,8 +45,82 @@ namespace EditorEX.MapData.Objects
             ICustomDataRepository customDataRepository
         )
         {
-            IReadOnlyList<EventBoxEditorData> eventBoxesByEventBoxGroupId =
+            IReadOnlyList<EventBoxEditorData> boxes =
                 beatmapEventBoxGroupsDataModel.GetEventBoxesByEventBoxGroupId(e.id);
+            var baseLists = new List<(BeatmapEditorObjectId, List<BaseEditorData>)>();
+            foreach (EventBoxEditorData box in boxes)
+            {
+                baseLists.Add(
+                    (box.id, GetBaseEventsFromModel(beatmapEventBoxGroupsDataModel, e.type, box.id))
+                );
+            }
+
+            return SaveV3FromInput(
+                new BeatmapEditorEventBoxGroupInput
+                {
+                    eventBoxGroup = e,
+                    eventBoxes = boxes,
+                    baseLists = baseLists,
+                },
+                fxEventsCollection,
+                customDataRepository
+            );
+        }
+
+        public static List<BaseEditorData> GetBaseEventsFromModel(
+            BeatmapEventBoxGroupsDataModel model,
+            EventBoxGroupType type,
+            BeatmapEditorObjectId boxId
+        )
+        {
+            return type switch
+            {
+                EventBoxGroupType.Color => model
+                    .GetBaseEventsListByEventBoxId<LightColorBaseEditorData>(boxId)
+                    .Cast<BaseEditorData>()
+                    .ToList(),
+                EventBoxGroupType.Rotation => model
+                    .GetBaseEventsListByEventBoxId<LightRotationBaseEditorData>(boxId)
+                    .Cast<BaseEditorData>()
+                    .ToList(),
+                EventBoxGroupType.Translation => model
+                    .GetBaseEventsListByEventBoxId<LightTranslationBaseEditorData>(boxId)
+                    .Cast<BaseEditorData>()
+                    .ToList(),
+                EventBoxGroupType.FloatFx => model
+                    .GetBaseEventsListByEventBoxId<FloatFxBaseEditorData>(boxId)
+                    .Cast<BaseEditorData>()
+                    .ToList(),
+                _ => new List<BaseEditorData>(),
+            };
+        }
+
+        public static List<EventBoxGroup> SaveV3FromInput(
+            BeatmapEditorEventBoxGroupInput input,
+            FxEventsCollection fxEventsCollection,
+            ICustomDataRepository customDataRepository
+        )
+        {
+            EventBoxGroupEditorData e = input.eventBoxGroup;
+            IEnumerable<EventBoxEditorData> eventBoxesByEventBoxGroupId =
+                input.eventBoxes ?? Array.Empty<EventBoxEditorData>();
+            var baseById = new Dictionary<BeatmapEditorObjectId, List<BaseEditorData>>();
+            if (input.baseLists != null)
+            {
+                foreach (var (id, events) in input.baseLists)
+                {
+                    baseById[id] = events;
+                }
+            }
+
+            IEnumerable<T> Bases<T>(BeatmapEditorObjectId id)
+                where T : BaseEditorData
+            {
+                return baseById.TryGetValue(id, out var events)
+                    ? events.OfType<T>()
+                    : Enumerable.Empty<T>();
+            }
+
             List<EventBoxGroup> list = new List<EventBoxGroup>();
             EventBoxGroupType type = e.type;
             switch (type)
@@ -76,10 +150,7 @@ namespace EditorEX.MapData.Objects
                                             ConvertEaseType(
                                                 eventBox.brightnessDistributionEaseType
                                             ),
-                                            beatmapEventBoxGroupsDataModel
-                                                .GetBaseEventsListByEventBoxId<LightColorBaseEditorData>(
-                                                    eventBox.id
-                                                )
+                                            Bases<LightColorBaseEditorData>(eventBox.id)
                                                 .OrderBy((LightColorBaseEditorData i) => i.beat)
                                                 .Select(
                                                     (LightColorBaseEditorData data) =>
@@ -130,10 +201,7 @@ namespace EditorEX.MapData.Objects
                                             ConvertEaseType(eventBox.rotationDistributionEaseType),
                                             (Axis)eventBox.axis,
                                             eventBox.flipRotation,
-                                            beatmapEventBoxGroupsDataModel
-                                                .GetBaseEventsListByEventBoxId<LightRotationBaseEditorData>(
-                                                    eventBox.id
-                                                )
+                                            Bases<LightRotationBaseEditorData>(eventBox.id)
                                                 .OrderBy((LightRotationBaseEditorData i) => i.beat)
                                                 .Select(
                                                     delegate(LightRotationBaseEditorData data)
@@ -196,10 +264,7 @@ namespace EditorEX.MapData.Objects
                                             ConvertEaseType(eventBox.gapDistributionEaseType),
                                             (Axis)eventBox.axis,
                                             eventBox.flipTranslation,
-                                            beatmapEventBoxGroupsDataModel
-                                                .GetBaseEventsListByEventBoxId<LightTranslationBaseEditorData>(
-                                                    eventBox.id
-                                                )
+                                            Bases<LightTranslationBaseEditorData>(eventBox.id)
                                                 .OrderBy(
                                                     (LightTranslationBaseEditorData i) => i.beat
                                                 )
@@ -266,10 +331,7 @@ namespace EditorEX.MapData.Objects
                                         bool vfxDistributionShouldAffectFirstBaseEvent =
                                             eventBox.vfxDistributionShouldAffectFirstBaseEvent;
                                         IEnumerable<FloatFxBaseEditorData> enumerable =
-                                            beatmapEventBoxGroupsDataModel
-                                                .GetBaseEventsListByEventBoxId<FloatFxBaseEditorData>(
-                                                    eventBox.id
-                                                )
+                                            Bases<FloatFxBaseEditorData>(eventBox.id)
                                                 .OrderBy((FloatFxBaseEditorData i) => i.beat);
                                         Func<FloatFxBaseEditorData, int> func = (
                                             FloatFxBaseEditorData data

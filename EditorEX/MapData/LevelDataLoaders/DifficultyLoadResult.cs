@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.SerializedData;
+using BeatmapSaveDataVersion3;
 
 namespace EditorEX.MapData.LevelDataLoaders
 {
@@ -24,6 +25,8 @@ namespace EditorEX.MapData.LevelDataLoaders
 
         public List<BasicEventTypesForKeywordEditorData> BasicEventTypesForKeyword { get; set; } =
             new();
+
+        public List<BpmChangeEventData> BpmChanges { get; set; } = new();
 
         public bool UseNormalEventsAsCompatibleEvents { get; set; }
     }
