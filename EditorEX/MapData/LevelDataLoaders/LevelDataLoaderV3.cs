@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Scripts.SerializedData;
 using BeatmapEditor3D.SerializedData;
 using BeatmapSaveDataCommon;
-using BeatmapSaveDataVersion3;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
-using EditorEX.CustomJSONData.CustomEvents;
+using EditorEX.MapData.Objects;
 
 namespace EditorEX.MapData.LevelDataLoaders
 {
-    public class LevelDataLoaderV3
+    public class LevelDataLoaderV3 : ICustomLevelDataLoader
     {
         private readonly ICustomDataRepository _customDataRepository;
 
@@ -22,144 +19,108 @@ namespace EditorEX.MapData.LevelDataLoaders
             _customDataRepository = customDataRepository;
         }
 
-        public static CustomEventEditorData CreateCustomEventEditorData(
-            Version3CustomBeatmapSaveData.CustomEventSaveData data
-        )
+        public bool IsVersion(Version version)
         {
-            return CustomEventEditorData.CreateNew(data.beat, data.type, data.customData, false);
+            return version.Major == 3;
         }
 
-        public void Load(
-            BeatmapDataModelsLoader __instance,
+        public DifficultyLoadResult Load(
+            BeatmapDataModelsLoader loader,
             string projectPath,
-            string filename,
-            out List<NoteEditorData> notes,
-            out List<WaypointEditorData> waypoints,
-            out List<ObstacleEditorData> obstacles,
-            out List<ArcEditorData> arcs,
-            out List<ChainEditorData> chains,
-            out List<BasicEventEditorData> basicEvents,
-            out List<BeatmapEditorEventBoxGroupInput> eventBoxGroups,
-            out List<BasicEventTypesForKeywordEditorData> basicEventTypesForKeywordEditorData,
-            out bool useNormalEventsAsCompatibleEvents
+            string beatmapFilename,
+            string? lightshowFilename
         )
         {
             _customDataRepository.ClearAll();
 
-            var customLevelInfoSaveData = CustomLevelInfoSaveData.Deserialize(
-                File.ReadAllText(Path.Combine(projectPath, "Info.dat"))
-            );
-
-            string fullPath = Path.Combine(projectPath, filename);
-
-            Version version = BeatmapSaveDataHelpers.GetVersion(File.ReadAllText(fullPath));
-
+            var result = new DifficultyLoadResult();
+            string fullPath = Path.Combine(projectPath, beatmapFilename);
             Version3CustomBeatmapSaveData beatmapSaveData =
                 Version3CustomBeatmapSaveData.Deserialize(File.ReadAllText(fullPath));
 
             BeatmapEditorRotationProcessor_v3 rotationProcessor =
                 new BeatmapEditorRotationProcessor_v3(beatmapSaveData.rotationEvents);
 
-            notes = LevelDataLoaderUtil
+            result.Notes = LevelDataLoaderUtil
                 .GetEditorData(
                     beatmapSaveData.colorNotes.Cast<Version3CustomBeatmapSaveData.ColorNoteSaveData>(),
-                    BeatmapDataModelsLoader.CreateColorNoteEditorData_v3,
+                    ColorNoteCodec.LoadV3,
                     rotationProcessor,
                     _customDataRepository
                 )
                 .ToList();
-
             rotationProcessor.ResetRotation();
-
-            notes.AddRange(
-                LevelDataLoaderUtil
-                    .GetEditorData(
-                        beatmapSaveData.bombNotes.Cast<Version3CustomBeatmapSaveData.BombNoteSaveData>(),
-                        BeatmapDataModelsLoader.CreateBombNoteEditorData_v3,
-                        rotationProcessor,
-                        _customDataRepository
-                    )
-                    .ToList()
+            result.Notes.AddRange(
+                LevelDataLoaderUtil.GetEditorData(
+                    beatmapSaveData.bombNotes.Cast<Version3CustomBeatmapSaveData.BombNoteSaveData>(),
+                    BombNoteCodec.LoadV3,
+                    rotationProcessor,
+                    _customDataRepository
+                )
             );
-
             rotationProcessor.ResetRotation();
-
-            waypoints = LevelDataLoaderUtil
+            result.Waypoints = LevelDataLoaderUtil
                 .GetEditorData(
                     beatmapSaveData.waypoints.Cast<Version3CustomBeatmapSaveData.WaypointSaveData>(),
-                    BeatmapDataModelsLoader.CreateWaypointEditorData_v3,
+                    WaypointCodec.LoadV3,
                     rotationProcessor,
                     _customDataRepository
                 )
                 .ToList();
-
             rotationProcessor.ResetRotation();
-
-            obstacles = LevelDataLoaderUtil
+            result.Obstacles = LevelDataLoaderUtil
                 .GetEditorData(
                     beatmapSaveData.obstacles.Cast<Version3CustomBeatmapSaveData.ObstacleSaveData>(),
-                    BeatmapDataModelsLoader.CreateObstacleEditorData_v3,
+                    ObstacleCodec.LoadV3,
                     rotationProcessor,
                     _customDataRepository
                 )
                 .ToList();
-
             rotationProcessor.ResetRotation();
-
-            arcs = LevelDataLoaderUtil
+            result.Arcs = LevelDataLoaderUtil
                 .GetEditorData(
                     beatmapSaveData.sliders.Cast<Version3CustomBeatmapSaveData.SliderSaveData>(),
-                    BeatmapDataModelsLoader.CreateArcEditorData_v3,
+                    ArcCodec.LoadV3,
                     rotationProcessor,
                     _customDataRepository
                 )
                 .ToList();
-
             rotationProcessor.ResetRotation();
-
-            chains = LevelDataLoaderUtil
+            result.Chains = LevelDataLoaderUtil
                 .GetEditorData(
                     beatmapSaveData.burstSliders.Cast<Version3CustomBeatmapSaveData.BurstSliderSaveData>(),
-                    BeatmapDataModelsLoader.CreateChainEditorData_v3,
+                    ChainCodec.LoadV3,
                     rotationProcessor,
                     _customDataRepository
                 )
                 .ToList();
 
-            rotationProcessor.ResetRotation();
-
-            basicEvents = LevelDataLoaderUtil
+            result.BasicEvents = LevelDataLoaderUtil
                 .GetEditorData(
                     beatmapSaveData.basicBeatmapEvents.Cast<Version3CustomBeatmapSaveData.BasicEventSaveData>(),
-                    BeatmapDataModelsLoader.CreateEventEditorData_v3,
+                    BasicEventCodec.LoadV3,
                     _customDataRepository
                 )
                 .ToList();
-
-            basicEvents.AddRange(
-                LevelDataLoaderUtil
-                    .GetEditorData(
-                        beatmapSaveData.colorBoostBeatmapEvents.Cast<Version3CustomBeatmapSaveData.ColorBoostEventSaveData>(),
-                        BeatmapDataModelsLoader.CreateEventEditorDataFromColorBoost_v3,
-                        _customDataRepository
-                    )
-                    .ToList()
+            result.BasicEvents.AddRange(
+                LevelDataLoaderUtil.GetEditorData(
+                    beatmapSaveData.colorBoostBeatmapEvents.Cast<Version3CustomBeatmapSaveData.ColorBoostEventSaveData>(),
+                    ColorBoostEventCodec.LoadV3,
+                    _customDataRepository
+                )
             );
-
-            basicEvents.AddRange(
-                LevelDataLoaderUtil
-                    .GetEditorData(
-                        beatmapSaveData.rotationEvents.Cast<Version3CustomBeatmapSaveData.RotationEventSaveData>(),
-                        BeatmapDataModelsLoader.CreateEventEditorDataFromRotation_v3,
-                        _customDataRepository
-                    )
-                    .ToList()
+            result.BasicEvents.AddRange(
+                LevelDataLoaderUtil.GetEditorData(
+                    beatmapSaveData.rotationEvents.Cast<Version3CustomBeatmapSaveData.RotationEventSaveData>(),
+                    RotationEventCodec.LoadV3,
+                    _customDataRepository
+                )
             );
 
             var customEvents = LevelDataLoaderUtil
                 .GetEditorData(
                     beatmapSaveData.customEvents,
-                    CreateCustomEventEditorData,
+                    CustomEventCodec.LoadV3,
                     _customDataRepository
                 )
                 .ToList();
@@ -167,58 +128,16 @@ namespace EditorEX.MapData.LevelDataLoaders
             _customDataRepository.SetCustomBeatmapSaveData(beatmapSaveData);
             _customDataRepository.SetCustomEvents(customEvents);
 
-            eventBoxGroups = new List<BeatmapEditorEventBoxGroupInput>()
-                .Concat(
-                    beatmapSaveData
-                        .lightColorEventBoxGroups.Select(
-                            new Func<LightColorEventBoxGroup, BeatmapEditorEventBoxGroupInput>(
-                                BeatmapDataModelsLoader.CreateLightColorEventBoxGroup_v3
-                            )
-                        )
-                        .OrderBy((BeatmapEditorEventBoxGroupInput e) => e.eventBoxGroup.beat)
-                )
-                .Concat(
-                    beatmapSaveData
-                        .lightRotationEventBoxGroups.Select(
-                            new Func<LightRotationEventBoxGroup, BeatmapEditorEventBoxGroupInput>(
-                                BeatmapDataModelsLoader.CreateLightRotationEventBoxGroup_v3
-                            )
-                        )
-                        .OrderBy((BeatmapEditorEventBoxGroupInput e) => e.eventBoxGroup.beat)
-                )
-                .Concat(
-                    beatmapSaveData
-                        .lightTranslationEventBoxGroups.Select(
-                            new Func<
-                                LightTranslationEventBoxGroup,
-                                BeatmapEditorEventBoxGroupInput
-                            >(BeatmapDataModelsLoader.CreateLightTranslationEventBoxGroup_v3)
-                        )
-                        .OrderBy((BeatmapEditorEventBoxGroupInput e) => e.eventBoxGroup.beat)
-                )
-                .Concat(
-                    beatmapSaveData
-                        .vfxEventBoxGroups.Select(
-                            new Func<FxEventBoxGroup, BeatmapEditorEventBoxGroupInput>(
-                                (x) =>
-                                    BeatmapDataModelsLoader.CreateFxEventBoxGroupWithFxEventsCollection_v3(
-                                        x,
-                                        beatmapSaveData._fxEventsCollection
-                                    )
-                            )
-                        )
-                        .OrderBy((BeatmapEditorEventBoxGroupInput e) => e.eventBoxGroup.beat)
+            result.EventBoxGroups = EventBoxGroupCodec.LoadV3(beatmapSaveData);
+            result.BasicEventTypesForKeyword = beatmapSaveData
+                .basicEventTypesWithKeywords.data.Select(
+                    loader.CreateBasicEventTypesForKeywordData_v3
                 )
                 .ToList();
-            basicEventTypesForKeywordEditorData = beatmapSaveData
-                .basicEventTypesWithKeywords.data.Select(
-                    new Func<
-                        BasicEventTypesWithKeywords.BasicEventTypesForKeyword,
-                        BasicEventTypesForKeywordEditorData
-                    >(__instance.CreateBasicEventTypesForKeywordData_v3)
-                )
-                .ToList<BasicEventTypesForKeywordEditorData>();
-            useNormalEventsAsCompatibleEvents = beatmapSaveData.useNormalEventsAsCompatibleEvents;
+            result.UseNormalEventsAsCompatibleEvents =
+                beatmapSaveData.useNormalEventsAsCompatibleEvents;
+
+            return result;
         }
     }
 }

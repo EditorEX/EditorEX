@@ -39,8 +39,9 @@ namespace EditorEX.CustomJSONData.Installers
             Container.Bind<V2BeatmapBpmDataVersionedLoader>().AsSingle();
             Container.BindInterfacesAndSelfTo<AudioDataLoaderPatch>().AsSingle().NonLazy();
 
-            Container.Bind<LevelDataLoaderV2>().AsSingle();
-            Container.Bind<LevelDataLoaderV3>().AsSingle();
+            Container.BindInterfacesAndSelfTo<LevelDataLoaderV2>().AsSingle();
+            Container.BindInterfacesAndSelfTo<LevelDataLoaderV3>().AsSingle();
+            Container.BindInterfacesAndSelfTo<LevelDataLoaderV4>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapDataModelsLoaderPatch>().AsSingle().NonLazy();
 
             Container.BindInterfacesAndSelfTo<LevelCustomDataModel>().AsSingle();

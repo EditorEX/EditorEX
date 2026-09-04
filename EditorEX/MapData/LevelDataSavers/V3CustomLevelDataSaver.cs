@@ -5,69 +5,58 @@ using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Types;
 using BeatmapSaveDataCommon;
 using BeatmapSaveDataVersion3;
+using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using EditorEX.CustomJSONData.VersionedSaveData;
 using EditorEX.MapData.Bookmarks;
 using EditorEX.MapData.Contexts;
-using SiraUtil.Logging;
-using Zenject;
-using static EditorEX.CustomJSONData.VersionedSaveData.Custom2_6_0AndEarlierBeatmapSaveDataVersioned;
+using EditorEX.MapData.Objects;
 using V3 = BeatmapSaveDataVersion3;
 
 namespace EditorEX.MapData.LevelDataSavers
 {
     public class V3CustomLevelDataSaver : ICustomLevelDataSaver
     {
-        [Inject]
-        private SiraLog? _siraLog = null!;
+        private readonly ICustomDataRepository _customDataRepository;
 
-        [Inject]
-        private ICustomDataRepository _customDataRepository = null!;
+        private V3CustomLevelDataSaver(ICustomDataRepository customDataRepository)
+        {
+            _customDataRepository = customDataRepository;
+        }
 
         public bool IsVersion(Version version)
         {
             return version.Major == 3;
         }
 
-        private CustomBeatmapSaveDataVersioned GetSaveData(
-            BeatmapProjectManager projectManager,
-            DifficultyBeatmapData difficultyBeatmapData
-        )
+        private CustomBeatmapSaveDataVersioned GetSaveData(BeatmapProjectManager projectManager)
         {
             var basicEventsModel = projectManager._beatmapBasicEventsDataModel;
             var levelDataModel = projectManager._beatmapObjectsDataModel;
             var eventBoxGroupsDataModel = projectManager._beatmapEventBoxGroupsDataModel;
 
             var bpmChanges = projectManager
-                ._audioDataModel.bpmData.regions.Select(V3Converters.CreateBpmChangeEventSaveData)
+                ._audioDataModel.bpmData.regions.Select(BpmChangeCodec.SaveV3)
                 .ToList();
             var rotationEvents = new List<RotationEventData>()
                 .Concat(
                     basicEventsModel
                         .GetAllDataIn(BasicBeatmapEventType.Event14)
-                        .Select(x =>
-                            V3Converters.CreateRotationEventSaveData(x, _customDataRepository)
-                        )
+                        .Select(x => RotationEventCodec.SaveV3(x, _customDataRepository))
                 )
                 .Concat(
                     basicEventsModel
                         .GetAllDataIn(BasicBeatmapEventType.Event15)
-                        .Select(x =>
-                            V3Converters.CreateRotationEventSaveData(x, _customDataRepository)
-                        )
+                        .Select(x => RotationEventCodec.SaveV3(x, _customDataRepository))
                 )
                 .ToList();
             var basicEvents = basicEventsModel
                 .GetAllEventsAsList()
-                .Select(x => V3Converters.CreateBasicEventSaveData(x, _customDataRepository))
-                .ToList();
-            var customEvents = _customDataRepository
-                .GetCustomEvents()
-                .Select(V3Converters.CreateCustomEventSaveData)
+                .Select(x => BasicEventCodec.SaveV3(x, _customDataRepository))
                 .ToList();
             var colorBoostEvents = basicEventsModel
                 .GetAllDataIn(BasicBeatmapEventType.Event5)
-                .Select(x => V3Converters.CreateColorBoostSaveEventData(x, _customDataRepository))
+                .Select(x => ColorBoostEventCodec.SaveV3(x, _customDataRepository))
                 .ToList();
             var colorNotes = new List<ColorNoteData>();
             var bombNotes = new List<BombNoteData>();
@@ -79,61 +68,35 @@ namespace EditorEX.MapData.LevelDataSavers
                 BaseBeatmapObjectEditorData allBeatmapObject in levelDataModel.allBeatmapObjects
             )
             {
-                if (!(allBeatmapObject is NoteEditorData noteEditorData))
+                switch (allBeatmapObject)
                 {
-                    if (!(allBeatmapObject is WaypointEditorData w))
-                    {
-                        if (!(allBeatmapObject is ObstacleEditorData o))
-                        {
-                            if (!(allBeatmapObject is ChainEditorData c))
-                            {
-                                if (allBeatmapObject is ArcEditorData a)
-                                {
-                                    sliders.Add(
-                                        V3Converters.CreateSliderSaveData(a, _customDataRepository)
-                                    );
-                                }
-                            }
-                            else
-                            {
-                                colorNotes.Add(
-                                    V3Converters.CreateColorNoteSaveDataFromChains(
-                                        c,
-                                        _customDataRepository
-                                    )
-                                );
-                                burstSliders.Add(
-                                    V3Converters.CreateBurstSliderSaveData(c, _customDataRepository)
-                                );
-                            }
-                        }
-                        else
-                        {
-                            obstacles.Add(
-                                V3Converters.CreateObstacleSaveData(o, _customDataRepository)
-                            );
-                        }
-                    }
-                    else
-                    {
-                        waypoints.Add(
-                            V3Converters.CreateWaypointSaveData(w, _customDataRepository)
+                    case NoteEditorData noteEditorData
+                        when noteEditorData.noteType == NoteType.Note:
+                        colorNotes.Add(
+                            ColorNoteCodec.SaveV3(noteEditorData, _customDataRepository)
                         );
-                    }
-                }
-                else if (noteEditorData.noteType == NoteType.Note)
-                {
-                    colorNotes.Add(
-                        V3Converters.CreateColorNoteSaveData(noteEditorData, _customDataRepository)
-                    );
-                }
-                else
-                {
-                    bombNotes.Add(
-                        V3Converters.CreateBombNoteSaveData(noteEditorData, _customDataRepository)
-                    );
+                        break;
+                    case NoteEditorData bomb:
+                        bombNotes.Add(BombNoteCodec.SaveV3(bomb, _customDataRepository));
+                        break;
+                    case WaypointEditorData waypoint:
+                        waypoints.Add(WaypointCodec.SaveV3(waypoint, _customDataRepository));
+                        break;
+                    case ObstacleEditorData obstacle:
+                        obstacles.Add(ObstacleCodec.SaveV3(obstacle, _customDataRepository));
+                        break;
+                    case ChainEditorData chain:
+                        colorNotes.Add(
+                            ColorNoteCodec.SaveV3FromChain(chain, _customDataRepository)
+                        );
+                        burstSliders.Add(ChainCodec.SaveV3(chain, _customDataRepository));
+                        break;
+                    case ArcEditorData arc:
+                        sliders.Add(ArcCodec.SaveV3(arc, _customDataRepository));
+                        break;
                 }
             }
+
             bpmChanges.Sort(LegacySavingUtil.SortByBeat);
             rotationEvents.Sort(LegacySavingUtil.SortByRotationTypeAndBeat);
             basicEvents.Sort(LegacySavingUtil.SortByEventTypeAndBeat);
@@ -151,7 +114,7 @@ namespace EditorEX.MapData.LevelDataSavers
                 select e
             )
                 .Select(x =>
-                    V3Converters.CreateEventBoxGroupSaveDataWithFxCollection(
+                    EventBoxGroupCodec.SaveV3(
                         x,
                         vfxCollection,
                         eventBoxGroupsDataModel,
@@ -165,34 +128,18 @@ namespace EditorEX.MapData.LevelDataSavers
                         new List<LightTranslationEventBoxGroup>(),
                         new List<FxEventBoxGroup>()
                     ),
-                    V3Converters.SplitEventBoxGroupsSaveData
+                    EventBoxGroupCodec.SplitV3
                 );
-            List<LightColorEventBoxGroup> lightColorEventBoxGroups = tuple.Item1;
-            List<LightRotationEventBoxGroup> lightRotationEventBoxGroups = tuple.Item2;
-            List<LightTranslationEventBoxGroup> lightTranslationEventBoxGroups = tuple.Item3;
-            List<FxEventBoxGroup> fxEventBoxGroups = tuple.Item4;
             BasicEventTypesWithKeywords basicEventTypesWithKeywords =
                 new BasicEventTypesWithKeywords(
                     basicEventsModel
                         .GetBasicEventTypesForKeywordData()
-                        .Select(V3Converters.CreateBasicEventTypesForKeywordSaveData)
+                        .Select(BasicEventCodec.SaveKeywordV3)
                         .ToList()
                 );
 
-            _siraLog.Info($"Saving 1: {_customDataRepository.GetBeatmapData() == null}");
-            _siraLog.Info($"Saving 2: {_customDataRepository.GetBeatmapData().customData == null}");
-
-            var customData = _customDataRepository.GetBeatmapData().customData;
-
-            _siraLog.Info($"Saving 3: {_customDataRepository.GetCustomEvents() == null}");
-            _siraLog.Info(
-                $"Saving 3: {_customDataRepository.GetCustomEvents().Select(x => new CustomEventDataSerialized(x)) == null}"
-            );
-
-            customData["customEvents"] = _customDataRepository
-                .GetCustomEvents()
-                .Select(x => new CustomEventDataSerialized(x));
-
+            var customData = _customDataRepository.GetBeatmapData()?.customData ?? new CustomData();
+            CustomEventCodec.Write(customData, _customDataRepository.GetCustomEvents(), v3: true);
             CustomDataBookmarkCodec.Write(customData, projectManager._bookmarksDataModel, v3: true);
 
             return new CustomBeatmapSaveDataVersioned(
@@ -207,10 +154,10 @@ namespace EditorEX.MapData.LevelDataSavers
                 waypoints,
                 basicEvents,
                 colorBoostEvents,
-                lightColorEventBoxGroups,
-                lightRotationEventBoxGroups,
-                lightTranslationEventBoxGroups,
-                fxEventBoxGroups,
+                tuple.Item1,
+                tuple.Item2,
+                tuple.Item3,
+                tuple.Item4,
                 vfxCollection,
                 basicEventTypesWithKeywords,
                 basicEventsModel.GetUseNormalEventsAsCompatibleEvents(),
@@ -224,19 +171,14 @@ namespace EditorEX.MapData.LevelDataSavers
             bool clearDirty
         )
         {
-            bool bookmarksDirty = projectManager._bookmarkDataModelSaver.NeedsSaving();
-            if (!projectManager._beatmapDataModelsSaver.NeedsSaving() && !bookmarksDirty)
+            if (LevelDataSaveOps.ShouldSkipSave(projectManager))
             {
                 return;
             }
 
-            if (
-                projectManager._beatmapDataModelsSaver.BeatmapNeedSaving()
-                || projectManager._beatmapDataModelsSaver.LightshowNeedsSaving()
-                || bookmarksDirty
-            )
+            if (LevelDataSaveOps.BeatmapOrLightshowOrBookmarksNeedSaving(projectManager))
             {
-                var beatmapSaveData = GetSaveData(projectManager, difficultyBeatmapData);
+                var beatmapSaveData = GetSaveData(projectManager);
                 LegacySavingUtil.SerializeAndSave(
                     projectManager._workingBeatmapProject,
                     difficultyBeatmapData.beatmapFilename,
@@ -244,17 +186,11 @@ namespace EditorEX.MapData.LevelDataSavers
                 );
                 if (clearDirty)
                 {
-                    projectManager._beatmapObjectsDataModel.ClearDirty();
-                    projectManager._beatmapBasicEventsDataModel.ClearDirty();
-                    projectManager._beatmapEventBoxGroupsDataModel.ClearDirty();
-                    projectManager._bookmarksDataModel.ClearDirty();
+                    LevelDataSaveOps.ClearDifficultyDirty(projectManager);
                 }
             }
-            if (clearDirty)
-            {
-                projectManager.BackupProject();
-                projectManager.SaveTempProject();
-            }
+
+            LevelDataSaveOps.BackupAndSaveTemp(projectManager, clearDirty);
         }
     }
 }

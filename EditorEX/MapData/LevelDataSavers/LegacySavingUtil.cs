@@ -79,5 +79,10 @@ namespace EditorEX.MapData.LevelDataSavers
             SaveToJSONFileCompact(toSerialize, filePath, false);
             Directory.SetLastWriteTime(projectPath, DateTime.Now);
         }
+
+        public static T? Deserialize<T>(string json)
+        {
+            return JsonConvert.DeserializeObject<T>(json, _serializerSettings);
+        }
     }
 }
