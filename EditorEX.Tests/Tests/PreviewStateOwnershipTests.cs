@@ -76,5 +76,44 @@ namespace EditorEX.Tests.Tests
 
             Assert.Equal(10f, end);
         }
+
+        [Fact]
+        public void PreviousConflicting_returns_nearest_earlier_match()
+        {
+            var items = new List<(float Beat, string Id, string Value)>
+            {
+                (0f, "a", "first"),
+                (5f, "other", "skip"),
+                (10f, "a", "second"),
+            };
+
+            string? previous = PreviewStateOwnership.PreviousConflicting(
+                items,
+                2,
+                (left, right) => left.Id == right.Id,
+                item => item.Value
+            );
+
+            Assert.Equal("first", previous);
+        }
+
+        [Fact]
+        public void PreviousConflicting_is_null_when_nothing_conflicts()
+        {
+            var items = new List<(float Beat, string Id, string Value)>
+            {
+                (0f, "a", "first"),
+                (10f, "b", "second"),
+            };
+
+            string? previous = PreviewStateOwnership.PreviousConflicting(
+                items,
+                1,
+                (left, right) => left.Id == right.Id,
+                item => item.Value
+            );
+
+            Assert.Null(previous);
+        }
     }
 }

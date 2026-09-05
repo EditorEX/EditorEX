@@ -13,5 +13,20 @@ namespace EditorEX.Util
         {
             return repo.GetCustomData(data);
         }
+
+        public static CustomData GetOrCreateCustomData(
+            this BaseEditorData? data,
+            ICustomDataRepository repo
+        )
+        {
+            CustomData customData = repo.GetCustomData(data);
+            if (customData == null)
+            {
+                customData = new CustomData();
+                repo.AddCustomData(data, customData);
+            }
+
+            return customData;
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace EditorEX.Heck.Events
     {
         private readonly EditorCoroutineEventData _data;
         private readonly EditorCoroutineEventData.CoroutineInfo _info;
+        private readonly IPointDefinition? _previousPointDefinition;
         private readonly float _fromBeat;
         private readonly bool _path;
         private bool _active;
@@ -18,13 +19,15 @@ namespace EditorEX.Heck.Events
             EditorCoroutineEventData data,
             EditorCoroutineEventData.CoroutineInfo info,
             float fromBeat,
-            bool path
+            bool path,
+            IPointDefinition? previousPointDefinition = null
         )
         {
             _data = data;
             _info = info;
             _fromBeat = fromBeat;
             _path = path;
+            _previousPointDefinition = previousPointDefinition;
         }
 
         public void Execute()
@@ -35,17 +38,27 @@ namespace EditorEX.Heck.Events
             }
 
             _active = true;
+            if (_path)
+            {
+                HeckTrackPreviewPathInit.Apply(
+                    ((BasePathProperty)_info.Property).IInterpolation,
+                    _previousPointDefinition,
+                    _info.PointDefinition
+                );
+                if (_info.PointDefinition == null)
+                {
+                    _info.Track.UpdatedThisFrame = true;
+                    PreviewOriginalTransform.RestoreUnanimated(_info.Track);
+                }
+
+                return;
+            }
+
             if (_info.PointDefinition == null)
             {
                 _info.Track.UpdatedThisFrame = true;
                 _info.Property.Null();
                 PreviewOriginalTransform.RestoreUnanimated(_info.Track);
-                return;
-            }
-
-            if (_path)
-            {
-                ((BasePathProperty)_info.Property).IInterpolation.Init(_info.PointDefinition);
             }
         }
 

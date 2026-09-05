@@ -4,6 +4,7 @@ using EditorEX.CustomJSONData.CustomEvents;
 using EditorEX.Essentials.PreviewState;
 using EditorEX.Heck.Deserialize;
 using EditorEX.Heck.EventData;
+using Heck.Animation;
 using Zenject;
 using static EditorEX.Heck.Constants;
 
@@ -89,10 +90,22 @@ namespace EditorEX.Heck.Events
                     item => item.Beat,
                     (left, right) => Conflicts(left.Info, right.Info)
                 );
+                IPointDefinition? previous = PreviewStateOwnership.PreviousConflicting(
+                    items,
+                    i,
+                    (left, right) => Conflicts(left.Info, right.Info),
+                    item => item.Info.PointDefinition
+                );
                 registry.Add(
                     from,
                     to,
-                    new HeckTrackPreviewAction(items[i].Data, items[i].Info, from, items[i].Path)
+                    new HeckTrackPreviewAction(
+                        items[i].Data,
+                        items[i].Info,
+                        from,
+                        items[i].Path,
+                        previous
+                    )
                 );
             }
         }

@@ -23,5 +23,25 @@ namespace EditorEX.Essentials.PreviewState
 
             return float.MaxValue;
         }
+
+        public static TValue? PreviousConflicting<T, TValue>(
+            IReadOnlyList<T> sorted,
+            int index,
+            Func<T, T, bool> conflicts,
+            Func<T, TValue> select
+        )
+            where TValue : class
+        {
+            T current = sorted[index];
+            for (int j = index - 1; j >= 0; j--)
+            {
+                if (conflicts(sorted[j], current))
+                {
+                    return select(sorted[j]);
+                }
+            }
+
+            return null;
+        }
     }
 }
