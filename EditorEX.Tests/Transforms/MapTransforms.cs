@@ -136,6 +136,34 @@ namespace EditorEX.Tests.Transforms
             }
         }
 
+        public static ObstacleEditorData AddObstacle(
+            DifficultyLoadResult loaded,
+            ICustomDataRepository repo
+        )
+        {
+            float beat = loaded.Obstacles.Count == 0 ? 32f : loaded.Obstacles.Max(o => o.beat) + 4f;
+            ObstacleEditorData obstacle = ObstacleEditorData.CreateNew(beat, 0, 0, 0, 1f, 1, 3);
+            repo.AddCustomData(obstacle, new CustomData());
+            loaded.Obstacles.Add(obstacle);
+            return obstacle;
+        }
+
+        public static CustomEventEditorData AddCustomEvent(ICustomDataRepository repo)
+        {
+            var existing = repo.GetCustomEvents() ?? new List<CustomEventEditorData>();
+            float beat = existing.Count == 0 ? 32f : existing.Max(e => e.beat) + 4f;
+            bool v2 = MapContext.Version != null && MapContext.Version.Major < 3;
+            CustomEventEditorData evt = CustomEventEditorData.CreateNew(
+                beat,
+                "AnimateTrack",
+                new CustomData { [TestCustomDataKey] = true },
+                v2
+            );
+            var next = new List<CustomEventEditorData>(existing) { evt };
+            repo.SetCustomEvents(next);
+            return evt;
+        }
+
         public static NoteEditorData AddColorNote(
             DifficultyLoadResult loaded,
             ICustomDataRepository repo

@@ -53,6 +53,32 @@ namespace EditorEX.Tests.Tests
 
         [SkippableTheory]
         [MemberData(nameof(MapCatalog.AllTheoryData), MemberType = typeof(MapCatalog))]
+        public async Task AddObstacle_IsPreservedAfterSaveReload(MapFixture fixture)
+        {
+            await RoundtripMutation(
+                fixture,
+                loaded =>
+                {
+                    MapTransforms.AddObstacle(loaded.Result, loaded.Repository);
+                }
+            );
+        }
+
+        [SkippableTheory]
+        [MemberData(nameof(MapCatalog.AllTheoryData), MemberType = typeof(MapCatalog))]
+        public async Task AddCustomEvent_IsPreservedAfterSaveReload(MapFixture fixture)
+        {
+            await RoundtripMutation(
+                fixture,
+                loaded =>
+                {
+                    MapTransforms.AddCustomEvent(loaded.Repository);
+                }
+            );
+        }
+
+        [SkippableTheory]
+        [MemberData(nameof(MapCatalog.AllTheoryData), MemberType = typeof(MapCatalog))]
         public async Task CustomDataAddAndStrip_IsPreservedAfterSaveReload(MapFixture fixture)
         {
             await RoundtripMutation(

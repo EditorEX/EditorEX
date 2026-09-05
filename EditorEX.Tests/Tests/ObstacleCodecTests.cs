@@ -97,6 +97,57 @@ namespace EditorEX.Tests.Tests
             Assert.Equal(expected, ObstacleCodec.GameplayHeight(editorHeight, versionMajor));
         }
 
+        [Fact]
+        public void LoadV4_uses_height_minus_two()
+        {
+            var data = new BeatmapSaveDataVersion4.Obstacle
+            {
+                x = 1,
+                y = 1,
+                d = 2f,
+                w = 2,
+                h = 4,
+            };
+
+            ObstacleEditorData editor = ObstacleCodec.LoadV4(8f, 15, data);
+
+            Assert.Equal(8f, editor.beat);
+            Assert.Equal(15, editor.rotation);
+            Assert.Equal(1, editor.column);
+            Assert.Equal(1, editor.row);
+            Assert.Equal(2, editor.height);
+            Assert.Equal(2, editor.width);
+            Assert.Equal(2f, editor.duration);
+        }
+
+        [Fact]
+        public void SaveV4Data_adds_two_to_editor_height()
+        {
+            ObstacleEditorData editor = ObstacleEditorData.CreateNew(0f, 2, 1, 0, 1.5f, 3, 2);
+
+            BeatmapSaveDataVersion4.Obstacle saved = ObstacleCodec.SaveV4Data(editor);
+
+            Assert.Equal(2, saved.x);
+            Assert.Equal(1, saved.y);
+            Assert.Equal(1.5f, saved.d);
+            Assert.Equal(3, saved.w);
+            Assert.Equal(4, saved.h);
+        }
+
+        [Theory]
+        [InlineData(0, 1, false)]
+        [InlineData(1, 0, false)]
+        [InlineData(1, 1, true)]
+        public void CanSaveV4_requires_positive_width_height_and_duration(
+            int width,
+            int height,
+            bool expected
+        )
+        {
+            ObstacleEditorData editor = ObstacleEditorData.CreateNew(0f, 0, 0, 0, 1f, width, height);
+            Assert.Equal(expected, ObstacleCodec.CanSaveV4(editor));
+        }
+
         [Theory]
         [InlineData(0, 3, 0)]
         [InlineData(1, 3, 2)]
