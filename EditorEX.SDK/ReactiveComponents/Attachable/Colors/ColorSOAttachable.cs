@@ -24,7 +24,12 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
             {
                 var container = component
                     .Content.transform.GetComponentInParent<ReactiveContainerHolder>()
-                    .ReactiveContainer;
+                    ?.ReactiveContainer;
+                if (container == null)
+                {
+                    return;
+                }
+
                 colorSOAttachable.ColorSO = container.ColorCollector.GetColor(ColorSource);
             }
         }

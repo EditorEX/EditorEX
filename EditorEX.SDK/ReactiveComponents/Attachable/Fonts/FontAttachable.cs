@@ -11,7 +11,12 @@ namespace EditorEX.SDK.ReactiveComponents.Attachable
             {
                 var container = component
                     .Content.transform.GetComponentInParent<ReactiveContainerHolder>()
-                    .ReactiveContainer;
+                    ?.ReactiveContainer;
+                if (container == null)
+                {
+                    return;
+                }
+
                 fontAttachable.Material = container.FontCollector.GetMaterial();
                 fontAttachable.Font = container.FontCollector.GetFontAsset();
             }

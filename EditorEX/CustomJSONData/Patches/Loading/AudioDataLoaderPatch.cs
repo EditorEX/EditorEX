@@ -4,6 +4,7 @@ using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Types;
 using EditorEX.MapData.SaveDataLoaders;
+using EditorEX.Util;
 using SiraUtil.Affinity;
 using SiraUtil.Logging;
 using UnityEngine;
@@ -193,6 +194,49 @@ namespace EditorEX.CustomJSONData.Patches.Loading
             return false;
         }
 
+        [AffinityPatch(typeof(AudioClipLoader), nameof(AudioClipLoader.LoadAudioFile))]
+        [AffinityPrefix]
+        private bool LoadAudioFileWithoutNullName(
+            AudioClipLoader __instance,
+            string filePath,
+            ref Task<AudioClip> __result
+        )
+        {
+            __result = LoadAudioFileSafeAsync(__instance, filePath);
+            return false;
+        }
+
+        private static async Task<AudioClip> LoadAudioFileSafeAsync(
+            AudioClipLoader loader,
+            string filePath
+        )
+        {
+            if (loader._isLoading)
+            {
+                return null!;
+            }
+
+            string? resolved = AudioClipLoad.ResolveExistingFile(filePath);
+            if (resolved == null)
+            {
+                return null!;
+            }
+
+            loader._isLoading = true;
+            try
+            {
+                AudioClip clip = await MediaAsyncLoader.LoadAudioClipAsync(
+                    resolved,
+                    streamAudio: false
+                );
+                return AudioClipLoad.AssignNameOrNull(clip, resolved)!;
+            }
+            finally
+            {
+                loader._isLoading = false;
+            }
+        }
+
         [AffinityPatch(typeof(AudioDataLoader), nameof(AudioDataLoader.LoadAsync))]
         [AffinityPrefix]
         private bool LoadLoadPatch(
@@ -263,10 +307,24 @@ namespace EditorEX.CustomJSONData.Patches.Loading
                 setBpmDataWithClip = true;
             }
 
-            string audioClipFilePath = Path.Combine(
+            string? audioClipFilePath = AudioClipLoad.ResolveFromLevel(
                 projectPath,
-                __instance._beatmapLevelDataModel.songFilename
+                __instance._beatmapLevelDataModel.songFilename,
+                __instance._beatmapLevelDataModel.songFilePath
             );
+
+            if (audioClipFilePath == null)
+            {
+                _siraLog.Error(
+                    $"Unable to load audio: no song file under '{projectPath}' (filename='{__instance._beatmapLevelDataModel.songFilename}')"
+                );
+                __instance._signalBus.Fire(
+                    new BeatmapDataModelSignals.AudioDataLoadedResult(
+                        LoadAudioDataResult.UnableToLoadAudio
+                    )
+                );
+                return;
+            }
 
             AudioClip audioClip = await __instance._audioClipLoader.LoadAudioFile(
                 audioClipFilePath
@@ -274,6 +332,7 @@ namespace EditorEX.CustomJSONData.Patches.Loading
 
             if (audioClip == null)
             {
+                _siraLog.Error($"Unable to decode audio clip at '{audioClipFilePath}'");
                 __instance._signalBus.Fire(
                     new BeatmapDataModelSignals.AudioDataLoadedResult(
                         LoadAudioDataResult.UnableToLoadAudio

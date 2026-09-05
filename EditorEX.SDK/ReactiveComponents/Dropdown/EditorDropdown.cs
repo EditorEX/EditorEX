@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using EditorEX.SDK.Extensions;
+using EditorEX.SDK.ReactiveComponents.Native;
 using EditorEX.SDK.ReactiveComponents.Table;
 using Reactive;
 using Reactive.BeatSaber.Components;
@@ -23,9 +23,9 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             {
                 _items = value ?? throw new ArgumentNullException(nameof(value));
 
-                if (_tableHost != null)
+                if (_cellList != null)
                 {
-                    RebuildTable();
+                    RebuildCells();
                     ApplyListLayout();
 
                     if (_initialized)
@@ -34,7 +34,6 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                         if (ContainsKey(currentKey))
                         {
                             _keyState.Value = currentKey;
-                            SynchronizeTableSelection(currentKey);
                         }
                         else
                         {
@@ -75,24 +74,28 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
         private bool _initialized;
         private bool _keyAssigned;
-        private bool _suppressTableSelectionChanged;
         private IReadOnlyDictionary<T, BsDropdownItem>? _items;
         private T? _key;
         private State<T?> _keyState = null!;
         private State<bool> _modalOpened = null!;
+        private AnimatedState<float> _openProgress = null!;
         private ScrollContext _scrollContext = null!;
-        private Layout _tableHost = null!;
+        private Layout _cellList = null!;
         private EditorBackground _listPanel = null!;
-        private Reactive.Components.Basic.Table<T, IReactiveComponent> _table = null!;
+        private Reactive.Components.Basic.ScrollArea _scrollArea = null!;
         private EditorScrollbar _scrollbar = null!;
         private EditorLabel _previewLabel = null!;
         private EditorImage _previewIcon = null!;
+        private CanvasGroup _listCanvasGroup = null!;
+        private readonly List<EditorDropdownCell> _cells = new();
 
         private const int MaxDisplayedItems = 5;
         private const float ItemHeight = 40f;
-        private const float ListPadding = 4f;
+        private const float PanelPadX = 2f;
+        private const float PanelPadY = 4f;
         private const float ScrollbarWidth = 7f;
         private const float ListGap = 1f;
+        private const float OpenAnimationSeconds = 0.2f;
 
         private void DoInitialUpdate()
         {
@@ -101,7 +104,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 && _keyAssigned
                 && _items != null
                 && _keyState != null
-                && _table != null
+                && _cellList != null
             )
             {
                 SetKey(_key!, true);
@@ -119,7 +122,11 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
 
             if (updateTable)
             {
-                SynchronizeTableSelection(value);
+                RebuildCells();
+            }
+            else
+            {
+                ApplySelectedStates();
             }
 
             OnKeyChanged?.Invoke(value);
@@ -156,112 +163,242 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             _keyAssigned = false;
             _key = default;
             _keyState.Value = default;
-            ClearTableSelection();
+            RebuildCells();
         }
 
-        private void ClearTableSelection()
+        private float ButtonWidth()
         {
-            _suppressTableSelectionChanged = true;
-            try
+            if (!IsInitialized)
             {
-                _table.SelectionMode = Reactive.Components.Basic.SelectionMode.None;
-                _table.SelectionMode = Reactive.Components.Basic.SelectionMode.Single;
+                return 200f;
             }
-            finally
-            {
-                _suppressTableSelectionChanged = false;
-            }
+
+            var width = ContentTransform.rect.width;
+            return width > 0f ? width : 200f;
         }
 
-        private void SynchronizeTableSelection(T value)
+        private int VisibleItemCount()
         {
-            _suppressTableSelectionChanged = true;
-            try
+            return Mathf.Clamp(_items?.Count ?? 1, 1, MaxDisplayedItems);
+        }
+
+        private YogaVector ListPanelSize()
+        {
+            return new()
             {
-                _table.SelectionMode = Reactive.Components.Basic.SelectionMode.None;
-                _table.SelectionMode = Reactive.Components.Basic.SelectionMode.Single;
-                _table.SelectedItems = [value];
-            }
-            finally
-            {
-                _suppressTableSelectionChanged = false;
-            }
+                x = ButtonWidth(),
+                y = VisibleItemCount() * ItemHeight + PanelPadY * 2f,
+            };
         }
 
         private YogaVector ListViewportSize()
         {
-            var width = 200f;
-            if (_listPanel != null)
+            return new()
             {
-                var buttonWidth = ContentTransform.rect.width;
-                if (buttonWidth > 0f)
-                {
-                    width = buttonWidth;
-                }
-            }
-
-            var visible = Mathf.Clamp(_items?.Count ?? 1, 1, MaxDisplayedItems);
-            return new() { x = width, y = visible * ItemHeight };
+                x = Mathf.Max(0f, ButtonWidth() - ScrollbarWidth - ListGap - PanelPadX * 2f),
+                y = VisibleItemCount() * ItemHeight,
+            };
         }
 
         private void ApplyListLayout()
         {
-            if (_tableHost == null || _listPanel == null)
+            if (_scrollArea == null || _listPanel == null)
             {
                 return;
             }
 
             var viewport = ListViewportSize();
-            _table.AsFlexItem(size: viewport);
-            _tableHost.AsFlexItem(size: viewport);
-            _listPanel.AsFlexItem(
-                size: new()
-                {
-                    x = viewport.x.value + ScrollbarWidth + ListGap + ListPadding,
-                    y = viewport.y.value + ListPadding,
-                }
+            var panel = ListPanelSize();
+            _scrollArea.AsFlexItem(flexGrow: 1f, size: viewport);
+            _scrollArea.ContentTransform.sizeDelta = new Vector2(
+                viewport.x.value,
+                viewport.y.value
             );
+            _listPanel.AsFlexItem(size: panel);
+            ApplyCellSizes(viewport.x.value);
+            RestoreScrollContentRect();
+        }
+
+        private void ApplyCellSizes(float width)
+        {
+            foreach (var cell in _cells)
+            {
+                cell.AsFlexItem(size: new() { x = width, y = ItemHeight });
+            }
+        }
+
+        private void RestoreScrollContentRect()
+        {
+            if (_cellList == null)
+            {
+                return;
+            }
+
+            var contentHeight = Mathf.Max(_cells.Count, 1) * ItemHeight;
+            var transform = _cellList.ContentTransform;
+            transform.anchorMin = new Vector2(0f, 0f);
+            transform.anchorMax = new Vector2(1f, 0f);
+            transform.pivot = new Vector2(1f, 1f);
+            transform.sizeDelta = new Vector2(0f, contentHeight);
         }
 
         private void OpenList()
         {
-            ApplyListLayout();
-            _modalOpened.Value = true;
-            RebuildTable();
-            ApplyListLayout();
-        }
-
-        private Reactive.Components.Basic.Table<T, IReactiveComponent> CreateTable()
-        {
-            return new Reactive.Components.Basic.Table<T, IReactiveComponent>
+            if (_items == null || _items.Count == 0)
             {
-                ScrollContext = _scrollContext,
-                Items = _items?.Keys.ToArray() ?? [],
-                OnSelectedItemsChanged = HandleSelectedItemsChanged,
-                ConstructCell = CreateCell,
-            }.AsFlexItem(size: ListViewportSize());
+                return;
+            }
+
+            ApplyListLayout();
+            _openProgress.OnFinish = HandleOpenProgressFinished;
+            if (!_modalOpened.Value)
+            {
+                _openProgress.SetValueImmediate(0f, true);
+                ApplyOpenVisual(0f);
+                _modalOpened.Value = true;
+                _listPanel.RecalculateLayoutImmediate();
+                RestoreScrollContentRect();
+            }
+
+            _openProgress.TargetValue = 1f;
         }
 
-        private void RebuildTable()
+        private void CloseList()
         {
-            var oldTable = _table;
-            _tableHost.Children.Remove(oldTable);
-            oldTable.OnSelectedItemsChanged = null;
-            oldTable.Destroy();
+            if (!_modalOpened.Value && _openProgress.TargetValue <= 0f)
+            {
+                return;
+            }
 
-            _scrollContext = new ScrollContext();
-            var replacementTable = CreateTable().Bind(ref _table);
-            _scrollbar.ScrollContext = _scrollContext;
-            _tableHost.Children.Add(replacementTable);
+            _openProgress.OnFinish = HandleOpenProgressFinished;
+            _openProgress.TargetValue = 0f;
+        }
+
+        private void HandleOpenProgressFinished(float value)
+        {
+            if (_openProgress.TargetValue <= 0f)
+            {
+                _modalOpened.Value = false;
+            }
+        }
+
+        private void ApplyOpenVisual(float t)
+        {
+            EvaluateJumpCurve(t, out var x, out var y);
+            if (_listCanvasGroup != null)
+            {
+                _listCanvasGroup.alpha = t;
+            }
+
+            if (_listPanel == null)
+            {
+                return;
+            }
+
+            var transform = _listPanel.ContentTransform;
+            transform.pivot = new Vector2(0.5f, 1f);
+            transform.localScale = new Vector3(x, y, 1f);
+        }
+
+        private static void EvaluateJumpCurve(float t, out float x, out float y)
+        {
+            x =
+                t <= 0.3f
+                    ? Mathf.Lerp(0.85f, 1.065f, t / 0.3f)
+                    : Mathf.Lerp(1.065f, 1f, (t - 0.3f) / 0.7f);
+            y =
+                t <= 0.47f
+                    ? Mathf.Lerp(0f, 0.95f, t / 0.47f)
+                    : Mathf.Lerp(0.95f, 1f, (t - 0.47f) / 0.53f);
+        }
+
+        private void RebuildCells()
+        {
+            if (_cellList == null)
+            {
+                return;
+            }
+
+            var existing = new List<ILayoutItem>(_cellList.Children);
+            foreach (var child in existing)
+            {
+                _cellList.Children.Remove(child);
+                if (child is ReactiveComponent component)
+                {
+                    component.Destroy();
+                }
+            }
+
+            _cells.Clear();
+            if (_items == null)
+            {
+                return;
+            }
+
+            foreach (var pair in _items)
+            {
+                var key = pair.Key;
+                var item = pair.Value;
+                var cell = new EditorDropdownCell
+                {
+                    Text = item.Text ?? string.Empty,
+                    Icon = item.Icon,
+                    Selected = _initialized && EqualityComparer<T>.Default.Equals(key, _key!),
+                    OnClick = () => SelectKey(key),
+                };
+                _cells.Add(cell);
+                _cellList.Children.Add(
+                    cell.AsFlexItem(size: new() { x = ListViewportSize().x, y = ItemHeight })
+                );
+            }
+        }
+
+        private void ApplySelectedStates()
+        {
+            if (_items == null)
+            {
+                return;
+            }
+
+            var index = 0;
+            foreach (var pair in _items)
+            {
+                if (index >= _cells.Count)
+                {
+                    break;
+                }
+
+                _cells[index].Selected =
+                    _initialized && EqualityComparer<T>.Default.Equals(pair.Key, _key!);
+                index++;
+            }
+        }
+
+        private void SelectKey(T key)
+        {
+            if (_initialized && EqualityComparer<T>.Default.Equals(key, _key!))
+            {
+                CloseList();
+                return;
+            }
+
+            SetKey(key, false);
+            CloseList();
         }
 
         protected override GameObject Construct()
         {
             _keyState = Remember<T?>(default);
             _modalOpened = Remember(false);
+            _openProgress = RememberAnimated(
+                0f,
+                new AnimationDuration(OpenAnimationSeconds, DurationUnit.Seconds)
+            );
+            _openProgress.ValueChangedEvent += ApplyOpenVisual;
 
             var anchor = Remember<RectTransform?>(null);
             _scrollContext = new ScrollContext();
+            _cellList = new Layout();
             _previewLabel = new EditorLabel
             {
                 Alignment = TextAlignmentOptions.Left,
@@ -307,7 +444,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 {
                     sIsPushed = _modalOpened,
                     sPlacementAnchor = anchor,
-                    OnClickOutside = () => _modalOpened.Value = false,
+                    OnClickOutside = CloseList,
                     PlacementData = new()
                     {
                         Placement = RelativePlacement.BottomCenter,
@@ -318,10 +455,18 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                     {
                         new LayoutChildren
                         {
-                            new Layout { Children = { CreateTable().Bind(ref _table) } }
-                                .AsFlexGroup(constrainHorizontal: false, constrainVertical: false)
+                            new Reactive.Components.Basic.ScrollArea
+                            {
+                                ScrollContext = _scrollContext,
+                                ScrollContent = _cellList.AsFlexGroup(
+                                    direction: FlexDirection.Column,
+                                    constrainHorizontal: true,
+                                    constrainVertical: false
+                                ),
+                                LineSize = ItemHeight,
+                            }
                                 .AsFlexItem(size: ListViewportSize())
-                                .Bind(ref _tableHost),
+                                .Bind(ref _scrollArea),
                             new EditorScrollbar
                             {
                                 ScrollContext = _scrollContext,
@@ -332,19 +477,18 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                         }
                             .As<EditorBackground>(x =>
                             {
-                                x.Source = "#Background4px";
-                                x.ImageType = UnityEngine.UI.Image.Type.Sliced;
-                                x.Color = new Color(0.11f, 0.13f, 0.14f, 1f);
+                                x.Source = "#WhitePixel";
+                                x.ImageType = UnityEngine.UI.Image.Type.Simple;
                             })
                             .AsFlexGroup(
                                 direction: FlexDirection.Row,
                                 alignItems: Align.Stretch,
                                 gap: ListGap,
-                                padding: 2f,
+                                padding: new YogaFrame(PanelPadY, PanelPadX),
                                 constrainHorizontal: false,
                                 constrainVertical: false
                             )
-                            .AsFlexItem(size: ListViewportSize())
+                            .AsFlexItem(size: ListPanelSize())
                             .Bind(ref _listPanel),
                     },
                 },
@@ -363,68 +507,29 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 .With(x => anchor.Value = x.ContentTransform);
 
             var gameObject = root.Use();
+            _listCanvasGroup =
+                _listPanel.Content.GetComponent<CanvasGroup>()
+                ?? _listPanel.Content.AddComponent<CanvasGroup>();
+            ApplyOpenVisual(0f);
+            RebuildCells();
             DoInitialUpdate();
             return gameObject;
         }
 
-        private IReactiveComponent CreateCell(Reactive.Components.CellContext<T> context)
+        protected override void OnStart()
         {
-            var label = new EditorLabel
+            var container = Content
+                .transform.GetComponentInParent<ReactiveContainerHolder>()
+                ?.ReactiveContainer;
+            if (container != null)
             {
-                Alignment = TextAlignmentOptions.Left,
-                FontSize = 18f,
-                RaycastTarget = false,
-            };
-
-            var icon = new EditorImage { PreserveAspect = true, RaycastTarget = false };
-
-            var background = new LayoutChildren
-            {
-                label.AsFlexItem(flexGrow: 1f),
-                icon.AsFlexItem(size: 20f, aspectRatio: 1f),
-            }
-                .As<EditorBackground>(x =>
-                {
-                    x.Source = "#Background4px";
-                    x.ImageType = UnityEngine.UI.Image.Type.Sliced;
-                    x.RaycastTarget = true;
-                })
-                .AsFlexGroup(alignItems: Align.Center, gap: 4f, padding: 8f)
-                .AsFlexItem(size: new() { x = 200f, y = ItemHeight });
-
-            void Update(Reactive.Components.CellContext<T> value)
-            {
-                var dropdownItem = Items[value.Item];
-                label.Text = dropdownItem.Text ?? string.Empty;
-                label.Enabled = dropdownItem.Text != null;
-                icon.Sprite = dropdownItem.Icon;
-                icon.Enabled = dropdownItem.Icon != null;
-                background.Color = value.Selected ? new Color(0.2f, 0.28f, 0.32f, 1f) : Color.clear;
+                var transition = container.TransitionCollector.GetTransition<ColorTransitionSO>(
+                    "SelectableCell/Background"
+                );
+                _listPanel.ColorSO = transition._normalColor;
             }
 
-            context.ValueChangedEvent += Update;
-            Update(context);
-            background.WrappedImage.WithPointerEvents(onDown: _ => context.Selected = true);
-
-            return background;
-        }
-
-        private void HandleSelectedItemsChanged(IReadOnlyCollection<T> items)
-        {
-            if (_suppressTableSelectionChanged || items.Count == 0)
-            {
-                return;
-            }
-
-            var selectedKey = items.First();
-            if (_initialized && EqualityComparer<T>.Default.Equals(selectedKey, _key!))
-            {
-                _modalOpened.Value = false;
-                return;
-            }
-
-            SetKey(selectedKey, false);
-            _modalOpened.Value = false;
+            base.OnStart();
         }
     }
 }
