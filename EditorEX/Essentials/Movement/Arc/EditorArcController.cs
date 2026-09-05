@@ -41,11 +41,24 @@ namespace EditorEX.Essentials.Movement.Arc
 
         public void Dispose()
         {
-            _activeViewMode.ModeChanged -= RefreshArcMovementAndInit;
+            if (_activeViewMode != null)
+            {
+                _activeViewMode.ModeChanged -= RefreshArcMovementAndInit;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Dispose();
         }
 
         private void RefreshArcMovementAndInit()
         {
+            if (!this)
+            {
+                return;
+            }
+
             try
             {
                 RefreshArcMovement();
@@ -92,7 +105,7 @@ namespace EditorEX.Essentials.Movement.Arc
 
         public void Init(ArcEditorData? editorData)
         {
-            if (editorData == null)
+            if (!this || editorData == null)
                 return;
             _data = editorData;
 
@@ -120,6 +133,11 @@ namespace EditorEX.Essentials.Movement.Arc
 
         public void ManualUpdate()
         {
+            if (!this)
+            {
+                return;
+            }
+
             if (_arcMovement == null)
             {
                 RefreshArcMovementAndInit();

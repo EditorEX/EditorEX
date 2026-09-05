@@ -107,6 +107,10 @@ namespace EditorEX.NoodleExtensions.ObjectData
                     ?.Mirror(leftHanded);
 
                 Track = customData.GetNullableTrackArray(beatmapTracks, v2)?.ToList();
+                if (Track is { Count: 0 })
+                {
+                    Track = null;
+                }
 
                 CustomData? animationData = customData.Get<CustomData>(
                     v2 ? HeckController.V2_ANIMATION : HeckController.ANIMATION

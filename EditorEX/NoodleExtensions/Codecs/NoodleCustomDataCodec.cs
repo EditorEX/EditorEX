@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
@@ -74,16 +75,26 @@ namespace EditorEX.NoodleExtensions.Codecs
                 CustomEventEditorData customEventEditorData in ctx.Repository.GetCustomEvents()
             )
             {
-                bool v2 = customEventEditorData.version2_6_0AndEarlier;
-                string eventType = customEventEditorData.eventType;
-                CustomData data = customEventEditorData.customData;
-                if (eventType == ASSIGN_TRACK_PARENT)
+                try
                 {
-                    ctx.TrackBuilder.AddFromCustomData(data, v2 ? V2_PARENT_TRACK : PARENT_TRACK);
+                    bool v2 = customEventEditorData.version2_6_0AndEarlier;
+                    string eventType = customEventEditorData.eventType;
+                    CustomData data = customEventEditorData.customData;
+                    if (eventType == ASSIGN_TRACK_PARENT)
+                    {
+                        ctx.TrackBuilder.AddFromCustomData(
+                            data,
+                            v2 ? V2_PARENT_TRACK : PARENT_TRACK
+                        );
+                    }
+                    else if (eventType == ASSIGN_PLAYER_TO_TRACK)
+                    {
+                        ctx.TrackBuilder.AddFromCustomData(data, v2);
+                    }
                 }
-                else if (eventType == ASSIGN_PLAYER_TO_TRACK)
+                catch (Exception e)
                 {
-                    ctx.TrackBuilder.AddFromCustomData(data, v2);
+                    Plugin.Logger?.Error(e.ToString());
                 }
             }
         }

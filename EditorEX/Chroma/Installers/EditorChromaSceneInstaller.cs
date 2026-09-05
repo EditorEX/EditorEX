@@ -20,8 +20,9 @@ namespace EditorEX.Chroma.Installers
         {
             if (MapContext.Version.Major < 4)
             {
-                Container.BindInterfacesTo<EditorAnimateComponent>().AsSingle();
-                Container.BindInterfacesTo<EditorFogAnimatorV2>().AsSingle();
+                Container.BindInterfacesAndSelfTo<EditorFogAnimatorV2>().AsSingle();
+                Container.BindInterfacesTo<AssignFogTrackPreviewSource>().AsSingle();
+                Container.BindInterfacesTo<ChromaAnimateComponentPreviewSource>().AsSingle();
 
                 Container.Bind<EditorLightColorizerManager>().AsSingle();
                 Container

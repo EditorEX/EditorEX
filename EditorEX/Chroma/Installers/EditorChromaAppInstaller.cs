@@ -7,7 +7,7 @@ namespace EditorEX.Chroma.Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<ChromaCustomDataCodec>().AsSingle();
+            Container.BindInterfacesAndSelfTo<ChromaCustomDataCodec>().AsCached();
         }
     }
 }

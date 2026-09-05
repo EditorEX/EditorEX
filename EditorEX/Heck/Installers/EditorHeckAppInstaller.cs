@@ -17,17 +17,13 @@ namespace EditorEX.Heck.Installers
             BindCache("Chroma");
             BindCache("Vivify");
 
-            Container.BindInterfacesAndSelfTo<HeckCustomDataCodec>().AsSingle();
+            Container.BindInterfacesAndSelfTo<HeckCustomDataCodec>().AsCached();
             Container.BindInterfacesAndSelfTo<CustomDataCodecRegistry>().AsSingle();
         }
 
         private void BindCache(string id)
         {
-            Container
-                .Bind<EditorDeserializedData>()
-                .WithId(id)
-                .FromMethod(_ => new EditorDeserializedData())
-                .AsSingle();
+            Container.BindInstance(new EditorDeserializedData()).WithId(id);
         }
     }
 }

@@ -11,6 +11,7 @@ using EditorEX.Essentials.Movement.Obstacle.MovementProvider;
 using EditorEX.Essentials.Patches;
 using EditorEX.Essentials.Patches.Movement;
 using EditorEX.Essentials.Patches.Preview;
+using EditorEX.Essentials.PreviewState;
 using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.VariableMovement;
 using EditorEX.Essentials.Visuals;
@@ -165,6 +166,12 @@ namespace EditorEX.Essentials.Installers
                 );
 
             Container.Bind<EditorBeatmapObjectsInTimeRowProcessor>().AsSingle();
+
+            Container
+                .BindInterfacesAndSelfTo<PreviewStateManager>()
+                .FromNewComponentOnNewGameObject()
+                .AsSingle()
+                .NonLazy();
 
             Container.BindInterfacesAndSelfTo<FixAudioTimeSource>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<ProcessNewEditorData>().AsSingle().NonLazy();

@@ -76,7 +76,16 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
         )
         {
             EditorNoodleNoteData? noodleData = null;
-            _editorDeserializedData?.Resolve(editorData, out noodleData);
+            try
+            {
+                _editorDeserializedData?.Resolve(editorData, out noodleData);
+            }
+            catch (Exception e)
+            {
+                Plugin.Logger?.Error(
+                    $"Noodle Resolve failed for note at beat {editorData?.beat}: {e}"
+                );
+            }
 
             _variableMovementDataProvider = variableMovementDataProvider;
 
@@ -266,35 +275,48 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             }
 
             float? time = noodleData.GetTimeProperty();
-            float normalTime;
-            if (time.HasValue)
+            if (
+                !AnimationNormalTime.TryCompute(
+                    time,
+                    _audioDataModel.bpmData.BeatToSeconds(_state.beat),
+                    _audioDataModel.bpmData.BeatToSeconds(editorData.beat),
+                    _variableMovementDataProvider.jumpDuration,
+                    out float normalTime
+                )
+            )
             {
-                normalTime = time.Value;
-            }
-            else
-            {
-                float jumpDuration = _jump.jumpDuration;
-                float elapsedTime =
-                    _audioDataModel.bpmData.BeatToSeconds(_state.beat)
-                    - (
-                        _audioDataModel.bpmData.BeatToSeconds(editorData.beat)
-                        - (jumpDuration * 0.5f)
-                    );
-                normalTime = elapsedTime / jumpDuration;
+                return;
             }
 
-            _animationHelper.GetObjectOffset(
-                animationObject,
-                tracks,
-                normalTime,
-                out Vector3? positionOffset,
-                out Quaternion? rotationOffset,
-                out Vector3? scaleOffset,
-                out Quaternion? localRotationOffset,
-                out float? dissolve,
-                out float? dissolveArrow,
-                out float? cuttable
-            );
+            Vector3? positionOffset;
+            Quaternion? rotationOffset;
+            Vector3? scaleOffset;
+            Quaternion? localRotationOffset;
+            float? dissolve;
+            float? dissolveArrow;
+            float? cuttable;
+            try
+            {
+                _animationHelper.GetObjectOffset(
+                    animationObject,
+                    tracks,
+                    normalTime,
+                    out positionOffset,
+                    out rotationOffset,
+                    out scaleOffset,
+                    out localRotationOffset,
+                    out dissolve,
+                    out dissolveArrow,
+                    out cuttable
+                );
+            }
+            catch (Exception e)
+            {
+                Plugin.Logger?.Error(
+                    $"GetObjectOffset failed for note at beat {editorData?.beat}: {e}"
+                );
+                return;
+            }
 
             if (positionOffset.HasValue)
             {

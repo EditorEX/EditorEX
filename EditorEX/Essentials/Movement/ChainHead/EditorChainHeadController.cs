@@ -46,11 +46,24 @@ namespace EditorEX.Essentials.Movement.ChainHead
 
         public void Dispose()
         {
-            _activeViewMode.ModeChanged -= RefreshHeadMovementVisualsAndInit;
+            if (_activeViewMode != null)
+            {
+                _activeViewMode.ModeChanged -= RefreshHeadMovementVisualsAndInit;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Dispose();
         }
 
         private void RefreshHeadMovementVisualsAndInit()
         {
+            if (!this)
+            {
+                return;
+            }
+
             try
             {
                 RefreshHeadMovementVisuals();
@@ -110,7 +123,7 @@ namespace EditorEX.Essentials.Movement.ChainHead
 
         public void Init(ChainEditorData? editorData)
         {
-            if (editorData == null)
+            if (!this || editorData == null)
                 return;
             _data = editorData;
 
@@ -139,6 +152,11 @@ namespace EditorEX.Essentials.Movement.ChainHead
 
         public void ManualUpdate()
         {
+            if (!this)
+            {
+                return;
+            }
+
             if (_chainMovement == null || _chainVisuals == null)
             {
                 RefreshHeadMovementVisualsAndInit();

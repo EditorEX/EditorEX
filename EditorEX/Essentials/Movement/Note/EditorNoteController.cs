@@ -3,7 +3,6 @@ using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.VariableMovement;
-using EditorEX.Essentials.VariableMovement;
 using EditorEX.Essentials.Visuals;
 using UnityEngine;
 using Zenject;
@@ -46,17 +45,33 @@ namespace EditorEX.Essentials.Movement.Note
 
         public void Dispose()
         {
-            _activeViewMode.ModeChanged -= RefreshNoteMovementVisualsAndInit;
+            if (_activeViewMode != null)
+            {
+                _activeViewMode.ModeChanged -= RefreshNoteMovementVisualsAndInit;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Dispose();
         }
 
         private void RefreshNoteMovementVisualsAndInit()
         {
+            if (!this)
+            {
+                return;
+            }
+
             try
             {
                 RefreshNoteMovementVisuals();
                 Init(_data);
             }
-            catch { }
+            catch (Exception e)
+            {
+                Plugin.Logger?.Error($"Failed to init note: {e}");
+            }
         }
 
         private void RefreshNoteMovementVisuals()
@@ -110,7 +125,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         public void Init(NoteEditorData? noteData)
         {
-            if (noteData == null)
+            if (!this || noteData == null)
                 return;
             _data = noteData;
 
@@ -148,15 +163,25 @@ namespace EditorEX.Essentials.Movement.Note
 
         public void ManualUpdate()
         {
+            if (!this)
+            {
+                return;
+            }
+
             if (_noteMovement == null || _noteVisuals == null)
             {
                 RefreshNoteMovementVisualsAndInit();
             }
 
-            _noteMovement!.Setup(_data);
+            if (_noteMovement == null || _noteVisuals == null)
+            {
+                return;
+            }
+
+            _noteMovement.Setup(_data);
 
             _noteMovement.ManualUpdate();
-            _noteVisuals!.ManualUpdate();
+            _noteVisuals.ManualUpdate();
         }
     }
 }

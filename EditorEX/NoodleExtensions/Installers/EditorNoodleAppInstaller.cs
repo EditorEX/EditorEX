@@ -7,7 +7,7 @@ namespace EditorEX.NoodleExtensions.Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<NoodleCustomDataCodec>().AsSingle();
+            Container.BindInterfacesAndSelfTo<NoodleCustomDataCodec>().AsCached();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace EditorEX.Vivify.Installers
     {
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<VivifyCustomDataCodec>().AsSingle();
+            Container.BindInterfacesAndSelfTo<VivifyCustomDataCodec>().AsCached();
         }
     }
 }

@@ -119,6 +119,8 @@ namespace EditorEX.Heck.Deserialize
             _objectCustomDatas.Clear();
         }
 
+        internal int ObjectCount => _objectCustomDatas.Count;
+
         internal void RegisterNewObject(
             BaseEditorData beatmapObjectData,
             IObjectCustomData objectCustomData

@@ -20,7 +20,7 @@ namespace EditorEX.Heck.Installers
 
             Container.Bind<CoroutineDummy>().FromNewComponentOnRoot().AsSingle();
             Container.BindInterfacesTo<CustomEventController>().AsSingle();
-            Container.BindInterfacesTo<EditorCoroutineEvent>().AsSingle();
+            Container.BindInterfacesTo<HeckTrackPreviewSource>().AsSingle();
             Container.BindInterfacesAndSelfTo<TransformControllerFactory>().AsSingle();
             Container.BindInterfacesTo<TrackUpdateManager>().AsSingle();
 

@@ -51,11 +51,24 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
         public void Dispose()
         {
-            _activeViewMode.ModeChanged -= RefreshObstacleMovementVisualsAndInit;
+            if (_activeViewMode != null)
+            {
+                _activeViewMode.ModeChanged -= RefreshObstacleMovementVisualsAndInit;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            Dispose();
         }
 
         private void RefreshObstacleMovementVisualsAndInit()
         {
+            if (!this)
+            {
+                return;
+            }
+
             try
             {
                 RefreshObstacleMovementVisuals();
@@ -133,7 +146,7 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
         public void Init(ObstacleEditorData? obstacleData)
         {
-            if (obstacleData == null)
+            if (!this || obstacleData == null)
                 return;
             _data = obstacleData;
 
@@ -177,6 +190,11 @@ namespace EditorEX.Essentials.Movement.Obstacle
 
         public void ManualUpdate()
         {
+            if (!this)
+            {
+                return;
+            }
+
             if (_obstacleMovement == null || _obstacleVisuals == null)
             {
                 RefreshObstacleMovementVisualsAndInit();

@@ -2,6 +2,7 @@
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using Chroma;
+using EditorEX.Essentials.Movement;
 using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Visuals.Universal;
 using EditorEX.Heck.Deserialize;
@@ -219,21 +220,17 @@ namespace EditorEX.Essentials.Visuals.Note
             }
 
             float? time2 = noodleData.GetTimeProperty();
-            float normalTime;
-            if (time2.HasValue)
+            if (
+                !AnimationNormalTime.TryCompute(
+                    time2,
+                    _audioDataModel.bpmData.BeatToSeconds(_state.beat),
+                    _audioDataModel.bpmData.BeatToSeconds(_editorData.beat),
+                    _noteJump.jumpDuration,
+                    out float normalTime
+                )
+            )
             {
-                normalTime = time2.Value;
-            }
-            else
-            {
-                float jumpDuration = _noteJump.jumpDuration;
-                float elapsedTime =
-                    _audioDataModel.bpmData.BeatToSeconds(_state.beat)
-                    - (
-                        _audioDataModel.bpmData.BeatToSeconds(_editorData.beat)
-                        - (jumpDuration * 0.5f)
-                    );
-                normalTime = elapsedTime / jumpDuration;
+                return;
             }
 
             _animationHelper.GetObjectOffset(

@@ -9,6 +9,7 @@ using Chroma.HarmonyPatches.EnvironmentComponent;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.Chroma.EnvironmentEnhancement.Component;
 using EditorEX.CustomJSONData;
+using EditorEX.Essentials.PreviewState;
 using EditorEX.MapData.Contexts;
 using Heck.Animation;
 using Heck.Animation.Transform;
@@ -37,6 +38,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
         private SavedEnvironmentLoader _savedEnvironmentLoader = null!;
         private bool _usingOverrideEnvironment;
         private ICustomDataRepository _customDataRepository = null!;
+        private IPreviewStateRegistry? _previewStateRegistry;
 
         [Inject]
         private void Construct(
@@ -51,7 +53,8 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             TransformControllerFactory controllerFactory,
             SavedEnvironmentLoader savedEnvironmentLoader,
             EnvironmentSceneSetupData sceneSetupData,
-            ICustomDataRepository customDataRepository
+            ICustomDataRepository customDataRepository,
+            [InjectOptional] IPreviewStateRegistry? previewStateRegistry
         )
         {
             _log = log;
@@ -66,6 +69,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             _savedEnvironmentLoader = savedEnvironmentLoader;
             _usingOverrideEnvironment = sceneSetupData.hideBranding;
             _customDataRepository = customDataRepository;
+            _previewStateRegistry = previewStateRegistry;
         }
 
         private void Start()
@@ -152,19 +156,11 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                     TransformData spawnData = new(gameObjectData, v2);
                     int? lightID = gameObjectData.Get<int?>(V2_LIGHT_ID);
 
-                    List<GameObjectInfo> foundObjects;
                     CustomData? geometryData = gameObjectData.Get<CustomData?>(
                         v2 ? V2_GEOMETRY : GEOMETRY
                     );
                     if (geometryData != null)
                     {
-                        GameObjectInfo newObjectInfo = new(
-                            _geometryFactory.Create(geometryData, v2)
-                        );
-                        allGameObjectInfos.Add(newObjectInfo);
-                        foundObjects = new List<GameObjectInfo> { newObjectInfo };
-
-                        // cause i know ppl are gonna fck it up
                         string? id = gameObjectData.Get<string>(GAMEOBJECT_ID);
                         LookupMethod? lookupMethod = gameObjectData.GetStringToEnum<LookupMethod?>(
                             LOOKUP_METHOD
@@ -175,198 +171,268 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                                 "you cant have geometry and an id you goofball"
                             );
                         }
-                    }
-                    else
-                    {
-                        string id = gameObjectData.GetRequired<string>(
-                            v2 ? V2_GAMEOBJECT_ID : GAMEOBJECT_ID
-                        );
-                        LookupMethod lookupMethod =
-                            gameObjectData.GetStringToEnumRequired<LookupMethod>(
-                                v2 ? V2_LOOKUP_METHOD : LOOKUP_METHOD
-                            );
-                        foundObjects = LookupID.Get(
-                            allGameObjectInfos,
-                            gameObjectInfoIds,
-                            id,
-                            lookupMethod
-                        );
 
-                        if (foundObjects.Count == 0)
+                        List<GameObject> SpawnGeometry()
                         {
-                            throw new InvalidOperationException(
-                                $"ID [\"{id}\"] using method [{lookupMethod:G}] found nothing."
+                            GameObject created = _geometryFactory.Create(geometryData, v2);
+                            GameObjectInfo newObjectInfo = new(created);
+                            allGameObjectInfos.Add(newObjectInfo);
+                            List<GameObject> enhanced = EnhanceFoundObjects(
+                                gameObjectData,
+                                new List<GameObjectInfo> { newObjectInfo },
+                                allGameObjectInfos,
+                                v2,
+                                dupeAmount,
+                                active,
+                                spawnData,
+                                lightID,
+                                ref gameObjectInfoIds
                             );
-                        }
-                    }
-
-                    CustomData? componentData = null;
-                    if (!v2)
-                    {
-                        componentData = gameObjectData.Get<CustomData>(
-                            ComponentConstants.COMPONENTS
-                        );
-                    }
-                    else if (lightID != null)
-                    {
-                        componentData = new CustomData(
-                            new[]
+                            var spawned = new List<GameObject> { created };
+                            foreach (GameObject go in enhanced)
                             {
-                                new KeyValuePair<string, object?>(
-                                    ComponentConstants.LIGHT_WITH_ID,
-                                    new CustomData(
-                                        new[]
-                                        {
-                                            new KeyValuePair<string, object?>(
-                                                LIGHT_ID,
-                                                lightID.Value
-                                            ),
-                                        }
-                                    )
-                                ),
+                                if (!spawned.Contains(go))
+                                {
+                                    spawned.Add(go);
+                                }
                             }
+
+                            return spawned;
+                        }
+
+                        var action = new ChromaGeometryPreviewAction(
+                            SpawnGeometry,
+                            DespawnGeometry
+                        );
+                        // Spawn now so later lookup rows in this array still see GameObjectInfos.
+                        action.Execute();
+                        _previewStateRegistry?.Add(
+                            0f,
+                            float.MaxValue,
+                            action,
+                            alreadyExecuted: true
+                        );
+                        continue;
+                    }
+
+                    string lookupId = gameObjectData.GetRequired<string>(
+                        v2 ? V2_GAMEOBJECT_ID : GAMEOBJECT_ID
+                    );
+                    LookupMethod lookup = gameObjectData.GetStringToEnumRequired<LookupMethod>(
+                        v2 ? V2_LOOKUP_METHOD : LOOKUP_METHOD
+                    );
+                    List<GameObjectInfo> foundObjects = LookupID.Get(
+                        allGameObjectInfos,
+                        gameObjectInfoIds,
+                        lookupId,
+                        lookup
+                    );
+
+                    if (foundObjects.Count == 0)
+                    {
+                        throw new InvalidOperationException(
+                            $"ID [\"{lookupId}\"] using method [{lookup:G}] found nothing."
                         );
                     }
 
-                    List<GameObject> gameObjects;
-
-                    // handle duplicating
-                    if (dupeAmount.HasValue)
-                    {
-                        gameObjects = new List<GameObject>();
-                        if (foundObjects.Count > 100)
-                        {
-                            throw new InvalidOperationException(
-                                "Extreme value reached, you are attempting to duplicate over 100 objects! Environment enhancements stopped"
-                            );
-                        }
-
-                        foreach (GameObjectInfo gameObjectInfo in foundObjects)
-                        {
-                            GameObject gameObject = gameObjectInfo.GameObject;
-                            Transform parent = gameObject.transform.parent;
-                            Scene scene = gameObject.scene;
-
-                            for (int i = 0; i < dupeAmount.Value; i++)
-                            {
-                                List<IComponentData> componentDatas = new();
-                                EditorDuplicateInitializer.PrefillComponentsData(
-                                    gameObject.transform,
-                                    componentDatas
-                                );
-                                GameObject newGameObject = Instantiate(gameObject);
-                                _duplicateInitializer.PostfillComponentsData(
-                                    newGameObject.transform,
-                                    gameObject.transform,
-                                    componentDatas
-                                );
-                                SceneManager.MoveGameObjectToScene(newGameObject, scene);
-
-                                // ReSharper disable once Unity.InstantiateWithoutParent
-                                // need to move shit to right scene first
-                                newGameObject.transform.SetParent(parent, true);
-                                _duplicateInitializer.InitializeComponents(
-                                    newGameObject.transform,
-                                    gameObject.transform,
-                                    allGameObjectInfos,
-                                    componentDatas
-                                );
-
-                                List<GameObjectInfo> gameObjectInfos = allGameObjectInfos
-                                    .Where(n => n.GameObject == newGameObject)
-                                    .ToList();
-                                gameObjects.AddRange(gameObjectInfos.Select(n => n.GameObject));
-                            }
-                        }
-
-                        // Update array with new duplicated objects
-                        gameObjectInfoIds = allGameObjectInfos.Select(n => n.FullID).ToArray();
-                    }
-                    else
-                    {
-                        if (lightID.HasValue)
-                        {
-                            _log.Error("LightID requested but no duplicated object to apply to");
-                        }
-
-                        gameObjects = foundObjects.Select(n => n.GameObject).ToList();
-                    }
-
-                    foreach (GameObject gameObject in gameObjects)
-                    {
-                        if (active.HasValue)
-                        {
-                            gameObject.SetActive(active.Value);
-                        }
-
-                        Transform transform = gameObject.transform;
-
-                        spawnData.Apply(transform, _leftHanded, v2);
-
-                        // Handle TrackLaneRing
-                        TrackLaneRing? trackLaneRing =
-                            gameObject.GetComponentInChildren<TrackLaneRing>();
-                        if (trackLaneRing != null)
-                        {
-                            _trackLaneRingOffset.SetTransform(trackLaneRing, spawnData);
-                        }
-
-                        // Handle ParametricBoxController
-                        ParametricBoxController parametricBoxController =
-                            gameObject.GetComponentInChildren<ParametricBoxController>();
-                        if (parametricBoxController != null)
-                        {
-                            _parametricBoxControllerTransformOverride.SetTransform(
-                                parametricBoxController,
-                                spawnData
-                            );
-                        }
-
-                        if (componentData != null)
-                        {
-                            _componentCustomizer.Customize(transform, componentData);
-                        }
-
-                        List<Track>? track = gameObjectData
-                            .GetNullableTrackArray(_tracks, v2)
-                            ?.ToList();
-                        if (track == null)
-                        {
-                            continue;
-                        }
-
-                        TransformController controller = _controllerFactory.Create(
-                            gameObject,
-                            track,
-                            true
-                        );
-                        if (trackLaneRing != null)
-                        {
-                            controller.RotationUpdated += () =>
-                                _trackLaneRingOffset.UpdateRotation(trackLaneRing);
-                            controller.PositionUpdated += () =>
-                                TrackLaneRingOffset.UpdatePosition(trackLaneRing);
-                        }
-                        else if (parametricBoxController != null)
-                        {
-                            controller.PositionUpdated += () =>
-                                _parametricBoxControllerTransformOverride.UpdatePosition(
-                                    parametricBoxController
-                                );
-                            controller.ScaleUpdated += () =>
-                                _parametricBoxControllerTransformOverride.UpdateScale(
-                                    parametricBoxController
-                                );
-                        }
-
-                        track.ForEach(n => n.AddGameObject(gameObject));
-                    }
+                    EnhanceFoundObjects(
+                        gameObjectData,
+                        foundObjects,
+                        allGameObjectInfos,
+                        v2,
+                        dupeAmount,
+                        active,
+                        spawnData,
+                        lightID,
+                        ref gameObjectInfoIds
+                    );
                 }
                 catch (Exception e)
                 {
                     _log.Error($"Error processing environment data for: {gameObjectData}");
                     _log.Error(e);
                 }
+            }
+
+            _previewStateRegistry?.Refresh();
+        }
+
+        private List<GameObject> EnhanceFoundObjects(
+            CustomData gameObjectData,
+            List<GameObjectInfo> foundObjects,
+            List<GameObjectInfo> allGameObjectInfos,
+            bool v2,
+            int? dupeAmount,
+            bool? active,
+            TransformData spawnData,
+            int? lightID,
+            ref string[] gameObjectInfoIds
+        )
+        {
+            CustomData? componentData = null;
+            if (!v2)
+            {
+                componentData = gameObjectData.Get<CustomData>(ComponentConstants.COMPONENTS);
+            }
+            else if (lightID != null)
+            {
+                componentData = new CustomData(
+                    new[]
+                    {
+                        new KeyValuePair<string, object?>(
+                            ComponentConstants.LIGHT_WITH_ID,
+                            new CustomData(
+                                new[] { new KeyValuePair<string, object?>(LIGHT_ID, lightID.Value) }
+                            )
+                        ),
+                    }
+                );
+            }
+
+            List<GameObject> gameObjects;
+
+            if (dupeAmount.HasValue)
+            {
+                gameObjects = new List<GameObject>();
+                if (foundObjects.Count > 100)
+                {
+                    throw new InvalidOperationException(
+                        "Extreme value reached, you are attempting to duplicate over 100 objects! Environment enhancements stopped"
+                    );
+                }
+
+                foreach (GameObjectInfo gameObjectInfo in foundObjects)
+                {
+                    GameObject gameObject = gameObjectInfo.GameObject;
+                    Transform parent = gameObject.transform.parent;
+                    Scene scene = gameObject.scene;
+
+                    for (int i = 0; i < dupeAmount.Value; i++)
+                    {
+                        List<IComponentData> componentDatas = new();
+                        EditorDuplicateInitializer.PrefillComponentsData(
+                            gameObject.transform,
+                            componentDatas
+                        );
+                        GameObject newGameObject = Instantiate(gameObject);
+                        _duplicateInitializer.PostfillComponentsData(
+                            newGameObject.transform,
+                            gameObject.transform,
+                            componentDatas
+                        );
+                        SceneManager.MoveGameObjectToScene(newGameObject, scene);
+
+                        newGameObject.transform.SetParent(parent, true);
+                        _duplicateInitializer.InitializeComponents(
+                            newGameObject.transform,
+                            gameObject.transform,
+                            allGameObjectInfos,
+                            componentDatas
+                        );
+
+                        List<GameObjectInfo> gameObjectInfos = allGameObjectInfos
+                            .Where(n => n.GameObject == newGameObject)
+                            .ToList();
+                        gameObjects.AddRange(gameObjectInfos.Select(n => n.GameObject));
+                    }
+                }
+
+                gameObjectInfoIds = allGameObjectInfos.Select(n => n.FullID).ToArray();
+            }
+            else
+            {
+                if (lightID.HasValue)
+                {
+                    _log.Error("LightID requested but no duplicated object to apply to");
+                }
+
+                gameObjects = foundObjects.Select(n => n.GameObject).ToList();
+            }
+
+            foreach (GameObject gameObject in gameObjects)
+            {
+                if (active.HasValue)
+                {
+                    gameObject.SetActive(active.Value);
+                }
+
+                Transform transform = gameObject.transform;
+
+                spawnData.Apply(transform, _leftHanded, v2);
+
+                TrackLaneRing? trackLaneRing = gameObject.GetComponentInChildren<TrackLaneRing>();
+                if (trackLaneRing != null)
+                {
+                    _trackLaneRingOffset.SetTransform(trackLaneRing, spawnData);
+                }
+
+                ParametricBoxController parametricBoxController =
+                    gameObject.GetComponentInChildren<ParametricBoxController>();
+                if (parametricBoxController != null)
+                {
+                    _parametricBoxControllerTransformOverride.SetTransform(
+                        parametricBoxController,
+                        spawnData
+                    );
+                }
+
+                if (componentData != null)
+                {
+                    _componentCustomizer.Customize(transform, componentData);
+                }
+
+                List<Track>? track = gameObjectData.GetNullableTrackArray(_tracks, v2)?.ToList();
+                if (track == null)
+                {
+                    continue;
+                }
+
+                PreviewOriginalTransform restorer =
+                    gameObject.GetComponent<PreviewOriginalTransform>()
+                    ?? gameObject.AddComponent<PreviewOriginalTransform>();
+                restorer.Capture(spawnData, _leftHanded, v2);
+
+                TransformController controller = _controllerFactory.Create(gameObject, track, true);
+                if (trackLaneRing != null)
+                {
+                    controller.RotationUpdated += () =>
+                        _trackLaneRingOffset.UpdateRotation(trackLaneRing);
+                    controller.PositionUpdated += () =>
+                        TrackLaneRingOffset.UpdatePosition(trackLaneRing);
+                }
+                else if (parametricBoxController != null)
+                {
+                    controller.PositionUpdated += () =>
+                        _parametricBoxControllerTransformOverride.UpdatePosition(
+                            parametricBoxController
+                        );
+                    controller.ScaleUpdated += () =>
+                        _parametricBoxControllerTransformOverride.UpdateScale(
+                            parametricBoxController
+                        );
+                }
+
+                track.ForEach(n => n.AddGameObject(gameObject));
+            }
+
+            return gameObjects;
+        }
+
+        private void DespawnGeometry(IReadOnlyList<GameObject> spawned)
+        {
+            foreach (GameObject gameObject in spawned)
+            {
+                if (gameObject == null)
+                {
+                    continue;
+                }
+
+                foreach (Track track in _tracks.Values)
+                {
+                    track.RemoveGameObject(gameObject);
+                }
+
+                UnityEngine.Object.Destroy(gameObject);
             }
         }
 

@@ -94,11 +94,6 @@ namespace EditorEX.Heck.Codecs
             ctx.PointDefinitions ??= new Dictionary<string, List<object>>();
 
             CollectTracks(objectsModel, eventsModel, ctx);
-            foreach (KeyValuePair<string, Track> pair in ctx.TrackBuilder.Tracks)
-            {
-                _tracks[pair.Key] = pair.Value;
-            }
-
             foreach (IEarlyCustomDataCodec codec in _early)
             {
                 try
@@ -107,8 +102,13 @@ namespace EditorEX.Heck.Codecs
                 }
                 catch (Exception e)
                 {
-                    _log?.Error(e);
+                    Log(e);
                 }
+            }
+
+            foreach (KeyValuePair<string, Track> pair in ctx.TrackBuilder.Tracks)
+            {
+                _tracks[pair.Key] = pair.Value;
             }
 
             IReadOnlyList<BasicEventEditorData> eventList = eventsModel.GetAllEventsAsList();
@@ -144,6 +144,17 @@ namespace EditorEX.Heck.Codecs
             {
                 DeserializeCustomEvent(customEvent, ctx);
             }
+
+            Log(
+                $"Custom data codecs loaded. Heck={CountObjects("Heck")} Noodle={CountObjects("NoodleExtensions")} Chroma={CountObjects("Chroma")} Vivify={CountObjects("Vivify")} tracks={_tracks.Count} pointDefs={ctx.PointDefinitions.Count}."
+            );
+        }
+
+        private int CountObjects(string id)
+        {
+            return _caches.TryGetValue(id, out EditorDeserializedData cache)
+                ? cache.ObjectCount
+                : 0;
         }
 
         internal void DeserializeObject(BaseEditorData obj, CustomDataCodecContext ctx)
@@ -169,7 +180,7 @@ namespace EditorEX.Heck.Codecs
                 }
                 catch (Exception e)
                 {
-                    _log?.Error(e);
+                    Log(e);
                 }
             }
         }
@@ -192,7 +203,7 @@ namespace EditorEX.Heck.Codecs
                 }
                 catch (Exception e)
                 {
-                    _log?.Error(e);
+                    Log(e);
                 }
             }
         }
@@ -215,7 +226,7 @@ namespace EditorEX.Heck.Codecs
                 }
                 catch (Exception e)
                 {
-                    _log?.Error(e);
+                    Log(e);
                 }
             }
         }
@@ -316,42 +327,71 @@ namespace EditorEX.Heck.Codecs
 
             foreach (BaseEditorData? baseEditorData in datas)
             {
-                CustomData customData = ctx.Repository.GetCustomData(baseEditorData);
-                if (customData == null && baseEditorData is CustomEventEditorData customEvent)
+                try
                 {
-                    customData = customEvent.customData;
-                }
+                    CustomData customData = ctx.Repository.GetCustomData(baseEditorData);
+                    if (customData == null && baseEditorData is CustomEventEditorData customEvent)
+                    {
+                        customData = customEvent.customData;
+                    }
 
-                if (customData == null)
-                {
-                    continue;
-                }
+                    if (customData == null)
+                    {
+                        continue;
+                    }
 
-                object? trackNameRaw = customData.Get<object>(
-                    ctx.SourceIsV2
-                        ? EditorEX.Heck.Constants.V2_TRACK
-                        : EditorEX.Heck.Constants.TRACK
-                );
-                if (trackNameRaw == null)
-                {
-                    continue;
-                }
+                    object? trackNameRaw = customData.Get<object>(
+                        ctx.SourceIsV2
+                            ? EditorEX.Heck.Constants.V2_TRACK
+                            : EditorEX.Heck.Constants.TRACK
+                    );
+                    if (trackNameRaw == null)
+                    {
+                        continue;
+                    }
 
-                IEnumerable<string> trackNames;
-                if (trackNameRaw is List<object> listTrack)
-                {
-                    trackNames = listTrack.Select(x => (string)x);
-                }
-                else
-                {
-                    trackNames = new[] { (string)trackNameRaw };
-                }
+                    IEnumerable<string> trackNames;
+                    if (trackNameRaw is List<object> listTrack)
+                    {
+                        trackNames = listTrack.Select(x => (string)x);
+                    }
+                    else
+                    {
+                        trackNames = new[] { (string)trackNameRaw };
+                    }
 
-                foreach (string trackName in trackNames)
+                    foreach (string trackName in trackNames)
+                    {
+                        ctx.TrackBuilder!.AddTrack(trackName);
+                    }
+                }
+                catch (Exception e)
                 {
-                    ctx.TrackBuilder!.AddTrack(trackName);
+                    Log(e);
                 }
             }
+        }
+
+        private void Log(Exception e)
+        {
+            if (_log != null)
+            {
+                _log.Error(e);
+                return;
+            }
+
+            Plugin.Logger?.Error(e.ToString());
+        }
+
+        private void Log(string message)
+        {
+            if (_log != null)
+            {
+                _log.Info(message);
+                return;
+            }
+
+            Plugin.Logger?.Info(message);
         }
     }
 }

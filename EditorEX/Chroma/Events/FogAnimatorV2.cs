@@ -1,59 +1,57 @@
 ﻿using System;
 using Chroma;
-using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
-using EditorEX.Heck.Deserialize;
-using Heck;
 using Heck.Animation;
-using Heck.Event;
 using UnityEngine;
 using Zenject;
-using static Chroma.ChromaController;
+using static EditorEX.Chroma.Constants;
 
-// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.Chroma.Events
 {
-    [CustomEvent(ASSIGN_FOG_TRACK)]
-    internal class EditorFogAnimatorV2 : ITickable, IDisposable, ICustomEvent
+    internal class EditorFogAnimatorV2 : IDisposable
     {
         private readonly BloomFogSO _bloomFog;
-        private readonly EditorDeserializedData _editorDeserializedData;
-
         private readonly BloomFogEnvironmentParams _transitionFogParams;
-        private readonly ICustomDataRepository _customDataRepository;
-        private Track? _track;
+        private readonly BloomFogEnvironmentParams _defaults;
 
-        private EditorFogAnimatorV2(
-            BloomFogSO bloomFog,
-            [InjectOptional(Id = "Chroma")] EditorDeserializedData deserializedData,
-            ICustomDataRepository customDataRepository
-        )
+        private EditorFogAnimatorV2(BloomFogSO bloomFog)
         {
             _bloomFog = bloomFog;
-            _editorDeserializedData = deserializedData;
-            _customDataRepository = customDataRepository;
 
             _transitionFogParams = ScriptableObject.CreateInstance<BloomFogEnvironmentParams>();
-            BloomFogEnvironmentParams defaultParams = bloomFog.defaultForParams;
-            _transitionFogParams.attenuation = defaultParams.attenuation;
-            _transitionFogParams.offset = defaultParams.offset;
-            _transitionFogParams.heightFogStartY = defaultParams.heightFogStartY;
-            _transitionFogParams.heightFogHeight = defaultParams.heightFogHeight;
+            _defaults = bloomFog.defaultForParams;
+            RestoreDefaults();
             bloomFog.transitionFogParams = _transitionFogParams;
         }
 
-        public void Callback(CustomEventData customEventData)
+        internal void Apply(Track track)
         {
-            if (
-                _editorDeserializedData?.Resolve(
-                    _customDataRepository.GetCustomEventConversion(customEventData),
-                    out ChromaAssignFogEventData? chromaData
-                )
-                ?? false
-            )
-            {
-                _track = chromaData.Track;
-            }
+            _transitionFogParams.attenuation = ChromaFogPreview.Channel(
+                track.GetProperty<float>(V2_ATTENUATION),
+                _defaults.attenuation
+            );
+            _transitionFogParams.offset = ChromaFogPreview.Channel(
+                track.GetProperty<float>(V2_OFFSET),
+                _defaults.offset
+            );
+            _transitionFogParams.heightFogStartY = ChromaFogPreview.Channel(
+                track.GetProperty<float>(V2_HEIGHT_FOG_STARTY),
+                _defaults.heightFogStartY
+            );
+            _transitionFogParams.heightFogHeight = ChromaFogPreview.Channel(
+                track.GetProperty<float>(V2_HEIGHT_FOG_HEIGHT),
+                _defaults.heightFogHeight
+            );
+            _bloomFog._transition = 1;
+        }
+
+        internal void RestoreDefaults()
+        {
+            _transitionFogParams.attenuation = _defaults.attenuation;
+            _transitionFogParams.offset = _defaults.offset;
+            _transitionFogParams.heightFogStartY = _defaults.heightFogStartY;
+            _transitionFogParams.heightFogHeight = _defaults.heightFogHeight;
+            _bloomFog.transition = 0;
         }
 
         public void Dispose()
@@ -61,40 +59,6 @@ namespace EditorEX.Chroma.Events
             _bloomFog.transition = 0;
             _bloomFog.transitionFogParams = null;
             UnityEngine.Object.Destroy(_transitionFogParams);
-        }
-
-        public void Tick()
-        {
-            if (_track == null)
-            {
-                return;
-            }
-
-            float? attenuation = _track.GetProperty<float>(V2_ATTENUATION);
-            if (attenuation.HasValue)
-            {
-                _transitionFogParams.attenuation = attenuation.Value;
-            }
-
-            float? offset = _track.GetProperty<float>(V2_OFFSET);
-            if (offset.HasValue)
-            {
-                _transitionFogParams.offset = offset.Value;
-            }
-
-            float? startY = _track.GetProperty<float>(V2_HEIGHT_FOG_STARTY);
-            if (startY.HasValue)
-            {
-                _transitionFogParams.heightFogStartY = startY.Value;
-            }
-
-            float? height = _track.GetProperty<float>(V2_HEIGHT_FOG_HEIGHT);
-            if (height.HasValue)
-            {
-                _transitionFogParams.heightFogHeight = height.Value;
-            }
-
-            _bloomFog._transition = 1;
         }
     }
 }

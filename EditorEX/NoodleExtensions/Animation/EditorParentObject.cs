@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using EditorEX.Essentials.PreviewState;
 using Heck;
 using Heck.Animation;
 using NoodleExtensions;
@@ -117,6 +118,33 @@ namespace EditorEX.NoodleExtensions.Animation
         private void ParentToObject(Transform childTransform)
         {
             childTransform.SetParent(transform, _worldPositionStays);
+        }
+
+        internal void Teardown(HashSet<EditorParentObject> parentObjects)
+        {
+            foreach (Track track in ChildrenTracks)
+            {
+                track.GameObjectAdded -= OnTrackGameObjectAdded;
+                track.GameObjectRemoved -= OnTrackGameObjectRemoved;
+                foreach (GameObject go in track.GameObjects.ToArray())
+                {
+                    if (go == null)
+                    {
+                        continue;
+                    }
+
+                    go.transform.SetParent(null, _worldPositionStays);
+                }
+
+                PreviewOriginalTransform.RestoreUnanimated(track);
+                track.UpdatedThisFrame = true;
+            }
+
+            ChildrenTracks.Clear();
+            _track.RemoveGameObject(gameObject);
+            parentObjects.Remove(this);
+            gameObject.SetActive(false);
+            Destroy(gameObject);
         }
 
         private void OnDestroy()

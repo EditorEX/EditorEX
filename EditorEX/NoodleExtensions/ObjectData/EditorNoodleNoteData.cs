@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
+using EditorEX.Util;
 using Heck;
 using Heck.Animation;
 using IPA.Utilities;
@@ -30,10 +31,10 @@ namespace EditorEX.NoodleExtensions.ObjectData
                     float? cutDir = customData.Get<float?>("_cutDirection");
                     if (cutDir != null)
                     {
-                        noteData.SetField("angle", (int)cutDir.Value.Mirror(leftHanded));
+                        noteData.SetCutDirectionAngleOffset(cutDir.Value.Mirror(leftHanded));
                         if (noteData.cutDirection != NoteCutDirection.Any)
                         {
-                            noteData.SetField("cutDirection", NoteCutDirection.Down);
+                            noteData.ChangeNoteCutDirection(NoteCutDirection.Down);
                         }
                     }
                 }
