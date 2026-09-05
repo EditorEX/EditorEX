@@ -72,7 +72,6 @@ namespace EditorEX.Essentials.Features.ViewMode
                 _arrowX.SetValueImmediate(GetCachedLabelCenterX(previousIndex));
                 _alpha.SetValueImmediate(0f);
                 _visible = true;
-                Content.SetActive(true);
             }
 
             _arrowX.TargetValue = targetX;
@@ -89,10 +88,6 @@ namespace EditorEX.Essentials.Features.ViewMode
             _alpha.OnFinish = _ =>
             {
                 _visible = false;
-                if (!IsDestroyed)
-                {
-                    Content.SetActive(false);
-                }
                 _alpha.OnFinish = null;
             };
             _alpha.TargetValue = 0f;
@@ -180,7 +175,9 @@ namespace EditorEX.Essentials.Features.ViewMode
             arrowRect.localScale = Vector3.one;
             arrowRect.SetAsLastSibling();
 
-            Content.SetActive(false);
+            // Keep Content active. ReactiveComponent.StartCoroutine runs on this
+            // GameObject's ReactiveHost, and Unity cannot start (or resume) those
+            // coroutines while the host is inactive. Visibility is CanvasGroup alpha.
             ApplyLabelStyles(0);
         }
 
@@ -244,10 +241,6 @@ namespace EditorEX.Essentials.Features.ViewMode
                 }
             }
 
-            // Preferred sizes can be wrong while inactive — measure with content enabled.
-            var wasActive = Content.activeSelf;
-            Content.SetActive(true);
-
             float totalWidth = PanelPadX * 2f;
             float maxHeight = 0f;
 
@@ -286,7 +279,6 @@ namespace EditorEX.Essentials.Features.ViewMode
 
             ApplyLabelStyles(_selectedIndex.Value);
             ScheduleLayoutRecalculation();
-            Content.SetActive(wasActive);
 
             _slotsLocked = true;
             StartCoroutine(CacheCentersAfterLayout());
@@ -294,11 +286,8 @@ namespace EditorEX.Essentials.Features.ViewMode
 
         private IEnumerator CacheCentersAfterLayout()
         {
-            var wasActive = Content.activeSelf;
-            Content.SetActive(true);
             yield return null;
             RefreshLabelCenters();
-            Content.SetActive(wasActive);
         }
 
         private void RefreshLabelCenters()
