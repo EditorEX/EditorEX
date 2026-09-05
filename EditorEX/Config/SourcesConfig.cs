@@ -12,6 +12,8 @@ namespace EditorEX.Config
     {
         public virtual string SelectedSource { get; set; } = "Custom Levels";
 
+        public virtual string SaveSource { get; set; } = "Custom WIP Levels";
+
         [UseConverter(typeof(DictionaryConverter<string>))]
         public virtual Dictionary<string, string> Sources { get; set; } = new();
     }

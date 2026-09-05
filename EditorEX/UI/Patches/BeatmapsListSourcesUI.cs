@@ -182,6 +182,13 @@ namespace EditorEX.UI.Patches
         {
             _segmentedControl!.Values = SetupSources().ToArray();
 
+            var keys = _sourcesConfig.Sources.Keys.ToList();
+            int selected = keys.IndexOf(_sourcesConfig.SelectedSource);
+            if (selected >= 0)
+            {
+                _tab.Value = selected;
+            }
+
             _beatmapsCollectionDataModel.RefreshCollection();
         }
     }

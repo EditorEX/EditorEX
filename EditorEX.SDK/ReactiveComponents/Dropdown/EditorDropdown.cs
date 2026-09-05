@@ -26,6 +26,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 if (_tableHost != null)
                 {
                     RebuildTable();
+                    ApplyListLayout();
 
                     if (_initialized)
                     {
@@ -81,10 +82,17 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
         private State<bool> _modalOpened = null!;
         private ScrollContext _scrollContext = null!;
         private Layout _tableHost = null!;
+        private EditorBackground _listPanel = null!;
         private Reactive.Components.Basic.Table<T, IReactiveComponent> _table = null!;
         private EditorScrollbar _scrollbar = null!;
         private EditorLabel _previewLabel = null!;
         private EditorImage _previewIcon = null!;
+
+        private const int MaxDisplayedItems = 5;
+        private const float ItemHeight = 40f;
+        private const float ListPadding = 4f;
+        private const float ScrollbarWidth = 7f;
+        private const float ListGap = 1f;
 
         private void DoInitialUpdate()
         {
@@ -180,6 +188,49 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
             }
         }
 
+        private YogaVector ListViewportSize()
+        {
+            var width = 200f;
+            if (_listPanel != null)
+            {
+                var buttonWidth = ContentTransform.rect.width;
+                if (buttonWidth > 0f)
+                {
+                    width = buttonWidth;
+                }
+            }
+
+            var visible = Mathf.Clamp(_items?.Count ?? 1, 1, MaxDisplayedItems);
+            return new() { x = width, y = visible * ItemHeight };
+        }
+
+        private void ApplyListLayout()
+        {
+            if (_tableHost == null || _listPanel == null)
+            {
+                return;
+            }
+
+            var viewport = ListViewportSize();
+            _table.AsFlexItem(size: viewport);
+            _tableHost.AsFlexItem(size: viewport);
+            _listPanel.AsFlexItem(
+                size: new()
+                {
+                    x = viewport.x.value + ScrollbarWidth + ListGap + ListPadding,
+                    y = viewport.y.value + ListPadding,
+                }
+            );
+        }
+
+        private void OpenList()
+        {
+            ApplyListLayout();
+            _modalOpened.Value = true;
+            RebuildTable();
+            ApplyListLayout();
+        }
+
         private Reactive.Components.Basic.Table<T, IReactiveComponent> CreateTable()
         {
             return new Reactive.Components.Basic.Table<T, IReactiveComponent>
@@ -188,7 +239,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 Items = _items?.Keys.ToArray() ?? [],
                 OnSelectedItemsChanged = HandleSelectedItemsChanged,
                 ConstructCell = CreateCell,
-            }.AsFlexItem(size: new() { x = 200f, y = 200f });
+            }.AsFlexItem(size: ListViewportSize());
         }
 
         private void RebuildTable()
@@ -268,15 +319,15 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                         new LayoutChildren
                         {
                             new Layout { Children = { CreateTable().Bind(ref _table) } }
-                                .AsFlexGroup()
-                                .AsFlexItem(size: new() { x = 200f, y = 200f })
+                                .AsFlexGroup(constrainHorizontal: false, constrainVertical: false)
+                                .AsFlexItem(size: ListViewportSize())
                                 .Bind(ref _tableHost),
                             new EditorScrollbar
                             {
                                 ScrollContext = _scrollContext,
                                 HideIfNothingToScroll = true,
                             }
-                                .AsFlexItem(size: new() { x = 7f, y = "auto" })
+                                .AsFlexItem(size: new() { x = ScrollbarWidth, y = "auto" })
                                 .Bind(ref _scrollbar),
                         }
                             .As<EditorBackground>(x =>
@@ -288,9 +339,13 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                             .AsFlexGroup(
                                 direction: FlexDirection.Row,
                                 alignItems: Align.Stretch,
-                                gap: 1f,
-                                padding: 2f
-                            ),
+                                gap: ListGap,
+                                padding: 2f,
+                                constrainHorizontal: false,
+                                constrainVertical: false
+                            )
+                            .AsFlexItem(size: ListViewportSize())
+                            .Bind(ref _listPanel),
                     },
                 },
             }
@@ -300,7 +355,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                     {
                         if (_items?.Count > 0)
                         {
-                            _modalOpened.Value = true;
+                            OpenList();
                         }
                     };
                 })
@@ -335,7 +390,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                     x.RaycastTarget = true;
                 })
                 .AsFlexGroup(alignItems: Align.Center, gap: 4f, padding: 8f)
-                .AsFlexItem(size: new() { x = 200f, y = 40f });
+                .AsFlexItem(size: new() { x = 200f, y = ItemHeight });
 
             void Update(Reactive.Components.CellContext<T> value)
             {

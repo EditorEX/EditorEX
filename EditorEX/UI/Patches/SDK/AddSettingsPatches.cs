@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BeatmapEditor3D;
@@ -8,6 +9,7 @@ using EditorEX.SDK.ViewContent;
 using Reactive;
 using Reactive.Yoga;
 using SiraUtil.Affinity;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -39,6 +41,8 @@ namespace EditorEX.UI.Patches.SDK
         {
             if (firstActivation)
             {
+                HideCustomLevelsFolderAndHeader(__instance);
+
                 var tab = StateUtils.Remember(0);
 
                 new LayoutChildren
@@ -68,6 +72,35 @@ namespace EditorEX.UI.Patches.SDK
                 layout.Children.AddRange(
                     _viewContents.Select((x, index) => x.Create().EnabledWithState(tab, index + 1))
                 );
+            }
+        }
+
+        private static void HideCustomLevelsFolderAndHeader(
+            BeatmapEditorSettingsViewController settings
+        )
+        {
+            var folder = settings._openFolderView.gameObject;
+            var parent = folder.transform.parent;
+            if (parent != null && parent != settings.transform && parent.name != "Container")
+            {
+                parent.gameObject.SetActive(false);
+            }
+            else
+            {
+                folder.SetActive(false);
+            }
+
+            foreach (var label in settings.GetComponentsInChildren<TMP_Text>(true))
+            {
+                if (
+                    label.text != null
+                    && label
+                        .text.Trim()
+                        .Equals("General Settings", StringComparison.OrdinalIgnoreCase)
+                )
+                {
+                    label.gameObject.SetActive(false);
+                }
             }
         }
     }

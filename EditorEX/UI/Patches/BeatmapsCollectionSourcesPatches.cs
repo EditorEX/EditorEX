@@ -12,13 +12,16 @@ namespace EditorEX.UI.Patches
 {
     /// <summary>
     /// Scans the configured (possibly multiple) map sources into
-    /// <see cref="BeatmapsCollectionDataModel"/> and resolves relative project paths against
-    /// whichever configured source directory contains them.
+    /// <see cref="BeatmapsCollectionDataModel"/>, creates new maps in
+    /// <c>SourcesConfig.SaveSource</c>, imports vanilla <c>customLevelsFolder</c>
+    /// when it is not already a source, and resolves relative project paths against
+    /// whichever configured source contains them.
     /// </summary>
     internal class BeatmapsCollectionSourcesPatches : IAffinity
     {
         private readonly SiraLog _siraLog;
         private readonly SourcesConfig _sourcesConfig;
+        private string? _savedCustomLevelsFolder;
 
         private BeatmapsCollectionSourcesPatches(SiraLog siraLog, SourcesConfig sourcesConfig)
         {
@@ -26,16 +29,38 @@ namespace EditorEX.UI.Patches
             _sourcesConfig = sourcesConfig;
         }
 
-        private string EndsWithSeparator(string absolutePath)
+        [AffinityPrefix]
+        [AffinityPatch(
+            typeof(BeatmapsCollectionDataModel),
+            nameof(BeatmapsCollectionDataModel.AddNewBeatmap)
+        )]
+        private void UseSelectedSourceForNewMap(BeatmapsCollectionDataModel __instance)
         {
-            return absolutePath?.TrimEnd('/', '\\') + "/";
+            var settings = __instance._beatmapEditorSettingsDataModel;
+            _savedCustomLevelsFolder = settings._customLevelsFolder;
+            string saveSource = BeatmapSourcePaths.ResolveSaveSource(
+                _sourcesConfig.Sources,
+                _sourcesConfig.SaveSource
+            );
+            _sourcesConfig.SaveSource = saveSource;
+            _sourcesConfig.SelectedSource = saveSource;
+            settings._customLevelsFolder = BeatmapSourcePaths.ResolveNewMapRoot(
+                _sourcesConfig.Sources,
+                saveSource,
+                settings.customLevelsFolder
+            );
         }
 
-        private bool IsBaseOf(DirectoryInfo root, DirectoryInfo child)
+        [AffinityPostfix]
+        [AffinityPatch(
+            typeof(BeatmapsCollectionDataModel),
+            nameof(BeatmapsCollectionDataModel.AddNewBeatmap)
+        )]
+        private void RestoreCustomLevelsFolder(BeatmapsCollectionDataModel __instance)
         {
-            var directoryPath = EndsWithSeparator(new Uri(child.FullName).AbsolutePath);
-            var rootPath = EndsWithSeparator(new Uri(root.FullName).AbsolutePath);
-            return directoryPath.StartsWith(rootPath, StringComparison.OrdinalIgnoreCase);
+            __instance._beatmapEditorSettingsDataModel._customLevelsFolder =
+                _savedCustomLevelsFolder;
+            _savedCustomLevelsFolder = null;
         }
 
         [AffinityPrefix]
@@ -44,33 +69,16 @@ namespace EditorEX.UI.Patches
             nameof(BeatmapsCollectionDataModel.GenerateRelativePath)
         )]
         private bool GenerateRelativePathWithCustomSource(
+            BeatmapsCollectionDataModel __instance,
             string projectDirectoryPath,
             ref string __result
         )
         {
-            var projectDirectory = new DirectoryInfo(projectDirectoryPath);
-
-            var allPaths = _sourcesConfig.Sources.Values;
-            string sourcePath = "";
-            foreach (var path in allPaths)
-            {
-                if (IsBaseOf(new DirectoryInfo(path), projectDirectory))
-                {
-                    sourcePath = path;
-                    break;
-                }
-            }
-
-            if (sourcePath.Equals(projectDirectoryPath))
-            {
-                __result = string.Empty;
-                return false;
-            }
-            int num = sourcePath.Length + 1;
-            int length = Path.GetFileNameWithoutExtension(projectDirectoryPath).Length;
-            int length2 = projectDirectoryPath.Length;
-            __result = projectDirectoryPath.Substring(num, length2 - length - num);
-
+            __result = BeatmapSourcePaths.GenerateRelativePath(
+                projectDirectoryPath,
+                _sourcesConfig.Sources.Values,
+                __instance._beatmapEditorSettingsDataModel.customLevelsFolder
+            );
             return false;
         }
 
@@ -81,14 +89,17 @@ namespace EditorEX.UI.Patches
         )]
         private bool UseCustomLevelSources(BeatmapsCollectionDataModel __instance)
         {
-            if (_sourcesConfig.Sources == null || _sourcesConfig.Sources.Count == 0)
+            if (_sourcesConfig.Sources == null)
             {
-                _sourcesConfig.Sources = new Dictionary<string, string>
-                {
-                    { "Custom Levels", GenerateDefaultSources("CustomLevels") },
-                    { "Custom WIP Levels", GenerateDefaultSources("CustomWIPLevels") },
-                };
+                _sourcesConfig.Sources = new Dictionary<string, string>();
             }
+
+            BeatmapSourcePaths.EnsureDefaultSources(_sourcesConfig.Sources);
+
+            BeatmapSourcePaths.TryAddMissingFolder(
+                _sourcesConfig.Sources,
+                __instance._beatmapEditorSettingsDataModel.customLevelsFolder
+            );
 
             string pathToLoad = string.Empty;
             if (!_sourcesConfig.Sources.TryGetValue(_sourcesConfig.SelectedSource, out pathToLoad))
@@ -124,13 +135,6 @@ namespace EditorEX.UI.Patches
             __instance._signalBus.Fire<BeatmapsCollectionSignals.UpdatedSignal>();
 
             return false;
-        }
-
-        private string GenerateDefaultSources(string source)
-        {
-            var currentGamePath = Path.Combine(Environment.CurrentDirectory, "Beat Saber_Data");
-
-            return Path.Combine(currentGamePath, source).Replace("\\", "/");
         }
     }
 }

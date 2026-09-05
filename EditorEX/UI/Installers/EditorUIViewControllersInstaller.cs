@@ -23,6 +23,7 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<AddBeatmapListContextMenu>().AsSingle();
             Container.BindInterfacesAndSelfTo<MoreCoverFileTypes>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapsListSourcesUI>().AsSingle();
+            Container.BindInterfacesAndSelfTo<NewMapFormatUI>().AsSingle();
             Container.BindInterfacesAndSelfTo<BeatmapsListFilterPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditDifficultyBeatmapPatches>().AsSingle();
             Container.BindInterfacesAndSelfTo<EditBeatmapLevelPatches>().AsSingle();
