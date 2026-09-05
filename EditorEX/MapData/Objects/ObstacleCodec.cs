@@ -1,8 +1,5 @@
 using BeatmapEditor3D.DataModels;
 using BeatmapEditor3D.Scripts.SerializedData;
-using BeatmapEditor3D.SerializedData;
-using BeatmapSaveDataCommon;
-using CustomJSONData.CustomBeatmap;
 using EditorEX.CustomJSONData;
 using V2 = BeatmapSaveDataVersion2_6_0AndEarlier;
 using V2CustomSaveData = CustomJSONData.CustomBeatmap.Version2_6_0AndEarlierCustomBeatmapSaveData;
@@ -19,7 +16,17 @@ namespace EditorEX.MapData.Objects
             BeatmapEditorRotationProcessor_v2 rotationProcessor
         )
         {
-            return BeatmapDataModelsLoader.CreateObstacleEditorData_v2(data, rotationProcessor);
+            // 1.40 vanilla used Top → (row=2, height=1). 1.42 matches v3 crouch cells.
+            bool top = data.type == V2.ObstacleType.Top;
+            return ObstacleEditorData.CreateNew(
+                data.time,
+                data.lineIndex,
+                top ? 1 : 0,
+                rotationProcessor.GetRotation(data.time),
+                data.duration,
+                data.width,
+                top ? 2 : 3
+            );
         }
 
         public static ObstacleEditorData LoadV3(
@@ -27,7 +34,16 @@ namespace EditorEX.MapData.Objects
             BeatmapEditorRotationProcessor_v3 rotationProcessor
         )
         {
-            return BeatmapDataModelsLoader.CreateObstacleEditorData_v3(data, rotationProcessor);
+            // 1.40 vanilla applied v4's `h - 2`. Official v3 is `y/2`, `(h+1)/2`.
+            return ObstacleEditorData.CreateNew(
+                data.beat,
+                data.line,
+                data.layer / 2,
+                rotationProcessor.GetRotation(data.beat, advanceGlobal: true),
+                data.duration,
+                data.width,
+                (data.height + 1) / 2
+            );
         }
 
         public static ObstacleEditorData LoadV4(float beat, int rotation, V4.Obstacle data)
@@ -48,7 +64,10 @@ namespace EditorEX.MapData.Objects
             ICustomDataRepository customDataRepository
         )
         {
-            V2.ObstacleType type = o.row == 2 ? V2.ObstacleType.Top : V2.ObstacleType.FullHeight;
+            V2.ObstacleType type =
+                (o.row == 1 && o.height == 2) || o.row == 2
+                    ? V2.ObstacleType.Top
+                    : V2.ObstacleType.FullHeight;
             return CustomDataUtil.SaveCustom(o, customDataRepository, out var customData)
                 ? new V2CustomSaveData.ObstacleSaveData(
                     o.beat,
@@ -96,6 +115,16 @@ namespace EditorEX.MapData.Objects
                 w = o.width,
                 h = o.height + 2,
             };
+        }
+
+        public static int GameplayHeight(int editorHeight, int versionMajor)
+        {
+            return versionMajor >= 4 ? editorHeight + 2 : editorHeight * 2 - 1;
+        }
+
+        public static int GameplayLayer(int editorRow, int versionMajor)
+        {
+            return versionMajor >= 4 ? editorRow : editorRow * 2;
         }
     }
 }

@@ -103,13 +103,6 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             return worldRotation;
         }
 
-        private float GetCustomWidth(float @default, ObstacleEditorData? obstacleData)
-        {
-            EditorNoodleObstacleData? noodleData = null;
-            _editorDeserializedData?.Resolve(obstacleData, out noodleData);
-            return noodleData?.Width ?? @default;
-        }
-
         private float GetCustomLength(float @default, ObstacleEditorData? obstacleData)
         {
             EditorNoodleObstacleData? noodleData = null;
@@ -151,7 +144,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             _obstacleDuration = _editorData.duration;
             _height = obstacleSpawnData.obstacleHeight;
             _color = _colorManager.obstaclesColor;
-            _width = GetCustomWidth(obstacleSpawnData.obstacleWidth, _editorData);
+            _width = obstacleSpawnData.obstacleWidth;
             _moveOffset = obstacleSpawnData.moveOffset;
 
             Vector3 startPos = _variableMovementDataProvider.moveStartPosition + _moveOffset;

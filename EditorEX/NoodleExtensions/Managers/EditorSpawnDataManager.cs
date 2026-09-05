@@ -1,6 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Heck.Deserialize;
+using EditorEX.MapData.Contexts;
+using EditorEX.MapData.Objects;
 using EditorEX.NoodleExtensions.ObjectData;
 using NoodleExtensions;
 using SiraUtil.Logging;
@@ -89,9 +91,11 @@ namespace EditorEX.NoodleExtensions.Managers
                 return false;
             }
 
+            int versionMajor = MapContext.Version?.Major ?? 3;
             float lineIndex =
                 noodleData.StartX + (_movementData.noteLinesCount / 2) ?? obstacleData.column;
-            float lineLayer = noodleData.StartY ?? obstacleData.row;
+            float lineLayer =
+                noodleData.StartY ?? ObstacleCodec.GameplayLayer(obstacleData.row, versionMajor);
 
             Vector3 obstacleOffset = GetObstacleOffset(lineIndex, lineLayer);
             obstacleOffset.y += _movementData.jumpOffsetY;
@@ -107,7 +111,8 @@ namespace EditorEX.NoodleExtensions.Managers
             {
                 // _topObstaclePosY =/= _obstacleTopPosY
                 obstacleHeight = Mathf.Min(
-                    obstacleData.height * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance,
+                    ObstacleCodec.GameplayHeight(obstacleData.height, versionMajor)
+                        * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance,
                     _movementData._obstacleTopPosY - obstacleOffset.y
                 );
             }

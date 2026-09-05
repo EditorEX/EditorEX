@@ -1,6 +1,8 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Patches;
 using EditorEX.Essentials.SpawnProcessing;
+using EditorEX.MapData.Contexts;
+using EditorEX.MapData.Objects;
 using EditorEX.NoodleExtensions.Managers;
 using IPA.Utilities;
 using UnityEngine;
@@ -127,14 +129,15 @@ namespace EditorEX.Essentials.Movement.Data
                     return spawnData.Value;
             }
 
+            int versionMajor = MapContext.Version?.Major ?? 3;
             Vector3 obstacleOffset = GetObstacleOffset(
                 obstacleData.column,
-                (NoteLineLayer)obstacleData.row
+                (NoteLineLayer)ObstacleCodec.GameplayLayer(obstacleData.row, versionMajor)
             );
             obstacleOffset.y += _jumpOffsetYProvider.jumpOffsetY;
             obstacleOffset.y = Mathf.Max(obstacleOffset.y, _verticalObstaclePosY);
             float height = Mathf.Min(
-                (float)obstacleData.height
+                (float)ObstacleCodec.GameplayHeight(obstacleData.height, versionMajor)
                     * StaticBeatmapObjectSpawnMovementData.kNoteLinesDistance,
                 _obstacleTopPosY - obstacleOffset.y
             );
