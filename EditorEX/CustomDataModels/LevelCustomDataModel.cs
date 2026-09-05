@@ -16,6 +16,22 @@ namespace EditorEX.CustomDataModels
         public float ShufflePeriod { get; set; }
         public CustomData? LevelCustomData { get; set; }
         public Dictionary<string, CustomData>? BeatmapCustomDatasByFilename { get; set; }
+
+        public CustomData GetOrCreateBeatmapCustomData(string filename)
+        {
+            BeatmapCustomDatasByFilename ??= new Dictionary<string, CustomData>();
+            if (
+                !BeatmapCustomDatasByFilename.TryGetValue(filename, out CustomData? data)
+                || data == null
+            )
+            {
+                data = new CustomData();
+                BeatmapCustomDatasByFilename[filename] = data;
+            }
+
+            return data;
+        }
+
         public List<ContributorData>? Contributors { get; set; }
         public CustomPlatformsListModel.CustomPlatformInfo? CustomPlatformInfo { get; set; }
         public Dictionary<

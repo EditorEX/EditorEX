@@ -120,7 +120,7 @@ namespace EditorEX.MapData.SaveDataSavers
                         v.noteJumpStartBeatOffset,
                         _beatmapLevelDataModel.colorSchemes.IndexOf(v.colorScheme),
                         envNames.IndexOf(v.environmentName.ToString()),
-                        _levelCustomDataModel.BeatmapCustomDatasByFilename[v.beatmapFilename]
+                        _levelCustomDataModel.GetOrCreateBeatmapCustomData(v.beatmapFilename)
                     )
                 );
                 existing._difficultyBeatmaps = list.ToArray();

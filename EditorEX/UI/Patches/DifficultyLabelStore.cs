@@ -28,14 +28,7 @@ namespace EditorEX.UI.Patches
 
         public void Write(string filename, string value)
         {
-            var datas = _levelCustomDataModel.BeatmapCustomDatasByFilename;
-            if (datas == null)
-                return;
-            if (!datas.TryGetValue(filename, out var cd) || cd == null)
-            {
-                cd = new CustomData();
-                datas[filename] = cd;
-            }
+            var cd = _levelCustomDataModel.GetOrCreateBeatmapCustomData(filename);
             if (string.IsNullOrWhiteSpace(value))
                 cd.TryRemove(DifficultyLabelKey, out _);
             else

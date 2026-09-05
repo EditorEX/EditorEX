@@ -23,12 +23,9 @@ namespace EditorEX.Vivify.Installers
                 Container.BindInterfacesAndSelfTo<CameraPropertyManager>().AsSingle();
                 Container.BindInterfacesAndSelfTo<CameraEffectApplier>().AsSingle();
 
-                Container.BindInterfacesTo<EditorApplyPostProcessing>().AsSingle();
+                Container.BindInterfacesTo<VivifyObjectPreviewSource>().AsSingle();
+                Container.BindInterfacesTo<VivifyPostProcessingPreviewSource>().AsSingle();
                 Container.BindInterfacesTo<EditorAssignObjectPrefab>().AsSingle();
-                Container.BindInterfacesTo<EditorDeclareCullingTexture>().AsSingle();
-                Container.BindInterfacesTo<EditorDeclareRenderTexture>().AsSingle();
-                Container.BindInterfacesTo<EditorDestroyPrefab>().AsSingle();
-                Container.BindInterfacesTo<EditorInstantiatePrefab>().AsSingle();
                 Container.BindInterfacesTo<EditorSetAnimatorProperty>().AsSingle();
                 Container.BindInterfacesAndSelfTo<EditorSetCameraProperty>().AsSingle();
                 Container.BindInterfacesTo<EditorSetGlobalProperty>().AsSingle();

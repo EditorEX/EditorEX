@@ -15,6 +15,7 @@ namespace EditorEX.CustomDataModels
         float ShufflePeriod { get; }
         CustomData? LevelCustomData { get; }
         Dictionary<string, CustomData>? BeatmapCustomDatasByFilename { get; }
+        CustomData GetOrCreateBeatmapCustomData(string filename);
         CustomPlatformsListModel.CustomPlatformInfo? CustomPlatformInfo { get; }
         Dictionary<string, CharacteristicDetailsData> CharacteristicDetailsByName { get; }
         Dictionary<string, CustomData> CharacteristicCustomDataByName { get; set; }

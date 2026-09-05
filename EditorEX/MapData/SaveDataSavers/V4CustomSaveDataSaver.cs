@@ -145,9 +145,9 @@ namespace EditorEX.MapData.SaveDataSavers
                                 noteJumpStartBeatOffset = difficultyBeatmap.noteJumpStartBeatOffset,
                                 beatmapDataFilename = difficultyBeatmap.beatmapFilename,
                                 lightshowDataFilename = difficultyBeatmap.lightshowFilename,
-                                customData = _levelCustomDataModel.BeatmapCustomDatasByFilename[
+                                customData = _levelCustomDataModel.GetOrCreateBeatmapCustomData(
                                     difficultyBeatmap.beatmapFilename
-                                ],
+                                ),
                             }
                     )
                     .ToArray(),
