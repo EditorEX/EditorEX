@@ -420,22 +420,27 @@ namespace EditorEX.Essentials.Visuals.ChainHead
                 out _
             );
 
-            float noteCutout = 1f - dissolveNote.GetValueOrDefault(1f);
-            float arrowCutout = 1f - dissolveArrow.GetValueOrDefault(1f);
+            if (dissolveNote.HasValue)
+            {
+                float noteCutout = 1f - dissolveNote.Value;
+                _headNoteCutout?.SetCutout(noteCutout);
 
-            _headNoteCutout?.SetCutout(noteCutout);
-            _headArrowCutout?.SetCutout(arrowCutout);
+                foreach (LinkVisual link in _linkVisuals)
+                {
+                    SetCutouts(link.cutouts, dissolveNote.Value);
+                }
+            }
+            if (dissolveArrow.HasValue)
+            {
+                _headArrowCutout?.SetCutout(1f - dissolveArrow.Value);
+            }
+
             if (_headArrowObjects != null && _editorData != null)
             {
                 _headArrowObjects[1]
                     .SetActive(
                         _editorData.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f
                     );
-            }
-
-            foreach (LinkVisual link in _linkVisuals)
-            {
-                SetCutouts(link.cutouts, noteCutout);
             }
 
             ChromaObjectData? chromaData = _chromaData;

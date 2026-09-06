@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using EditorEX.Vivify.Managers;
+using EditorEX.Vivify.ObjectPrefab;
 using HarmonyLib;
 using Heck.Animation;
 using Heck.ReLoad;
@@ -21,6 +23,11 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
     private readonly EditorAssetBundleManager _assetBundleManager;
     private readonly IInstantiator _instantiator;
     private readonly SiraLog _log;
+
+    private static readonly EventInfo Changed = typeof(PrefabDictionary).GetEvent(
+        "Changed",
+        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+    )!;
 
     private readonly Dictionary<string, IPrefabPool> _prefabPools = new();
     private readonly ReLoader? _reLoader;
@@ -91,6 +98,52 @@ internal class EditorBeatmapObjectPrefabManager : IDisposable
             {
                 _log.Error($"Could not assign [{assetName}], is already on track");
             }
+        }
+    }
+
+    internal HashSet<PrefabPool?> Snapshot(PrefabDictionary prefabDictionary, Track track)
+    {
+        return prefabDictionary.TryGetValue(track, out HashSet<PrefabPool?> pools)
+            ? new HashSet<PrefabPool?>(pools)
+            : [];
+    }
+
+    internal void Restore(
+        PrefabDictionary prefabDictionary,
+        Track track,
+        HashSet<PrefabPool?> snapshot
+    )
+    {
+        if (!prefabDictionary.TryGetValue(track, out HashSet<PrefabPool?> pools))
+        {
+            return;
+        }
+
+        pools.Clear();
+        foreach (PrefabPool? pool in snapshot)
+        {
+            pools.Add(pool);
+        }
+
+        RaiseChanged(prefabDictionary, track);
+    }
+
+    private static void RaiseChanged(PrefabDictionary dictionary, Track track)
+    {
+        MethodInfo? raise = Changed.GetRaiseMethod(nonPublic: true);
+        if (raise != null)
+        {
+            raise.Invoke(dictionary, [track]);
+            return;
+        }
+
+        FieldInfo? backing = typeof(PrefabDictionary).GetField(
+            "Changed",
+            BindingFlags.Instance | BindingFlags.NonPublic
+        );
+        if (backing?.GetValue(dictionary) is Action<Track> handlers)
+        {
+            handlers(track);
         }
     }
 

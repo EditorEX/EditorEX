@@ -2,71 +2,72 @@
 using System.Collections.Generic;
 using System.Linq;
 using BeatmapEditor3D.Controller;
-using CustomJSONData.CustomBeatmap;
-using EditorEX.CustomJSONData;
-using EditorEX.Heck.Deserialize;
-using Heck;
-using Heck.Event;
-using NoodleExtensions;
+using Heck.Animation;
 using NoodleExtensions.Animation;
 using NoodleExtensions.Managers;
 using UnityEngine;
 using Zenject;
 
-// Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.Events
 {
-    [CustomEvent(NoodleController.ASSIGN_PLAYER_TO_TRACK)]
-    internal class EditorAssignPlayerToTrack : ICustomEvent
+    internal class EditorAssignPlayerToTrack
     {
         private readonly IInstantiator _container;
         private readonly PlayerTransforms _playerTransforms;
-        private readonly EditorDeserializedData _editorDeserializedData;
         private readonly Dictionary<PlayerObject, PlayerTrack> _playerTracks = new();
-        private readonly BeatmapEditor360CameraController _beatmapEditor360CameraController;
-        private readonly ICustomDataRepository _customDataRepository;
+        private readonly BeatmapEditor360CameraController? _beatmapEditor360CameraController;
 
         private EditorAssignPlayerToTrack(
             IInstantiator container,
-            PlayerTransforms playerTransforms,
-            [InjectOptional(Id = NoodleController.ID)]
-                EditorDeserializedData editorDeserializedData,
-            ICustomDataRepository customDataRepository
+            PlayerTransforms playerTransforms
         )
         {
             _container = container;
             _playerTransforms = playerTransforms;
-            _editorDeserializedData = editorDeserializedData;
             _beatmapEditor360CameraController = Resources
                 .FindObjectsOfTypeAll<BeatmapEditor360CameraController>()
                 .FirstOrDefault();
-            _customDataRepository = customDataRepository;
         }
 
-        public void Callback(CustomEventData customEventData)
+        internal void Assign(PlayerObject playerObject, Track track)
         {
-            if (
-                !(
-                    _editorDeserializedData?.Resolve(
-                        _customDataRepository.GetCustomEventConversion(customEventData),
-                        out NoodlePlayerTrackEventData? noodlePlayerData
-                    )
-                    ?? false
-                )
-            )
+            if (!_playerTracks.TryGetValue(playerObject, out PlayerTrack? playerTrack))
+            {
+                _playerTracks[playerObject] = playerTrack = Create(playerObject);
+            }
+
+            playerTrack.AssignTrack(track);
+        }
+
+        internal void Restore(PlayerObject playerObject, Track? previous)
+        {
+            if (!_playerTracks.TryGetValue(playerObject, out PlayerTrack? playerTrack))
             {
                 return;
             }
 
-            PlayerObject resultPlayerTrackObject = noodlePlayerData.PlayerObject;
-            if (!_playerTracks.TryGetValue(resultPlayerTrackObject, out PlayerTrack? playerTrack))
+            if (previous != null)
             {
-                _playerTracks[resultPlayerTrackObject] = playerTrack = Create(
-                    resultPlayerTrackObject
-                );
+                playerTrack.AssignTrack(previous);
+                return;
             }
 
-            playerTrack.AssignTrack(noodlePlayerData.Track);
+            Clear(playerTrack);
+        }
+
+        private static void Clear(PlayerTrack playerTrack)
+        {
+            if (playerTrack._track != null)
+            {
+                playerTrack._track.RemoveGameObject(playerTrack.gameObject);
+                playerTrack._track = null;
+            }
+
+            if (playerTrack._transformController != null)
+            {
+                UnityEngine.Object.Destroy(playerTrack._transformController);
+                playerTrack._transformController = null;
+            }
         }
 
         private PlayerTrack Create(PlayerObject playerTrackObject)
@@ -87,7 +88,7 @@ namespace EditorEX.NoodleExtensions.Events
                 ),
             };
 
-            if (playerTrackObject == PlayerObject.Root)
+            if (playerTrackObject == PlayerObject.Root && _beatmapEditor360CameraController != null)
             {
                 _beatmapEditor360CameraController.transform.SetParent(origin, true);
             }

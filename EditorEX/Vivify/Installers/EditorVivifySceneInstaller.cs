@@ -3,6 +3,7 @@ using EditorEX.MapData.Contexts;
 using EditorEX.Vivify.Events;
 using EditorEX.Vivify.Managers;
 using EditorEX.Vivify.ObjectPrefab.Managers;
+using EditorEX.Vivify.Patches;
 using Vivify.HarmonyPatches;
 using Vivify.Managers;
 using Zenject;
@@ -22,15 +23,23 @@ namespace EditorEX.Vivify.Installers
 
                 Container.BindInterfacesAndSelfTo<CameraPropertyManager>().AsSingle();
                 Container.BindInterfacesAndSelfTo<CameraEffectApplier>().AsSingle();
+                Container.BindInterfacesTo<EditorVivifyCameraEffectBridge>().AsSingle();
 
                 Container.BindInterfacesTo<VivifyObjectPreviewSource>().AsSingle();
                 Container.BindInterfacesTo<VivifyPostProcessingPreviewSource>().AsSingle();
-                Container.BindInterfacesTo<EditorAssignObjectPrefab>().AsSingle();
-                Container.BindInterfacesTo<EditorSetAnimatorProperty>().AsSingle();
+                Container.BindInterfacesTo<VivifySetMaterialPropertyPreviewSource>().AsSingle();
+                Container.BindInterfacesTo<VivifyAssignObjectPrefabPreviewSource>().AsSingle();
+                Container.BindInterfacesTo<VivifySetAnimatorPropertyPreviewSource>().AsSingle();
+                Container.BindInterfacesTo<VivifySetCameraPropertyPreviewSource>().AsSingle();
+                Container.BindInterfacesTo<VivifySetGlobalPropertyPreviewSource>().AsSingle();
+                Container.BindInterfacesTo<VivifySetRenderingSettingsPreviewSource>().AsSingle();
+
+                Container.BindInterfacesAndSelfTo<EditorAssignObjectPrefab>().AsSingle();
+                Container.BindInterfacesAndSelfTo<EditorSetAnimatorProperty>().AsSingle();
                 Container.BindInterfacesAndSelfTo<EditorSetCameraProperty>().AsSingle();
-                Container.BindInterfacesTo<EditorSetGlobalProperty>().AsSingle();
+                Container.BindInterfacesAndSelfTo<EditorSetGlobalProperty>().AsSingle();
                 Container.BindInterfacesAndSelfTo<EditorSetMaterialProperty>().AsSingle();
-                Container.BindInterfacesTo<EditorSetRenderingSettings>().AsSingle();
+                Container.BindInterfacesAndSelfTo<EditorSetRenderingSettings>().AsSingle();
             }
         }
     }

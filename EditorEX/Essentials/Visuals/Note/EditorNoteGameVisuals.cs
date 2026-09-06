@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using Chroma;
@@ -7,6 +8,7 @@ using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Visuals.Universal;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
+using EditorEX.Vivify.Events;
 using EditorEX.Vivify.ObjectPrefab.Managers;
 using Heck.Animation;
 using NoodleExtensions;
@@ -49,6 +51,8 @@ namespace EditorEX.Essentials.Visuals.Note
         private GameObject[] _arrowObjects;
         private GameObject _circleObject;
         private bool _active;
+        private bool _hasAssignedPrefab;
+        private float _lastPrefabElapsed = -1f;
 
         [Inject]
         private void Construct(
@@ -75,6 +79,14 @@ namespace EditorEX.Essentials.Visuals.Note
             _state = state;
             _prefabManager = prefabManager;
             _vivifyNotePrefabManager = vivifyNotePrefabManager;
+            _vivifyNotePrefabManager.Subscribe(
+                _vivifyNotePrefabManager.ColorNotePrefabs,
+                OnAssignedPrefabsChanged
+            );
+            _vivifyNotePrefabManager.Subscribe(
+                _vivifyNotePrefabManager.AnyDirectionNotePrefabs,
+                OnAssignedPrefabsChanged
+            );
 
             if (_visualAssetProvider.gameNotePrefab == null)
             {
@@ -163,20 +175,20 @@ namespace EditorEX.Essentials.Visuals.Note
             }
             _circleObject.SetActive(anyDirection);
             _circleObject.GetComponent<MeshRenderer>().enabled = anyDirection;
-
-            _noteCutout.SetCutout(0f);
-            _arrowCutout.SetCutout(0f);
         }
 
         public void Enable()
         {
             _gameRoot?.SetActive(true);
             _active = true;
+            _hasAssignedPrefab = false;
+            _lastPrefabElapsed = -1f;
 
             _prefabManager.Despawn(_gameRoot.transform);
 
             if (
-                !_vivifyEditorDeserializedData.Resolve(_editorData, out VivifyObjectData? data)
+                _vivifyEditorDeserializedData == null
+                || !_vivifyEditorDeserializedData.Resolve(_editorData, out VivifyObjectData? data)
                 || data?.Track == null
             )
             {
@@ -188,24 +200,30 @@ namespace EditorEX.Essentials.Visuals.Note
                     ? _vivifyNotePrefabManager.AnyDirectionNotePrefabs
                     : _vivifyNotePrefabManager.ColorNotePrefabs;
 
-            _prefabManager.Spawn(
-                data.Track,
-                prefabDictionary,
-                _gameRoot.transform,
-                _editorData.beat
-            );
+            // Gameplay passes NoteFloorMovement._beatTime, which is seconds.
+            float noteSeconds = _audioDataModel.bpmData.BeatToSeconds(_editorData.beat);
+            _prefabManager.Spawn(data.Track, prefabDictionary, _gameRoot.transform, noteSeconds);
+            _hasAssignedPrefab = true;
+            TickAssignedPrefab(noteSeconds);
         }
 
         public void Disable()
         {
             _gameRoot?.SetActive(false);
             _active = false;
+            _hasAssignedPrefab = false;
+            _lastPrefabElapsed = -1f;
 
             _prefabManager.Despawn(_gameRoot.transform);
         }
 
         public void ManualUpdate()
         {
+            if (_editorData != null)
+            {
+                TickAssignedPrefab(_audioDataModel.bpmData.BeatToSeconds(_editorData.beat));
+            }
+
             EditorNoodleBaseNoteData? noodleData = _noodleData;
             if (noodleData == null)
             {
@@ -246,14 +264,14 @@ namespace EditorEX.Essentials.Visuals.Note
                 out _
             );
 
-            _noteCutout.SetCutout(1f - dissolveNote.GetValueOrDefault(1f));
-
-            _arrowCutout.SetCutout(1f - dissolveArrow.GetValueOrDefault(1f));
-
-            _arrowObjects[1]
-                .SetActive(
-                    _editorData?.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f
-                );
+            if (dissolveNote.HasValue)
+            {
+                _noteCutout.SetCutout(1f - dissolveNote.Value);
+            }
+            if (dissolveArrow.HasValue)
+            {
+                _arrowCutout.SetCutout(1f - dissolveArrow.Value);
+            }
 
             ChromaObjectData? chromaData = _chromaData;
             if (chromaData == null)
@@ -291,6 +309,53 @@ namespace EditorEX.Essentials.Visuals.Note
         public GameObject GetVisualRoot()
         {
             return _gameRoot;
+        }
+
+        private void OnDestroy()
+        {
+            if (_vivifyNotePrefabManager == null)
+            {
+                return;
+            }
+
+            _vivifyNotePrefabManager.Unsubscribe(
+                _vivifyNotePrefabManager.ColorNotePrefabs,
+                OnAssignedPrefabsChanged
+            );
+            _vivifyNotePrefabManager.Unsubscribe(
+                _vivifyNotePrefabManager.AnyDirectionNotePrefabs,
+                OnAssignedPrefabsChanged
+            );
+        }
+
+        private void OnAssignedPrefabsChanged(Track track)
+        {
+            if (
+                !_active
+                || _editorData == null
+                || _vivifyEditorDeserializedData == null
+                || !_vivifyEditorDeserializedData.Resolve(_editorData, out VivifyObjectData? data)
+                || data?.Track == null
+                || !data.Track.Contains(track)
+            )
+            {
+                return;
+            }
+
+            Enable();
+        }
+
+        private void TickAssignedPrefab(float noteSeconds)
+        {
+            if (_gameRoot == null || !_active || !_hasAssignedPrefab)
+            {
+                return;
+            }
+
+            float currentSeconds = _audioDataModel.bpmData.BeatToSeconds(_state.beat);
+            float elapsed = VivifyPrefabPreviewSync.NoteSeekSeconds(currentSeconds, noteSeconds);
+            VivifyPrefabPreviewSync.Apply(_gameRoot, _lastPrefabElapsed, elapsed);
+            _lastPrefabElapsed = elapsed;
         }
     }
 }

@@ -1,62 +1,22 @@
-﻿using CustomJSONData.CustomBeatmap;
-using EditorEX.CustomJSONData;
-using EditorEX.Heck.Deserialize;
-using Heck;
-using Heck.Event;
+﻿using System.Collections.Generic;
 using Vivify;
 using Vivify.Managers;
 using Vivify.TrackGameObject;
-using Zenject;
-using static Vivify.VivifyController;
 
-// Based from https://github.com/Aeroluna/Vivify
 namespace EditorEX.Vivify.Events
 {
-    [CustomEvent(SET_CAMERA_PROPERTY)]
-    internal class EditorSetCameraProperty : ICustomEvent
+    internal class EditorSetCameraProperty
     {
         private readonly CameraPropertyManager _cameraPropertyManager;
-        private readonly EditorDeserializedData _deserializedData;
-        private readonly ICustomDataRepository _customDataRepository;
 
-        private EditorSetCameraProperty(
-            CameraPropertyManager cameraPropertyManager,
-            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
-            ICustomDataRepository customDataRepository
-        )
+        private EditorSetCameraProperty(CameraPropertyManager cameraPropertyManager)
         {
             _cameraPropertyManager = cameraPropertyManager;
-            _deserializedData = deserializedData;
-            _customDataRepository = customDataRepository;
-        }
-
-        public void Callback(CustomEventData customEventData)
-        {
-            if (
-                !_deserializedData.Resolve(
-                    _customDataRepository.GetCustomEventConversion(customEventData),
-                    out SetCameraPropertyData? eventData
-                )
-            )
-            {
-                return;
-            }
-
-            SetCameraProperties(eventData.Id, eventData.Property);
         }
 
         public void SetCameraProperties(string id, CameraProperty property)
         {
-            if (
-                !_cameraPropertyManager.Properties.TryGetValue(
-                    id,
-                    out CameraPropertyManager.CameraProperties properties
-                )
-            )
-            {
-                _cameraPropertyManager.Properties[id] = properties =
-                    new CameraPropertyManager.CameraProperties();
-            }
+            CameraPropertyManager.CameraProperties properties = PropertiesFor(id);
 
             if (property.HasDepthTextureMode)
             {
@@ -91,6 +51,60 @@ namespace EditorEX.Vivify.Events
             {
                 properties.MainEffect = property.MainEffect;
             }
+        }
+
+        internal void ClearChannels(string id, IReadOnlyList<string> channels)
+        {
+            if (
+                !_cameraPropertyManager.Properties.TryGetValue(
+                    id,
+                    out CameraPropertyManager.CameraProperties properties
+                )
+            )
+            {
+                return;
+            }
+
+            for (int i = 0; i < channels.Count; i++)
+            {
+                switch (channels[i])
+                {
+                    case "depthTextureMode":
+                        properties.DepthTextureMode = null;
+                        break;
+                    case "clearFlags":
+                        properties.ClearFlags = null;
+                        break;
+                    case "backgroundColor":
+                        properties.BackgroundColor = null;
+                        break;
+                    case "culling":
+                        properties.CullingTextureData = null;
+                        break;
+                    case "bloomPrePass":
+                        properties.BloomPrePass = null;
+                        break;
+                    case "mainEffect":
+                        properties.MainEffect = null;
+                        break;
+                }
+            }
+        }
+
+        private CameraPropertyManager.CameraProperties PropertiesFor(string id)
+        {
+            if (
+                !_cameraPropertyManager.Properties.TryGetValue(
+                    id,
+                    out CameraPropertyManager.CameraProperties properties
+                )
+            )
+            {
+                _cameraPropertyManager.Properties[id] = properties =
+                    new CameraPropertyManager.CameraProperties();
+            }
+
+            return properties;
         }
     }
 }

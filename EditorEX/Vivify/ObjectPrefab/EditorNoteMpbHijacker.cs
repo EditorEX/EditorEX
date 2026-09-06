@@ -5,6 +5,10 @@ using Vivify.ObjectPrefab.Hijackers;
 
 namespace EditorEX.Vivify.ObjectPrefab;
 
+/// <summary>
+/// Same as gameplay <c>MpbControllerHijacker</c>. The editor passes the
+/// NoteCube itself, so the cube is the parent — not the note root.
+/// </summary>
 public class EditorNoteMpbHijacker : IHijacker<GameObject>
 {
     private readonly Transform _child;
@@ -15,8 +19,7 @@ public class EditorNoteMpbHijacker : IHijacker<GameObject>
     internal EditorNoteMpbHijacker(Component component)
     {
         _originalRenderers = component.GetComponentsInChildren<Renderer>();
-        _child = component.transform.parent;
-
+        _child = component.transform;
         _materialPropertyBlockController =
             component.GetComponent<MaterialPropertyBlockController>();
     }

@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
-using CustomJSONData.CustomBeatmap;
-using EditorEX.CustomJSONData;
-using EditorEX.Essentials.Patches;
-using EditorEX.Heck.Deserialize;
 using EditorEX.Vivify.Managers;
-using Heck;
-using Heck.Animation;
-using Heck.Event;
-using SiraUtil.Logging;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.XR;
@@ -20,22 +9,12 @@ using Vivify.Events;
 using Vivify.Extras;
 using Vivify.Managers;
 using Zenject;
-using static Vivify.VivifyController;
 
 // Based from https://github.com/Aeroluna/Vivify
 namespace EditorEX.Vivify.Events
 {
-    [CustomEvent(SET_RENDERING_SETTINGS)]
-    internal class EditorSetRenderingSettings : ICustomEvent, IInitializable, IDisposable
+    internal class EditorSetRenderingSettings : IInitializable, IDisposable
     {
-        private readonly IAudioTimeSource _audioTimeSource;
-        private readonly IBpmController _bpmController;
-        private readonly CoroutineDummy _coroutineDummy;
-        private readonly EditorDeserializedData _deserializedData;
-        private readonly AudioDataModel _audioDataModel;
-        private readonly SiraLog _log;
-        private readonly ICustomDataRepository _customDataRepository;
-
         private readonly Dictionary<string, ISettingHandler> _settings = new()
         {
             {
@@ -249,24 +228,10 @@ namespace EditorEX.Vivify.Events
         };
 
         private EditorSetRenderingSettings(
-            SiraLog log,
-            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
-            IAudioTimeSource audioTimeSource,
-            IBpmController bpmController,
-            CoroutineDummy coroutineDummy,
             EditorAssetBundleManager assetBundleManager,
-            PrefabManager prefabManager,
-            IEditorBeatmapModels populateBeatmap,
-            ICustomDataRepository customDataRepository
+            PrefabManager prefabManager
         )
         {
-            _log = log;
-            _deserializedData = deserializedData;
-            _audioTimeSource = audioTimeSource;
-            _bpmController = bpmController;
-            _coroutineDummy = coroutineDummy;
-            _audioDataModel = populateBeatmap.AudioDataModel;
-            _customDataRepository = customDataRepository;
             _settings.Add(
                 "skybox",
                 new ClassSettingHandler<string, Material>(
@@ -304,39 +269,9 @@ namespace EditorEX.Vivify.Events
         {
             public void Capture();
 
-            public void Handle(
-                EditorSetRenderingSettings instance,
-                RenderingSettingsProperty property,
-                bool noDuration,
-                float duration,
-                Functions easing,
-                float startTime
-            );
+            public void ApplyAtProgress(RenderingSettingsProperty property, float progress);
 
             public void Reset();
-        }
-
-        public void Callback(CustomEventData customEventData)
-        {
-            if (
-                !_deserializedData.Resolve(
-                    _customDataRepository.GetCustomEventConversion(customEventData),
-                    out SetRenderingSettingsData? data
-                )
-            )
-            {
-                return;
-            }
-
-            float duration = data.Duration;
-            duration = (60f * duration) / _bpmController.currentBpm; // Convert to real time;
-            List<RenderingSettingsProperty> properties = data.Properties;
-            SetRenderSettings(
-                properties,
-                duration,
-                data.Easing,
-                _audioDataModel.bpmData.BeatToSeconds(customEventData.time)
-            );
         }
 
         public void Dispose()
@@ -355,66 +290,20 @@ namespace EditorEX.Vivify.Events
             }
         }
 
-        internal void SetRenderSettings(
-            List<RenderingSettingsProperty> properties,
-            float duration,
-            Functions easing,
-            float startTime
-        )
+        internal void ApplyAtProgress(RenderingSettingsProperty property, float progress)
         {
-            foreach (RenderingSettingsProperty property in properties)
+            if (_settings.TryGetValue(property.Name, out ISettingHandler settingHandler))
             {
-                string name = property.Name;
-                _log.Debug($"Setting [{name}]");
-
-                bool noDuration = duration == 0 || startTime + duration < _audioTimeSource.songTime;
-
-                if (_settings.TryGetValue(name, out ISettingHandler settingHandler))
-                {
-                    settingHandler.Handle(this, property, noDuration, duration, easing, startTime);
-                }
+                settingHandler.ApplyAtProgress(property, progress);
             }
         }
 
-        private IEnumerator AnimatePropertyCoroutine<T>(
-            PointDefinition<T> points,
-            Action<object> set,
-            float duration,
-            float startTime,
-            Functions easing
-        )
-            where T : struct
+        internal void Reset(string name)
         {
-            while (true)
+            if (_settings.TryGetValue(name, out ISettingHandler settingHandler))
             {
-                float elapsedTime = _audioTimeSource.songTime - startTime;
-
-                if (elapsedTime < duration)
-                {
-                    float time = Easings.Interpolate(Mathf.Min(elapsedTime / duration, 1f), easing);
-                    set(points.Interpolate(time));
-
-                    yield return null;
-                }
-                else
-                {
-                    break;
-                }
+                settingHandler.Reset();
             }
-        }
-
-        private void StartCoroutine<T>(
-            PointDefinition<T> points,
-            Action<object> set,
-            float duration,
-            float startTime,
-            Functions easing
-        )
-            where T : struct
-        {
-            _coroutineDummy.StartCoroutine(
-                AnimatePropertyCoroutine(points, set, duration, startTime, easing)
-            );
         }
 
         private class StructSettingHandler<TSettings, THandled, TProperty> : ISettingHandler
@@ -433,34 +322,17 @@ namespace EditorEX.Vivify.Events
                 _capturedSetting.Capture();
             }
 
-            public void Handle(
-                EditorSetRenderingSettings instance,
-                RenderingSettingsProperty property,
-                bool noDuration,
-                float duration,
-                Functions easing,
-                float startTime
-            )
+            public void ApplyAtProgress(RenderingSettingsProperty property, float progress)
             {
                 switch (property)
                 {
-                    case AnimatedRenderingSettingsProperty<THandled> animated when noDuration:
-                        _capturedSetting.Set(animated.PointDefinition.Interpolate(1));
-                        break;
                     case AnimatedRenderingSettingsProperty<THandled> animated:
-                        instance.StartCoroutine(
-                            animated.PointDefinition,
-                            _capturedSetting.Set,
-                            duration,
-                            startTime,
-                            easing
-                        );
+                        _capturedSetting.Set(animated.PointDefinition.Interpolate(progress));
                         break;
                     case RenderingSettingsProperty<THandled> value:
                         _capturedSetting.Set(value.Value);
                         DynamicGI.UpdateEnvironment();
                         break;
-
                     default:
                         throw new InvalidOperationException(
                             $"Could not handle type [{property.GetType().FullName}]."
@@ -491,14 +363,7 @@ namespace EditorEX.Vivify.Events
                 _capturedSetting.Capture();
             }
 
-            public void Handle(
-                EditorSetRenderingSettings instance,
-                RenderingSettingsProperty property,
-                bool noDuration,
-                float duration,
-                Functions easing,
-                float startTime
-            )
+            public void ApplyAtProgress(RenderingSettingsProperty property, float progress)
             {
                 switch (property)
                 {
@@ -506,7 +371,6 @@ namespace EditorEX.Vivify.Events
                         _capturedSetting.Set(value.Value);
                         DynamicGI.UpdateEnvironment();
                         break;
-
                     default:
                         throw new InvalidOperationException(
                             $"Could not handle type [{property.GetType().FullName}]."

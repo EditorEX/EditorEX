@@ -2,82 +2,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using BeatmapEditor3D;
-using BeatmapEditor3D.DataModels;
-using CustomJSONData.CustomBeatmap;
-using EditorEX.CustomJSONData;
-using EditorEX.Essentials.Patches;
-using EditorEX.Heck.Deserialize;
 using EditorEX.Vivify.Managers;
 using Heck;
 using Heck.Animation;
-using Heck.Event;
 using UnityEngine;
 using Vivify;
-using Zenject;
-using static Vivify.VivifyController;
 
 // Based from https://github.com/Aeroluna/Vivify
 namespace EditorEX.Vivify.Events
 {
-    [CustomEvent(SET_MATERIAL_PROPERTY)]
-    internal class EditorSetMaterialProperty : ICustomEvent
+    internal class EditorSetMaterialProperty
     {
         private readonly EditorAssetBundleManager _assetBundleManager;
-        private readonly EditorDeserializedData _deserializedData;
         private readonly IAudioTimeSource _audioTimeSource;
-        private readonly IBpmController _bpmController;
         private readonly CoroutineDummy _coroutineDummy;
-        private readonly AudioDataModel _audioDataModel;
-        private readonly ICustomDataRepository _customDataRepository;
 
         private EditorSetMaterialProperty(
             EditorAssetBundleManager assetBundleManager,
-            [InjectOptional(Id = ID)] EditorDeserializedData deserializedData,
             IAudioTimeSource audioTimeSource,
-            IBpmController bpmController,
-            CoroutineDummy coroutineDummy,
-            IEditorBeatmapModels populateBeatmap,
-            ICustomDataRepository customDataRepository
+            CoroutineDummy coroutineDummy
         )
         {
             _assetBundleManager = assetBundleManager;
-            _deserializedData = deserializedData;
             _audioTimeSource = audioTimeSource;
-            _bpmController = bpmController;
             _coroutineDummy = coroutineDummy;
-            _audioDataModel = populateBeatmap.AudioDataModel;
-            _customDataRepository = customDataRepository;
-        }
-
-        public void Callback(CustomEventData customEventData)
-        {
-            if (
-                !_deserializedData.Resolve(
-                    _customDataRepository.GetCustomEventConversion(customEventData),
-                    out SetMaterialPropertyData? data
-                )
-            )
-            {
-                return;
-            }
-
-            float duration = data.Duration;
-            duration = (60f * duration) / _bpmController.currentBpm; // Convert to real time;
-
-            if (!_assetBundleManager.TryGetAsset(data.Asset, out Material? material))
-            {
-                return;
-            }
-
-            List<MaterialProperty> properties = data.Properties;
-            SetMaterialProperties(
-                material,
-                properties,
-                duration,
-                data.Easing,
-                _audioDataModel.bpmData.BeatToSeconds(customEventData.time)
-            );
         }
 
         internal void SetMaterialProperties(

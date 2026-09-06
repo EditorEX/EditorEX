@@ -213,15 +213,20 @@ namespace EditorEX.Vivify.Events
         )
         {
             string? registeredId = null;
+            GameObject? instance = null;
+            float lastElapsed = -1f;
             return new VivifyResourcePreviewAction(
                 () =>
                 {
+                    lastElapsed = -1f;
+                    instance = null;
                     if (!_assetBundleManager.TryGetAsset(data.Asset, out GameObject? prefab))
                     {
                         return;
                     }
 
                     GameObject gameObject = Object.Instantiate(prefab!);
+                    gameObject.SetActive(false);
                     Transform transform = gameObject.transform;
                     data.TransformData.Apply(transform, false);
                     if (data.Track != null)
@@ -234,12 +239,14 @@ namespace EditorEX.Vivify.Events
                         _transformControllerFactory.Create(gameObject, data.Track);
                     }
 
+                    gameObject.SetActive(true);
                     _instantiator.SongSynchronize(
                         gameObject,
                         _audioDataModel.bpmData.BeatToSeconds(fromBeat)
                     );
 
                     registeredId = data.Id ?? gameObject.GetHashCode().ToString();
+                    instance = gameObject;
                     if (data.Id != null)
                     {
                         _log.Debug($"Enabled [{data.Asset}] with id [{data.Id}]");
@@ -253,6 +260,8 @@ namespace EditorEX.Vivify.Events
                 },
                 () =>
                 {
+                    instance = null;
+                    lastElapsed = -1f;
                     if (registeredId == null)
                     {
                         return;
@@ -260,6 +269,20 @@ namespace EditorEX.Vivify.Events
 
                     _prefabManager.Destroy(registeredId);
                     registeredId = null;
+                },
+                beat =>
+                {
+                    if (instance == null)
+                    {
+                        return;
+                    }
+
+                    float elapsed = VivifyPrefabPreviewSync.ElapsedSeconds(
+                        _audioDataModel.bpmData.BeatToSeconds(fromBeat),
+                        _audioDataModel.bpmData.BeatToSeconds(beat)
+                    );
+                    VivifyPrefabPreviewSync.Apply(instance, lastElapsed, elapsed);
+                    lastElapsed = elapsed;
                 }
             );
         }
