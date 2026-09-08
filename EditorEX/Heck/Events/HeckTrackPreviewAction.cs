@@ -8,24 +8,32 @@ namespace EditorEX.Heck.Events
 {
     internal sealed class HeckTrackPreviewAction : IPreviewStateAction
     {
-        private readonly EditorCoroutineEventData _data;
         private readonly EditorCoroutineEventData.CoroutineInfo _info;
         private readonly IPointDefinition? _previousPointDefinition;
         private readonly float _fromBeat;
+        private readonly float _durationBeats;
+        private readonly int _repeat;
+        private readonly Functions _easing;
         private readonly bool _path;
         private bool _active;
+        private bool _settled;
+        private float _latchBeat;
 
         public HeckTrackPreviewAction(
-            EditorCoroutineEventData data,
             EditorCoroutineEventData.CoroutineInfo info,
             float fromBeat,
+            float durationBeats,
+            int repeat,
+            Functions easing,
             bool path,
             IPointDefinition? previousPointDefinition = null
         )
         {
-            _data = data;
             _info = info;
             _fromBeat = fromBeat;
+            _durationBeats = durationBeats;
+            _repeat = repeat;
+            _easing = easing;
             _path = path;
             _previousPointDefinition = previousPointDefinition;
         }
@@ -73,6 +81,7 @@ namespace EditorEX.Heck.Events
             _info.Property.Null();
             PreviewOriginalTransform.RestoreUnanimated(_info.Track);
 
+            _settled = false;
             _active = false;
         }
 
@@ -83,20 +92,29 @@ namespace EditorEX.Heck.Events
                 return;
             }
 
-            int repeat = _path ? 0 : _data.Repeat;
-            float progress = HeckTrackPreviewSampler.EasedProgress(
-                beat,
-                _fromBeat,
-                _data.Duration,
-                repeat,
-                _data.Easing,
-                out _
-            );
-
-            if (_info.PointDefinition == null)
+            IPointDefinition? points = _info.PointDefinition;
+            if (points == null)
             {
                 return;
             }
+
+            bool hasBaseProvider = points.HasBaseProvider;
+            if (HeckTrackPreviewSampler.CanSkipSample(_settled, hasBaseProvider, beat, _latchBeat))
+            {
+                return;
+            }
+
+            _settled = false;
+
+            int repeat = _path ? 0 : _repeat;
+            float progress = HeckTrackPreviewSampler.EasedProgress(
+                beat,
+                _fromBeat,
+                _durationBeats,
+                repeat,
+                _easing,
+                out bool complete
+            );
 
             if (_path)
             {
@@ -105,17 +123,35 @@ namespace EditorEX.Heck.Events
                 ((BasePathProperty)_info.Property)
                     .IInterpolation
                     .Time = progress;
+                if (!hasBaseProvider && complete)
+                {
+                    Latch(beat);
+                }
+
+                return;
             }
-            else
+
+            SetPropertyValue(points, _info.Property, _info.Track, progress, out bool onLast);
+            if (
+                !hasBaseProvider
+                && onLast
+                && HeckTrackPreviewSampler.OnLastRepeat(
+                    beat,
+                    _fromBeat,
+                    _durationBeats,
+                    repeat,
+                    complete
+                )
+            )
             {
-                SetPropertyValue(
-                    _info.PointDefinition,
-                    _info.Property,
-                    _info.Track,
-                    progress,
-                    out _
-                );
+                Latch(beat);
             }
+        }
+
+        private void Latch(float beat)
+        {
+            _settled = true;
+            _latchBeat = beat;
         }
 
         private static void SetPropertyValue(

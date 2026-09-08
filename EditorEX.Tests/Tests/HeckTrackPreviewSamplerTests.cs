@@ -133,5 +133,83 @@ namespace EditorEX.Tests.Tests
             Assert.Equal(1f, progress);
             Assert.True(complete);
         }
+
+        [Fact]
+        public void CanSkipSample_only_after_latch_beat_without_base_provider()
+        {
+            Assert.True(
+                HeckTrackPreviewSampler.CanSkipSample(
+                    settled: true,
+                    hasBaseProvider: false,
+                    beat: 12f,
+                    latchBeat: 12f
+                )
+            );
+            Assert.False(
+                HeckTrackPreviewSampler.CanSkipSample(
+                    settled: true,
+                    hasBaseProvider: false,
+                    beat: 11.9f,
+                    latchBeat: 12f
+                )
+            );
+            Assert.False(
+                HeckTrackPreviewSampler.CanSkipSample(
+                    settled: true,
+                    hasBaseProvider: true,
+                    beat: 20f,
+                    latchBeat: 12f
+                )
+            );
+            Assert.False(
+                HeckTrackPreviewSampler.CanSkipSample(
+                    settled: false,
+                    hasBaseProvider: false,
+                    beat: 20f,
+                    latchBeat: 12f
+                )
+            );
+        }
+
+        [Fact]
+        public void OnLastRepeat_is_true_once_the_final_cycle_has_started()
+        {
+            Assert.True(
+                HeckTrackPreviewSampler.OnLastRepeat(
+                    beat: 6f,
+                    fromBeat: 4f,
+                    durationBeats: 8f,
+                    repeat: 0,
+                    complete: false
+                )
+            );
+            Assert.False(
+                HeckTrackPreviewSampler.OnLastRepeat(
+                    beat: 6f,
+                    fromBeat: 4f,
+                    durationBeats: 4f,
+                    repeat: 1,
+                    complete: false
+                )
+            );
+            Assert.True(
+                HeckTrackPreviewSampler.OnLastRepeat(
+                    beat: 8f,
+                    fromBeat: 4f,
+                    durationBeats: 4f,
+                    repeat: 1,
+                    complete: false
+                )
+            );
+            Assert.True(
+                HeckTrackPreviewSampler.OnLastRepeat(
+                    beat: 100f,
+                    fromBeat: 4f,
+                    durationBeats: 4f,
+                    repeat: 1,
+                    complete: true
+                )
+            );
+        }
     }
 }

@@ -100,9 +100,11 @@ namespace EditorEX.Heck.Events
                     from,
                     to,
                     new HeckTrackPreviewAction(
-                        items[i].Data,
                         items[i].Info,
                         from,
+                        items[i].Data.Duration,
+                        items[i].Data.Repeat,
+                        items[i].Data.Easing,
                         items[i].Path,
                         previous
                     )

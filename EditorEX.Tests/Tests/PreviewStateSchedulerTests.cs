@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using EditorEX.Essentials.PreviewState;
 using Xunit;
@@ -123,6 +124,25 @@ namespace EditorEX.Tests.Tests
             Assert.Equal(new[] { "R:G" }, log);
         }
 
+        [Fact]
+        public void Apply_steady_state_does_not_allocate()
+        {
+            var scheduler = new PreviewStateScheduler();
+            for (int i = 0; i < 64; i++)
+            {
+                scheduler.Add(0f, 100f, NoopAction.Instance);
+            }
+
+            scheduler.Apply(40f);
+            scheduler.Apply(40.1f);
+
+            long before = GC.GetAllocatedBytesForCurrentThread();
+            scheduler.Apply(40.2f);
+            long allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+            Assert.Equal(0, allocated);
+        }
+
         private sealed class RecordingAction : IPreviewStateAction
         {
             private readonly string _name;
@@ -139,6 +159,17 @@ namespace EditorEX.Tests.Tests
             public void Reverse() => _log.Add($"R:{_name}");
 
             public void Tick(float beat) => _log.Add($"T:{_name}@{beat}");
+        }
+
+        private sealed class NoopAction : IPreviewStateAction
+        {
+            public static readonly NoopAction Instance = new();
+
+            public void Execute() { }
+
+            public void Reverse() { }
+
+            public void Tick(float beat) { }
         }
     }
 }

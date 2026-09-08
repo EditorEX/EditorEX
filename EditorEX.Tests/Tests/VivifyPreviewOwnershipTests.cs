@@ -273,5 +273,75 @@ namespace EditorEX.Tests.Tests
             Assert.Equal(8f, ExclusiveEnd(1));
             Assert.Equal(float.MaxValue, ExclusiveEnd(2));
         }
+
+        [Fact]
+        public void Camera_or_texture_with_the_same_id_does_not_end_a_prefab()
+        {
+            Assert.False(
+                VivifyPreviewOwnership.ConflictsObjectResource(
+                    ["smoke"],
+                    VivifyObjectResourceKind.Instantiate,
+                    ["smoke"],
+                    VivifyObjectResourceKind.Camera
+                )
+            );
+            Assert.False(
+                VivifyPreviewOwnership.ConflictsObjectResource(
+                    ["smoke"],
+                    VivifyObjectResourceKind.Instantiate,
+                    ["smoke"],
+                    VivifyObjectResourceKind.Texture
+                )
+            );
+        }
+
+        [Fact]
+        public void Later_instantiate_or_destroy_of_the_same_id_ends_a_prefab()
+        {
+            Assert.True(
+                VivifyPreviewOwnership.ConflictsObjectResource(
+                    ["smoke"],
+                    VivifyObjectResourceKind.Instantiate,
+                    ["smoke"],
+                    VivifyObjectResourceKind.Instantiate
+                )
+            );
+            Assert.True(
+                VivifyPreviewOwnership.ConflictsObjectResource(
+                    ["smoke"],
+                    VivifyObjectResourceKind.Instantiate,
+                    ["wall", "smoke"],
+                    VivifyObjectResourceKind.Destroy
+                )
+            );
+        }
+
+        [Fact]
+        public void Cameras_still_conflict_with_later_cameras_of_the_same_id()
+        {
+            Assert.True(
+                VivifyPreviewOwnership.ConflictsObjectResource(
+                    ["smoke"],
+                    VivifyObjectResourceKind.Camera,
+                    ["smoke"],
+                    VivifyObjectResourceKind.Camera
+                )
+            );
+        }
+
+        [Fact]
+        public void Animator_lookup_ends_when_the_prefab_is_destroyed()
+        {
+            var destroys = new List<(float Beat, string[] Ids)> { (32f, ["smoke"]) };
+
+            Assert.Equal(
+                32f,
+                VivifyPreviewOwnership.NextPrefabDestroy("smoke", 16f, destroys, item => item.Beat, item => item.Ids)
+            );
+            Assert.Equal(
+                float.MaxValue,
+                VivifyPreviewOwnership.NextPrefabDestroy("cube", 16f, destroys, item => item.Beat, item => item.Ids)
+            );
+        }
     }
 }

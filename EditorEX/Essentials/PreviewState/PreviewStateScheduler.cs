@@ -8,11 +8,13 @@ namespace EditorEX.Essentials.PreviewState
     {
         private readonly IntervalTree<float, PreviewStateEntry> _tree = new();
         private readonly HashSet<PreviewStateEntry> _active = new();
+        private readonly List<PreviewStateEntry> _query = new();
         private readonly List<PreviewStateEntry> _removed = new();
         private readonly List<PreviewStateEntry> _added = new();
         private readonly List<PreviewStateEntry> _pendingExecuted = new();
         private readonly Action<Exception>? _onError;
         private int _order;
+        private int _generation;
         private float _beat;
         private bool _hasApplied;
 
@@ -67,69 +69,77 @@ namespace EditorEX.Essentials.PreviewState
             _beat = beat;
             _hasApplied = true;
 
-            foreach (PreviewStateEntry entry in _pendingExecuted)
+            for (int i = 0; i < _pendingExecuted.Count; i++)
             {
+                PreviewStateEntry entry = _pendingExecuted[i];
                 if (beat >= entry.From && beat < entry.To)
                 {
                     _active.Add(entry);
                 }
                 else
                 {
-                    Invoke(entry.Action.Reverse);
+                    InvokeReverse(entry.Action);
                 }
             }
 
             _pendingExecuted.Clear();
 
-            var current = new HashSet<PreviewStateEntry>();
-            foreach (PreviewStateEntry entry in _tree.Query(beat))
+            _tree.Rebuild();
+            _query.Clear();
+            if (_tree.root != null)
             {
-                if (beat >= entry.From && beat < entry.To)
-                {
-                    current.Add(entry);
-                }
+                QueryPointInto(_tree.root, beat, _query);
             }
 
+            int generation = ++_generation;
             _removed.Clear();
             _added.Clear();
-            foreach (PreviewStateEntry entry in _active)
-            {
-                if (!current.Contains(entry))
-                {
-                    _removed.Add(entry);
-                }
-            }
 
-            foreach (PreviewStateEntry entry in current)
+            for (int i = 0; i < _query.Count; i++)
             {
+                PreviewStateEntry entry = _query[i];
+                entry.Generation = generation;
                 if (!_active.Contains(entry))
                 {
                     _added.Add(entry);
                 }
             }
 
-            _removed.Sort(CompareDescending);
-            _added.Sort(CompareAscending);
-
-            foreach (PreviewStateEntry entry in _removed)
+            foreach (PreviewStateEntry entry in _active)
             {
-                Invoke(entry.Action.Reverse);
+                if (entry.Generation != generation)
+                {
+                    _removed.Add(entry);
+                }
             }
 
-            foreach (PreviewStateEntry entry in _added)
+            if (_removed.Count > 1)
             {
-                Invoke(entry.Action.Execute);
+                _removed.Sort(CompareDescending);
             }
 
-            foreach (PreviewStateEntry entry in current)
+            if (_added.Count > 1)
             {
-                Invoke(() => entry.Action.Tick(beat));
+                _added.Sort(CompareAscending);
             }
 
-            _active.Clear();
-            foreach (PreviewStateEntry entry in current)
+            for (int i = 0; i < _removed.Count; i++)
             {
+                PreviewStateEntry entry = _removed[i];
+                _active.Remove(entry);
+                InvokeReverse(entry.Action);
+            }
+
+            for (int i = 0; i < _added.Count; i++)
+            {
+                PreviewStateEntry entry = _added[i];
                 _active.Add(entry);
+                InvokeExecute(entry.Action);
+            }
+
+            for (int i = 0; i < _query.Count; i++)
+            {
+                InvokeTick(_query[i].Action, beat);
             }
         }
 
@@ -139,29 +149,99 @@ namespace EditorEX.Essentials.PreviewState
             _removed.AddRange(_pendingExecuted);
             _removed.AddRange(_active);
             _pendingExecuted.Clear();
-            _removed.Sort(CompareDescending);
-            foreach (PreviewStateEntry entry in _removed)
+            if (_removed.Count > 1)
             {
-                Invoke(entry.Action.Reverse);
+                _removed.Sort(CompareDescending);
+            }
+
+            for (int i = 0; i < _removed.Count; i++)
+            {
+                InvokeReverse(_removed[i].Action);
             }
 
             _active.Clear();
         }
 
-        private void Invoke(Action call)
+        private void InvokeExecute(IPreviewStateAction action)
         {
             try
             {
-                call();
+                action.Execute();
             }
             catch (Exception e)
             {
-                if (_onError == null)
-                {
-                    throw;
-                }
+                Handle(e);
+            }
+        }
 
-                _onError(e);
+        private void InvokeReverse(IPreviewStateAction action)
+        {
+            try
+            {
+                action.Reverse();
+            }
+            catch (Exception e)
+            {
+                Handle(e);
+            }
+        }
+
+        private void InvokeTick(IPreviewStateAction action, float beat)
+        {
+            try
+            {
+                action.Tick(beat);
+            }
+            catch (Exception e)
+            {
+                Handle(e);
+            }
+        }
+
+        private void Handle(Exception e)
+        {
+            if (_onError == null)
+            {
+                throw e;
+            }
+
+            _onError(e);
+        }
+
+        // Stock IntervalTreeNode.Query(value) allocates a List at every visited node
+        // and AddRange-copies children. Walk once into a reused buffer. Half-open
+        // [from, to) is applied here (stock Query is inclusive on both ends).
+        private static void QueryPointInto(
+            IntervalTreeNode<float, PreviewStateEntry> node,
+            float beat,
+            List<PreviewStateEntry> acc
+        )
+        {
+            RangeValuePair<float, PreviewStateEntry>[]? items = node.items;
+            if (items != null)
+            {
+                for (int i = 0; i < items.Length; i++)
+                {
+                    RangeValuePair<float, PreviewStateEntry> rv = items[i];
+                    if (rv.From > beat)
+                    {
+                        break;
+                    }
+
+                    if (rv.From <= beat && beat < rv.To)
+                    {
+                        acc.Add(rv.Value);
+                    }
+                }
+            }
+
+            if (node.leftNode != null && beat < node.center)
+            {
+                QueryPointInto(node.leftNode, beat, acc);
+            }
+            else if (node.rightNode != null && beat > node.center)
+            {
+                QueryPointInto(node.rightNode, beat, acc);
             }
         }
 
@@ -193,6 +273,8 @@ namespace EditorEX.Essentials.PreviewState
             public int Order { get; }
 
             public IPreviewStateAction Action { get; }
+
+            public int Generation;
         }
     }
 }

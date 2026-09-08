@@ -44,9 +44,26 @@ namespace EditorEX.Vivify.Events
                     float Duration,
                     Functions Easing
                 )>();
+            var destroys = new List<(float Beat, string[] Ids)>();
             int index = 0;
             foreach (CustomEventEditorData customEvent in _customDataRepository.GetCustomEvents())
             {
+                if (customEvent.eventType == DESTROY_PREFAB)
+                {
+                    if (
+                        _editorDeserializedData.Resolve(
+                            customEvent,
+                            out DestroyObjectData? destroyData
+                        )
+                        && destroyData?.Id != null
+                    )
+                    {
+                        destroys.Add((customEvent.beat, destroyData.Id));
+                    }
+
+                    continue;
+                }
+
                 if (customEvent.eventType != SET_ANIMATOR_PROPERTY)
                 {
                     continue;
@@ -100,6 +117,18 @@ namespace EditorEX.Vivify.Events
                             right.Name
                         )
                 );
+                float destroyed = VivifyPreviewOwnership.NextPrefabDestroy(
+                    items[i].PrefabId,
+                    from,
+                    destroys,
+                    item => item.Beat,
+                    item => item.Ids
+                );
+                if (destroyed < to)
+                {
+                    to = destroyed;
+                }
+
                 registry.Add(
                     from,
                     to,

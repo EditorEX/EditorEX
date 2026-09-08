@@ -184,7 +184,13 @@ namespace EditorEX.Vivify.Events
                     items,
                     i,
                     item => item.Beat,
-                    (left, right) => VivifyPreviewOwnership.Conflicts(left.Ids, right.Ids)
+                    (left, right) =>
+                        VivifyPreviewOwnership.ConflictsObjectResource(
+                            left.Ids,
+                            ResourceKindOf(left.Kind),
+                            right.Ids,
+                            ResourceKindOf(right.Kind)
+                        )
                 );
                 IPreviewStateAction? action = CreateAction(items[i].Kind, items[i].Data, from);
                 if (action == null)
@@ -318,6 +324,17 @@ namespace EditorEX.Vivify.Events
         private static string[] IdsOf(string? id)
         {
             return string.IsNullOrEmpty(id) ? Array.Empty<string>() : new[] { id! };
+        }
+
+        private static VivifyObjectResourceKind ResourceKindOf(Kind kind)
+        {
+            return kind switch
+            {
+                Kind.Instantiate => VivifyObjectResourceKind.Instantiate,
+                Kind.Destroy => VivifyObjectResourceKind.Destroy,
+                Kind.DeclareCamera => VivifyObjectResourceKind.Camera,
+                Kind.DeclareTexture => VivifyObjectResourceKind.Texture,
+            };
         }
 
         private enum Kind

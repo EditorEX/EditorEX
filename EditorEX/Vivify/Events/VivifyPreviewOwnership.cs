@@ -1,11 +1,72 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace EditorEX.Vivify.Events
 {
+    internal enum VivifyObjectResourceKind
+    {
+        Instantiate,
+        Destroy,
+        Camera,
+        Texture,
+    }
+
     internal static class VivifyPreviewOwnership
     {
         public static bool CanWriteMaterial(Material? material) => material != null;
+
+        public static bool ConflictsObjectResource(
+            IReadOnlyList<string> idsA,
+            VivifyObjectResourceKind kindA,
+            IReadOnlyList<string> idsB,
+            VivifyObjectResourceKind kindB
+        )
+        {
+            if (kindA == kindB)
+            {
+                return Conflicts(idsA, idsB);
+            }
+
+            bool prefabA =
+                kindA == VivifyObjectResourceKind.Instantiate
+                || kindA == VivifyObjectResourceKind.Destroy;
+            bool prefabB =
+                kindB == VivifyObjectResourceKind.Instantiate
+                || kindB == VivifyObjectResourceKind.Destroy;
+            return prefabA && prefabB && Conflicts(idsA, idsB);
+        }
+
+        public static float NextPrefabDestroy<T>(
+            string prefabId,
+            float fromBeat,
+            IReadOnlyList<T> sorted,
+            Func<T, float> beatOf,
+            Func<T, IReadOnlyList<string>> idsOf
+        )
+        {
+            float next = float.MaxValue;
+            for (int i = 0; i < sorted.Count; i++)
+            {
+                float beat = beatOf(sorted[i]);
+                if (beat < fromBeat || beat >= next)
+                {
+                    continue;
+                }
+
+                IReadOnlyList<string> ids = idsOf(sorted[i]);
+                for (int j = 0; j < ids.Count; j++)
+                {
+                    if (ids[j] == prefabId)
+                    {
+                        next = beat;
+                        break;
+                    }
+                }
+            }
+
+            return next;
+        }
 
         public static bool Conflicts(IReadOnlyList<string> idsA, IReadOnlyList<string> idsB)
         {

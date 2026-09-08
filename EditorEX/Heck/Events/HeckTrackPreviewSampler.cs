@@ -36,5 +36,31 @@ namespace EditorEX.Heck.Events
             float cycleElapsed = elapsed % durationBeats;
             return Easings.Interpolate(cycleElapsed / durationBeats, easing);
         }
+
+        public static bool CanSkipSample(
+            bool settled,
+            bool hasBaseProvider,
+            float beat,
+            float latchBeat
+        )
+        {
+            return settled && !hasBaseProvider && beat >= latchBeat;
+        }
+
+        public static bool OnLastRepeat(
+            float beat,
+            float fromBeat,
+            float durationBeats,
+            int repeat,
+            bool complete
+        )
+        {
+            if (complete || repeat <= 0 || durationBeats <= 0f)
+            {
+                return true;
+            }
+
+            return beat - fromBeat >= durationBeats * repeat;
+        }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using HarmonyLib;
 using UnityEngine;
 using Vivify;
 using Vivify.Managers;
@@ -8,6 +10,11 @@ namespace EditorEX.Vivify.Events
 {
     internal class EditorSetAnimatorProperty
     {
+        private static readonly FieldInfo? _prefabsField = AccessTools.Field(
+            typeof(PrefabManager),
+            "_prefabs"
+        );
+
         private readonly PrefabManager _prefabManager;
 
         private EditorSetAnimatorProperty(PrefabManager prefabManager)
@@ -17,8 +24,12 @@ namespace EditorEX.Vivify.Events
 
         internal bool TryGetAnimators(string id, out Animator[] animators)
         {
+            // PrefabManager.TryGetPrefab logs an error on miss. Animator preview ticks
+            // every frame, so look up the dictionary directly.
             if (
-                _prefabManager.TryGetPrefab(id, out InstantiatedPrefab? instantiatedPrefab)
+                _prefabsField?.GetValue(_prefabManager)
+                    is Dictionary<string, InstantiatedPrefab> prefabs
+                && prefabs.TryGetValue(id, out InstantiatedPrefab? instantiatedPrefab)
                 && instantiatedPrefab != null
             )
             {
