@@ -78,5 +78,21 @@ namespace EditorEX.Tests.Tests
             manager.Subscribe(manager.ColorNotePrefabs, handler);
             manager.Unsubscribe(manager.ColorNotePrefabs, handler);
         }
+
+        [Fact]
+        public void Empty_targets_apply_is_a_noop()
+        {
+            VivifyPrefabPreviewSync.Apply(new VivifyPrefabPreviewSync.Targets(), -1f, 1f);
+        }
+
+        [Fact]
+        public void Capture_null_clears_cached_components()
+        {
+            var targets = new VivifyPrefabPreviewSync.Targets();
+            targets.Capture(null);
+            Assert.Empty(targets.Animators);
+            Assert.Empty(targets.Particles);
+            Assert.Empty(targets.Syncs);
+        }
     }
 }

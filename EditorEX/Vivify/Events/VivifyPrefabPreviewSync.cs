@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Vivify.Controllers.Sync;
 
@@ -45,14 +46,14 @@ namespace EditorEX.Vivify.Events
             return previousElapsed < 0f || elapsed > previousElapsed + 0.0001f;
         }
 
-        public static void Apply(GameObject instance, float previousElapsed, float elapsedSeconds)
+        public static void Apply(Targets targets, float previousElapsed, float elapsedSeconds)
         {
             bool reset = NeedsReset(previousElapsed, elapsedSeconds);
             float animatorDelta = AnimatorDelta(previousElapsed, elapsedSeconds);
             bool restartParticles = ShouldRestartParticles(previousElapsed, elapsedSeconds);
             bool simulateParticles = ShouldSimulateParticles(previousElapsed, elapsedSeconds);
 
-            foreach (Animator animator in instance.GetComponentsInChildren<Animator>(true))
+            foreach (Animator animator in targets.Animators)
             {
                 animator.enabled = true;
                 if (reset)
@@ -66,18 +67,8 @@ namespace EditorEX.Vivify.Events
                 animator.enabled = false;
             }
 
-            foreach (
-                ParticleSystem particle in instance.GetComponentsInChildren<ParticleSystem>(true)
-            )
+            foreach (ParticleSystem particle in targets.Particles)
             {
-                if (
-                    particle.transform.parent != null
-                    && particle.transform.parent.GetComponent<ParticleSystem>() != null
-                )
-                {
-                    continue;
-                }
-
                 // Unity cannot step particles backward; leave the last pose on rewind.
                 if (simulateParticles)
                 {
@@ -87,24 +78,68 @@ namespace EditorEX.Vivify.Events
                 particle.Pause(true);
             }
 
-            foreach (SyncController sync in instance.GetComponentsInChildren<SyncController>(true))
+            foreach (SyncController sync in targets.Syncs)
             {
                 sync.enabled = false;
             }
-
-            EnableDynamicReflectionProbes(instance);
         }
 
-        // Runtime-instantiated scene prefabs are not reflection-probe static.
-        // Unity's default renderDynamicObjects=false leaves realtime probes empty,
-        // so reflective note shaders sample a black cubemap.
-        public static void EnableDynamicReflectionProbes(GameObject instance)
+        internal sealed class Targets
         {
-            foreach (
-                ReflectionProbe probe in instance.GetComponentsInChildren<ReflectionProbe>(true)
-            )
+            internal Animator[] Animators { get; private set; } = Array.Empty<Animator>();
+
+            internal ParticleSystem[] Particles { get; private set; } =
+                Array.Empty<ParticleSystem>();
+
+            internal SyncController[] Syncs { get; private set; } = Array.Empty<SyncController>();
+
+            internal void Capture(GameObject? instance)
             {
-                probe.renderDynamicObjects = true;
+                if (instance == null)
+                {
+                    Clear();
+                    return;
+                }
+
+                Animators = instance.GetComponentsInChildren<Animator>(true);
+                Particles = RootParticleSystems(
+                    instance.GetComponentsInChildren<ParticleSystem>(true)
+                );
+                Syncs = instance.GetComponentsInChildren<SyncController>(true);
+            }
+
+            internal void Clear()
+            {
+                Animators = Array.Empty<Animator>();
+                Particles = Array.Empty<ParticleSystem>();
+                Syncs = Array.Empty<SyncController>();
+            }
+
+            private static ParticleSystem[] RootParticleSystems(ParticleSystem[] particles)
+            {
+                int count = 0;
+                for (int i = 0; i < particles.Length; i++)
+                {
+                    if (!IsNestedParticleSystem(particles[i]))
+                    {
+                        particles[count++] = particles[i];
+                    }
+                }
+
+                if (count == particles.Length)
+                {
+                    return particles;
+                }
+
+                var roots = new ParticleSystem[count];
+                Array.Copy(particles, roots, count);
+                return roots;
+            }
+
+            private static bool IsNestedParticleSystem(ParticleSystem particle)
+            {
+                return particle.transform.parent != null
+                    && particle.transform.parent.GetComponent<ParticleSystem>() != null;
             }
         }
     }

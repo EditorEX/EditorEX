@@ -12,7 +12,6 @@ using EditorEX.Vivify.Events;
 using EditorEX.Vivify.ObjectPrefab.Managers;
 using Heck.Animation;
 using NoodleExtensions;
-using NoodleExtensions.Animation;
 using UnityEngine;
 using Vivify;
 using Zenject;
@@ -29,7 +28,6 @@ namespace EditorEX.Essentials.Visuals.Note
         private EditorDeserializedData _vivifyEditorDeserializedData = null!;
         private EditorDeserializedData _noodleEditorDeserializedData = null!;
         private EditorDeserializedData _chromeEditorDeserializedData = null!;
-        private AnimationHelper _animationHelper = null!;
         private EditorBeatmapObjectPrefabManager _prefabManager = null!;
         private EditorVivifyNotePrefabManager _vivifyNotePrefabManager = null!;
 
@@ -53,6 +51,9 @@ namespace EditorEX.Essentials.Visuals.Note
         private bool _active;
         private bool _hasAssignedPrefab;
         private float _lastPrefabElapsed = -1f;
+        private float _lastNoteCutout = float.NaN;
+        private float _lastArrowCutout = float.NaN;
+        private readonly VivifyPrefabPreviewSync.Targets _prefabTargets = new();
 
         [Inject]
         private void Construct(
@@ -60,7 +61,6 @@ namespace EditorEX.Essentials.Visuals.Note
             [InjectOptional(Id = "NoodleExtensions")]
                 EditorDeserializedData noodleEditorDeserializedData,
             [InjectOptional(Id = "Chroma")] EditorDeserializedData chromeEditorDeserializedData,
-            AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
             ColorManager colorManager,
             IReadonlyBeatmapState state,
@@ -73,7 +73,6 @@ namespace EditorEX.Essentials.Visuals.Note
             _noodleEditorDeserializedData = noodleEditorDeserializedData;
             _chromeEditorDeserializedData = chromeEditorDeserializedData;
             _visualAssetProvider = visualAssetProvider;
-            _animationHelper = animationHelper;
             _audioDataModel = audioDataModel;
             _colorManager = colorManager;
             _state = state;
@@ -138,6 +137,8 @@ namespace EditorEX.Essentials.Visuals.Note
         public void Init(BaseEditorData? editorData)
         {
             _editorData = editorData as NoteEditorData;
+            _lastNoteCutout = float.NaN;
+            _lastArrowCutout = float.NaN;
 
             EditorNoodleBaseNoteData? noodleData = null;
             _noodleEditorDeserializedData?.Resolve(_editorData, out noodleData);
@@ -183,6 +184,7 @@ namespace EditorEX.Essentials.Visuals.Note
             _active = true;
             _hasAssignedPrefab = false;
             _lastPrefabElapsed = -1f;
+            _prefabTargets.Clear();
 
             _prefabManager.Despawn(_gameRoot.transform);
 
@@ -204,7 +206,8 @@ namespace EditorEX.Essentials.Visuals.Note
             float noteSeconds = _audioDataModel.bpmData.BeatToSeconds(_editorData.beat);
             _prefabManager.Spawn(data.Track, prefabDictionary, _gameRoot.transform, noteSeconds);
             _hasAssignedPrefab = true;
-            TickAssignedPrefab(noteSeconds);
+            _prefabTargets.Capture(_gameRoot);
+            TickAssignedPrefab(noteSeconds, _audioDataModel.bpmData.BeatToSeconds(_state.beat));
         }
 
         public void Disable()
@@ -213,19 +216,64 @@ namespace EditorEX.Essentials.Visuals.Note
             _active = false;
             _hasAssignedPrefab = false;
             _lastPrefabElapsed = -1f;
+            _prefabTargets.Clear();
 
             _prefabManager.Despawn(_gameRoot.transform);
         }
 
         public void ManualUpdate()
         {
+            float noteSeconds = 0f;
+            float playheadSeconds = 0f;
             if (_editorData != null)
             {
-                TickAssignedPrefab(_audioDataModel.bpmData.BeatToSeconds(_editorData.beat));
+                noteSeconds = _audioDataModel.bpmData.BeatToSeconds(_editorData.beat);
+                playheadSeconds = _audioDataModel.bpmData.BeatToSeconds(_state.beat);
+                TickAssignedPrefab(noteSeconds, playheadSeconds);
             }
 
             EditorNoodleBaseNoteData? noodleData = _noodleData;
             if (noodleData == null)
+            {
+                return;
+            }
+
+            if (
+                DissolveCutout.TryGetChanged(
+                    noodleData.InternalDissolve,
+                    ref _lastNoteCutout,
+                    out float noteCutout
+                )
+            )
+            {
+                _noteCutout.SetCutout(noteCutout);
+            }
+
+            if (
+                DissolveCutout.TryGetChanged(
+                    noodleData.InternalDissolveArrow,
+                    ref _lastArrowCutout,
+                    out float arrowCutout
+                )
+            )
+            {
+                _arrowCutout.SetCutout(arrowCutout);
+                _arrowObjects[1]
+                    .SetActive(
+                        _editorData?.cutDirection != NoteCutDirection.Any
+                            && noodleData.InternalDissolveArrow == 1f
+                    );
+            }
+
+            ChromaObjectData? chromaData = _chromaData;
+            if (chromaData == null)
+            {
+                return;
+            }
+
+            IReadOnlyList<Track>? chromaTracks = chromaData.Track;
+            PointDefinition<Vector4>? pathPointDefinition = chromaData.LocalPathColor;
+            if (chromaTracks == null && pathPointDefinition == null)
             {
                 return;
             }
@@ -241,47 +289,12 @@ namespace EditorEX.Essentials.Visuals.Note
             if (
                 !AnimationNormalTime.TryCompute(
                     time2,
-                    _audioDataModel.bpmData.BeatToSeconds(_state.beat),
-                    _audioDataModel.bpmData.BeatToSeconds(_editorData.beat),
+                    playheadSeconds,
+                    noteSeconds,
                     _noteJump.jumpDuration,
                     out float normalTime
                 )
             )
-            {
-                return;
-            }
-
-            _animationHelper.GetObjectOffset(
-                animationObject,
-                tracks,
-                normalTime,
-                out _,
-                out _,
-                out _,
-                out _,
-                out float? dissolveNote,
-                out float? dissolveArrow,
-                out _
-            );
-
-            if (dissolveNote.HasValue)
-            {
-                _noteCutout.SetCutout(1f - dissolveNote.Value);
-            }
-            if (dissolveArrow.HasValue)
-            {
-                _arrowCutout.SetCutout(1f - dissolveArrow.Value);
-            }
-
-            ChromaObjectData? chromaData = _chromaData;
-            if (chromaData == null)
-            {
-                return;
-            }
-
-            IReadOnlyList<Track>? chromaTracks = chromaData.Track;
-            PointDefinition<Vector4>? pathPointDefinition = chromaData.LocalPathColor;
-            if (chromaTracks == null && pathPointDefinition == null)
             {
                 return;
             }
@@ -345,16 +358,15 @@ namespace EditorEX.Essentials.Visuals.Note
             Enable();
         }
 
-        private void TickAssignedPrefab(float noteSeconds)
+        private void TickAssignedPrefab(float noteSeconds, float playheadSeconds)
         {
             if (_gameRoot == null || !_active || !_hasAssignedPrefab)
             {
                 return;
             }
 
-            float currentSeconds = _audioDataModel.bpmData.BeatToSeconds(_state.beat);
-            float elapsed = VivifyPrefabPreviewSync.NoteSeekSeconds(currentSeconds, noteSeconds);
-            VivifyPrefabPreviewSync.Apply(_gameRoot, _lastPrefabElapsed, elapsed);
+            float elapsed = VivifyPrefabPreviewSync.NoteSeekSeconds(playheadSeconds, noteSeconds);
+            VivifyPrefabPreviewSync.Apply(_prefabTargets, _lastPrefabElapsed, elapsed);
             _lastPrefabElapsed = elapsed;
         }
     }

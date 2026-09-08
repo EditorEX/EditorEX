@@ -34,6 +34,12 @@ namespace EditorEX.NoodleExtensions.ObjectData
         internal Vector3 InternalNoteOffset { get; set; }
         internal Vector3 InternalStartPos { get; set; }
         internal Quaternion InternalWorldRotation { get; set; }
+
+        // Filled by Game movement Setup from GetObjectOffset so visuals can reuse
+        // dissolve without sampling the full 7-property offset a second time.
+        internal float? InternalDissolve { get; set; }
+        internal float? InternalDissolveArrow { get; set; }
+
         internal float? StartX { get; private protected set; }
 
         internal float? GetTimeProperty()

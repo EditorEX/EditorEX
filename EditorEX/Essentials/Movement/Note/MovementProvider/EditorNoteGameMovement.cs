@@ -267,6 +267,9 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
                 return;
             }
 
+            noodleData.InternalDissolve = null;
+            noodleData.InternalDissolveArrow = null;
+
             IReadOnlyList<Track>? tracks = noodleData.Track;
             NoodleObjectData.AnimationObjectData? animationObject = noodleData.AnimationObject;
             if (tracks == null && animationObject == null)
@@ -317,6 +320,9 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
                 );
                 return;
             }
+
+            noodleData.InternalDissolve = dissolve;
+            noodleData.InternalDissolveArrow = dissolveArrow;
 
             if (positionOffset.HasValue)
             {

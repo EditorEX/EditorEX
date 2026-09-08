@@ -221,11 +221,13 @@ namespace EditorEX.Vivify.Events
             string? registeredId = null;
             GameObject? instance = null;
             float lastElapsed = -1f;
+            var targets = new VivifyPrefabPreviewSync.Targets();
             return new VivifyResourcePreviewAction(
                 () =>
                 {
                     lastElapsed = -1f;
                     instance = null;
+                    targets.Clear();
                     if (!_assetBundleManager.TryGetAsset(data.Asset, out GameObject? prefab))
                     {
                         return;
@@ -253,6 +255,7 @@ namespace EditorEX.Vivify.Events
 
                     registeredId = data.Id ?? gameObject.GetHashCode().ToString();
                     instance = gameObject;
+                    targets.Capture(gameObject);
                     if (data.Id != null)
                     {
                         _log.Debug($"Enabled [{data.Asset}] with id [{data.Id}]");
@@ -268,6 +271,7 @@ namespace EditorEX.Vivify.Events
                 {
                     instance = null;
                     lastElapsed = -1f;
+                    targets.Clear();
                     if (registeredId == null)
                     {
                         return;
@@ -287,7 +291,7 @@ namespace EditorEX.Vivify.Events
                         _audioDataModel.bpmData.BeatToSeconds(fromBeat),
                         _audioDataModel.bpmData.BeatToSeconds(beat)
                     );
-                    VivifyPrefabPreviewSync.Apply(instance, lastElapsed, elapsed);
+                    VivifyPrefabPreviewSync.Apply(targets, lastElapsed, elapsed);
                     lastElapsed = elapsed;
                 }
             );
