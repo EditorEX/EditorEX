@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using BeatmapEditor3D.DataModels;
+﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Visuals.Universal;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
-using Heck.Animation;
-using NoodleExtensions;
-using NoodleExtensions.Animation;
 using UnityEngine;
 using Zenject;
 
@@ -18,10 +14,10 @@ namespace EditorEX.Essentials.Visuals.Obstacle
         private ColorManager _colorManager = null!;
         private IReadonlyBeatmapState _state = null!;
         private EditorDeserializedData _editorDeserializedData = null!;
-        private AnimationHelper _animationHelper = null!;
 
         // Visuals fields
         private ObstacleEditorData? _editorData;
+        private EditorNoodleObstacleData? _noodleData;
         private GameObject _gameRoot;
 
         private StretchableObstacle _stretchableObstacle;
@@ -33,18 +29,18 @@ namespace EditorEX.Essentials.Visuals.Obstacle
         private GameObject _basicFrame;
 
         private bool _active;
+        private float _lastWallCutout = float.NaN;
+        private float _lastFrameCutout = float.NaN;
 
         [Inject]
         private void Construct(
             [InjectOptional(Id = "NoodleExtensions")] EditorDeserializedData editorDeserializedData,
-            AnimationHelper animationHelper,
             VisualAssetProvider visualAssetProvider,
             ColorManager colorManager,
             IReadonlyBeatmapState state
         )
         {
             _editorDeserializedData = editorDeserializedData;
-            _animationHelper = animationHelper;
             _visualAssetProvider = visualAssetProvider;
             _colorManager = colorManager;
             _state = state;
@@ -110,6 +106,12 @@ namespace EditorEX.Essentials.Visuals.Obstacle
         public void Init(BaseEditorData? editorData)
         {
             _editorData = editorData as ObstacleEditorData;
+            _lastWallCutout = float.NaN;
+            _lastFrameCutout = float.NaN;
+
+            EditorNoodleObstacleData? noodleData = null;
+            _editorDeserializedData?.Resolve(_editorData, out noodleData);
+            _noodleData = noodleData;
 
             if (_active)
             {
@@ -150,44 +152,33 @@ namespace EditorEX.Essentials.Visuals.Obstacle
 
         public void ManualUpdate()
         {
+            EditorNoodleObstacleData? noodleData = _noodleData;
+            if (noodleData == null)
+            {
+                return;
+            }
+
             if (
-                !(
-                    _editorDeserializedData?.Resolve(
-                        _editorData,
-                        out EditorNoodleObstacleData? noodleData
-                    ) ?? false
+                DissolveCutout.TryGetChanged(
+                    noodleData.InternalDissolve,
+                    ref _lastWallCutout,
+                    out float wallCutout
                 )
-                || noodleData == null
             )
             {
-                return;
+                _wallCutout.SetCutout(wallCutout);
             }
 
-            IReadOnlyList<Track>? tracks = noodleData.Track;
-            NoodleObjectData.AnimationObjectData? animationObject = noodleData.AnimationObject;
-            if (tracks == null && animationObject == null)
+            if (
+                DissolveCutout.TryGetChanged(
+                    noodleData.InternalDissolve,
+                    ref _lastFrameCutout,
+                    out float frameCutout
+                )
+            )
             {
-                return;
+                _frameCutout.SetCutout(frameCutout);
             }
-
-            var normalTime = noodleData.GetTimeProperty() ?? 0f;
-
-            _animationHelper.GetObjectOffset(
-                animationObject,
-                tracks,
-                normalTime,
-                out Vector3? _,
-                out Quaternion? _,
-                out Vector3? _,
-                out Quaternion? _,
-                out float? dissolve,
-                out float? _,
-                out float? _
-            );
-
-            _wallCutout.SetCutout(1f - dissolve.GetValueOrDefault(1f));
-
-            _frameCutout.SetCutout(1f - dissolve.GetValueOrDefault(1f));
         }
 
         public GameObject GetVisualRoot()

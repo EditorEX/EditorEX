@@ -3,6 +3,7 @@ using System.Reflection;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
 using Chroma;
+using EditorEX.Essentials.Movement;
 using EditorEX.Essentials.Movement.Note;
 using EditorEX.Essentials.Visuals.Universal;
 using EditorEX.Heck.Deserialize;
@@ -57,6 +58,8 @@ namespace EditorEX.Essentials.Visuals.ChainHead
 
         // Per-link visuals (cloned burst-slider element wrapper under each link's Game slot).
         private readonly List<LinkVisual> _linkVisuals = new();
+        private float _lastNoteCutout = float.NaN;
+        private float _lastArrowCutout = float.NaN;
 
         [Inject]
         private void Construct(
@@ -301,6 +304,8 @@ namespace EditorEX.Essentials.Visuals.ChainHead
 
         private void ResetCutouts()
         {
+            _lastNoteCutout = float.NaN;
+            _lastArrowCutout = float.NaN;
             _headNoteCutout?.SetCutout(0f);
             _headArrowCutout?.SetCutout(0f);
             foreach (LinkVisual link in _linkVisuals)
@@ -394,12 +399,9 @@ namespace EditorEX.Essentials.Visuals.ChainHead
             else if (_noteJump != null && _editorData != null)
             {
                 float jumpDuration = _noteJump.jumpDuration;
-                float elapsedTime =
-                    _audioDataModel.bpmData.BeatToSeconds(_state.beat)
-                    - (
-                        _audioDataModel.bpmData.BeatToSeconds(_editorData.beat)
-                        - (jumpDuration * 0.5f)
-                    );
+                float playheadSeconds = _audioDataModel.bpmData.BeatToSeconds(_state.beat);
+                float noteSeconds = _audioDataModel.bpmData.BeatToSeconds(_editorData.beat);
+                float elapsedTime = playheadSeconds - (noteSeconds - (jumpDuration * 0.5f));
                 normalTime = elapsedTime / jumpDuration;
             }
             else
@@ -407,40 +409,55 @@ namespace EditorEX.Essentials.Visuals.ChainHead
                 normalTime = 0f;
             }
 
-            _animationHelper.GetObjectOffset(
-                animationObject,
-                tracks,
-                normalTime,
-                out _,
-                out _,
-                out _,
-                out _,
-                out float? dissolveNote,
-                out float? dissolveArrow,
-                out _
-            );
-
-            if (dissolveNote.HasValue)
+            if (NoodleOffsetPresence.HasDissolve(animationObject, tracks))
             {
-                float noteCutout = 1f - dissolveNote.Value;
-                _headNoteCutout?.SetCutout(noteCutout);
+                _animationHelper.GetObjectOffset(
+                    animationObject,
+                    tracks,
+                    normalTime,
+                    out _,
+                    out _,
+                    out _,
+                    out _,
+                    out float? dissolveNote,
+                    out float? dissolveArrow,
+                    out _
+                );
 
-                foreach (LinkVisual link in _linkVisuals)
+                if (
+                    DissolveCutout.TryGetChanged(
+                        dissolveNote,
+                        ref _lastNoteCutout,
+                        out float noteCutout
+                    )
+                )
                 {
-                    SetCutouts(link.cutouts, dissolveNote.Value);
-                }
-            }
-            if (dissolveArrow.HasValue)
-            {
-                _headArrowCutout?.SetCutout(1f - dissolveArrow.Value);
-            }
+                    _headNoteCutout?.SetCutout(noteCutout);
 
-            if (_headArrowObjects != null && _editorData != null)
-            {
-                _headArrowObjects[1]
-                    .SetActive(
-                        _editorData.cutDirection != NoteCutDirection.Any && dissolveArrow == 1f
-                    );
+                    foreach (LinkVisual link in _linkVisuals)
+                    {
+                        SetCutouts(link.cutouts, 1f - noteCutout);
+                    }
+                }
+                if (
+                    DissolveCutout.TryGetChanged(
+                        dissolveArrow,
+                        ref _lastArrowCutout,
+                        out float arrowCutout
+                    )
+                )
+                {
+                    _headArrowCutout?.SetCutout(arrowCutout);
+
+                    if (_headArrowObjects != null && _editorData != null)
+                    {
+                        _headArrowObjects[1]
+                            .SetActive(
+                                _editorData.cutDirection != NoteCutDirection.Any
+                                    && dissolveArrow == 1f
+                            );
+                    }
+                }
             }
 
             ChromaObjectData? chromaData = _chromaData;

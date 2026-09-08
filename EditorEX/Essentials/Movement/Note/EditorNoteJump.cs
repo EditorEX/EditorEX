@@ -1,6 +1,7 @@
 ﻿using System;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
+using EditorEX.Essentials.Movement;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
 using EditorEX.NoodleExtensions.ObjectData;
@@ -141,7 +142,13 @@ namespace EditorEX.Essentials.Movement.Note
         private Vector3 DefiniteNoteJump(Vector3 original, float time)
         {
             EditorNoodleBaseNoteData? noodleData = NoodleData;
-            if (noodleData != null)
+            if (
+                noodleData != null
+                && NoodleOffsetPresence.HasDefinitePosition(
+                    noodleData.AnimationObject,
+                    noodleData.Track
+                )
+            )
             {
                 _animationHelper.GetDefinitePositionOffset(
                     noodleData.AnimationObject,

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BeatmapEditor3D;
 using BeatmapEditor3D.DataModels;
+using EditorEX.Essentials.Movement;
 using EditorEX.Essentials.Movement.Data;
 using EditorEX.Essentials.Visuals;
 using EditorEX.Heck.Deserialize;
@@ -229,6 +230,16 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 0,
                 1
             );
+            if (
+                !NoodleOffsetPresence.HasDefinitePosition(
+                    noodleData.AnimationObject,
+                    noodleData.Track
+                )
+            )
+            {
+                return false;
+            }
+
             _animationHelper.GetDefinitePositionOffset(
                 noodleData.AnimationObject,
                 noodleData.Track,
@@ -307,6 +318,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
 
             IReadOnlyList<Track>? tracks = noodleData.Track;
             NoodleObjectData.AnimationObjectData? animationObject = noodleData.AnimationObject;
+            noodleData.InternalDissolve = null;
             if (tracks == null && animationObject == null)
             {
                 return;
@@ -338,6 +350,8 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
                 out _,
                 out float? cuttable
             );
+
+            noodleData.InternalDissolve = dissolve;
 
             if (positionOffset.HasValue)
             {
