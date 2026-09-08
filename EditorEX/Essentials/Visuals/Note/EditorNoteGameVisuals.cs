@@ -188,6 +188,16 @@ namespace EditorEX.Essentials.Visuals.Note
 
             _prefabManager.Despawn(_gameRoot.transform);
 
+            if (_noteCutout._cutout != 0f)
+            {
+                _noteCutout.SetCutout(0f);
+            }
+
+            if (_arrowCutout._cutout != 0f)
+            {
+                _arrowCutout.SetCutout(0f);
+            }
+
             if (
                 _vivifyEditorDeserializedData == null
                 || !_vivifyEditorDeserializedData.Resolve(_editorData, out VivifyObjectData? data)
