@@ -125,6 +125,50 @@ namespace EditorEX.Tests.Tests
         }
 
         [Fact]
+        public void Forward_apply_skips_tick_once_WantsTick_is_false()
+        {
+            var log = new List<string>();
+            var scheduler = new PreviewStateScheduler();
+            scheduler.Add(0f, float.MaxValue, new LatchAction("A", log));
+
+            scheduler.Apply(5f);
+            log.Clear();
+            scheduler.Apply(6f);
+
+            Assert.Empty(log);
+        }
+
+        [Fact]
+        public void Rewind_ticks_again_when_WantsTick_becomes_true()
+        {
+            var log = new List<string>();
+            var scheduler = new PreviewStateScheduler();
+            scheduler.Add(0f, float.MaxValue, new LatchAction("A", log));
+
+            scheduler.Apply(5f);
+            log.Clear();
+            scheduler.Apply(4f);
+
+            Assert.Equal(new[] { "T:A@4" }, log);
+        }
+
+        [Fact]
+        public void Forward_apply_does_not_tick_reversed_action()
+        {
+            var log = new List<string>();
+            var scheduler = new PreviewStateScheduler();
+            scheduler.Add(0f, 10f, new LatchAction("A", log));
+            scheduler.Add(10f, float.MaxValue, new RecordingAction("B", log));
+
+            scheduler.Apply(5f);
+            log.Clear();
+            scheduler.Apply(10f);
+            scheduler.Apply(11f);
+
+            Assert.Equal(new[] { "R:A", "E:B", "T:B@10", "T:B@11" }, log);
+        }
+
+        [Fact]
         public void Apply_steady_state_does_not_allocate()
         {
             var scheduler = new PreviewStateScheduler();
@@ -170,6 +214,37 @@ namespace EditorEX.Tests.Tests
             public void Reverse() { }
 
             public void Tick(float beat) { }
+        }
+
+        private sealed class LatchAction : IPreviewStateAction, IPreviewStateSampling
+        {
+            private readonly string _name;
+            private readonly List<string> _log;
+            private bool _settled;
+            private float _latchBeat;
+
+            public LatchAction(string name, List<string> log)
+            {
+                _name = name;
+                _log = log;
+            }
+
+            public void Execute() => _log.Add($"E:{_name}");
+
+            public void Reverse()
+            {
+                _settled = false;
+                _log.Add($"R:{_name}");
+            }
+
+            public void Tick(float beat)
+            {
+                _log.Add($"T:{_name}@{beat}");
+                _settled = true;
+                _latchBeat = beat;
+            }
+
+            public bool WantsTick(float beat) => !_settled || beat < _latchBeat;
         }
     }
 }

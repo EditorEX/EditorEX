@@ -34,5 +34,19 @@ namespace EditorEX.Tests.Tests
 
             Assert.False(NoodleOffsetPresence.HasDissolve(null, tracks));
         }
+
+        [Fact]
+        public void HasObjectOffset_is_false_without_animation_or_tracks()
+        {
+            Assert.False(NoodleOffsetPresence.HasObjectOffset(null, null));
+        }
+
+        [Fact]
+        public void HasObjectOffset_is_false_when_tracks_have_no_offset_properties()
+        {
+            IReadOnlyList<Track> tracks = new[] { new Track() };
+
+            Assert.False(NoodleOffsetPresence.HasObjectOffset(null, tracks));
+        }
     }
 }

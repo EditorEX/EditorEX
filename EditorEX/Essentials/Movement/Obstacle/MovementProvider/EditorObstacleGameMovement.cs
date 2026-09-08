@@ -319,7 +319,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             IReadOnlyList<Track>? tracks = noodleData.Track;
             NoodleObjectData.AnimationObjectData? animationObject = noodleData.AnimationObject;
             noodleData.InternalDissolve = null;
-            if (tracks == null && animationObject == null)
+            if (!NoodleOffsetPresence.HasObjectOffset(animationObject, tracks))
             {
                 return;
             }

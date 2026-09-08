@@ -8,10 +8,12 @@ namespace EditorEX.Essentials.PreviewState
     {
         private readonly IntervalTree<float, PreviewStateEntry> _tree = new();
         private readonly HashSet<PreviewStateEntry> _active = new();
+        private readonly HashSet<PreviewStateEntry> _sampling = new();
         private readonly List<PreviewStateEntry> _query = new();
         private readonly List<PreviewStateEntry> _removed = new();
         private readonly List<PreviewStateEntry> _added = new();
         private readonly List<PreviewStateEntry> _pendingExecuted = new();
+        private readonly List<PreviewStateEntry> _tickBuffer = new();
         private readonly Action<Exception>? _onError;
         private int _order;
         private int _generation;
@@ -66,6 +68,7 @@ namespace EditorEX.Essentials.PreviewState
 
         public void Apply(float beat)
         {
+            bool rewinding = _hasApplied && beat < _beat;
             _beat = beat;
             _hasApplied = true;
 
@@ -75,9 +78,14 @@ namespace EditorEX.Essentials.PreviewState
                 if (beat >= entry.From && beat < entry.To)
                 {
                     _active.Add(entry);
+                    if (!rewinding && WantsTick(entry.Action, beat))
+                    {
+                        _sampling.Add(entry);
+                    }
                 }
                 else
                 {
+                    _sampling.Remove(entry);
                     InvokeReverse(entry.Action);
                 }
             }
@@ -127,6 +135,7 @@ namespace EditorEX.Essentials.PreviewState
             {
                 PreviewStateEntry entry = _removed[i];
                 _active.Remove(entry);
+                _sampling.Remove(entry);
                 InvokeReverse(entry.Action);
             }
 
@@ -137,10 +146,31 @@ namespace EditorEX.Essentials.PreviewState
                 InvokeExecute(entry.Action);
             }
 
-            for (int i = 0; i < _query.Count; i++)
+            if (rewinding)
             {
-                InvokeTick(_query[i].Action, beat);
+                _sampling.Clear();
+                for (int i = 0; i < _query.Count; i++)
+                {
+                    PreviewStateEntry entry = _query[i];
+                    if (WantsTick(entry.Action, beat))
+                    {
+                        _sampling.Add(entry);
+                    }
+                }
             }
+            else
+            {
+                for (int i = 0; i < _added.Count; i++)
+                {
+                    PreviewStateEntry entry = _added[i];
+                    if (WantsTick(entry.Action, beat))
+                    {
+                        _sampling.Add(entry);
+                    }
+                }
+            }
+
+            TickSampling(beat);
         }
 
         public void ReverseAll()
@@ -160,6 +190,31 @@ namespace EditorEX.Essentials.PreviewState
             }
 
             _active.Clear();
+            _sampling.Clear();
+        }
+
+        private void TickSampling(float beat)
+        {
+            _tickBuffer.Clear();
+            foreach (PreviewStateEntry entry in _sampling)
+            {
+                _tickBuffer.Add(entry);
+            }
+
+            for (int i = 0; i < _tickBuffer.Count; i++)
+            {
+                PreviewStateEntry entry = _tickBuffer[i];
+                InvokeTick(entry.Action, beat);
+                if (!WantsTick(entry.Action, beat))
+                {
+                    _sampling.Remove(entry);
+                }
+            }
+        }
+
+        private static bool WantsTick(IPreviewStateAction action, float beat)
+        {
+            return action is not IPreviewStateSampling sampling || sampling.WantsTick(beat);
         }
 
         private void InvokeExecute(IPreviewStateAction action)

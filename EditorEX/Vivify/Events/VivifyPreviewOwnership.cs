@@ -16,6 +16,8 @@ namespace EditorEX.Vivify.Events
     {
         public static bool CanWriteMaterial(Material? material) => material != null;
 
+        public static bool CanWriteAnimator(Animator? animator) => animator != null;
+
         public static bool ConflictsObjectResource(
             IReadOnlyList<string> idsA,
             VivifyObjectResourceKind kindA,

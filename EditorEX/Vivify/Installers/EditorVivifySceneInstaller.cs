@@ -24,6 +24,7 @@ namespace EditorEX.Vivify.Installers
                 Container.BindInterfacesAndSelfTo<CameraPropertyManager>().AsSingle();
                 Container.BindInterfacesAndSelfTo<CameraEffectApplier>().AsSingle();
                 Container.BindInterfacesTo<EditorVivifyCameraEffectBridge>().AsSingle();
+                Container.BindInterfacesTo<EditorCullingCameraPatch>().AsSingle();
 
                 Container.BindInterfacesTo<VivifyObjectPreviewSource>().AsSingle();
                 Container.BindInterfacesTo<VivifyPostProcessingPreviewSource>().AsSingle();

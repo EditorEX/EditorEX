@@ -132,6 +132,12 @@ namespace EditorEX.Tests.Tests
         }
 
         [Fact]
+        public void Destroyed_or_missing_animator_is_not_written()
+        {
+            Assert.False(VivifyPreviewOwnership.CanWriteAnimator(null));
+        }
+
+        [Fact]
         public void Instant_material_events_write_once()
         {
             Assert.True(VivifyPreviewOwnership.NeedsMaterialWrite(0f, alreadyWritten: false));

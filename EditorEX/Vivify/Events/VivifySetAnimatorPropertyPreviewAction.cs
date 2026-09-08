@@ -17,6 +17,7 @@ namespace EditorEX.Vivify.Events
         private readonly float _durationBeats;
         private readonly Functions _easing;
         private readonly List<Action> _restore = [];
+        private Animator[]? _captured;
         private bool _active;
         private bool _written;
 
@@ -59,6 +60,8 @@ namespace EditorEX.Vivify.Events
                 _restore[i]();
             }
 
+            _restore.Clear();
+            _captured = null;
             _written = false;
             _active = false;
         }
@@ -73,9 +76,11 @@ namespace EditorEX.Vivify.Events
                 return;
             }
 
-            if (_restore.Count == 0)
+            if (NeedsRecapture(animators))
             {
+                _restore.Clear();
                 CaptureOriginals(animators);
+                _captured = animators;
             }
 
             if (!VivifyPreviewOwnership.NeedsMaterialWrite(_durationBeats, _written))
@@ -95,6 +100,27 @@ namespace EditorEX.Vivify.Events
             _written = true;
         }
 
+        private bool NeedsRecapture(Animator[] animators)
+        {
+            if (_restore.Count == 0 || _captured == null || _captured.Length != animators.Length)
+            {
+                return true;
+            }
+
+            for (int i = 0; i < animators.Length; i++)
+            {
+                if (
+                    !VivifyPreviewOwnership.CanWriteAnimator(_captured[i])
+                    || _captured[i] != animators[i]
+                )
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private void CaptureOriginals(Animator[] animators)
         {
             foreach (AnimatorProperty property in _properties)
@@ -103,34 +129,53 @@ namespace EditorEX.Vivify.Events
                 AnimatorPropertyType type = property.Type;
                 foreach (Animator animator in animators)
                 {
+                    if (!VivifyPreviewOwnership.CanWriteAnimator(animator))
+                    {
+                        continue;
+                    }
+
                     Animator captured = animator;
                     switch (type)
                     {
                         case AnimatorPropertyType.Bool:
                             bool boolValue = captured.GetBool(name);
-                            _restore.Add(() => captured.SetBool(name, boolValue));
+                            Remember(captured, () => captured.SetBool(name, boolValue));
                             break;
                         case AnimatorPropertyType.Float:
                             float floatValue = captured.GetFloat(name);
-                            _restore.Add(() => captured.SetFloat(name, floatValue));
+                            Remember(captured, () => captured.SetFloat(name, floatValue));
                             break;
                         case AnimatorPropertyType.Integer:
                             int intValue = captured.GetInteger(name);
-                            _restore.Add(() => captured.SetInteger(name, intValue));
+                            Remember(captured, () => captured.SetInteger(name, intValue));
                             break;
                         case AnimatorPropertyType.Trigger:
                             bool trigger = (bool)property.Value;
-                            _restore.Add(() =>
-                            {
-                                if (trigger)
+                            Remember(
+                                captured,
+                                () =>
                                 {
-                                    captured.ResetTrigger(name);
+                                    if (trigger)
+                                    {
+                                        captured.ResetTrigger(name);
+                                    }
                                 }
-                            });
+                            );
                             break;
                     }
                 }
             }
+        }
+
+        private void Remember(Animator captured, Action restore)
+        {
+            _restore.Add(() =>
+            {
+                if (VivifyPreviewOwnership.CanWriteAnimator(captured))
+                {
+                    restore();
+                }
+            });
         }
     }
 }

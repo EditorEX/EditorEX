@@ -272,7 +272,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 
             IReadOnlyList<Track>? tracks = noodleData.Track;
             NoodleObjectData.AnimationObjectData? animationObject = noodleData.AnimationObject;
-            if (tracks == null && animationObject == null)
+            if (!NoodleOffsetPresence.HasObjectOffset(animationObject, tracks))
             {
                 return;
             }

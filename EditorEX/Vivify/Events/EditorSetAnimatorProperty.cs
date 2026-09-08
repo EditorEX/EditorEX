@@ -62,7 +62,10 @@ namespace EditorEX.Vivify.Events
                                 : (bool)value;
                         foreach (Animator animator in animators)
                         {
-                            animator.SetBool(name, boolValue);
+                            if (VivifyPreviewOwnership.CanWriteAnimator(animator))
+                            {
+                                animator.SetBool(name, boolValue);
+                            }
                         }
 
                         break;
@@ -74,7 +77,10 @@ namespace EditorEX.Vivify.Events
                                 : Convert.ToSingle(value);
                         foreach (Animator animator in animators)
                         {
-                            animator.SetFloat(name, floatValue);
+                            if (VivifyPreviewOwnership.CanWriteAnimator(animator))
+                            {
+                                animator.SetFloat(name, floatValue);
+                            }
                         }
 
                         break;
@@ -86,7 +92,10 @@ namespace EditorEX.Vivify.Events
                                 : Convert.ToInt32(value);
                         foreach (Animator animator in animators)
                         {
-                            animator.SetInteger(name, intValue);
+                            if (VivifyPreviewOwnership.CanWriteAnimator(animator))
+                            {
+                                animator.SetInteger(name, intValue);
+                            }
                         }
 
                         break;
@@ -95,6 +104,11 @@ namespace EditorEX.Vivify.Events
                         bool trigger = (bool)value;
                         foreach (Animator animator in animators)
                         {
+                            if (!VivifyPreviewOwnership.CanWriteAnimator(animator))
+                            {
+                                continue;
+                            }
+
                             if (trigger)
                             {
                                 animator.SetTrigger(name);

@@ -122,6 +122,38 @@ namespace EditorEX.Tests.Tests
         }
 
         [Fact]
+        public void After_duration_WantsTick_is_false_at_a_later_beat()
+        {
+            (HeckTrackPreviewAction action, _) = CreateAnimate(
+                fromBeat: 4f,
+                durationBeats: 8f,
+                repeat: 0,
+                Points(0f, 0f, 1f, 1f)
+            );
+
+            action.Execute();
+            action.Tick(12f);
+
+            Assert.False(action.WantsTick(20f));
+        }
+
+        [Fact]
+        public void After_duration_WantsTick_is_true_when_rewinding_into_duration()
+        {
+            (HeckTrackPreviewAction action, _) = CreateAnimate(
+                fromBeat: 4f,
+                durationBeats: 8f,
+                repeat: 0,
+                Points(0f, 0f, 1f, 1f)
+            );
+
+            action.Execute();
+            action.Tick(12f);
+
+            Assert.True(action.WantsTick(8f));
+        }
+
+        [Fact]
         public void Path_rewind_into_duration_resamples_time()
         {
             (HeckTrackPreviewAction action, PointDefinitionInterpolation<float> interpolation) =

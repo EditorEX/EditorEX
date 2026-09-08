@@ -6,15 +6,26 @@ using UnityEngine;
 
 namespace EditorEX.Heck.Events
 {
-    internal sealed class HeckTrackPreviewAction : IPreviewStateAction
+    internal sealed class HeckTrackPreviewAction : IPreviewStateAction, IPreviewStateSampling
     {
         private readonly EditorCoroutineEventData.CoroutineInfo _info;
+        private readonly IPointDefinition? _points;
         private readonly IPointDefinition? _previousPointDefinition;
+        private readonly BasePathProperty? _pathProperty;
+        private readonly PointDefinition<float>? _floatPoints;
+        private readonly Property<float>? _floatProperty;
+        private readonly PointDefinition<Vector3>? _vector3Points;
+        private readonly Property<Vector3>? _vector3Property;
+        private readonly PointDefinition<Vector4>? _vector4Points;
+        private readonly Property<Vector4>? _vector4Property;
+        private readonly PointDefinition<Quaternion>? _quaternionPoints;
+        private readonly Property<Quaternion>? _quaternionProperty;
         private readonly float _fromBeat;
         private readonly float _durationBeats;
         private readonly int _repeat;
         private readonly Functions _easing;
         private readonly bool _path;
+        private readonly bool _hasBaseProvider;
         private bool _active;
         private bool _settled;
         private float _latchBeat;
@@ -30,12 +41,43 @@ namespace EditorEX.Heck.Events
         )
         {
             _info = info;
+            _points = info.PointDefinition;
             _fromBeat = fromBeat;
             _durationBeats = durationBeats;
             _repeat = repeat;
             _easing = easing;
             _path = path;
             _previousPointDefinition = previousPointDefinition;
+            _hasBaseProvider = _points?.HasBaseProvider ?? false;
+            if (path)
+            {
+                _pathProperty = (BasePathProperty)info.Property;
+                return;
+            }
+
+            switch (_points)
+            {
+                case PointDefinition<float> values:
+                    _floatPoints = values;
+                    _floatProperty = (Property<float>)info.Property;
+                    break;
+                case PointDefinition<Vector3> values:
+                    _vector3Points = values;
+                    _vector3Property = (Property<Vector3>)info.Property;
+                    break;
+                case PointDefinition<Vector4> values:
+                    _vector4Points = values;
+                    _vector4Property = (Property<Vector4>)info.Property;
+                    break;
+                case PointDefinition<Quaternion> values:
+                    _quaternionPoints = values;
+                    _quaternionProperty = (Property<Quaternion>)info.Property;
+                    break;
+                case null:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(info));
+            }
         }
 
         public void Execute()
@@ -49,11 +91,11 @@ namespace EditorEX.Heck.Events
             if (_path)
             {
                 HeckTrackPreviewPathInit.Apply(
-                    ((BasePathProperty)_info.Property).IInterpolation,
+                    _pathProperty!.IInterpolation,
                     _previousPointDefinition,
-                    _info.PointDefinition
+                    _points
                 );
-                if (_info.PointDefinition == null)
+                if (_points == null)
                 {
                     _info.Track.UpdatedThisFrame = true;
                     PreviewOriginalTransform.RestoreUnanimated(_info.Track);
@@ -62,7 +104,7 @@ namespace EditorEX.Heck.Events
                 return;
             }
 
-            if (_info.PointDefinition == null)
+            if (_points == null)
             {
                 _info.Track.UpdatedThisFrame = true;
                 _info.Property.Null();
@@ -85,21 +127,21 @@ namespace EditorEX.Heck.Events
             _active = false;
         }
 
+        public bool WantsTick(float beat)
+        {
+            return _active
+                && _points != null
+                && !HeckTrackPreviewSampler.CanSkipSample(
+                    _settled,
+                    _hasBaseProvider,
+                    beat,
+                    _latchBeat
+                );
+        }
+
         public void Tick(float beat)
         {
-            if (!_active)
-            {
-                return;
-            }
-
-            IPointDefinition? points = _info.PointDefinition;
-            if (points == null)
-            {
-                return;
-            }
-
-            bool hasBaseProvider = points.HasBaseProvider;
-            if (HeckTrackPreviewSampler.CanSkipSample(_settled, hasBaseProvider, beat, _latchBeat))
+            if (!WantsTick(beat))
             {
                 return;
             }
@@ -120,10 +162,8 @@ namespace EditorEX.Heck.Events
             {
                 // Do not Finish(): that drops the previous point definition and makes
                 // scrubbing back through this same interval unable to blend.
-                ((BasePathProperty)_info.Property)
-                    .IInterpolation
-                    .Time = progress;
-                if (!hasBaseProvider && complete)
+                _pathProperty!.IInterpolation.Time = progress;
+                if (!_hasBaseProvider && complete)
                 {
                     Latch(beat);
                 }
@@ -131,9 +171,9 @@ namespace EditorEX.Heck.Events
                 return;
             }
 
-            SetPropertyValue(points, _info.Property, _info.Track, progress, out bool onLast);
+            SetPropertyValue(progress, out bool onLast);
             if (
-                !hasBaseProvider
+                !_hasBaseProvider
                 && onLast
                 && HeckTrackPreviewSampler.OnLastRepeat(
                     beat,
@@ -154,43 +194,39 @@ namespace EditorEX.Heck.Events
             _latchBeat = beat;
         }
 
-        private static void SetPropertyValue(
-            IPointDefinition points,
-            BaseProperty property,
-            Track track,
-            float time,
-            out bool onLast
-        )
+        private void SetPropertyValue(float time, out bool onLast)
         {
-            switch (points)
+            if (_floatPoints != null)
             {
-                case PointDefinition<float> values:
-                    SetPropertyValue(values, Cast<float>(property), track, time, out onLast);
-                    break;
-
-                case PointDefinition<Vector3> values:
-                    SetPropertyValue(values, Cast<Vector3>(property), track, time, out onLast);
-                    break;
-
-                case PointDefinition<Vector4> values:
-                    SetPropertyValue(values, Cast<Vector4>(property), track, time, out onLast);
-                    break;
-
-                case PointDefinition<Quaternion> values:
-                    SetPropertyValue(values, Cast<Quaternion>(property), track, time, out onLast);
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(points));
+                SetPropertyValue(_floatPoints, _floatProperty!, _info.Track, time, out onLast);
+                return;
             }
 
-            return;
-
-            Property<T> Cast<T>(BaseProperty toCast)
-                where T : struct
+            if (_vector3Points != null)
             {
-                return toCast as Property<T> ?? throw new InvalidOperationException();
+                SetPropertyValue(_vector3Points, _vector3Property!, _info.Track, time, out onLast);
+                return;
             }
+
+            if (_vector4Points != null)
+            {
+                SetPropertyValue(_vector4Points, _vector4Property!, _info.Track, time, out onLast);
+                return;
+            }
+
+            if (_quaternionPoints != null)
+            {
+                SetPropertyValue(
+                    _quaternionPoints,
+                    _quaternionProperty!,
+                    _info.Track,
+                    time,
+                    out onLast
+                );
+                return;
+            }
+
+            throw new InvalidOperationException();
         }
 
         private static void SetPropertyValue(
