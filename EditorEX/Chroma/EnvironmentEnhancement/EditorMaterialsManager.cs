@@ -20,6 +20,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
     internal class EditorMaterialsManager : IDisposable
     {
         private static readonly int _metallicPropertyID = Shader.PropertyToID("_Metallic");
+        private static readonly int _fogStartOffsetPropertyID = Shader.PropertyToID("_FogStartOffset");
 
         private static readonly Shader[] _allShaders = Resources.FindObjectsOfTypeAll<Shader>();
 
@@ -31,6 +32,9 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
         );
         private static readonly Material _transparentLightMaterial = InstantiateSharedMaterial(
             ShaderType.TransparentLight
+        );
+        private static readonly Material _glowingMaterial = InstantiateSharedMaterial(
+            ShaderType.Glowing
         );
 
         private readonly HashSet<Material> _createdMaterials = new();
@@ -120,6 +124,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                     ShaderType.BaseWater,
                     _environmentMaterialsManager.WaterLit
                 ),
+                ShaderType.Glowing => _glowingMaterial,
                 _ => _environmentMaterialsManager.EnvironmentMaterials.TryGetValue(
                     shaderType,
                     out Material foundMat
@@ -127,6 +132,14 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                     ? foundMat
                     : throw new InvalidOperationException(),
             };
+
+            if (shaderType is ShaderType.Standard or ShaderType.BTSPillar && shaderKeywords is { Length: 0 })
+            {
+                shaderKeywords = null;
+                color = color?.ColorWithAlpha(0);
+                originalMaterial = _glowingMaterial;
+            }
+            
             Material material = Object.Instantiate(originalMaterial);
             _createdMaterials.Add(material);
             if (color != null)
@@ -154,6 +167,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             {
                 ShaderType.OpaqueLight => "Custom/OpaqueNeonLight",
                 ShaderType.TransparentLight => "Custom/TransparentNeonLight",
+                ShaderType.Glowing => "Custom/Glowing",
                 _ => "Custom/SimpleLit",
             };
             Shader shader = _allShaders.First(n => n.name == shaderName);
@@ -237,9 +251,17 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                 },
                 color = new Color(0, 0, 0, 0),
             };
-            if (shaderType == ShaderType.Standard)
+            
+            switch (shaderType)
             {
-                material.SetFloat(_metallicPropertyID, 0);
+                case ShaderType.Standard:
+                    material.SetFloat(_metallicPropertyID, 0);
+                    break;
+
+                // Small fix to allow for infinite distance so it doesn't darken
+                case ShaderType.Glowing:
+                    material.SetFloat(_fogStartOffsetPropertyID, float.PositiveInfinity);
+                    break;
             }
 
             return material;
