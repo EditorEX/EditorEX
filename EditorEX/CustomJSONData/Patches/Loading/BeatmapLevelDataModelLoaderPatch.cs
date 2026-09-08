@@ -43,8 +43,6 @@ namespace EditorEX.CustomJSONData.Patches.Loading
         {
             var version = BeatmapProjectFileHelper.GetVersionedJSONVersion(projectPath, "Info.dat");
 
-            LevelContext.Reset();
-
             LevelContext.Version = version;
 
             var loader = _loaders.FirstOrDefault(x => x.IsVersion(version));
