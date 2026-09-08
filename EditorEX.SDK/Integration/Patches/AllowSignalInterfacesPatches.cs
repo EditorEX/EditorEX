@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using SiraUtil.Affinity;
 using Zenject;
 
@@ -7,19 +5,6 @@ namespace EditorEX.SDK.Integration.Patches
 {
     internal class AllowSignalInterfacesPatches : IAffinity
     {
-        [AffinityPatch(typeof(BindingId), "op_Equality")]
-        [AffinityPrefix]
-        private bool EqualityPatch(BindingId left, BindingId right, ref bool __result)
-        {
-            __result =
-                (
-                    left.Type == right.Type
-                    || left.Type.IsAssignableFrom(right.Type)
-                    || right.Type.IsAssignableFrom(left.Type)
-                ) && Equals(left.Identifier, right.Identifier);
-            return false;
-        }
-
         [AffinityPatch(
             typeof(SignalBus),
             nameof(SignalBus.GetDeclaration),
@@ -36,12 +21,13 @@ namespace EditorEX.SDK.Integration.Patches
             ref SignalDeclaration __result
         )
         {
-            KeyValuePair<BindingId, SignalDeclaration> result =
-                __instance._localDeclarationMap.FirstOrDefault(
-                    (KeyValuePair<BindingId, SignalDeclaration> x) => x.Key == signalId
-                );
-
-            if (__instance._localDeclarationMap.TryGetValue(signalId, out var signalDeclaration))
+            if (
+                SignalDeclarationLookup.TryGet(
+                    __instance._localDeclarationMap,
+                    signalId,
+                    out SignalDeclaration? signalDeclaration
+                )
+            )
             {
                 __result = signalDeclaration;
                 return false;
@@ -50,12 +36,6 @@ namespace EditorEX.SDK.Integration.Patches
             if (__instance._parentBus != null)
             {
                 __result = __instance._parentBus.GetDeclaration(signalId, requireDeclaration);
-                return false;
-            }
-
-            if (result.Value != null)
-            {
-                __result = result.Value;
                 return false;
             }
 
