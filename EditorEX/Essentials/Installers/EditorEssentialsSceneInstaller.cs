@@ -174,6 +174,7 @@ namespace EditorEX.Essentials.Installers
                 .NonLazy();
 
             Container.BindInterfacesAndSelfTo<FixAudioTimeSource>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<CurrentNoteJumpSpeedSkipPatch>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<ProcessNewEditorData>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PreviewToggler>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<CameraLock>().AsSingle().NonLazy();
