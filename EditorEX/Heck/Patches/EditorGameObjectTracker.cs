@@ -18,10 +18,15 @@ namespace EditorEX.Heck.Patches
     public class EditorGameObjectTracker : IAffinity
     {
         private static EditorDeserializedData? _heckCache;
+        private static readonly Dictionary<GameObject, List<Track>> _tracked = new();
 
         private static readonly MethodInfo _addObject = AccessTools.Method(
             typeof(EditorGameObjectTracker),
-            "AddObject"
+            nameof(AddObject)
+        );
+        private static readonly MethodInfo _removeObject = AccessTools.Method(
+            typeof(EditorGameObjectTracker),
+            nameof(RemoveObject)
         );
 
         private EditorGameObjectTracker([Inject(Id = "Heck")] EditorDeserializedData heckCache)
@@ -29,32 +34,9 @@ namespace EditorEX.Heck.Patches
             _heckCache = heckCache;
         }
 
-        private static readonly MethodInfo _removeObject = AccessTools.Method(
-            typeof(EditorGameObjectTracker),
-            "RemoveObject"
-        );
-        private static readonly MethodInfo _removeNote = AccessTools.Method(
-            typeof(EditorGameObjectTracker),
-            "RemoveNote"
-        );
-
-        private static void RemoveNote(NoteBeatmapObjectView self, NoteEditorData? noteData)
-        {
-            if (noteData == null)
-                return;
-            if (self._noteObjects.TryGetValue(noteData.id, out var normalNoteView))
-            {
-                RemoveObject(noteData, normalNoteView);
-            }
-            if (self._bombObjects.TryGetValue(noteData.id, out var bombNoteView))
-            {
-                RemoveObject(noteData, bombNoteView);
-            }
-        }
-
         private static void AddObject(BaseEditorData? editorData, Component obj)
         {
-            if (MapContext.Version.Major > 3)
+            if (MapContext.Version.Major > 3 || obj == null)
             {
                 return;
             }
@@ -64,22 +46,28 @@ namespace EditorEX.Heck.Patches
                 return;
             }
 
-            track.ForEach(n => n.AddGameObject(obj.gameObject));
+            GameObject gameObject = obj.gameObject;
+            _tracked[gameObject] = track;
+            track.ForEach(n => n.AddGameObject(gameObject));
         }
 
-        private static void RemoveObject(BaseEditorData? editorData, Component obj)
+        // Views are Zenject-pooled. Untrack by GameObject so DeleteObject and ClearObjects can
+        // both drop the instance before Despawn, even when editor data is already gone.
+        private static void RemoveObject(Component obj)
         {
-            if (MapContext.Version.Major > 3)
+            if (MapContext.Version.Major > 3 || obj == null)
             {
                 return;
             }
 
-            if (!TryGetTrack(editorData, out List<Track> track))
+            GameObject gameObject = obj.gameObject;
+            if (!_tracked.TryGetValue(gameObject, out List<Track> track))
             {
                 return;
             }
 
-            track.ForEach(n => n.RemoveGameObject(obj.gameObject));
+            _tracked.Remove(gameObject);
+            track.ForEach(n => n.RemoveGameObject(gameObject));
         }
 
         private static bool TryGetTrack(BaseEditorData? objectData, out List<Track> track)
@@ -98,138 +86,88 @@ namespace EditorEX.Heck.Patches
             return true;
         }
 
+        [AffinityTranspiler]
         [AffinityPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.InsertObject))]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerNote(
-            IEnumerable<CodeInstruction> instructions
-        )
-        {
-            var result = new CodeMatcher(instructions)
-                .End() // before ret
-                .Insert(
-                    new(OpCodes.Ldarg_1),
-                    new(OpCodes.Ldloc_S, 6),
-                    new(OpCodes.Call, _addObject)
-                )
-                .InstructionEnumeration();
-            return result;
-        }
-
-        [AffinityPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.DeleteObject))]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerRemoveNote(
-            IEnumerable<CodeInstruction> instructions
-        )
-        {
-            var result = new CodeMatcher(instructions)
-                .End() // before ret
-                .Insert(new(OpCodes.Ldarg_0), new(OpCodes.Ldarg_1), new(OpCodes.Call, _removeNote))
-                .InstructionEnumeration();
-            return result;
-        }
-
         [AffinityPatch(
             typeof(ObstacleBeatmapObjectView),
             nameof(ObstacleBeatmapObjectView.InsertObject)
         )]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerObstacle(
-            IEnumerable<CodeInstruction> instructions
-        )
-        {
-            var result = new CodeMatcher(instructions)
-                .End() // before ret
-                .Insert(new(OpCodes.Ldarg_1), new(OpCodes.Ldloc_2), new(OpCodes.Call, _addObject))
-                .InstructionEnumeration();
-            return result;
-        }
-
-        [AffinityPatch(
-            typeof(ObstacleBeatmapObjectView),
-            nameof(ObstacleBeatmapObjectView.DeleteObject)
-        )]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerRemoveObstacle(
-            IEnumerable<CodeInstruction> instructions
-        )
-        {
-            var result = new CodeMatcher(instructions)
-                .End() // before ret
-                .Insert(
-                    new(OpCodes.Ldarg_1),
-                    new(OpCodes.Ldloc_2),
-                    new(OpCodes.Call, _removeObject)
-                )
-                .InstructionEnumeration();
-            return result;
-        }
-
         [AffinityPatch(
             typeof(ChainBeatmapObjectsView),
             nameof(ChainBeatmapObjectsView.InsertObject)
         )]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerChain(
+        [AffinityPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.InsertObject))]
+        private IEnumerable<CodeInstruction> TranspileInsert(
             IEnumerable<CodeInstruction> instructions
         )
         {
-            var result = new CodeMatcher(instructions)
-                .End() // before ret
-                .Insert(new(OpCodes.Ldarg_1), new(OpCodes.Ldloc_0), new(OpCodes.Call, _addObject))
+            return new CodeMatcher(instructions)
+                .MatchForward(false, new CodeMatch(IsViewDictionaryAdd))
+                .Repeat(InsertAddObject)
                 .InstructionEnumeration();
-            return result;
         }
 
+        [AffinityTranspiler]
+        [AffinityPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.DeleteObject))]
+        [AffinityPatch(typeof(NoteBeatmapObjectView), nameof(NoteBeatmapObjectView.ClearObjects))]
+        [AffinityPatch(
+            typeof(ObstacleBeatmapObjectView),
+            nameof(ObstacleBeatmapObjectView.DeleteObject)
+        )]
+        [AffinityPatch(
+            typeof(ObstacleBeatmapObjectView),
+            nameof(ObstacleBeatmapObjectView.ClearObjects)
+        )]
         [AffinityPatch(
             typeof(ChainBeatmapObjectsView),
             nameof(ChainBeatmapObjectsView.DeleteObject)
         )]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerRemoveChain(
-            IEnumerable<CodeInstruction> instructions
-        )
-        {
-            var result = new CodeMatcher(instructions)
-                .End() // before ret
-                .Insert(
-                    new(OpCodes.Ldarg_1),
-                    new(OpCodes.Ldloc_0),
-                    new(OpCodes.Call, _removeObject)
-                )
-                .InstructionEnumeration();
-            return result;
-        }
-
-        [AffinityPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.InsertObject))]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerArc(
-            IEnumerable<CodeInstruction> instructions
-        )
-        {
-            var result = new CodeMatcher(instructions)
-                .End()
-                .Advance(-1) // before ret
-                .Insert(new(OpCodes.Ldarg_1), new(OpCodes.Ldloc_0), new(OpCodes.Call, _addObject))
-                .InstructionEnumeration();
-            return result;
-        }
-
+        [AffinityPatch(
+            typeof(ChainBeatmapObjectsView),
+            nameof(ChainBeatmapObjectsView.ClearObjects)
+        )]
         [AffinityPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.DeleteObject))]
-        [AffinityTranspiler]
-        private IEnumerable<CodeInstruction> TranspilerRemoveArc(
+        [AffinityPatch(typeof(ArcBeatmapObjectsView), nameof(ArcBeatmapObjectsView.ClearObjects))]
+        private IEnumerable<CodeInstruction> TranspileRemove(
             IEnumerable<CodeInstruction> instructions
         )
         {
-            var result = new CodeMatcher(instructions)
-                .End()
-                .Advance(-1) // before ret
-                .Insert(
-                    new(OpCodes.Ldarg_1),
-                    new(OpCodes.Ldloc_2),
-                    new(OpCodes.Call, _removeObject)
-                )
+            return new CodeMatcher(instructions)
+                .MatchForward(false, new CodeMatch(IsPoolDespawn))
+                .Repeat(InsertRemoveObject)
                 .InstructionEnumeration();
-            return result;
         }
+
+        private static void InsertAddObject(CodeMatcher matcher)
+        {
+            CodeInstruction viewLoad = matcher.InstructionAt(-1);
+            matcher
+                .Insert(
+                    new CodeInstruction(OpCodes.Ldarg_1),
+                    new CodeInstruction(viewLoad.opcode, viewLoad.operand),
+                    new CodeInstruction(OpCodes.Call, _addObject)
+                )
+                .Advance(4);
+        }
+
+        private static void InsertRemoveObject(CodeMatcher matcher)
+        {
+            matcher
+                .Insert(
+                    new CodeInstruction(OpCodes.Dup),
+                    new CodeInstruction(OpCodes.Call, _removeObject)
+                )
+                .Advance(3);
+        }
+
+        private static bool IsPoolDespawn(CodeInstruction instruction) =>
+            instruction.opcode == OpCodes.Callvirt
+            && instruction.operand is MethodInfo { Name: "Despawn" };
+
+        private static bool IsViewDictionaryAdd(CodeInstruction instruction) =>
+            instruction.opcode == OpCodes.Callvirt
+            && instruction.operand is MethodInfo { Name: "Add" } method
+            && method.DeclaringType is { IsGenericType: true } type
+            && type.GetGenericTypeDefinition() == typeof(Dictionary<,>);
     }
 }
