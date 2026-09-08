@@ -38,6 +38,7 @@ namespace EditorEX.UI.Installers
             Container.BindInterfacesAndSelfTo<BookmarkManagementViewPatches>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<CreateBookmarkDialogPatches>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<CustomBookmarkCommandPatches>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<VariableNjsVersionPatches>().AsSingle();
 
             Container
                 .Bind<IAddressableCollectorItem>()
