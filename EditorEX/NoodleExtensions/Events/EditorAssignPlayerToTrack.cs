@@ -31,7 +31,7 @@ namespace EditorEX.NoodleExtensions.Events
 
         internal void Assign(PlayerObject playerObject, Track track)
         {
-            if (!_playerTracks.TryGetValue(playerObject, out PlayerTrack? playerTrack))
+            if (!TryGetAlive(_playerTracks, playerObject, out PlayerTrack? playerTrack))
             {
                 _playerTracks[playerObject] = playerTrack = Create(playerObject);
             }
@@ -41,7 +41,7 @@ namespace EditorEX.NoodleExtensions.Events
 
         internal void Restore(PlayerObject playerObject, Track? previous)
         {
-            if (!_playerTracks.TryGetValue(playerObject, out PlayerTrack? playerTrack))
+            if (!TryGetAlive(_playerTracks, playerObject, out PlayerTrack? playerTrack))
             {
                 return;
             }
@@ -55,8 +55,35 @@ namespace EditorEX.NoodleExtensions.Events
             Clear(playerTrack);
         }
 
-        private static void Clear(PlayerTrack playerTrack)
+        // Unity overloaded == : destroyed components are not C# null, but .gameObject throws.
+        internal static bool TryGetAlive(
+            Dictionary<PlayerObject, PlayerTrack> playerTracks,
+            PlayerObject playerObject,
+            out PlayerTrack? playerTrack
+        )
         {
+            if (!playerTracks.TryGetValue(playerObject, out playerTrack))
+            {
+                return false;
+            }
+
+            if (playerTrack == null)
+            {
+                playerTracks.Remove(playerObject);
+                playerTrack = null;
+                return false;
+            }
+
+            return true;
+        }
+
+        internal static void Clear(PlayerTrack? playerTrack)
+        {
+            if (playerTrack == null)
+            {
+                return;
+            }
+
             if (playerTrack._track != null)
             {
                 playerTrack._track.RemoveGameObject(playerTrack.gameObject);
