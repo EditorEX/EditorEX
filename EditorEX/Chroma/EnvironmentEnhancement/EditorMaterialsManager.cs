@@ -20,7 +20,9 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
     internal class EditorMaterialsManager : IDisposable
     {
         private static readonly int _metallicPropertyID = Shader.PropertyToID("_Metallic");
-        private static readonly int _fogStartOffsetPropertyID = Shader.PropertyToID("_FogStartOffset");
+        private static readonly int _fogStartOffsetPropertyID = Shader.PropertyToID(
+            "_FogStartOffset"
+        );
 
         private static readonly Shader[] _allShaders = Resources.FindObjectsOfTypeAll<Shader>();
 
@@ -33,22 +35,20 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
         private static readonly Material _transparentLightMaterial = InstantiateSharedMaterial(
             ShaderType.TransparentLight
         );
-        private static readonly Material _glowingMaterial = InstantiateSharedMaterial(
-            ShaderType.Glowing
-        );
 
         private readonly HashSet<Material> _createdMaterials = new();
         private readonly Dictionary<string, MaterialInfo> _materialInfos = new();
 
-        private readonly EnvironmentMaterialsManager _environmentMaterialsManager;
+        private readonly EditorEnvironmentMaterialsManager _environmentMaterialsManager;
         private readonly Dictionary<string, Track> _beatmapTracks;
         private readonly LazyInject<MaterialColorAnimator> _materialColorAnimator;
         private readonly bool _v2;
 
         private Material? _baseWaterMaterial;
+        private Material? _glowingMaterial;
 
         private EditorMaterialsManager(
-            EnvironmentMaterialsManager environmentMaterialsManager,
+            EditorEnvironmentMaterialsManager environmentMaterialsManager,
             Dictionary<string, Track> beatmapTracks,
             LazyInject<MaterialColorAnimator> materialColorAnimator,
             ICustomDataRepository customDataRepository
@@ -124,7 +124,10 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                     ShaderType.BaseWater,
                     _environmentMaterialsManager.WaterLit
                 ),
-                ShaderType.Glowing => _glowingMaterial,
+                ShaderType.Glowing => _glowingMaterial ??= InstantiateMaterialFromShader(
+                    ShaderType.Glowing,
+                    _environmentMaterialsManager.Glowing
+                ),
                 _ => _environmentMaterialsManager.EnvironmentMaterials.TryGetValue(
                     shaderType,
                     out Material foundMat
@@ -133,13 +136,16 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                     : throw new InvalidOperationException(),
             };
 
-            if (shaderType is ShaderType.Standard or ShaderType.BTSPillar && shaderKeywords is { Length: 0 })
+            if (
+                shaderType is ShaderType.Standard or ShaderType.BTSPillar
+                && shaderKeywords is { Length: 0 }
+            )
             {
                 shaderKeywords = null;
                 color = color?.ColorWithAlpha(0);
                 originalMaterial = _glowingMaterial;
             }
-            
+
             Material material = Object.Instantiate(originalMaterial);
             _createdMaterials.Add(material);
             if (color != null)
@@ -251,7 +257,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                 },
                 color = new Color(0, 0, 0, 0),
             };
-            
+
             switch (shaderType)
             {
                 case ShaderType.Standard:

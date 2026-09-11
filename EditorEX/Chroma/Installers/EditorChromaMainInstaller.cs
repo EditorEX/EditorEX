@@ -1,4 +1,4 @@
-﻿using Chroma.EnvironmentEnhancement;
+﻿using EditorEX.Chroma.EnvironmentEnhancement;
 using EditorEX.Chroma.Patches;
 using Zenject;
 
@@ -9,7 +9,7 @@ namespace EditorEX.Chroma.Installers
         public override void InstallBindings()
         {
             Container
-                .BindInterfacesTo<EnvironmentMaterialsManager.EnvironmentMaterialsManagerInitializer>()
+                .BindInterfacesTo<EditorEnvironmentMaterialsManager.EditorEnvironmentMaterialsManagerInitializer>()
                 .AsSingle();
 
             Container.BindInterfacesTo<InjectCustomDataIntoLivePreview>().AsSingle().NonLazy();

@@ -53,7 +53,7 @@ namespace EditorEX.MapData.LevelDataSavers
 
         private static JsonSerializerSettings _serializerSettings = new()
         {
-            DefaultValueHandling = DefaultValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Include,
             Formatting = Formatting.None,
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             Converters = JsonSettings.jsonConverters,

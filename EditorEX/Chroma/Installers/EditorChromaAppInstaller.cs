@@ -1,4 +1,5 @@
 using EditorEX.Chroma.Codecs;
+using EditorEX.Chroma.EnvironmentEnhancement;
 using Zenject;
 
 namespace EditorEX.Chroma.Installers
@@ -8,6 +9,11 @@ namespace EditorEX.Chroma.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<ChromaCustomDataCodec>().AsCached();
+
+            Container
+                .Bind<EditorEnvironmentMaterialsManager>()
+                .FromNewComponentOnNewGameObject()
+                .AsSingle();
         }
     }
 }

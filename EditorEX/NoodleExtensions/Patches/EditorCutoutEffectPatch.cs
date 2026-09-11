@@ -18,7 +18,7 @@ namespace EditorEX.NoodleExtensions.Patches
         )]
         private bool CheckDifference(float cutout, float ____cutout)
         {
-            return !Mathf.Approximately(cutout, ____cutout);
+            return Mathf.Abs(cutout - ____cutout) > 0.001f;
         }
 
         // A new notecontroller can have its dissolve updated before this runs, causing this to override the cutouteffect
@@ -26,6 +26,19 @@ namespace EditorEX.NoodleExtensions.Patches
         [AffinityPrefix]
         [AffinityPatch(typeof(CutoutAnimateEffect), nameof(CutoutAnimateEffect.Start))]
         private bool SkipStart()
+        {
+            return false;
+        }
+
+        // A new notecontroller can have its dissolve updated before this runs, causing this to override the cutouteffect
+        // Thus setting the cutout effect while the _prevArrowTransparency has a different value.
+        [AffinityPrefix]
+        [AffinityPatch(
+            typeof(CutoutEffect),
+            nameof(CutoutEffect.useRandomCutoutOffset),
+            AffinityMethodType.Getter
+        )]
+        private bool SkipRandom()
         {
             return false;
         }
