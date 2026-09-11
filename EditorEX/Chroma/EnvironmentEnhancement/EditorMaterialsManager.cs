@@ -43,6 +43,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
         private readonly Dictionary<string, Track> _beatmapTracks;
         private readonly LazyInject<MaterialColorAnimator> _materialColorAnimator;
         private readonly bool _v2;
+        private readonly EditorGeomtryShaderAddressables _editorGeomtryShaderAddressables;
 
         private Material? _baseWaterMaterial;
         private Material? _glowingMaterial;
@@ -51,7 +52,8 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             EditorEnvironmentMaterialsManager environmentMaterialsManager,
             Dictionary<string, Track> beatmapTracks,
             LazyInject<MaterialColorAnimator> materialColorAnimator,
-            ICustomDataRepository customDataRepository
+            ICustomDataRepository customDataRepository,
+            EditorGeomtryShaderAddressables editorGeomtryShaderAddressables
         )
         {
             var beatmapData = customDataRepository.GetBeatmapData();
@@ -59,6 +61,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             _environmentMaterialsManager = environmentMaterialsManager;
             _beatmapTracks = beatmapTracks;
             _materialColorAnimator = materialColorAnimator;
+            _editorGeomtryShaderAddressables = editorGeomtryShaderAddressables;
 
             if (beatmapData == null)
             {
@@ -122,11 +125,11 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                 ShaderType.TransparentLight => _transparentLightMaterial,
                 ShaderType.BaseWater => _baseWaterMaterial ??= InstantiateMaterialFromShader(
                     ShaderType.BaseWater,
-                    _environmentMaterialsManager.WaterLit
+                    _editorGeomtryShaderAddressables.Waterlit
                 ),
                 ShaderType.Glowing => _glowingMaterial ??= InstantiateMaterialFromShader(
                     ShaderType.Glowing,
-                    _environmentMaterialsManager.Glowing
+                    _editorGeomtryShaderAddressables.Glowing
                 ),
                 _ => _environmentMaterialsManager.EnvironmentMaterials.TryGetValue(
                     shaderType,
@@ -143,8 +146,15 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             {
                 shaderKeywords = null;
                 color = color?.ColorWithAlpha(0);
-                originalMaterial = _glowingMaterial;
+                originalMaterial = _glowingMaterial ??= InstantiateMaterialFromShader(
+                    ShaderType.Glowing,
+                    _editorGeomtryShaderAddressables.Glowing
+                );
             }
+
+            Plugin.Logger.Info(
+                $"Original material: {originalMaterial?.name} shader type: {shaderType} shader null: {_editorGeomtryShaderAddressables.Glowing is null}"
+            );
 
             Material material = Object.Instantiate(originalMaterial);
             _createdMaterials.Add(material);
@@ -173,7 +183,6 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             {
                 ShaderType.OpaqueLight => "Custom/OpaqueNeonLight",
                 ShaderType.TransparentLight => "Custom/TransparentNeonLight",
-                ShaderType.Glowing => "Custom/Glowing",
                 _ => "Custom/SimpleLit",
             };
             Shader shader = _allShaders.First(n => n.name == shaderName);
@@ -270,6 +279,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                     break;
             }
 
+            Plugin.Logger.Info($"Material: {material?.name} shader: {shader?.name}");
             return material;
         }
     }

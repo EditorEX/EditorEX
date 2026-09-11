@@ -23,6 +23,7 @@ internal class Plugin
         zenjector.UseMetadataBinder<Plugin>();
 
         zenjector.Install<EditorSDKAppInstaller>(Location.App);
+        zenjector.Install<EditorSDKCommandInstaller, CommandInstaller>();
         zenjector.Install<EditorSDKModelsInstaller, BeatmapEditorDataModelsInstaller>();
         zenjector.Install<
             EditorSDKViewControllersInstaller,

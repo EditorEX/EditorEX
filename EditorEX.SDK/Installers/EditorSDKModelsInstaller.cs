@@ -11,13 +11,7 @@ namespace EditorEX.SDK.Installers
     {
         public override void InstallBindings()
         {
-            Container.DeclareSignal<IAddressableCollectorItemLoadedSignal>().OptionalSubscriber();
-
-            Container.BindInterfacesAndSelfTo<AllowSignalInterfacesPatches>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<FixUnityExplorerInputError>().AsSingle().NonLazy();
-
-            Container.BindInterfacesAndSelfTo<AddressableCollector>().AsSingle();
-            Container.BindInterfacesAndSelfTo<AddressableSignalBus>().AsSingle();
         }
     }
 }

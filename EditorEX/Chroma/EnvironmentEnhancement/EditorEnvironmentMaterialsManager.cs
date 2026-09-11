@@ -1,11 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Chroma.EnvironmentEnhancement;
+using EditorEX.SDK.AddressableHelpers;
 using SiraUtil.Logging;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.ResourceManagement.ResourceLocations;
 using UnityEngine.SceneManagement;
 using Zenject;
 using _AsyncOperation = UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle<UnityEngine.ResourceManagement.ResourceProviders.SceneInstance>;
@@ -18,9 +22,6 @@ internal class EditorEnvironmentMaterialsManager : MonoBehaviour
     private Dictionary<ShaderType, Material>? _environmentMaterials;
     private SiraLog _log = null!;
 
-    private Shader? _waterLit;
-    private Shader? _glowing;
-
     internal Dictionary<ShaderType, Material> EnvironmentMaterials
     {
         get
@@ -31,32 +32,6 @@ internal class EditorEnvironmentMaterialsManager : MonoBehaviour
             }
 
             return _environmentMaterials;
-        }
-    }
-
-    internal Shader WaterLit
-    {
-        get
-        {
-            if (_waterLit == null)
-            {
-                throw new InvalidOperationException("Environment materials not yet fetched!");
-            }
-
-            return _waterLit;
-        }
-    }
-
-    internal Shader Glowing
-    {
-        get
-        {
-            if (_glowing == null)
-            {
-                throw new InvalidOperationException("Environment materials not yet fetched!");
-            }
-
-            return _glowing;
         }
     }
 
@@ -82,20 +57,6 @@ internal class EditorEnvironmentMaterialsManager : MonoBehaviour
         Save(ShaderType.WaterfallMirror, "WaterfallMirror");
         Save(ShaderType.InterscopeConcrete, "Concrete2");
         Save(ShaderType.InterscopeCar, "Car");
-
-        var shaders = Resources.FindObjectsOfTypeAll<Shader>();
-        foreach (var shader in shaders)
-        {
-            switch (shader.name)
-            {
-                case "Custom/WaterLit":
-                    _waterLit = shader;
-                    break;
-                case "Custom/Glowing":
-                    _glowing = shader;
-                    break;
-            }
-        }
 
         foreach (string environment in environments)
         {

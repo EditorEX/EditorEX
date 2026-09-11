@@ -14,6 +14,8 @@ namespace EditorEX.Chroma.Installers
                 .Bind<EditorEnvironmentMaterialsManager>()
                 .FromNewComponentOnNewGameObject()
                 .AsSingle();
+
+            Container.Bind<EditorGeomtryShaderAddressables>().AsSingle();
         }
     }
 }
