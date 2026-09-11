@@ -71,7 +71,6 @@ public abstract class EditorModalBase : ReactiveComponent
             }
         }
     }
-
     #endregion
 
     #region Impl

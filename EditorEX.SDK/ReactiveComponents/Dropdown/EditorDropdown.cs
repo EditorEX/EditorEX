@@ -394,7 +394,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 0f,
                 new AnimationDuration(OpenAnimationSeconds, DurationUnit.Seconds)
             );
-            _openProgress.ValueChangedEvent += ApplyOpenVisual;
+            _openProgress.AddCallback(ApplyOpenVisual);
 
             var anchor = Remember<RectTransform?>(null);
             _scrollContext = new ScrollContext();
@@ -427,7 +427,7 @@ namespace EditorEX.SDK.ReactiveComponents.Dropdown
                 _previewIcon.Enabled = false;
             }
 
-            _keyState.ValueChangedEvent += RefreshPreview;
+            _keyState.AddCallback(RefreshPreview);
             RefreshPreview(_keyState.Value);
 
             var root = new LayoutChildren

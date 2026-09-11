@@ -11,7 +11,6 @@ namespace EditorEX.SDK.ReactiveComponents
             {
                 _textString = value;
                 _text.text = $"<uppercase>{value}</uppercase>";
-                NotifyPropertyChanged();
                 RequestLeafRecalculationOnDirty();
             }
         }
@@ -21,7 +20,6 @@ namespace EditorEX.SDK.ReactiveComponents
             set
             {
                 _text.fontStyle = value.HasFlag(FontStyles.Bold) ? value : value | FontStyles.Bold;
-                NotifyPropertyChanged();
             }
         }
 

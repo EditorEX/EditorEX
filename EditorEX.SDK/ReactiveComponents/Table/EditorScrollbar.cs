@@ -25,13 +25,10 @@ namespace EditorEX.SDK.ReactiveComponents.Table
             get => _scrollContext!;
             set
             {
-                if (_scrollContext != null)
-                {
-                    _scrollContext.ValueChangedEvent -= HandleContextUpdated;
-                }
+                _scrollContextSubscription?.RemoveCallback();
 
                 _scrollContext = value;
-                _scrollContext.ValueChangedEvent += HandleContextUpdated;
+                _scrollContextSubscription = _scrollContext.AddCallback(HandleContextUpdated);
 
                 HandleContextUpdated(value);
             }
@@ -62,6 +59,7 @@ namespace EditorEX.SDK.ReactiveComponents.Table
 
         private bool _hideIfNothingToScroll;
         private ScrollContext? _scrollContext;
+        private StateSubscription? _scrollContextSubscription;
         private float _padding = 0.25f;
 
         private void RefreshHandle()

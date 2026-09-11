@@ -30,7 +30,6 @@ namespace EditorEX.SDK.ReactiveComponents
                     )
                 );
                 TabbingType = TabbingType;
-                NotifyPropertyChanged();
             }
         }
 
@@ -55,7 +54,6 @@ namespace EditorEX.SDK.ReactiveComponents
                 {
                     child.SelectedIndex = value;
                 }
-                NotifyPropertyChanged();
             }
         }
 
@@ -71,8 +69,6 @@ namespace EditorEX.SDK.ReactiveComponents
                 }
                 _keyboardBinder.ClearBindings();
                 AddBindings();
-
-                NotifyPropertyChanged();
             }
         }
 

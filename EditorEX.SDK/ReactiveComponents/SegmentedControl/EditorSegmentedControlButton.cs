@@ -20,7 +20,6 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
             {
                 _text = value;
                 ApplyLabel();
-                NotifyPropertyChanged();
             }
         }
 
@@ -31,22 +30,21 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
             set
             {
                 _selectedIndex = value;
-                _selectedIndex.ValueChangedEvent += (value) =>
+                _selectedIndex.AddCallback(selected =>
                 {
                     _button.SetSelected(
-                        value == Position,
+                        selected == Position,
                         SelectableCell.TransitionType.Instant,
                         null,
                         false
                     );
-                };
+                });
                 _button.SetSelected(
                     _selectedIndex.Value == Position,
                     SelectableCell.TransitionType.Instant,
                     null,
                     false
                 );
-                NotifyPropertyChanged();
             }
         }
 
@@ -57,7 +55,6 @@ namespace EditorEX.SDK.ReactiveComponents.SegmentedControl
             {
                 _tabbingType = value;
                 ApplyLabel();
-                NotifyPropertyChanged();
             }
         }
 

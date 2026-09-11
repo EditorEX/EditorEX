@@ -14,11 +14,7 @@ namespace EditorEX.SDK.ReactiveComponents
         public string Text
         {
             get => _inputField.text;
-            private set
-            {
-                _inputField.text = value;
-                NotifyPropertyChanged();
-            }
+            private set { _inputField.text = value; }
         }
 
         public TMP_InputField InputField => _inputField;
@@ -101,10 +97,6 @@ namespace EditorEX.SDK.ReactiveComponents
                 {
                     _inputField.textComponent = _text.TextMesh;
                     _inputField.textViewport = viewport.ContentTransform;
-                    _inputField.onSubmit.AddListener(_ =>
-                    {
-                        NotifyPropertyChanged(nameof(Text));
-                    });
                 })
                 .AsFlexItem(size: new YogaVector("auto", 20f))
                 .AsFlexGroup(FlexDirection.Column, gap: 6f)

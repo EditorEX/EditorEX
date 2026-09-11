@@ -66,9 +66,10 @@ namespace EditorEX.UI.Patches
                         TabbingType = TabbingType.Alpha,
                     }
                         .AsFlexItem(size: new YogaVector(float.NaN, 30f))
+                        .Bind(ref _segmentedControl)
                         .On(
                             _tab,
-                            val =>
+                            (_, val) =>
                             {
                                 if (val != _segmentedControl!.Values.Length - 1)
                                 {
@@ -77,8 +78,7 @@ namespace EditorEX.UI.Patches
                                     _beatmapsCollectionDataModel.RefreshCollection();
                                 }
                             }
-                        )
-                        .Bind(ref _segmentedControl),
+                        ),
                     new LayoutChildren // Song List/Filter/Recently Modified
                     {
                         new LayoutElementComponent(

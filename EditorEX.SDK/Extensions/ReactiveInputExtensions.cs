@@ -39,9 +39,16 @@ namespace EditorEX.SDK.Extensions
             return namedRail;
         }
 
-        /// <summary>
-        /// Adds an input validator component to a string input field.
-        /// </summary>
+        public static EditorStringInput WithListener(
+            this EditorStringInput input,
+            Func<EditorStringInput, string> _,
+            Action<string> callback
+        )
+        {
+            input.InputField.onValueChanged.AddListener(value => callback(value));
+            return input;
+        }
+
         public static EditorStringInput WithInputValidator<T, U>(
             this EditorStringInput input,
             out T comp,

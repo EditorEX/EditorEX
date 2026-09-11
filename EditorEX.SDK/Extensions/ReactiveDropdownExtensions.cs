@@ -39,7 +39,7 @@ namespace EditorEX.SDK.Extensions
 
                 state.Value = (key, component.Items[key]);
             };
-            state.ValueChangedEvent += value =>
+            state.AddCallback(value =>
             {
                 if (
                     component.Items.ContainsKey(value.Item1)
@@ -48,7 +48,7 @@ namespace EditorEX.SDK.Extensions
                 {
                     component.Key = value.Item1;
                 }
-            };
+            });
             return component;
         }
     }

@@ -357,7 +357,7 @@
 
   <ItemGroup>
     <ProjectReference
-      Include="$(ReactiveDir)\src\reactive\Reactive.Compiler\Reactive.Compiler.csproj"
+      Include="$(ReactiveDir)\src\Reactive.Compiler\Reactive.Compiler.csproj"
       OutputItemType="Analyzer"
       ReferenceOutputAssembly="false"
     />

@@ -15,11 +15,10 @@ namespace EditorEX.SDK.Extensions
         {
             component.On(
                 state,
-                val =>
+                (comp, val) =>
                 {
-                    component.Enabled = val?.Equals(value()) ?? true;
-                },
-                true
+                    comp.Enabled = val?.Equals(value()) ?? true;
+                }
             );
             return component;
         }
@@ -34,17 +33,13 @@ namespace EditorEX.SDK.Extensions
             Func<R> value
         )
         {
-            component.SetActive(state.Value?.Equals(value()) ?? true);
-            void Closure(R val)
-            {
-                if (component == null)
+            state.AddCallbackUnity(
+                component,
+                (go, val) =>
                 {
-                    state.ValueChangedEvent -= Closure;
-                    return;
+                    go.SetActive(val?.Equals(value()) ?? true);
                 }
-                component.SetActive(state.Value?.Equals(value()) ?? true);
-            }
-            state.ValueChangedEvent += Closure;
+            );
             return component;
         }
 
@@ -58,9 +53,9 @@ namespace EditorEX.SDK.Extensions
             component.Enabled = !state.Value?.Equals(value()) ?? false;
             component.On(
                 state,
-                val =>
+                (comp, val) =>
                 {
-                    component.Enabled = !val?.Equals(value()) ?? false;
+                    comp.Enabled = !val?.Equals(value()) ?? false;
                 }
             );
             return component;

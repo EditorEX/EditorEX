@@ -50,7 +50,7 @@ namespace EditorEX.SDK.ReactiveComponents
                             {
                                 try
                                 {
-                                    var bytes = Utilities.GetResource(
+                                    var bytes = await Utilities.GetResourceAsync(
                                         Assembly.GetExecutingAssembly(),
                                         "EditorEX.SDK.Resources.Background6px.png"
                                     );
