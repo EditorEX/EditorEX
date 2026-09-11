@@ -101,6 +101,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
             float flipYSide = noodleData?.InternalFlipYSide ?? spawnDataAssociation.flipYSide;
             float endRotation =
                 noteEditorData.cutDirection.RotationAngle()
+                + noteEditorData.angle
                 + spawnDataAssociation.cutDirectionAngleOffset;
 
             Vector3 moveStartOffset = noteSpawnData.moveStartOffset;
