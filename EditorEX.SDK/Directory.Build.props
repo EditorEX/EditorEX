@@ -6,8 +6,8 @@
     <PluginId>EditorEX.SDK</PluginId>
     <PluginName>EditorEX.SDK</PluginName>
     <Authors>FutureMapper</Authors>
-    <Version>0.0.1</Version>
-    <GameVersion>1.40.0</GameVersion>
+    <Version>0.0.2</Version>
+    <GameVersion>1.42.1</GameVersion>
     <Description>Provides an SDK base for mods wishing to extend the editor.</Description>
     <!--<PluginIcon></PluginIcon>-->
     <!--<ProjectSource></ProjectSource>-->
