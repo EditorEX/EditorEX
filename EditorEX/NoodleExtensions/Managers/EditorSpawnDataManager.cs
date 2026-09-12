@@ -1,5 +1,6 @@
 ﻿using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Heck.Deserialize;
 using EditorEX.MapData.Contexts;
 using EditorEX.MapData.Objects;
@@ -145,20 +146,18 @@ namespace EditorEX.NoodleExtensions.Managers
 
             bool gravityOverride = noodleData.DisableGravity;
 
+            EditorObjectSpawnData spawn = EditorSpawnDataRepository.GetSpawnData(noteData);
             float offset = _movementData.noteLinesCount / 2f;
-            float? flipLineIndex = noodleData.InternalFlipLineIndex;
+            float flipLineIndex = spawn.flipLineIndex;
             float lineIndex = noodleData.StartX + offset ?? noteData.column;
             float lineLayer = noodleData.StartY ?? noteData.row;
-            float startLineLayer = noodleData.InternalStartNoteLineLayer;
+            float startLineLayer = spawn.startNoteLineLayer;
 
             Vector3 noteOffset = GetNoteOffset(lineIndex, startLineLayer);
 
             Vector3 noteOffset2 =
                 (noteData.type != ColorType.None)
-                    ? GetNoteOffset(
-                        flipLineIndex ?? lineIndex,
-                        gravityOverride ? lineLayer : startLineLayer
-                    )
+                    ? GetNoteOffset(flipLineIndex, gravityOverride ? lineLayer : startLineLayer)
                     : noteOffset;
 
             float gravity = GetGravityBase(lineLayer, gravityOverride ? lineLayer : startLineLayer);
@@ -190,13 +189,14 @@ namespace EditorEX.NoodleExtensions.Managers
 
             bool gravityOverride = noodleData.DisableGravity;
 
+            EditorObjectSpawnData spawn = EditorSpawnDataRepository.GetSpawnData(sliderData);
             float offset = _movementData.noteLinesCount / 2f;
             float headLineIndex = noodleData.StartX + offset ?? sliderData.column;
             float headLineLayer = noodleData.StartY ?? sliderData.row;
-            float headStartLineLayer = noodleData.InternalStartNoteLineLayer;
+            float headStartLineLayer = spawn.startNoteLineLayer;
             float tailLineIndex = noodleData.TailStartX + offset ?? sliderData.tailColumn;
             float tailLineLayer = noodleData.TailStartY ?? sliderData.tailRow;
-            float tailStartLineLayer = noodleData.InternalTailStartNoteLineLayer;
+            float tailStartLineLayer = spawn.tailStartNoteLineLayer;
 
             Vector3 headOffset = GetNoteOffset(
                 headLineIndex,

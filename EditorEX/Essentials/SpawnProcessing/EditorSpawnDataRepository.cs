@@ -30,9 +30,7 @@ namespace EditorEX.Essentials.SpawnProcessing
             if (!_repoData.SpawnDataAssociation.ContainsKey(data))
             {
                 var spawnData = new EditorObjectSpawnData();
-                spawnData.flipLineIndex = (data as BaseBeatmapObjectEditorData).column;
-                spawnData.beforeJumpNoteLineLayer = (NoteLineLayer)
-                    (data as BaseBeatmapObjectEditorData).row;
+                spawnData.ResetToIdentity((BaseBeatmapObjectEditorData)data);
                 _repoData.SpawnDataAssociation[data] = spawnData;
             }
             return _repoData.SpawnDataAssociation[data];

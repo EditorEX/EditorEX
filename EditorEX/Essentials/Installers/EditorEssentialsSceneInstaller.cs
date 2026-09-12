@@ -165,7 +165,8 @@ namespace EditorEX.Essentials.Installers
                     (["preview", "preview-lock-cam"], typeof(EditorChainHeadGameVisuals))
                 );
 
-            Container.Bind<EditorBeatmapObjectsInTimeRowProcessor>().AsSingle();
+            Container.BindInterfacesAndSelfTo<EditorSpawnLoadInitializer>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<EditorSpawnVisibleRefresher>().AsSingle().NonLazy();
 
             Container
                 .BindInterfacesAndSelfTo<PreviewStateManager>()
@@ -175,7 +176,6 @@ namespace EditorEX.Essentials.Installers
 
             Container.BindInterfacesAndSelfTo<FixAudioTimeSource>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<CurrentNoteJumpSpeedSkipPatch>().AsSingle().NonLazy();
-            Container.BindInterfacesAndSelfTo<ProcessNewEditorData>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<PreviewToggler>().AsSingle().NonLazy();
             Container.BindInterfacesAndSelfTo<CameraLock>().AsSingle().NonLazy();
 

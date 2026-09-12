@@ -98,7 +98,7 @@ namespace EditorEX.Essentials.Movement.Note.MovementProvider
 
             float noteTime = _audioDataModel.bpmData.BeatToSeconds(editorData.beat);
             float worldRotation = 0f;
-            float flipYSide = noodleData?.InternalFlipYSide ?? spawnDataAssociation.flipYSide;
+            float flipYSide = spawnDataAssociation.flipYSide;
             float endRotation =
                 noteEditorData.cutDirection.RotationAngle()
                 + noteEditorData.angle

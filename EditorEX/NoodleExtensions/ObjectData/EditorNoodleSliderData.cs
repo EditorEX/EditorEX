@@ -16,8 +16,6 @@ namespace EditorEX.NoodleExtensions.ObjectData
 
         internal float? TailStartY { get; }
 
-        internal float InternalTailStartNoteLineLayer { get; }
-
         public IObjectCustomData Copy()
         {
             return new EditorNoodleBaseNoteData(this);
@@ -35,9 +33,6 @@ namespace EditorEX.NoodleExtensions.ObjectData
         {
             try
             {
-                InternalTailStartNoteLineLayer = customData
-                    .Get<float?>("NE_tailStartNoteLineLayer")
-                    .GetValueOrDefault();
                 IEnumerable<float?> nullableFloats = customData.GetNullableFloats(
                     "tailCoordinates"
                 );

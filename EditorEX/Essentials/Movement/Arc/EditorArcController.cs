@@ -2,7 +2,7 @@
 using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.Essentials.Movement.Data;
-using EditorEX.Essentials.VariableMovement;
+using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.VariableMovement;
 using UnityEngine;
 using Zenject;
@@ -16,6 +16,7 @@ namespace EditorEX.Essentials.Movement.Arc
         private ITypeProvider _variableMovementTypeProvider = null!;
         private ActiveViewMode _activeViewMode = null!;
         private EditorBasicBeatmapObjectSpawnMovementData _movementData = null!;
+        private EditorSpawnVisibleRefresher? _visibleRefresher;
 
         private ArcEditorData? _data;
         private IObjectMovement? _arcMovement;
@@ -27,13 +28,15 @@ namespace EditorEX.Essentials.Movement.Arc
             ActiveViewMode activeViewMode,
             [Inject(Id = "Movement")] ITypeProvider movementTypeProvider,
             [Inject(Id = "VariableMovement")] ITypeProvider variableMovementTypeProvider,
-            EditorBasicBeatmapObjectSpawnMovementData movementData
+            EditorBasicBeatmapObjectSpawnMovementData movementData,
+            [InjectOptional] EditorSpawnVisibleRefresher? visibleRefresher
         )
         {
             _state = state;
             _movementTypeProvider = movementTypeProvider;
             _variableMovementTypeProvider = variableMovementTypeProvider;
             _movementData = movementData;
+            _visibleRefresher = visibleRefresher;
 
             _activeViewMode = activeViewMode;
             _activeViewMode.ModeChanged += RefreshArcMovementAndInit;
@@ -41,6 +44,7 @@ namespace EditorEX.Essentials.Movement.Arc
 
         public void Dispose()
         {
+            _visibleRefresher?.Unregister(_data);
             if (_activeViewMode != null)
             {
                 _activeViewMode.ModeChanged -= RefreshArcMovementAndInit;
@@ -112,6 +116,8 @@ namespace EditorEX.Essentials.Movement.Arc
             RefreshArcMovement();
 
             _arcMovement.Init(editorData, _variableMovementDataProvider, _movementData, null);
+
+            _visibleRefresher?.Register(editorData, () => Init(_data));
 
             ManualUpdate();
         }

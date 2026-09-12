@@ -2,7 +2,7 @@ using System;
 using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.Essentials.Movement.Data;
-using EditorEX.Essentials.VariableMovement;
+using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.VariableMovement;
 using EditorEX.Essentials.Visuals;
 using UnityEngine;
@@ -18,6 +18,7 @@ namespace EditorEX.Essentials.Movement.ChainHead
         private ITypeProvider _variableMovementTypeProvider = null!;
         private ActiveViewMode _activeViewMode = null!;
         private EditorBasicBeatmapObjectSpawnMovementData _movementData = null!;
+        private EditorSpawnVisibleRefresher? _visibleRefresher;
 
         private ChainEditorData? _data;
         private IObjectMovement? _chainMovement;
@@ -31,7 +32,8 @@ namespace EditorEX.Essentials.Movement.ChainHead
             [Inject(Id = "Movement")] ITypeProvider movementTypeProvider,
             [Inject(Id = "Visuals")] ITypeProvider visualsTypeProvider,
             [Inject(Id = "VariableMovement")] ITypeProvider variableMovementTypeProvider,
-            EditorBasicBeatmapObjectSpawnMovementData movementData
+            EditorBasicBeatmapObjectSpawnMovementData movementData,
+            [InjectOptional] EditorSpawnVisibleRefresher? visibleRefresher
         )
         {
             _state = state;
@@ -39,6 +41,7 @@ namespace EditorEX.Essentials.Movement.ChainHead
             _visualsTypeProvider = visualsTypeProvider;
             _variableMovementTypeProvider = variableMovementTypeProvider;
             _movementData = movementData;
+            _visibleRefresher = visibleRefresher;
 
             _activeViewMode = activeViewMode;
             _activeViewMode.ModeChanged += RefreshHeadMovementVisualsAndInit;
@@ -46,6 +49,7 @@ namespace EditorEX.Essentials.Movement.ChainHead
 
         public void Dispose()
         {
+            _visibleRefresher?.Unregister(_data);
             if (_activeViewMode != null)
             {
                 _activeViewMode.ModeChanged -= RefreshHeadMovementVisualsAndInit;
@@ -131,6 +135,8 @@ namespace EditorEX.Essentials.Movement.ChainHead
 
             _chainMovement?.Init(editorData, _variableMovementDataProvider, _movementData, null);
             _chainVisuals?.Init(editorData);
+
+            _visibleRefresher?.Register(editorData, () => Init(_data));
 
             ManualUpdate();
         }

@@ -200,8 +200,13 @@ namespace EditorEX.Essentials.Movement.Data
 
         public Vector3 GetNoteOffset(int noteLineIndex, NoteLineLayer noteLineLayer)
         {
+            return GetNoteOffset((float)noteLineIndex, noteLineLayer);
+        }
+
+        public Vector3 GetNoteOffset(float noteLineIndex, NoteLineLayer noteLineLayer)
+        {
             float num = (float)(-(float)(_noteLinesCount - 1)) * 0.5f;
-            num = (num + (float)noteLineIndex) * 0.8f;
+            num = (num + noteLineIndex) * 0.8f;
             return _rightVec * num
                 + new Vector3(
                     0f,

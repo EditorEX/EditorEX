@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BeatmapEditor3D.DataModels;
 using CustomJSONData.CustomBeatmap;
+using Heck;
 using Heck.Animation;
+using NoodleExtensions;
 
 // Based from https://github.com/Aeroluna/Heck
 namespace EditorEX.NoodleExtensions.ObjectData
 {
     internal class EditorNoodleBaseNoteData : EditorNoodleObjectData
     {
-        internal float? InternalFlipYSide { get; set; }
+        internal float? FlipX { get; }
 
-        internal float? InternalFlipLineIndex { get; set; }
-
-        internal float InternalStartNoteLineLayer { get; set; }
+        internal float? FlipY { get; }
 
         internal bool DisableGravity { get; }
 
@@ -32,6 +33,8 @@ namespace EditorEX.NoodleExtensions.ObjectData
         {
             DisableGravity = original.DisableGravity;
             DisableLook = original.DisableLook;
+            FlipX = original.FlipX;
+            FlipY = original.FlipY;
         }
 
         internal EditorNoodleBaseNoteData(
@@ -58,11 +61,11 @@ namespace EditorEX.NoodleExtensions.ObjectData
                         .Get<bool?>("disableBadCutSaberType")
                         .GetValueOrDefault();
                 }
-                InternalFlipYSide = customData.Get<float?>("NE_flipYSide");
-                InternalFlipLineIndex = customData.Get<float?>("NE_flipLineIndex");
-                InternalStartNoteLineLayer = customData
-                    .Get<float?>("NE_startNoteLineLayer")
-                    .GetValueOrDefault();
+                IEnumerable<float?>? flip = customData
+                    .GetNullableFloats(v2 ? NoodleController.V2_FLIP : NoodleController.FLIP)
+                    ?.ToList();
+                FlipX = flip?.ElementAtOrDefault(0);
+                FlipY = flip?.ElementAtOrDefault(1);
                 DisableGravity = customData
                     .Get<bool?>(v2 ? "_disableNoteGravity" : "disableNoteGravity")
                     .GetValueOrDefault();

@@ -1,6 +1,7 @@
 using BeatmapEditor3D.InputSystem;
 using EditorEX.Essentials.Patches;
 using EditorEX.Essentials.Patches.Movement;
+using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.SDK.Input;
 using Zenject;
 
@@ -11,6 +12,13 @@ namespace EditorEX.Essentials.Installers
         public override void InstallBindings()
         {
             Container.BindInterfacesAndSelfTo<PopulateBeatmap>().AsSingle().NonLazy();
+
+            // SceneSetup, DataModels, and CommandInstaller are sibling contexts.
+            // App is the parent they all inherit, so load/journal/command share one index.
+            Container.Bind<EditorSpawnTimeIndex>().AsSingle();
+            Container.Bind<EditorSpawnProcessor>().AsSingle();
+            Container.Bind<EditorSpawnDirtyTracker>().AsSingle();
+            Container.BindInterfacesAndSelfTo<EditorSpawnDirtyJournal>().AsSingle().NonLazy();
             Container
                 .BindInterfacesAndSelfTo<ObjectMarkerOptimizationPatches>()
                 .AsSingle()

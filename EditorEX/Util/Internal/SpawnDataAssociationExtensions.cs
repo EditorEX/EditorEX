@@ -80,7 +80,7 @@ namespace EditorEX.Util
             baseSpawn.flipYSide = (float)((editorData.column > targetNote.column) ? 1 : (-1));
             if (
                 (editorData.column > targetNote.column && editorData.row < targetNote.row)
-                || (editorData.column < targetNote.column && editorData.column > targetNote.row)
+                || (editorData.column < targetNote.column && editorData.row > targetNote.row)
             )
             {
                 baseSpawn.flipYSide *= -1f;

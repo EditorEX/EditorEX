@@ -2,6 +2,7 @@
 using BeatmapEditor3D.DataModels;
 using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.Essentials.Movement.Data;
+using EditorEX.Essentials.SpawnProcessing;
 using EditorEX.Essentials.VariableMovement;
 using EditorEX.Essentials.Visuals;
 using UnityEngine;
@@ -17,6 +18,7 @@ namespace EditorEX.Essentials.Movement.Note
         private ITypeProvider _variableMovementTypeProvider = null!;
         private ActiveViewMode _activeViewMode = null!;
         private EditorBasicBeatmapObjectSpawnMovementData _movementData = null!;
+        private EditorSpawnVisibleRefresher? _visibleRefresher;
 
         private NoteEditorData? _data;
         private IObjectMovement? _noteMovement;
@@ -30,7 +32,8 @@ namespace EditorEX.Essentials.Movement.Note
             [Inject(Id = "Movement")] ITypeProvider movementTypeProvider,
             [Inject(Id = "Visuals")] ITypeProvider visualsTypeProvider,
             [Inject(Id = "VariableMovement")] ITypeProvider variableMovementTypeProvider,
-            EditorBasicBeatmapObjectSpawnMovementData movementData
+            EditorBasicBeatmapObjectSpawnMovementData movementData,
+            [InjectOptional] EditorSpawnVisibleRefresher? visibleRefresher
         )
         {
             _state = state;
@@ -38,6 +41,7 @@ namespace EditorEX.Essentials.Movement.Note
             _visualsTypeProvider = visualsTypeProvider;
             _variableMovementTypeProvider = variableMovementTypeProvider;
             _movementData = movementData;
+            _visibleRefresher = visibleRefresher;
 
             _activeViewMode = activeViewMode;
             _activeViewMode.ModeChanged += RefreshNoteMovementVisualsAndInit;
@@ -45,6 +49,7 @@ namespace EditorEX.Essentials.Movement.Note
 
         public void Dispose()
         {
+            _visibleRefresher?.Unregister(_data);
             if (_activeViewMode != null)
             {
                 _activeViewMode.ModeChanged -= RefreshNoteMovementVisualsAndInit;
@@ -138,6 +143,8 @@ namespace EditorEX.Essentials.Movement.Note
                 () => _noteVisuals!
             );
             _noteVisuals!.Init(noteData);
+
+            _visibleRefresher?.Register(noteData, () => Init(_data));
 
             ManualUpdate();
         }

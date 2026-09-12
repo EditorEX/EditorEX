@@ -92,6 +92,30 @@ namespace EditorEX.Tests.Tests
         }
 
         [Fact]
+        public void Deserialize_note_reads_authored_flip()
+        {
+            NoteEditorData note = NoteEditorData.CreateNew(
+                4f,
+                1,
+                0,
+                0,
+                ColorType.ColorA,
+                NoteType.Note,
+                NoteCutDirection.Up,
+                0
+            );
+            var json = new CustomData { [FLIP] = new List<object> { 0.5f, -1f } };
+            var typed = (EditorNoodleBaseNoteData)
+                new NoodleCustomDataCodec().Deserialize(
+                    note,
+                    json,
+                    new CustomDataCodecContext { SourceVersion = V3, TargetVersion = V3 }
+                )!;
+            Assert.Equal(0.5f, typed.FlipX);
+            Assert.Equal(-1f, typed.FlipY);
+        }
+
+        [Fact]
         public void Deserialize_note_reads_coordinates_njs_and_link()
         {
             NoteEditorData note = NoteEditorData.CreateNew(

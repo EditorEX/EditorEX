@@ -1,12 +1,6 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using BeatmapEditor3D.DataModels;
-using CustomJSONData.CustomBeatmap;
-using EditorEX.CustomJSONData;
-using EditorEX.Util;
-using Heck;
-using static Heck.HeckController;
-using static NoodleExtensions.NoodleController;
 
 namespace EditorEX.Essentials.SpawnProcessing
 {
@@ -14,8 +8,7 @@ namespace EditorEX.Essentials.SpawnProcessing
     {
         public static void Apply(
             IReadOnlyList<NoteEditorData> colorNotesData,
-            ICustomDataRepository repo,
-            bool v2
+            Func<NoteEditorData, (float x, float y)> positionOf
         )
         {
             if (colorNotesData.Count != 2)
@@ -23,23 +16,13 @@ namespace EditorEX.Essentials.SpawnProcessing
                 return;
             }
 
-            float offset = 4 / 2f;
             float[] lineIndexes = new float[2];
             float[] lineLayers = new float[2];
             for (int i = 0; i < 2; i++)
             {
-                if (colorNotesData[i] is not NoteEditorData noteData)
-                {
-                    continue;
-                }
-
-                CustomData customData = noteData.GetOrCreateCustomData(repo);
-                IEnumerable<float?>? position = customData
-                    .GetNullableFloats(v2 ? V2_POSITION : NOTE_OFFSET)
-                    ?.ToList();
-                lineIndexes[i] =
-                    position?.ElementAtOrDefault(0) + offset ?? colorNotesData[i].column;
-                lineLayers[i] = position?.ElementAtOrDefault(1) ?? (float)colorNotesData[i].row;
+                (float x, float y) = positionOf(colorNotesData[i]);
+                lineIndexes[i] = x;
+                lineLayers[i] = y;
             }
 
             if (
@@ -61,13 +44,10 @@ namespace EditorEX.Essentials.SpawnProcessing
 
             for (int i = 0; i < 2; i++)
             {
-                if (colorNotesData[i] is not NoteEditorData noteData)
-                {
-                    continue;
-                }
-
-                CustomData customData = noteData.GetOrCreateCustomData(repo);
-                customData[INTERNAL_FLIPLINEINDEX] = lineIndexes[1 - i];
+                EditorObjectSpawnData spawn = EditorSpawnDataRepository.GetSpawnData(
+                    colorNotesData[i]
+                );
+                spawn.flipLineIndex = lineIndexes[1 - i];
 
                 float flipYSide = (lineIndexes[i] > lineIndexes[1 - i]) ? 1 : -1;
                 if (
@@ -78,7 +58,7 @@ namespace EditorEX.Essentials.SpawnProcessing
                     flipYSide *= -1f;
                 }
 
-                customData[INTERNAL_FLIPYSIDE] = flipYSide;
+                spawn.flipYSide = flipYSide;
             }
         }
     }
