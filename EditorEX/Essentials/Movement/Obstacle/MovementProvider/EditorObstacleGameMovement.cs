@@ -142,7 +142,12 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             float worldRotation = 0f;
 
             _worldRotation = GetWorldRotation(_editorData, worldRotation);
-            _obstacleDuration = _editorData.duration;
+            // ObstacleEditorData.duration is beats; ObstacleController uses seconds
+            // (BeatToTime(endBeat) - BeatToTime(startBeat)).
+            float startSeconds = _audioDataModel.bpmData.BeatToSeconds(_editorData.beat);
+            _obstacleDuration =
+                _audioDataModel.bpmData.BeatToSeconds(_editorData.beat + _editorData.duration)
+                - startSeconds;
             _height = obstacleSpawnData.obstacleHeight;
             _color = _colorManager.obstaclesColor;
             _width = obstacleSpawnData.obstacleWidth;
@@ -152,7 +157,7 @@ namespace EditorEX.Essentials.Movement.Obstacle.MovementProvider
             Vector3 midPos = _variableMovementDataProvider.moveEndPosition + _moveOffset;
             Vector3 endPos = _variableMovementDataProvider.jumpEndPosition + _moveOffset;
             float num = (endPos - midPos).magnitude / _variableMovementDataProvider.jumpDuration;
-            _length = GetCustomLength(num * _editorData.duration, _editorData);
+            _length = GetCustomLength(num * _obstacleDuration, _editorData);
 
             _stretchableObstacle.SetAllProperties(
                 _width * 0.98f,
