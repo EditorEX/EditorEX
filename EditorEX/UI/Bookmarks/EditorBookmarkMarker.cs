@@ -2,9 +2,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace EditorEX.UI.Bookmarks3D
+namespace EditorEX.UI.Bookmarks
 {
-    internal class EditorBookmark3DMarker : MonoBehaviour
+    internal class EditorBookmarkMarker : MonoBehaviour
     {
         private static readonly int ColorId = Shader.PropertyToID("_Color");
 
@@ -17,7 +17,7 @@ namespace EditorEX.UI.Bookmarks3D
 
         public BoxCollider LabelCollider => _labelCollider;
 
-        public static EditorBookmark3DMarker Create(
+        public static EditorBookmarkMarker Create(
             Transform parent,
             Mesh quadMesh,
             Material wallMaterial,
@@ -28,10 +28,10 @@ namespace EditorEX.UI.Bookmarks3D
             Material fontMaterial
         )
         {
-            var root = new GameObject("EditorEXBookmark3DMarker");
+            var root = new GameObject("EditorEXBookmarkMarker");
             root.transform.SetParent(parent, false);
 
-            var marker = root.AddComponent<EditorBookmark3DMarker>();
+            var marker = root.AddComponent<EditorBookmarkMarker>();
             marker.Build(
                 quadMesh,
                 wallMaterial,

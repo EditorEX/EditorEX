@@ -2,7 +2,7 @@ using EditorEX.Essentials.Features.HideUI;
 using EditorEX.Essentials.Features.ViewMode;
 using EditorEX.SDK.Collectors;
 using EditorEX.SDK.ReactiveComponents;
-using EditorEX.UI.Bookmarks3D;
+using EditorEX.UI.Bookmarks;
 using Zenject;
 
 namespace EditorEX.Essentials.Installers
@@ -42,7 +42,7 @@ namespace EditorEX.Essentials.Installers
                 .AsSingle()
                 .NonLazy();
 
-            Container.BindInterfacesAndSelfTo<EditorBookmark3DMarkers>().AsSingle().NonLazy();
+            Container.BindInterfacesAndSelfTo<EditorBookmarkMarkers>().AsSingle().NonLazy();
         }
     }
 }

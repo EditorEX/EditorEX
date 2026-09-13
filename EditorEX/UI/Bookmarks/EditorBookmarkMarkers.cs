@@ -13,9 +13,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
 using Zenject;
 
-namespace EditorEX.UI.Bookmarks3D
+namespace EditorEX.UI.Bookmarks
 {
-    internal class EditorBookmark3DMarkers : IInitializable, ITickable, IDisposable
+    internal class EditorBookmarkMarkers : IInitializable, ITickable, IDisposable
     {
         private const float TimeToZDistanceScale = 12f;
 
@@ -26,8 +26,8 @@ namespace EditorEX.UI.Bookmarks3D
         private readonly ActiveViewMode _activeViewMode;
         private readonly SignalBus _signalBus;
 
-        private readonly Dictionary<BeatmapEditorObjectId, EditorBookmark3DMarker> _active = new();
-        private readonly Stack<EditorBookmark3DMarker> _pool = new();
+        private readonly Dictionary<BeatmapEditorObjectId, EditorBookmarkMarker> _active = new();
+        private readonly Stack<EditorBookmarkMarker> _pool = new();
         private readonly HashSet<BeatmapEditorObjectId> _seen = new();
         private readonly List<BeatmapEditorObjectId> _toDespawn = new();
 
@@ -43,7 +43,7 @@ namespace EditorEX.UI.Bookmarks3D
         private bool _templatesReady;
         private bool _forceRefresh;
 
-        private EditorBookmark3DMarkers(
+        private EditorBookmarkMarkers(
             IEditorBeatmapModels editorBeatmapModels,
             IReadonlyBeatmapState beatmapState,
             ActiveViewMode activeViewMode,
@@ -178,7 +178,7 @@ namespace EditorEX.UI.Bookmarks3D
             _font = fontSource.font;
             _fontMaterial = fontSource.fontSharedMaterial;
 
-            _root = new GameObject("EditorEXBookmark3DMarkers");
+            _root = new GameObject("EditorEXBookmarkMarkers");
             _root.transform.SetParent(parent, false);
 
             _templatesReady = true;
@@ -299,7 +299,7 @@ namespace EditorEX.UI.Bookmarks3D
             _forceRefresh = false;
         }
 
-        private EditorBookmark3DMarker Spawn()
+        private EditorBookmarkMarker Spawn()
         {
             if (_pool.Count > 0)
             {
@@ -308,7 +308,7 @@ namespace EditorEX.UI.Bookmarks3D
                 return pooled;
             }
 
-            return EditorBookmark3DMarker.Create(
+            return EditorBookmarkMarker.Create(
                 _root!.transform,
                 _quadMesh!,
                 _wallMaterial!,
@@ -320,7 +320,7 @@ namespace EditorEX.UI.Bookmarks3D
             );
         }
 
-        private void Despawn(EditorBookmark3DMarker marker)
+        private void Despawn(EditorBookmarkMarker marker)
         {
             marker.gameObject.SetActive(false);
             _pool.Push(marker);
@@ -358,7 +358,7 @@ namespace EditorEX.UI.Bookmarks3D
                 return;
             }
 
-            var marker = hit.collider.GetComponentInParent<EditorBookmark3DMarker>();
+            var marker = hit.collider.GetComponentInParent<EditorBookmarkMarker>();
             if (marker == null)
             {
                 return;
