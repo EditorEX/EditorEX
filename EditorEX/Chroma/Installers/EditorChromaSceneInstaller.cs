@@ -7,6 +7,7 @@ using EditorEX.Chroma.EnvironmentEnhancement.Component;
 using EditorEX.Chroma.Events;
 using EditorEX.Chroma.Lighting;
 using EditorEX.Chroma.Patches.Colorizer.Initialize;
+using EditorEX.Chroma.Patches.EnvironmentComponent;
 using EditorEX.Chroma.Patches.Events;
 using EditorEX.MapData.Contexts;
 using Heck;
@@ -73,7 +74,7 @@ namespace EditorEX.Chroma.Installers
                 Container
                     .BindInterfacesAndSelfTo<ParametricBoxControllerTransformOverride>()
                     .AsSingle();
-                Container.BindInterfacesAndSelfTo<TrackLaneRingOffset>().AsSingle();
+                Container.BindInterfacesAndSelfTo<EditorTrackLaneRingOffset>().AsSingle();
             }
         }
     }

@@ -35,22 +35,47 @@ namespace EditorEX.Chroma.Patches.Events
 
         [AffinityPrefix]
         [AffinityPatch(
+            typeof(TrackLaneRingsRotationEffect),
+            nameof(TrackLaneRingsRotationEffect.Start)
+        )]
+        private bool CreateChromaRingOnEffectStart(TrackLaneRingsRotationEffect __instance)
+        {
+            // Vanilla Start only queues startup rotation. That runs *before* the spawner's Start
+            // (where real Chroma creates the wrapper), so AddRingRotationEffect was being
+            // swallowed. Create here first; the chroma constructor already reapplies startup.
+            EnsureChromaRing(__instance);
+            return false;
+        }
+
+        [AffinityPrefix]
+        [AffinityPatch(
             typeof(TrackLaneRingsRotationEffectSpawner),
             nameof(TrackLaneRingsRotationEffectSpawner.Start)
         )]
         private void CreateChromaRing(TrackLaneRingsRotationEffect ____trackLaneRingsRotationEffect)
         {
             // custom platforms (terrible acronym) causes this to run twice for some reason, so stop the second
-            if (_chromaRings.ContainsKey(____trackLaneRingsRotationEffect))
+            EnsureChromaRing(____trackLaneRingsRotationEffect);
+        }
+
+        private ChromaRingsRotationEffect EnsureChromaRing(
+            TrackLaneRingsRotationEffect trackLaneRingsRotationEffect
+        )
+        {
+            if (
+                _chromaRings.TryGetValue(
+                    trackLaneRingsRotationEffect,
+                    out ChromaRingsRotationEffect chromaRing
+                )
+            )
             {
-                return;
+                return chromaRing;
             }
 
-            _chromaRings.Add(
-                ____trackLaneRingsRotationEffect,
-                _factory.Create(____trackLaneRingsRotationEffect)
-            );
-            ____trackLaneRingsRotationEffect.enabled = false;
+            chromaRing = _factory.Create(trackLaneRingsRotationEffect);
+            _chromaRings.Add(trackLaneRingsRotationEffect, chromaRing);
+            trackLaneRingsRotationEffect.enabled = false;
+            return chromaRing;
         }
 
         [AffinityPrefix]
@@ -76,11 +101,8 @@ namespace EditorEX.Chroma.Patches.Events
             float flexySpeed
         )
         {
-            if (_chromaRings.TryGetValue(__instance, out ChromaRingsRotationEffect chromaRing))
-            {
-                chromaRing.AddRingRotationEffect(angle, step, propagationSpeed, flexySpeed);
-            }
-
+            EnsureChromaRing(__instance)
+                .AddRingRotationEffect(angle, step, propagationSpeed, flexySpeed);
             return false;
         }
 

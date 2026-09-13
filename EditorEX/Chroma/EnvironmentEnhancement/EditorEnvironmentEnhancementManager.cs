@@ -8,6 +8,7 @@ using Chroma.EnvironmentEnhancement.Saved;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using CustomJSONData.CustomBeatmap;
 using EditorEX.Chroma.EnvironmentEnhancement.Component;
+using EditorEX.Chroma.Patches.EnvironmentComponent;
 using EditorEX.CustomJSONData;
 using EditorEX.Essentials.PreviewState;
 using EditorEX.MapData.Contexts;
@@ -29,7 +30,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
         private Dictionary<string, Track> _tracks = null!;
         private bool _leftHanded;
         private EditorGeometryFactory _geometryFactory = null!;
-        private TrackLaneRingOffset _trackLaneRingOffset = null!;
+        private EditorTrackLaneRingOffset _trackLaneRingOffset = null!;
         private ParametricBoxControllerTransformOverride _parametricBoxControllerTransformOverride =
             null!;
         private EditorDuplicateInitializer _duplicateInitializer = null!;
@@ -46,7 +47,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
             Dictionary<string, Track> tracks,
             [Inject(Id = LEFT_HANDED_ID)] bool leftHanded,
             EditorGeometryFactory geometryFactory,
-            TrackLaneRingOffset trackLaneRingOffset,
+            EditorTrackLaneRingOffset trackLaneRingOffset,
             ParametricBoxControllerTransformOverride parametricBoxControllerTransformOverride,
             EditorDuplicateInitializer duplicateInitializer,
             EditorComponentCustomizer componentCustomizer,
@@ -398,7 +399,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement
                     controller.RotationUpdated += () =>
                         _trackLaneRingOffset.UpdateRotation(trackLaneRing);
                     controller.PositionUpdated += () =>
-                        TrackLaneRingOffset.UpdatePosition(trackLaneRing);
+                        EditorTrackLaneRingOffset.UpdatePosition(trackLaneRing);
                 }
                 else if (parametricBoxController != null)
                 {

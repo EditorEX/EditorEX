@@ -5,6 +5,7 @@ using Chroma.EnvironmentEnhancement;
 using Chroma.EnvironmentEnhancement.Component;
 using Chroma.HarmonyPatches.EnvironmentComponent;
 using EditorEX.Chroma.Patches.Colorizer.Initialize;
+using EditorEX.Chroma.Patches.EnvironmentComponent;
 using HarmonyLib;
 using Heck.Animation.Transform;
 using IPA.Utilities;
@@ -61,7 +62,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
         >.GetAccessor(nameof(TrackLaneRingsRotationEffectSpawner._beatmapCallbacksController));
 
         private readonly SiraLog _log;
-        private readonly TrackLaneRingOffset _trackLaneRingOffset;
+        private readonly EditorTrackLaneRingOffset _trackLaneRingOffset;
         private readonly EditorLightWithIdRegisterer _lightWithIdRegisterer;
         private readonly global::Chroma.Settings.Config _config;
 
@@ -69,7 +70,7 @@ namespace EditorEX.Chroma.EnvironmentEnhancement.Component
 
         private EditorDuplicateInitializer(
             SiraLog log,
-            TrackLaneRingOffset trackLaneRingOffset,
+            EditorTrackLaneRingOffset trackLaneRingOffset,
             EditorLightWithIdRegisterer lightWithIdRegisterer,
             global::Chroma.Settings.Config config
         )
